@@ -1,0 +1,345 @@
+import { createClient } from "@supabase/supabase-js";
+import { queryOptions } from "@tanstack/react-query";
+import type { Database } from "@/integrations/supabase/types";
+
+export const SITE_URL = (import.meta.env.VITE_SITE_URL as string | undefined) ?? "https://store.ourvisibleuniverse.com";
+export const STORE_NAME = "Our Visible Universe";
+
+let _client: ReturnType<typeof createClient<Database>> | null = null;
+
+/** Session-less client for public reads. Row Level Security limits it to live products. */
+export function publicDb() {
+  if (_client) return _client;
+  const url = import.meta.env.VITE_SUPABASE_URL as string;
+  const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+  _client = createClient<Database>(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false, storage: undefined },
+    global: {
+      fetch: (input, init) => {
+        const h = new Headers(init?.headers);
+        if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`) h.delete("Authorization");
+        h.set("apikey", key);
+        return fetch(input, { ...init, headers: h });
+      },
+    },
+  });
+  return _client;
+}
+
+export type Category = Database["public"]["Tables"]["categories"]["Row"];
+export type Settings = Database["public"]["Tables"]["site_settings"]["Row"];
+
+export type ProductCardData = {
+  id: string;
+  name: string;
+  slug: string;
+  short_description: string | null;
+  price: number | null;
+  currency: string | null;
+  featured: boolean;
+  amazon_url: string | null;
+  created_at: string;
+  category: { name: string; slug: string } | null;
+  image: string | null;
+  imageAlt: string | null;
+};
+
+export type ProductFull = ProductCardData & {
+  description: string | null;
+  brand: string | null;
+  category_id: string | null;
+  amazon_asin: string | null;
+  amazon_marketplace: string | null;
+  price_updated_at: string | null;
+  images: { image_url: string; alt_text: string | null }[];
+  features: string[];
+  tags: string[];
+};
+
+export const CARD_SELECT =
+  "id,name,slug,short_description,price,currency,featured,amazon_url,created_at,category_id,categories(name,slug),product_images(image_url,alt_text,sort_order)";
+
+type RawCard = {
+  id: string;
+  name: string;
+  slug: string;
+  short_description: string | null;
+  price: number | null;
+  currency: string | null;
+  featured: boolean;
+  amazon_url: string | null;
+  created_at: string;
+  categories: { name: string; slug: string } | null;
+  product_images: { image_url: string; alt_text: string | null; sort_order: number }[] | null;
+};
+
+export function toCard(r: RawCard): ProductCardData {
+  const imgs = [...(r.product_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
+  return {
+    id: r.id,
+    name: r.name,
+    slug: r.slug,
+    short_description: r.short_description,
+    price: r.price,
+    currency: r.currency,
+    featured: r.featured,
+    amazon_url: r.amazon_url,
+    created_at: r.created_at,
+    category: r.categories,
+    image: imgs[0]?.image_url ?? null,
+    imageAlt: imgs[0]?.alt_text ?? null,
+  };
+}
+
+export function formatPrice(price: number | null, currency: string | null) {
+  if (price == null) return null;
+  try {
+    return new Intl.NumberFormat(currency === "INR" ? "en-IN" : "en-US", {
+      style: "currency",
+      currency: currency || "INR",
+      maximumFractionDigits: 2,
+    }).format(price);
+  } catch {
+    return `${currency ?? ""} ${price}`;
+  }
+}
+
+export function slugify(s: string) {
+  return s
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
+const AMAZON_HOST = /^(www\.)?(amazon\.[a-z.]{2,8}|amzn\.(to|eu|in|asia)|a\.co)$/i;
+export function isValidAmazonUrl(value: string) {
+  try {
+    const u = new URL(value.trim());
+    return (u.protocol === "https:" || u.protocol === "http:") && AMAZON_HOST.test(u.hostname);
+  } catch {
+    return false;
+  }
+}
+
+export function absoluteUrl(path: string | null | undefined) {
+  if (!path) return null;
+  if (/^https?:\/\//.test(path)) return path;
+  return `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+}
+
+function liveProducts() {
+  return publicDb().from("products").select(CARD_SELECT, { count: "exact" }).eq("active", true).is("deleted_at", null);
+}
+
+// ---------- Queries ----------
+
+export const settingsQuery = queryOptions({
+  queryKey: ["settings"],
+  queryFn: async () => {
+    const { data, error } = await publicDb().from("site_settings").select("*").eq("id", 1).maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+  staleTime: 60_000,
+});
+
+export const categoriesQuery = queryOptions({
+  queryKey: ["categories", "public"],
+  queryFn: async () => {
+    const { data, error } = await publicDb()
+      .from("categories")
+      .select("*")
+      .eq("active", true)
+      .order("sort_order")
+      .order("name");
+    if (error) throw error;
+    return data ?? [];
+  },
+  staleTime: 60_000,
+});
+
+export const homeQuery = queryOptions({
+  queryKey: ["home"],
+  queryFn: async () => {
+    const [featured, newest] = await Promise.all([
+      liveProducts().eq("featured", true).order("updated_at", { ascending: false }).limit(8),
+      liveProducts().order("created_at", { ascending: false }).limit(8),
+    ]);
+    if (featured.error) throw featured.error;
+    if (newest.error) throw newest.error;
+    return {
+      featured: (featured.data as unknown as RawCard[]).map(toCard),
+      newest: (newest.data as unknown as RawCard[]).map(toCard),
+    };
+  },
+});
+
+export type ListParams = {
+  q?: string;
+  category?: string; // slug
+  featured?: boolean;
+  sort?: "featured" | "newest" | "price_asc" | "price_desc";
+  min?: number;
+  max?: number;
+  page?: number;
+  pageSize?: number;
+};
+
+function clean(q: string) {
+  return q.replace(/[%,()*\\"']/g, " ").trim();
+}
+
+export async function listProducts(p: ListParams) {
+  const db = publicDb();
+  const pageSize = p.pageSize ?? 24;
+  const page = Math.max(1, p.page ?? 1);
+  let query = liveProducts();
+
+  if (p.category) {
+    const { data: cat } = await db.from("categories").select("id").eq("slug", p.category).eq("active", true).maybeSingle();
+    if (!cat) return { items: [] as ProductCardData[], total: 0, page, pageSize };
+    query = query.eq("category_id", cat.id);
+  }
+
+  const q = p.q ? clean(p.q) : "";
+  if (q) {
+    const words = q.split(/\s+/).filter(Boolean);
+    const pattern = `%${words.join("%")}%`;
+    const tagWords = words.filter((w) => w.length >= 3);
+    const [tagRes, catRes] = await Promise.all([
+      tagWords.length
+        ? db.from("product_tags").select("product_id").or(tagWords.map((w) => `tag.ilike.%${w}%`).join(",")).limit(500)
+        : Promise.resolve({ data: [] as { product_id: string }[] }),
+      db.from("categories").select("id").ilike("name", pattern).eq("active", true),
+    ]);
+    const ids = [...new Set((tagRes.data ?? []).map((t) => t.product_id))];
+    const catIds = (catRes.data ?? []).map((c) => c.id);
+    const ors = [
+      `name.ilike.${pattern}`,
+      `short_description.ilike.${pattern}`,
+      `description.ilike.${pattern}`,
+      `brand.ilike.${pattern}`,
+    ];
+    if (ids.length) ors.push(`id.in.(${ids.join(",")})`);
+    if (catIds.length) ors.push(`category_id.in.(${catIds.join(",")})`);
+    query = query.or(ors.join(","));
+  }
+
+  if (p.featured) query = query.eq("featured", true);
+  if (p.min != null && !Number.isNaN(p.min)) query = query.gte("price", p.min);
+  if (p.max != null && !Number.isNaN(p.max)) query = query.lte("price", p.max);
+
+  switch (p.sort) {
+    case "newest":
+      query = query.order("created_at", { ascending: false });
+      break;
+    case "price_asc":
+      query = query.order("price", { ascending: true, nullsFirst: false });
+      break;
+    case "price_desc":
+      query = query.order("price", { ascending: false, nullsFirst: false });
+      break;
+    default:
+      query = query.order("featured", { ascending: false }).order("created_at", { ascending: false });
+  }
+
+  const from = (page - 1) * pageSize;
+  const { data, error, count } = await query.range(from, from + pageSize - 1);
+  if (error) throw error;
+  return { items: (data as unknown as RawCard[]).map(toCard), total: count ?? 0, page, pageSize };
+}
+
+export const productsQuery = (p: ListParams) =>
+  queryOptions({ queryKey: ["products", p], queryFn: () => listProducts(p) });
+
+export const categoryQuery = (slug: string) =>
+  queryOptions({
+    queryKey: ["category", slug],
+    queryFn: async () => {
+      const { data, error } = await publicDb().from("categories").select("*").eq("slug", slug).eq("active", true).maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+export async function fetchProductFull(slug: string): Promise<ProductFull | null> {
+  const { data, error } = await publicDb()
+    .from("products")
+    .select(
+      `${CARD_SELECT},description,brand,amazon_asin,amazon_marketplace,price_updated_at,product_features(feature,sort_order),product_tags(tag)`,
+    )
+    .eq("slug", slug)
+    .eq("active", true)
+    .is("deleted_at", null)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  const r = data as unknown as RawCard & {
+    category_id: string | null;
+    description: string | null;
+    brand: string | null;
+    amazon_asin: string | null;
+    amazon_marketplace: string | null;
+    price_updated_at: string | null;
+    product_features: { feature: string; sort_order: number }[];
+    product_tags: { tag: string }[];
+  };
+  const imgs = [...(r.product_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
+  return {
+    ...toCard(r),
+    category_id: r.category_id,
+    description: r.description,
+    brand: r.brand,
+    amazon_asin: r.amazon_asin,
+    amazon_marketplace: r.amazon_marketplace,
+    price_updated_at: r.price_updated_at,
+    images: imgs.map((i) => ({ image_url: i.image_url, alt_text: i.alt_text })),
+    features: [...(r.product_features ?? [])].sort((a, b) => a.sort_order - b.sort_order).map((f) => f.feature),
+    tags: (r.product_tags ?? []).map((t) => t.tag),
+  };
+}
+
+export const productQuery = (slug: string) =>
+  queryOptions({ queryKey: ["product", slug], queryFn: () => fetchProductFull(slug) });
+
+export const relatedQuery = (p: { id: string; category_id: string | null; tags: string[] }) =>
+  queryOptions({
+    queryKey: ["related", p.id],
+    queryFn: async () => {
+      const db = publicDb();
+      const out: ProductCardData[] = [];
+      if (p.category_id) {
+        const { data } = await liveProducts().eq("category_id", p.category_id).neq("id", p.id).order("featured", { ascending: false }).limit(4);
+        out.push(...((data ?? []) as unknown as RawCard[]).map(toCard));
+      }
+      if (out.length < 4 && p.tags.length) {
+        const { data: tagRows } = await db.from("product_tags").select("product_id").in("tag", p.tags).limit(100);
+        const ids = [...new Set((tagRows ?? []).map((t) => t.product_id))].filter((id) => id !== p.id && !out.some((o) => o.id === id));
+        if (ids.length) {
+          const { data } = await liveProducts().in("id", ids.slice(0, 20)).limit(4 - out.length);
+          out.push(...((data ?? []) as unknown as RawCard[]).map(toCard));
+        }
+      }
+      if (out.length < 4) {
+        const { data } = await liveProducts().neq("id", p.id).eq("featured", true).limit(8);
+        for (const c of ((data ?? []) as unknown as RawCard[]).map(toCard)) {
+          if (out.length >= 4) break;
+          if (!out.some((o) => o.id === c.id)) out.push(c);
+        }
+      }
+      return out;
+    },
+  });
+
+/** Fire-and-forget outbound click log. Never blocks navigation to Amazon. */
+export function logOutboundClick(productId: string) {
+  try {
+    void publicDb().from("outbound_clicks").insert({ product_id: productId }).then(() => undefined);
+  } catch {
+    /* ignore */
+  }
+}
