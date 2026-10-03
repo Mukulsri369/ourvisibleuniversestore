@@ -9,8 +9,43 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StoreRouteImport } from './routes/_store'
+import { Route as StoreIndexRouteImport } from './routes/_store.index'
+import { Route as StoreSearchRouteImport } from './routes/_store.search'
+import { Route as StoreShopRouteImport } from './routes/_store.shop'
+import { Route as StoreCategorySlugRouteImport } from './routes/_store.category.$slug'
+import { Route as StoreProductSlugRouteImport } from './routes/_store.product.$slug'
 import { Route as ApiPublicImgSplatRouteImport } from './routes/api/public/img.$'
 
+const StoreRoute = StoreRouteImport.update({
+  id: '/_store',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoreIndexRoute = StoreIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StoreRoute,
+} as any)
+const StoreSearchRoute = StoreSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => StoreRoute,
+} as any)
+const StoreShopRoute = StoreShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => StoreRoute,
+} as any)
+const StoreCategorySlugRoute = StoreCategorySlugRouteImport.update({
+  id: '/category/$slug',
+  path: '/category/$slug',
+  getParentRoute: () => StoreRoute,
+} as any)
+const StoreProductSlugRoute = StoreProductSlugRouteImport.update({
+  id: '/product/$slug',
+  path: '/product/$slug',
+  getParentRoute: () => StoreRoute,
+} as any)
 const ApiPublicImgSplatRoute = ApiPublicImgSplatRouteImport.update({
   id: '/api/public/img/$',
   path: '/api/public/img/$',
@@ -18,29 +53,108 @@ const ApiPublicImgSplatRoute = ApiPublicImgSplatRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof StoreIndexRoute
+  '/search': typeof StoreSearchRoute
+  '/shop': typeof StoreShopRoute
+  '/category/$slug': typeof StoreCategorySlugRoute
+  '/product/$slug': typeof StoreProductSlugRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
 }
 export interface FileRoutesByTo {
+  '/search': typeof StoreSearchRoute
+  '/shop': typeof StoreShopRoute
+  '/': typeof StoreIndexRoute
+  '/category/$slug': typeof StoreCategorySlugRoute
+  '/product/$slug': typeof StoreProductSlugRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/_store': typeof StoreRouteWithChildren
+  '/_store/search': typeof StoreSearchRoute
+  '/_store/shop': typeof StoreShopRoute
+  '/_store/': typeof StoreIndexRoute
+  '/_store/category/$slug': typeof StoreCategorySlugRoute
+  '/_store/product/$slug': typeof StoreProductSlugRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/api/public/img/$'
+  fullPaths:
+    | '/'
+    | '/search'
+    | '/shop'
+    | '/category/$slug'
+    | '/product/$slug'
+    | '/api/public/img/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/api/public/img/$'
-  id: '__root__' | '/api/public/img/$'
+  to:
+    | '/search'
+    | '/shop'
+    | '/'
+    | '/category/$slug'
+    | '/product/$slug'
+    | '/api/public/img/$'
+  id:
+    | '__root__'
+    | '/_store'
+    | '/_store/search'
+    | '/_store/shop'
+    | '/_store/'
+    | '/_store/category/$slug'
+    | '/_store/product/$slug'
+    | '/api/public/img/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  StoreRoute: typeof StoreRouteWithChildren
   ApiPublicImgSplatRoute: typeof ApiPublicImgSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_store': {
+      id: '/_store'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof StoreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_store/': {
+      id: '/_store/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof StoreIndexRouteImport
+      parentRoute: typeof StoreRoute
+    }
+    '/_store/search': {
+      id: '/_store/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof StoreSearchRouteImport
+      parentRoute: typeof StoreRoute
+    }
+    '/_store/shop': {
+      id: '/_store/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof StoreShopRouteImport
+      parentRoute: typeof StoreRoute
+    }
+    '/_store/category/$slug': {
+      id: '/_store/category/$slug'
+      path: '/category/$slug'
+      fullPath: '/category/$slug'
+      preLoaderRoute: typeof StoreCategorySlugRouteImport
+      parentRoute: typeof StoreRoute
+    }
+    '/_store/product/$slug': {
+      id: '/_store/product/$slug'
+      path: '/product/$slug'
+      fullPath: '/product/$slug'
+      preLoaderRoute: typeof StoreProductSlugRouteImport
+      parentRoute: typeof StoreRoute
+    }
     '/api/public/img/$': {
       id: '/api/public/img/$'
       path: '/api/public/img/$'
@@ -51,7 +165,26 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface StoreRouteChildren {
+  StoreSearchRoute: typeof StoreSearchRoute
+  StoreShopRoute: typeof StoreShopRoute
+  StoreIndexRoute: typeof StoreIndexRoute
+  StoreCategorySlugRoute: typeof StoreCategorySlugRoute
+  StoreProductSlugRoute: typeof StoreProductSlugRoute
+}
+
+const StoreRouteChildren: StoreRouteChildren = {
+  StoreSearchRoute: StoreSearchRoute,
+  StoreShopRoute: StoreShopRoute,
+  StoreIndexRoute: StoreIndexRoute,
+  StoreCategorySlugRoute: StoreCategorySlugRoute,
+  StoreProductSlugRoute: StoreProductSlugRoute,
+}
+
+const StoreRouteWithChildren = StoreRoute._addFileChildren(StoreRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
+  StoreRoute: StoreRouteWithChildren,
   ApiPublicImgSplatRoute: ApiPublicImgSplatRoute,
 }
 export const routeTree = rootRouteImport
