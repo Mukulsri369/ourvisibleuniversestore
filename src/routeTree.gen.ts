@@ -11,8 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StoreRouteImport } from './routes/_store'
 import { Route as StoreIndexRouteImport } from './routes/_store.index'
+import { Route as StoreAboutRouteImport } from './routes/_store.about'
+import { Route as StoreAffiliateDisclosureRouteImport } from './routes/_store.affiliate-disclosure'
+import { Route as StoreContactRouteImport } from './routes/_store.contact'
+import { Route as StoreFaqRouteImport } from './routes/_store.faq'
+import { Route as StorePrivacyRouteImport } from './routes/_store.privacy'
 import { Route as StoreSearchRouteImport } from './routes/_store.search'
 import { Route as StoreShopRouteImport } from './routes/_store.shop'
+import { Route as StoreTermsRouteImport } from './routes/_store.terms'
 import { Route as StoreCategorySlugRouteImport } from './routes/_store.category.$slug'
 import { Route as StoreProductSlugRouteImport } from './routes/_store.product.$slug'
 import { Route as ApiPublicImgSplatRouteImport } from './routes/api/public/img.$'
@@ -26,6 +32,32 @@ const StoreIndexRoute = StoreIndexRouteImport.update({
   path: '/',
   getParentRoute: () => StoreRoute,
 } as any)
+const StoreAboutRoute = StoreAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => StoreRoute,
+} as any)
+const StoreAffiliateDisclosureRoute =
+  StoreAffiliateDisclosureRouteImport.update({
+    id: '/affiliate-disclosure',
+    path: '/affiliate-disclosure',
+    getParentRoute: () => StoreRoute,
+  } as any)
+const StoreContactRoute = StoreContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => StoreRoute,
+} as any)
+const StoreFaqRoute = StoreFaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => StoreRoute,
+} as any)
+const StorePrivacyRoute = StorePrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => StoreRoute,
+} as any)
 const StoreSearchRoute = StoreSearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -34,6 +66,11 @@ const StoreSearchRoute = StoreSearchRouteImport.update({
 const StoreShopRoute = StoreShopRouteImport.update({
   id: '/shop',
   path: '/shop',
+  getParentRoute: () => StoreRoute,
+} as any)
+const StoreTermsRoute = StoreTermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => StoreRoute,
 } as any)
 const StoreCategorySlugRoute = StoreCategorySlugRouteImport.update({
@@ -54,15 +91,27 @@ const ApiPublicImgSplatRoute = ApiPublicImgSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof StoreIndexRoute
+  '/about': typeof StoreAboutRoute
+  '/affiliate-disclosure': typeof StoreAffiliateDisclosureRoute
+  '/contact': typeof StoreContactRoute
+  '/faq': typeof StoreFaqRoute
+  '/privacy': typeof StorePrivacyRoute
   '/search': typeof StoreSearchRoute
   '/shop': typeof StoreShopRoute
+  '/terms': typeof StoreTermsRoute
   '/category/$slug': typeof StoreCategorySlugRoute
   '/product/$slug': typeof StoreProductSlugRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
 }
 export interface FileRoutesByTo {
+  '/about': typeof StoreAboutRoute
+  '/affiliate-disclosure': typeof StoreAffiliateDisclosureRoute
+  '/contact': typeof StoreContactRoute
+  '/faq': typeof StoreFaqRoute
+  '/privacy': typeof StorePrivacyRoute
   '/search': typeof StoreSearchRoute
   '/shop': typeof StoreShopRoute
+  '/terms': typeof StoreTermsRoute
   '/': typeof StoreIndexRoute
   '/category/$slug': typeof StoreCategorySlugRoute
   '/product/$slug': typeof StoreProductSlugRoute
@@ -71,8 +120,14 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_store': typeof StoreRouteWithChildren
+  '/_store/about': typeof StoreAboutRoute
+  '/_store/affiliate-disclosure': typeof StoreAffiliateDisclosureRoute
+  '/_store/contact': typeof StoreContactRoute
+  '/_store/faq': typeof StoreFaqRoute
+  '/_store/privacy': typeof StorePrivacyRoute
   '/_store/search': typeof StoreSearchRoute
   '/_store/shop': typeof StoreShopRoute
+  '/_store/terms': typeof StoreTermsRoute
   '/_store/': typeof StoreIndexRoute
   '/_store/category/$slug': typeof StoreCategorySlugRoute
   '/_store/product/$slug': typeof StoreProductSlugRoute
@@ -82,15 +137,27 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
+    | '/affiliate-disclosure'
+    | '/contact'
+    | '/faq'
+    | '/privacy'
     | '/search'
     | '/shop'
+    | '/terms'
     | '/category/$slug'
     | '/product/$slug'
     | '/api/public/img/$'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/about'
+    | '/affiliate-disclosure'
+    | '/contact'
+    | '/faq'
+    | '/privacy'
     | '/search'
     | '/shop'
+    | '/terms'
     | '/'
     | '/category/$slug'
     | '/product/$slug'
@@ -98,8 +165,14 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_store'
+    | '/_store/about'
+    | '/_store/affiliate-disclosure'
+    | '/_store/contact'
+    | '/_store/faq'
+    | '/_store/privacy'
     | '/_store/search'
     | '/_store/shop'
+    | '/_store/terms'
     | '/_store/'
     | '/_store/category/$slug'
     | '/_store/product/$slug'
@@ -127,6 +200,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreIndexRouteImport
       parentRoute: typeof StoreRoute
     }
+    '/_store/about': {
+      id: '/_store/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof StoreAboutRouteImport
+      parentRoute: typeof StoreRoute
+    }
+    '/_store/affiliate-disclosure': {
+      id: '/_store/affiliate-disclosure'
+      path: '/affiliate-disclosure'
+      fullPath: '/affiliate-disclosure'
+      preLoaderRoute: typeof StoreAffiliateDisclosureRouteImport
+      parentRoute: typeof StoreRoute
+    }
+    '/_store/contact': {
+      id: '/_store/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof StoreContactRouteImport
+      parentRoute: typeof StoreRoute
+    }
+    '/_store/faq': {
+      id: '/_store/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof StoreFaqRouteImport
+      parentRoute: typeof StoreRoute
+    }
+    '/_store/privacy': {
+      id: '/_store/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof StorePrivacyRouteImport
+      parentRoute: typeof StoreRoute
+    }
     '/_store/search': {
       id: '/_store/search'
       path: '/search'
@@ -139,6 +247,13 @@ declare module '@tanstack/react-router' {
       path: '/shop'
       fullPath: '/shop'
       preLoaderRoute: typeof StoreShopRouteImport
+      parentRoute: typeof StoreRoute
+    }
+    '/_store/terms': {
+      id: '/_store/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof StoreTermsRouteImport
       parentRoute: typeof StoreRoute
     }
     '/_store/category/$slug': {
@@ -166,16 +281,28 @@ declare module '@tanstack/react-router' {
 }
 
 interface StoreRouteChildren {
+  StoreAboutRoute: typeof StoreAboutRoute
+  StoreAffiliateDisclosureRoute: typeof StoreAffiliateDisclosureRoute
+  StoreContactRoute: typeof StoreContactRoute
+  StoreFaqRoute: typeof StoreFaqRoute
+  StorePrivacyRoute: typeof StorePrivacyRoute
   StoreSearchRoute: typeof StoreSearchRoute
   StoreShopRoute: typeof StoreShopRoute
+  StoreTermsRoute: typeof StoreTermsRoute
   StoreIndexRoute: typeof StoreIndexRoute
   StoreCategorySlugRoute: typeof StoreCategorySlugRoute
   StoreProductSlugRoute: typeof StoreProductSlugRoute
 }
 
 const StoreRouteChildren: StoreRouteChildren = {
+  StoreAboutRoute: StoreAboutRoute,
+  StoreAffiliateDisclosureRoute: StoreAffiliateDisclosureRoute,
+  StoreContactRoute: StoreContactRoute,
+  StoreFaqRoute: StoreFaqRoute,
+  StorePrivacyRoute: StorePrivacyRoute,
   StoreSearchRoute: StoreSearchRoute,
   StoreShopRoute: StoreShopRoute,
+  StoreTermsRoute: StoreTermsRoute,
   StoreIndexRoute: StoreIndexRoute,
   StoreCategorySlugRoute: StoreCategorySlugRoute,
   StoreProductSlugRoute: StoreProductSlugRoute,
