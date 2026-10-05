@@ -78,7 +78,7 @@ function Categories() {
 
   return (
     <>
-      <AdminTitle title="Categories" sub="Categories automatically appear in the product form." action={<Button variant="amazon" onClick={() => edit()}><Plus /> Add Category</Button>} />
+      <AdminTitle title="Categories" sub="Categories automatically appear in the product form." action={<Button variant="affiliate" onClick={() => edit()}><Plus /> Add Category</Button>} />
       <div className="overflow-hidden rounded-2xl border border-border bg-card/60">
         {isLoading ? <p className="p-6 text-sm text-muted-foreground">Loading…</p> : (
           <ul className="divide-y divide-border">
@@ -107,7 +107,7 @@ function Categories() {
               <input ref={fileRef} type="file" hidden accept="image/jpeg,image/png,image/webp" onChange={(e) => upload(e.target.files?.[0])} />
             </div>
             <label className="flex items-center justify-between"><span className="text-sm">Active</span><Switch checked={form.active} onCheckedChange={(v) => setForm((f) => ({ ...f, active: v }))} /></label>
-            <Button type="submit" variant="amazon" className="w-full" disabled={saving}>{saving ? "Saving…" : "Save category"}</Button>
+            <Button type="submit" variant="affiliate" className="w-full" disabled={saving}>{saving ? "Saving…" : "Save category"}</Button>
           </form>
         </DialogContent>
       </Dialog>

@@ -56,7 +56,7 @@ function Products() {
         action={
           <div className="flex gap-2">
             <Link to="/admin/products/trash" className={buttonVariants({ variant: "outline" })}><Trash2 /> Trash</Link>
-            <Link to="/admin/products/new" className={buttonVariants({ variant: "amazon" })}><Plus /> Add Product</Link>
+            <Link to="/admin/products/new" className={buttonVariants({ variant: "affiliate" })}><Plus /> Add Product</Link>
           </div>
         }
       />

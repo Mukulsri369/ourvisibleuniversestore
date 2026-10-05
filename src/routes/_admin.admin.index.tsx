@@ -71,7 +71,7 @@ function Dashboard() {
       <AdminTitle
         title="Dashboard"
         sub="Overview of your store"
-        action={<Link to="/admin/products/new" className={buttonVariants({ variant: "amazon", size: "lg" })}><Plus /> ADD PRODUCT</Link>}
+        action={<Link to="/admin/products/new" className={buttonVariants({ variant: "affiliate", size: "lg" })}><Plus /> ADD PRODUCT</Link>}
       />
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {cards.map(([l, v]) => (

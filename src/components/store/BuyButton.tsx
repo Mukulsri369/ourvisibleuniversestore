@@ -35,7 +35,7 @@ export function BuyButton({
       target="_blank"
       rel="nofollow sponsored noopener noreferrer"
       onClick={() => track && logOutboundClick(productId)}
-      className={cn(buttonVariants({ variant: "amazon", size }), className)}
+      className={cn(buttonVariants({ variant: "affiliate", size }), className)}
     >
       {label}
       <ExternalLink />

@@ -42,7 +42,7 @@ function Reset() {
         <h1 className="text-3xl">Set a new password</h1>
         <input type="password" autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder="New password" className="h-12 w-full rounded-xl border border-input bg-secondary/60 px-4 text-sm focus:outline-none" />
         {error && <p className="text-sm text-destructive">{error}</p>}
-        <Button type="submit" variant="amazon" size="lg" className="w-full" disabled={loading}>
+        <Button type="submit" variant="affiliate" size="lg" className="w-full" disabled={loading}>
           {loading && <Loader2 className="animate-spin" />} Update password
         </Button>
       </form>

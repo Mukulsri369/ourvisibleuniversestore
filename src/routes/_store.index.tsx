@@ -49,7 +49,7 @@ function Home() {
             Discover astronomy-inspired products, space gear, cosmic décor, apparel and gifts curated for curious minds.
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <Link to="/shop" className={buttonVariants({ variant: "amazon", size: "xl" })}>
+            <Link to="/shop" className={buttonVariants({ variant: "affiliate", size: "xl" })}>
               EXPLORE THE STORE <ArrowRight />
             </Link>
             <a href="#categories" className={buttonVariants({ variant: "glass", size: "xl" })}>
@@ -133,7 +133,7 @@ function Home() {
               href={settings?.instagram_url || "https://instagram.com"}
               target="_blank"
               rel="noopener noreferrer"
-              className={`${buttonVariants({ variant: "amazon", size: "lg" })} mt-7`}
+              className={`${buttonVariants({ variant: "affiliate", size: "lg" })} mt-7`}
             >
               <Instagram /> Follow on Instagram
             </a>

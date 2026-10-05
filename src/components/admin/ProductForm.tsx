@@ -404,11 +404,11 @@ export function ProductForm({ productId }: { productId?: string }) {
           <Link to="/admin/products" className={buttonVariants({ variant: "ghost" })}>Cancel</Link>
           <Button variant="outline" onClick={() => setPreview(true)}>Preview</Button>
           {productId ? (
-            <Button variant="amazon" disabled={!!saving} onClick={() => save("save")}>{saving && <Loader2 className="animate-spin" />} Save Changes</Button>
+            <Button variant="affiliate" disabled={!!saving} onClick={() => save("save")}>{saving && <Loader2 className="animate-spin" />} Save Changes</Button>
           ) : (
             <>
               <Button variant="secondary" disabled={!!saving} onClick={() => save("draft")}>{saving === "draft" && <Loader2 className="animate-spin" />} Save Draft</Button>
-              <Button variant="amazon" disabled={!!saving} onClick={() => save("publish")}>{saving === "publish" && <Loader2 className="animate-spin" />} Publish Product</Button>
+              <Button variant="affiliate" disabled={!!saving} onClick={() => save("publish")}>{saving === "publish" && <Loader2 className="animate-spin" />} Publish Product</Button>
             </>
           )}
         </div>
@@ -427,7 +427,7 @@ export function ProductForm({ productId }: { productId?: string }) {
           <DialogTitle className="text-2xl">{done?.published ? "Product published successfully." : "Changes saved."}</DialogTitle>
           {done && !done.active && <p className="text-sm text-muted-foreground">This product is inactive, so it is hidden from the store.</p>}
           <div className="mt-2 flex flex-col gap-2">
-            {done?.active && <a href={`/product/${done.slug}`} target="_blank" rel="noopener" className={buttonVariants({ variant: "amazon" })}>View Product</a>}
+            {done?.active && <a href={`/product/${done.slug}`} target="_blank" rel="noopener" className={buttonVariants({ variant: "affiliate" })}>View Product</a>}
             <Link to="/admin/products" className={buttonVariants({ variant: "outline" })}>Back to Products</Link>
           </div>
         </DialogContent>
