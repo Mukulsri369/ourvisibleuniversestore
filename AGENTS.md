@@ -8,3 +8,8 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Architecture decisions
+- Products, categories, settings, images, and click events are database-backed; public access is limited by row-level policies and admin writes use an allowlisted authenticated email.
+- Store media uses private object storage served through a validated public image route so storage credentials never reach visitors.
+- Amazon affiliate URLs are stored per product and passed through unchanged; outbound click logging is best-effort and never blocks navigation.
