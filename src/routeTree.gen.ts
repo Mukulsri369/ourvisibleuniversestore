@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AdminRouteImport } from './routes/_admin'
 import { Route as StoreRouteImport } from './routes/_store'
 import { Route as StoreIndexRouteImport } from './routes/_store.index'
 import { Route as StoreAboutRouteImport } from './routes/_store.about'
@@ -19,10 +20,18 @@ import { Route as StorePrivacyRouteImport } from './routes/_store.privacy'
 import { Route as StoreSearchRouteImport } from './routes/_store.search'
 import { Route as StoreShopRouteImport } from './routes/_store.shop'
 import { Route as StoreTermsRouteImport } from './routes/_store.terms'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
+import { Route as AdminAdminIndexRouteImport } from './routes/_admin.admin.index'
 import { Route as StoreCategorySlugRouteImport } from './routes/_store.category.$slug'
 import { Route as StoreProductSlugRouteImport } from './routes/_store.product.$slug'
+import { Route as AdminAdminProductsIndexRouteImport } from './routes/_admin.admin.products.index'
 import { Route as ApiPublicImgSplatRouteImport } from './routes/api/public/img.$'
 
+const AdminRoute = AdminRouteImport.update({
+  id: '/_admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StoreRoute = StoreRouteImport.update({
   id: '/_store',
   getParentRoute: () => rootRouteImport,
@@ -73,6 +82,21 @@ const StoreTermsRoute = StoreTermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => StoreRoute,
 } as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminResetPasswordRoute = AdminResetPasswordRouteImport.update({
+  id: '/admin/reset-password',
+  path: '/admin/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const StoreCategorySlugRoute = StoreCategorySlugRouteImport.update({
   id: '/category/$slug',
   path: '/category/$slug',
@@ -82,6 +106,11 @@ const StoreProductSlugRoute = StoreProductSlugRouteImport.update({
   id: '/product/$slug',
   path: '/product/$slug',
   getParentRoute: () => StoreRoute,
+} as any)
+const AdminAdminProductsIndexRoute = AdminAdminProductsIndexRouteImport.update({
+  id: '/admin/products/',
+  path: '/admin/products/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const ApiPublicImgSplatRoute = ApiPublicImgSplatRouteImport.update({
   id: '/api/public/img/$',
@@ -99,11 +128,16 @@ export interface FileRoutesByFullPath {
   '/search': typeof StoreSearchRoute
   '/shop': typeof StoreShopRoute
   '/terms': typeof StoreTermsRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
   '/category/$slug': typeof StoreCategorySlugRoute
   '/product/$slug': typeof StoreProductSlugRoute
+  '/admin/': typeof AdminAdminIndexRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
+  '/admin/products/': typeof AdminAdminProductsIndexRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof StoreIndexRoute
   '/about': typeof StoreAboutRoute
   '/affiliate-disclosure': typeof StoreAffiliateDisclosureRoute
   '/contact': typeof StoreContactRoute
@@ -112,13 +146,17 @@ export interface FileRoutesByTo {
   '/search': typeof StoreSearchRoute
   '/shop': typeof StoreShopRoute
   '/terms': typeof StoreTermsRoute
-  '/': typeof StoreIndexRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
   '/category/$slug': typeof StoreCategorySlugRoute
   '/product/$slug': typeof StoreProductSlugRoute
+  '/admin': typeof AdminAdminIndexRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
+  '/admin/products': typeof AdminAdminProductsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/_admin': typeof AdminRouteWithChildren
   '/_store': typeof StoreRouteWithChildren
   '/_store/about': typeof StoreAboutRoute
   '/_store/affiliate-disclosure': typeof StoreAffiliateDisclosureRoute
@@ -128,10 +166,14 @@ export interface FileRoutesById {
   '/_store/search': typeof StoreSearchRoute
   '/_store/shop': typeof StoreShopRoute
   '/_store/terms': typeof StoreTermsRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
   '/_store/': typeof StoreIndexRoute
   '/_store/category/$slug': typeof StoreCategorySlugRoute
   '/_store/product/$slug': typeof StoreProductSlugRoute
+  '/_admin/admin/': typeof AdminAdminIndexRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
+  '/_admin/admin/products/': typeof AdminAdminProductsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -145,11 +187,16 @@ export interface FileRouteTypes {
     | '/search'
     | '/shop'
     | '/terms'
+    | '/admin/login'
+    | '/admin/reset-password'
     | '/category/$slug'
     | '/product/$slug'
+    | '/admin/'
     | '/api/public/img/$'
+    | '/admin/products/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/about'
     | '/affiliate-disclosure'
     | '/contact'
@@ -158,12 +205,16 @@ export interface FileRouteTypes {
     | '/search'
     | '/shop'
     | '/terms'
-    | '/'
+    | '/admin/login'
+    | '/admin/reset-password'
     | '/category/$slug'
     | '/product/$slug'
+    | '/admin'
     | '/api/public/img/$'
+    | '/admin/products'
   id:
     | '__root__'
+    | '/_admin'
     | '/_store'
     | '/_store/about'
     | '/_store/affiliate-disclosure'
@@ -173,19 +224,33 @@ export interface FileRouteTypes {
     | '/_store/search'
     | '/_store/shop'
     | '/_store/terms'
+    | '/admin/login'
+    | '/admin/reset-password'
     | '/_store/'
     | '/_store/category/$slug'
     | '/_store/product/$slug'
+    | '/_admin/admin/'
     | '/api/public/img/$'
+    | '/_admin/admin/products/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  AdminRoute: typeof AdminRouteWithChildren
   StoreRoute: typeof StoreRouteWithChildren
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminResetPasswordRoute: typeof AdminResetPasswordRoute
   ApiPublicImgSplatRoute: typeof ApiPublicImgSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_admin': {
+      id: '/_admin'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_store': {
       id: '/_store'
       path: ''
@@ -256,6 +321,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreTermsRouteImport
       parentRoute: typeof StoreRoute
     }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/reset-password': {
+      id: '/admin/reset-password'
+      path: '/admin/reset-password'
+      fullPath: '/admin/reset-password'
+      preLoaderRoute: typeof AdminResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_admin/admin/': {
+      id: '/_admin/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminAdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_store/category/$slug': {
       id: '/_store/category/$slug'
       path: '/category/$slug'
@@ -270,6 +356,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreProductSlugRouteImport
       parentRoute: typeof StoreRoute
     }
+    '/_admin/admin/products/': {
+      id: '/_admin/admin/products/'
+      path: '/admin/products'
+      fullPath: '/admin/products/'
+      preLoaderRoute: typeof AdminAdminProductsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/public/img/$': {
       id: '/api/public/img/$'
       path: '/api/public/img/$'
@@ -279,6 +372,18 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AdminRouteChildren {
+  AdminAdminIndexRoute: typeof AdminAdminIndexRoute
+  AdminAdminProductsIndexRoute: typeof AdminAdminProductsIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAdminIndexRoute: AdminAdminIndexRoute,
+  AdminAdminProductsIndexRoute: AdminAdminProductsIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface StoreRouteChildren {
   StoreAboutRoute: typeof StoreAboutRoute
@@ -311,7 +416,10 @@ const StoreRouteChildren: StoreRouteChildren = {
 const StoreRouteWithChildren = StoreRoute._addFileChildren(StoreRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
+  AdminRoute: AdminRouteWithChildren,
   StoreRoute: StoreRouteWithChildren,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminResetPasswordRoute: AdminResetPasswordRoute,
   ApiPublicImgSplatRoute: ApiPublicImgSplatRoute,
 }
 export const routeTree = rootRouteImport
