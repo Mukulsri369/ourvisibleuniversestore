@@ -23,6 +23,8 @@ import { Route as StoreTermsRouteImport } from './routes/_store.terms'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin.admin.index'
+import { Route as AdminAdminCategoriesRouteImport } from './routes/_admin.admin.categories'
+import { Route as AdminAdminSettingsRouteImport } from './routes/_admin.admin.settings'
 import { Route as StoreCategorySlugRouteImport } from './routes/_store.category.$slug'
 import { Route as StoreProductSlugRouteImport } from './routes/_store.product.$slug'
 import { Route as AdminAdminProductsIndexRouteImport } from './routes/_admin.admin.products.index'
@@ -100,6 +102,16 @@ const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAdminCategoriesRoute = AdminAdminCategoriesRouteImport.update({
+  id: '/admin/categories',
+  path: '/admin/categories',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAdminSettingsRoute = AdminAdminSettingsRouteImport.update({
+  id: '/admin/settings',
+  path: '/admin/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
 const StoreCategorySlugRoute = StoreCategorySlugRouteImport.update({
   id: '/category/$slug',
   path: '/category/$slug',
@@ -149,6 +161,8 @@ export interface FileRoutesByFullPath {
   '/terms': typeof StoreTermsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/categories': typeof AdminAdminCategoriesRoute
+  '/admin/settings': typeof AdminAdminSettingsRoute
   '/category/$slug': typeof StoreCategorySlugRoute
   '/product/$slug': typeof StoreProductSlugRoute
   '/admin/': typeof AdminAdminIndexRoute
@@ -170,6 +184,8 @@ export interface FileRoutesByTo {
   '/terms': typeof StoreTermsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/categories': typeof AdminAdminCategoriesRoute
+  '/admin/settings': typeof AdminAdminSettingsRoute
   '/category/$slug': typeof StoreCategorySlugRoute
   '/product/$slug': typeof StoreProductSlugRoute
   '/admin': typeof AdminAdminIndexRoute
@@ -194,6 +210,8 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/_store/': typeof StoreIndexRoute
+  '/_admin/admin/categories': typeof AdminAdminCategoriesRoute
+  '/_admin/admin/settings': typeof AdminAdminSettingsRoute
   '/_store/category/$slug': typeof StoreCategorySlugRoute
   '/_store/product/$slug': typeof StoreProductSlugRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
@@ -217,6 +235,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/login'
     | '/admin/reset-password'
+    | '/admin/categories'
+    | '/admin/settings'
     | '/category/$slug'
     | '/product/$slug'
     | '/admin/'
@@ -238,6 +258,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/login'
     | '/admin/reset-password'
+    | '/admin/categories'
+    | '/admin/settings'
     | '/category/$slug'
     | '/product/$slug'
     | '/admin'
@@ -261,6 +283,8 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/reset-password'
     | '/_store/'
+    | '/_admin/admin/categories'
+    | '/_admin/admin/settings'
     | '/_store/category/$slug'
     | '/_store/product/$slug'
     | '/_admin/admin/'
@@ -379,6 +403,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_admin/admin/categories': {
+      id: '/_admin/admin/categories'
+      path: '/admin/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AdminAdminCategoriesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/settings': {
+      id: '/_admin/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminAdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_store/category/$slug': {
       id: '/_store/category/$slug'
       path: '/category/$slug'
@@ -432,6 +470,8 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAdminCategoriesRoute: typeof AdminAdminCategoriesRoute
+  AdminAdminSettingsRoute: typeof AdminAdminSettingsRoute
   AdminAdminIndexRoute: typeof AdminAdminIndexRoute
   AdminAdminProductsNewRoute: typeof AdminAdminProductsNewRoute
   AdminAdminProductsTrashRoute: typeof AdminAdminProductsTrashRoute
@@ -440,6 +480,8 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAdminCategoriesRoute: AdminAdminCategoriesRoute,
+  AdminAdminSettingsRoute: AdminAdminSettingsRoute,
   AdminAdminIndexRoute: AdminAdminIndexRoute,
   AdminAdminProductsNewRoute: AdminAdminProductsNewRoute,
   AdminAdminProductsTrashRoute: AdminAdminProductsTrashRoute,

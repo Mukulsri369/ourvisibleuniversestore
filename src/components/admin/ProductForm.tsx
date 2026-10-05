@@ -111,7 +111,10 @@ export function ProductForm({ productId }: { productId?: string }) {
       }
     }
     setUploading(false);
-    setErrors((e) => ({ ...e, images: undefined }));
+    setErrors((e) => {
+      const { images: _images, ...rest } = e;
+      return rest;
+    });
     if (fileRef.current) fileRef.current.value = "";
   }
 
@@ -120,13 +123,20 @@ export function ProductForm({ productId }: { productId?: string }) {
       const n = [...s];
       const j = i + d;
       if (j < 0 || j >= n.length) return s;
-      [n[i], n[j]] = [n[j], n[i]];
+      const current = n[i];
+      const target = n[j];
+      if (!current || !target) return s;
+      n[i] = target;
+      n[j] = current;
       return n;
     });
-  const makePrimary = (i: number) => setImages((s) => [s[i], ...s.filter((_, k) => k !== i)]);
+  const makePrimary = (i: number) => setImages((s) => {
+    const selected = s[i];
+    return selected ? [selected, ...s.filter((_, k) => k !== i)] : s;
+  });
   const removeImg = (i: number) =>
     setImages((s) => {
-      const p = s[i].path;
+      const p = s[i]?.path;
       if (p) setRemoved((r) => [...r, p]);
       return s.filter((_, k) => k !== i);
     });

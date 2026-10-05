@@ -28,11 +28,11 @@ function Products() {
 
   async function toggleActive(r: AdminRow) {
     if (!r.active) {
-      if (!r.amazon_url || !isValidAmazonUrl(r.amazon_url)) return toast.error("Add a valid Amazon affiliate URL before activating.");
-      if (!firstImage(r)) return toast.error("Upload a primary image before activating.");
+      if (!r.amazon_url || !isValidAmazonUrl(r.amazon_url)) { toast.error("Add a valid Amazon affiliate URL before activating."); return; }
+      if (!firstImage(r)) { toast.error("Upload a primary image before activating."); return; }
     }
     const { error } = await supabase.from("products").update({ active: !r.active }).eq("id", r.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(r.active ? "Product hidden from store." : "Product is live.");
     refresh();
   }
@@ -41,7 +41,7 @@ function Products() {
     if (!del) return;
     const { error } = await supabase.from("products").update({ deleted_at: new Date().toISOString() }).eq("id", del.id);
     setDel(null);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Moved to trash.");
     refresh();
   }

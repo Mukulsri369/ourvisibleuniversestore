@@ -36,7 +36,7 @@ export function Description({ text }: { text: string }) {
   );
 }
 
-export function ProductDetailView({ p, disclosure, preview }: { p: ProductFull; disclosure?: string | null; preview?: boolean }) {
+export function ProductDetailView({ p, disclosure, preview }: { p: ProductFull; disclosure?: string | null | undefined; preview?: boolean | undefined }) {
   const [active, setActive] = useState(0);
   const price = formatPrice(p.price, p.currency);
   const main = p.images[active] ?? p.images[0];

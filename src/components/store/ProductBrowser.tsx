@@ -7,26 +7,26 @@ import { ProductGrid } from "./ProductCard";
 import { EmptyState, Pager } from "./Pagination";
 
 export type BrowseSearch = {
-  q?: string;
-  category?: string;
-  featured?: boolean;
-  sort?: ListParams["sort"];
-  min?: number;
-  max?: number;
-  page?: number;
+  q?: string | undefined;
+  category?: string | undefined;
+  featured?: boolean | undefined;
+  sort?: ListParams["sort"] | undefined;
+  min?: number | undefined;
+  max?: number | undefined;
+  page?: number | undefined;
 };
 
 export function validateBrowseSearch(s: Record<string, unknown>): BrowseSearch {
   const num = (v: unknown) => (v === undefined || v === "" ? undefined : Number(v));
   const sorts = ["featured", "newest", "price_asc", "price_desc"];
   return {
-    q: typeof s.q === "string" && s.q ? s.q.slice(0, 100) : undefined,
-    category: typeof s.category === "string" && s.category ? s.category : undefined,
-    featured: s.featured === true || s.featured === "true" ? true : undefined,
-    sort: sorts.includes(String(s.sort)) ? (s.sort as ListParams["sort"]) : undefined,
-    min: Number.isFinite(num(s.min)) ? num(s.min) : undefined,
-    max: Number.isFinite(num(s.max)) ? num(s.max) : undefined,
-    page: Number.isFinite(num(s.page)) && Number(s.page) > 1 ? Number(s.page) : undefined,
+    q: typeof s['q'] === "string" && s['q'] ? s['q'].slice(0, 100) : undefined,
+    category: typeof s['category'] === "string" && s['category'] ? s['category'] : undefined,
+    featured: s['featured'] === true || s['featured'] === "true" ? true : undefined,
+    sort: sorts.includes(String(s['sort'])) ? (s['sort'] as ListParams["sort"]) : undefined,
+    min: Number.isFinite(num(s['min'])) ? num(s['min']) : undefined,
+    max: Number.isFinite(num(s['max'])) ? num(s['max']) : undefined,
+    page: Number.isFinite(num(s['page'])) && Number(s['page']) > 1 ? Number(s['page']) : undefined,
   };
 }
 
