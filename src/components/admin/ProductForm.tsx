@@ -213,7 +213,8 @@ export function ProductForm({ productId }: { productId?: string }) {
         if (error) throw error;
         id = data.id;
       }
-      const pid = id!;
+      if (!id) throw new Error("Product could not be saved.");
+      const pid = id;
       await Promise.all([
         supabase.from("product_images").delete().eq("product_id", pid),
         supabase.from("product_features").delete().eq("product_id", pid),
