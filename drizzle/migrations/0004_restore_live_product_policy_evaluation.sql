@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public.product_is_live(uuid) TO anon, authenticated;
