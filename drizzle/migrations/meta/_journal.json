@@ -36,6 +36,13 @@
       "when": 1791226402581,
       "tag": "0004_restore_live_product_policy_evaluation",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791229400150,
+      "tag": "0005_generalize_product_affiliate_links",
+      "breakpoints": true
     }
   ]
 }
