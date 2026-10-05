@@ -26,7 +26,10 @@ import { Route as AdminAdminIndexRouteImport } from './routes/_admin.admin.index
 import { Route as StoreCategorySlugRouteImport } from './routes/_store.category.$slug'
 import { Route as StoreProductSlugRouteImport } from './routes/_store.product.$slug'
 import { Route as AdminAdminProductsIndexRouteImport } from './routes/_admin.admin.products.index'
+import { Route as AdminAdminProductsNewRouteImport } from './routes/_admin.admin.products.new'
+import { Route as AdminAdminProductsTrashRouteImport } from './routes/_admin.admin.products.trash'
 import { Route as ApiPublicImgSplatRouteImport } from './routes/api/public/img.$'
+import { Route as AdminAdminProductsEditIdRouteImport } from './routes/_admin.admin.products.edit.$id'
 
 const AdminRoute = AdminRouteImport.update({
   id: '/_admin',
@@ -112,11 +115,27 @@ const AdminAdminProductsIndexRoute = AdminAdminProductsIndexRouteImport.update({
   path: '/admin/products/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAdminProductsNewRoute = AdminAdminProductsNewRouteImport.update({
+  id: '/admin/products/new',
+  path: '/admin/products/new',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAdminProductsTrashRoute = AdminAdminProductsTrashRouteImport.update({
+  id: '/admin/products/trash',
+  path: '/admin/products/trash',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ApiPublicImgSplatRoute = ApiPublicImgSplatRouteImport.update({
   id: '/api/public/img/$',
   path: '/api/public/img/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminAdminProductsEditIdRoute =
+  AdminAdminProductsEditIdRouteImport.update({
+    id: '/admin/products/edit/$id',
+    path: '/admin/products/edit/$id',
+    getParentRoute: () => AdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof StoreIndexRoute
@@ -133,8 +152,11 @@ export interface FileRoutesByFullPath {
   '/category/$slug': typeof StoreCategorySlugRoute
   '/product/$slug': typeof StoreProductSlugRoute
   '/admin/': typeof AdminAdminIndexRoute
+  '/admin/products/new': typeof AdminAdminProductsNewRoute
+  '/admin/products/trash': typeof AdminAdminProductsTrashRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
   '/admin/products/': typeof AdminAdminProductsIndexRoute
+  '/admin/products/edit/$id': typeof AdminAdminProductsEditIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof StoreIndexRoute
@@ -151,8 +173,11 @@ export interface FileRoutesByTo {
   '/category/$slug': typeof StoreCategorySlugRoute
   '/product/$slug': typeof StoreProductSlugRoute
   '/admin': typeof AdminAdminIndexRoute
+  '/admin/products/new': typeof AdminAdminProductsNewRoute
+  '/admin/products/trash': typeof AdminAdminProductsTrashRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
   '/admin/products': typeof AdminAdminProductsIndexRoute
+  '/admin/products/edit/$id': typeof AdminAdminProductsEditIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -172,8 +197,11 @@ export interface FileRoutesById {
   '/_store/category/$slug': typeof StoreCategorySlugRoute
   '/_store/product/$slug': typeof StoreProductSlugRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
+  '/_admin/admin/products/new': typeof AdminAdminProductsNewRoute
+  '/_admin/admin/products/trash': typeof AdminAdminProductsTrashRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
   '/_admin/admin/products/': typeof AdminAdminProductsIndexRoute
+  '/_admin/admin/products/edit/$id': typeof AdminAdminProductsEditIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -192,8 +220,11 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/product/$slug'
     | '/admin/'
+    | '/admin/products/new'
+    | '/admin/products/trash'
     | '/api/public/img/$'
     | '/admin/products/'
+    | '/admin/products/edit/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -210,8 +241,11 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/product/$slug'
     | '/admin'
+    | '/admin/products/new'
+    | '/admin/products/trash'
     | '/api/public/img/$'
     | '/admin/products'
+    | '/admin/products/edit/$id'
   id:
     | '__root__'
     | '/_admin'
@@ -230,8 +264,11 @@ export interface FileRouteTypes {
     | '/_store/category/$slug'
     | '/_store/product/$slug'
     | '/_admin/admin/'
+    | '/_admin/admin/products/new'
+    | '/_admin/admin/products/trash'
     | '/api/public/img/$'
     | '/_admin/admin/products/'
+    | '/_admin/admin/products/edit/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -363,6 +400,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminProductsIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_admin/admin/products/new': {
+      id: '/_admin/admin/products/new'
+      path: '/admin/products/new'
+      fullPath: '/admin/products/new'
+      preLoaderRoute: typeof AdminAdminProductsNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/_admin/admin/products/trash': {
+      id: '/_admin/admin/products/trash'
+      path: '/admin/products/trash'
+      fullPath: '/admin/products/trash'
+      preLoaderRoute: typeof AdminAdminProductsTrashRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/public/img/$': {
       id: '/api/public/img/$'
       path: '/api/public/img/$'
@@ -370,17 +421,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicImgSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_admin/admin/products/edit/$id': {
+      id: '/_admin/admin/products/edit/$id'
+      path: '/admin/products/edit/$id'
+      fullPath: '/admin/products/edit/$id'
+      preLoaderRoute: typeof AdminAdminProductsEditIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
   AdminAdminIndexRoute: typeof AdminAdminIndexRoute
+  AdminAdminProductsNewRoute: typeof AdminAdminProductsNewRoute
+  AdminAdminProductsTrashRoute: typeof AdminAdminProductsTrashRoute
   AdminAdminProductsIndexRoute: typeof AdminAdminProductsIndexRoute
+  AdminAdminProductsEditIdRoute: typeof AdminAdminProductsEditIdRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAdminIndexRoute: AdminAdminIndexRoute,
+  AdminAdminProductsNewRoute: AdminAdminProductsNewRoute,
+  AdminAdminProductsTrashRoute: AdminAdminProductsTrashRoute,
   AdminAdminProductsIndexRoute: AdminAdminProductsIndexRoute,
+  AdminAdminProductsEditIdRoute: AdminAdminProductsEditIdRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
