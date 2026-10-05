@@ -47,7 +47,7 @@ export function ProductCard({ p }: { p: ProductCardData }) {
         </Link>
         {p.short_description && <p className="line-clamp-2 text-sm text-muted-foreground">{p.short_description}</p>}
         <p className="mt-auto pt-1 text-sm font-semibold text-foreground">
-          {price ?? <span className="font-normal text-muted-foreground">Check latest price on Amazon</span>}
+          {price ?? <span className="font-normal text-muted-foreground">Check latest price</span>}
         </p>
         <div className="flex gap-2 pt-1">
           <Link
@@ -57,7 +57,7 @@ export function ProductCard({ p }: { p: ProductCardData }) {
           >
             View
           </Link>
-          <BuyButton productId={p.id} url={p.amazon_url} size="sm" label="Amazon" className="h-10 flex-[1.3] rounded-full" />
+          <BuyButton productId={p.id} url={p.affiliate_url} size="sm" label="Buy now" className="h-10 flex-[1.3] rounded-full" />
         </div>
       </div>
     </article>

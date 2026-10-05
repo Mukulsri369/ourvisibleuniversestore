@@ -121,7 +121,7 @@ function Login() {
           )}
           {error && <p role="alert" className="rounded-lg bg-destructive/15 px-3 py-2 text-sm text-destructive">{error}</p>}
           {info && <p className="rounded-lg bg-success/15 px-3 py-2 text-sm text-success">{info}</p>}
-          <Button type="submit" variant="amazon" size="lg" className="w-full" disabled={loading}>
+          <Button type="submit" variant="affiliate" size="lg" className="w-full" disabled={loading}>
             {loading && <Loader2 className="animate-spin" />}
             {mode === "signin" ? "Sign In" : mode === "forgot" ? "Send reset link" : "Create account"}
           </Button>

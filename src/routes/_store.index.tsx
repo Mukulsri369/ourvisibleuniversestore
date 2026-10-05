@@ -49,7 +49,7 @@ function Home() {
             Discover astronomy-inspired products, space gear, cosmic décor, apparel and gifts curated for curious minds.
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <Link to="/shop" className={buttonVariants({ variant: "amazon", size: "xl" })}>
+            <Link to="/shop" className={buttonVariants({ variant: "affiliate", size: "xl" })}>
               EXPLORE THE STORE <ArrowRight />
             </Link>
             <a href="#categories" className={buttonVariants({ variant: "glass", size: "xl" })}>
@@ -109,7 +109,7 @@ function Home() {
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           {[
             { icon: Compass, t: "Curated by space lovers", d: "Every product is chosen by the Our Visible Universe team for curiosity, quality and wonder." },
-            { icon: ShieldCheck, t: "Secure checkout on Amazon", d: "Purchases, payment, delivery and returns are handled entirely by Amazon." },
+            { icon: ShieldCheck, t: "Secure retailer checkout", d: "Purchases, payment, delivery and returns are handled by the linked retailer." },
             { icon: BadgeCheck, t: "Honest & transparent", d: "No invented prices or fake deals. We clearly disclose our affiliate relationship." },
           ].map(({ icon: Icon, t, d }) => (
             <div key={t} className="glass rounded-2xl p-6">
@@ -133,7 +133,7 @@ function Home() {
               href={settings?.instagram_url || "https://instagram.com"}
               target="_blank"
               rel="noopener noreferrer"
-              className={`${buttonVariants({ variant: "amazon", size: "lg" })} mt-7`}
+              className={`${buttonVariants({ variant: "affiliate", size: "lg" })} mt-7`}
             >
               <Instagram /> Follow on Instagram
             </a>

@@ -7,7 +7,7 @@ export type AdminRow = {
   slug: string;
   active: boolean;
   featured: boolean;
-  amazon_url: string | null;
+  affiliate_url: string | null;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
@@ -15,7 +15,7 @@ export type AdminRow = {
   product_images: { image_url: string; sort_order: number }[];
 };
 
-export const ADMIN_SELECT = "id,name,slug,active,featured,amazon_url,created_at,updated_at,deleted_at,categories(name),product_images(image_url,sort_order)";
+export const ADMIN_SELECT = "id,name,slug,active,featured,affiliate_url,created_at,updated_at,deleted_at,categories(name),product_images(image_url,sort_order)";
 
 export function firstImage(r: AdminRow) {
   return [...(r.product_images ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0]?.image_url ?? null;

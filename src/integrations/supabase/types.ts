@@ -190,6 +190,7 @@ export type Database = {
       products: {
         Row: {
           active: boolean
+          affiliate_url: string | null
           amazon_asin: string | null
           amazon_marketplace: string | null
           amazon_url: string | null
@@ -204,6 +205,8 @@ export type Database = {
           name: string
           price: number | null
           price_updated_at: string | null
+          retailer: string | null
+          retailer_product_id: string | null
           short_description: string | null
           slug: string
           subcategory: string | null
@@ -211,6 +214,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          affiliate_url?: string | null
           amazon_asin?: string | null
           amazon_marketplace?: string | null
           amazon_url?: string | null
@@ -225,6 +229,8 @@ export type Database = {
           name: string
           price?: number | null
           price_updated_at?: string | null
+          retailer?: string | null
+          retailer_product_id?: string | null
           short_description?: string | null
           slug: string
           subcategory?: string | null
@@ -232,6 +238,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          affiliate_url?: string | null
           amazon_asin?: string | null
           amazon_marketplace?: string | null
           amazon_url?: string | null
@@ -246,6 +253,8 @@ export type Database = {
           name?: string
           price?: number | null
           price_updated_at?: string | null
+          retailer?: string | null
+          retailer_product_id?: string | null
           short_description?: string | null
           slug?: string
           subcategory?: string | null

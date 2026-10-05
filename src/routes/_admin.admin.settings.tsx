@@ -68,7 +68,7 @@ function Settings() {
         <Field label="Affiliate disclosure"><textarea rows={5} className={textareaCls} value={s.affiliate_disclosure} onChange={(e) => set({ affiliate_disclosure: e.target.value })} /></Field>
         <Field label="Footer text"><input className={inputCls} value={s.footer_text} onChange={(e) => set({ footer_text: e.target.value })} /></Field>
       </Section>
-      <div className="flex justify-end"><Button type="submit" variant="amazon" size="lg" disabled={saving}>{saving ? "Saving…" : "Save Settings"}</Button></div>
+      <div className="flex justify-end"><Button type="submit" variant="affiliate" size="lg" disabled={saving}>{saving ? "Saving…" : "Save Settings"}</Button></div>
     </form>
   );
 }

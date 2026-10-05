@@ -37,7 +37,7 @@ export type ProductCardData = {
   price: number | null;
   currency: string | null;
   featured: boolean;
-  amazon_url: string | null;
+  affiliate_url: string | null;
   created_at: string;
   category: { name: string; slug: string } | null;
   image: string | null;
@@ -48,8 +48,8 @@ export type ProductFull = ProductCardData & {
   description: string | null;
   brand: string | null;
   category_id: string | null;
-  amazon_asin: string | null;
-  amazon_marketplace: string | null;
+  retailer: string | null;
+  retailer_product_id: string | null;
   price_updated_at: string | null;
   images: { image_url: string; alt_text: string | null }[];
   features: string[];
@@ -57,7 +57,7 @@ export type ProductFull = ProductCardData & {
 };
 
 export const CARD_SELECT =
-  "id,name,slug,short_description,price,currency,featured,amazon_url,created_at,category_id,categories(name,slug),product_images(image_url,alt_text,sort_order)";
+  "id,name,slug,short_description,price,currency,featured,affiliate_url,created_at,category_id,categories(name,slug),product_images(image_url,alt_text,sort_order)";
 
 type RawCard = {
   id: string;
@@ -67,7 +67,7 @@ type RawCard = {
   price: number | null;
   currency: string | null;
   featured: boolean;
-  amazon_url: string | null;
+  affiliate_url: string | null;
   created_at: string;
   categories: { name: string; slug: string } | null;
   product_images: { image_url: string; alt_text: string | null; sort_order: number }[] | null;
@@ -83,7 +83,7 @@ export function toCard(r: RawCard): ProductCardData {
     price: r.price,
     currency: r.currency,
     featured: r.featured,
-    amazon_url: r.amazon_url,
+    affiliate_url: r.affiliate_url,
     created_at: r.created_at,
     category: r.categories,
     image: imgs[0]?.image_url ?? null,
@@ -115,11 +115,10 @@ export function slugify(s: string) {
     .slice(0, 80);
 }
 
-const AMAZON_HOST = /^(www\.)?(amazon\.[a-z.]{2,8}|link\.amazon|amzn\.(to|eu|in|asia)|a\.co)$/i;
-export function isValidAmazonUrl(value: string) {
+export function isValidAffiliateUrl(value: string) {
   try {
     const u = new URL(value.trim());
-    return (u.protocol === "https:" || u.protocol === "http:") && AMAZON_HOST.test(u.hostname);
+    return u.protocol === "https:" && Boolean(u.hostname) && !u.username && !u.password;
   } catch {
     return false;
   }
@@ -270,7 +269,7 @@ export async function fetchProductFull(slug: string): Promise<ProductFull | null
   const { data, error } = await publicDb()
     .from("products")
     .select(
-      `${CARD_SELECT},description,brand,amazon_asin,amazon_marketplace,price_updated_at,product_features(feature,sort_order),product_tags(tag)`,
+      `${CARD_SELECT},description,brand,retailer,retailer_product_id,price_updated_at,product_features(feature,sort_order),product_tags(tag)`,
     )
     .eq("slug", slug)
     .eq("active", true)
@@ -282,8 +281,8 @@ export async function fetchProductFull(slug: string): Promise<ProductFull | null
     category_id: string | null;
     description: string | null;
     brand: string | null;
-    amazon_asin: string | null;
-    amazon_marketplace: string | null;
+    retailer: string | null;
+    retailer_product_id: string | null;
     price_updated_at: string | null;
     product_features: { feature: string; sort_order: number }[];
     product_tags: { tag: string }[];
@@ -294,8 +293,8 @@ export async function fetchProductFull(slug: string): Promise<ProductFull | null
     category_id: r.category_id,
     description: r.description,
     brand: r.brand,
-    amazon_asin: r.amazon_asin,
-    amazon_marketplace: r.amazon_marketplace,
+    retailer: r.retailer,
+    retailer_product_id: r.retailer_product_id,
     price_updated_at: r.price_updated_at,
     images: imgs.map((i) => ({ image_url: i.image_url, alt_text: i.alt_text })),
     features: [...(r.product_features ?? [])].sort((a, b) => a.sort_order - b.sort_order).map((f) => f.feature),
@@ -335,7 +334,7 @@ export const relatedQuery = (p: { id: string; category_id: string | null; tags: 
     },
   });
 
-/** Fire-and-forget outbound click log. Never blocks navigation to Amazon. */
+/** Fire-and-forget outbound affiliate click log. Never blocks navigation. */
 export function logOutboundClick(productId: string) {
   try {
     void publicDb().from("outbound_clicks").insert({ product_id: productId }).then(() => undefined);

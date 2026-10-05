@@ -10,7 +10,7 @@ import {
 import { AdminTitle, inputCls, StatusBadge, Thumb } from "@/components/admin/ui";
 import { supabase } from "@/integrations/supabase/client";
 import { adminCategoriesQuery, adminProductsQuery, firstImage, type AdminRow } from "@/lib/admin-queries";
-import { isValidAmazonUrl } from "@/lib/store";
+import { isValidAffiliateUrl } from "@/lib/store";
 
 export const Route = createFileRoute("/_admin/admin/products/")({
   head: () => ({ meta: [{ title: "Products | OVU Admin" }] }),
@@ -28,7 +28,7 @@ function Products() {
 
   async function toggleActive(r: AdminRow) {
     if (!r.active) {
-      if (!r.amazon_url || !isValidAmazonUrl(r.amazon_url)) { toast.error("Add a valid Amazon affiliate URL before activating."); return; }
+      if (!r.affiliate_url || !isValidAffiliateUrl(r.affiliate_url)) { toast.error("Add a valid affiliate URL before activating."); return; }
       if (!firstImage(r)) { toast.error("Upload a primary image before activating."); return; }
     }
     const { error } = await supabase.from("products").update({ active: !r.active }).eq("id", r.id);
@@ -56,7 +56,7 @@ function Products() {
         action={
           <div className="flex gap-2">
             <Link to="/admin/products/trash" className={buttonVariants({ variant: "outline" })}><Trash2 /> Trash</Link>
-            <Link to="/admin/products/new" className={buttonVariants({ variant: "amazon" })}><Plus /> Add Product</Link>
+            <Link to="/admin/products/new" className={buttonVariants({ variant: "affiliate" })}><Plus /> Add Product</Link>
           </div>
         }
       />
@@ -81,14 +81,14 @@ function Products() {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[820px] text-sm">
               <thead className="border-b border-border text-left text-xs text-muted-foreground">
-                <tr><th className="p-3">Product</th><th>Category</th><th>Amazon URL</th><th>Status</th><th>Featured</th><th>Added</th><th>Updated</th><th className="p-3 text-right">Actions</th></tr>
+                <tr><th className="p-3">Product</th><th>Category</th><th>Affiliate URL</th><th>Status</th><th>Featured</th><th>Added</th><th>Updated</th><th className="p-3 text-right">Actions</th></tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {data!.rows.map((r) => (
                   <tr key={r.id}>
                     <td className="p-3"><div className="flex items-center gap-3"><Thumb src={firstImage(r)} /><span className="max-w-56 truncate font-medium">{r.name}</span></div></td>
                     <td className="text-muted-foreground">{r.categories?.name ?? "—"}</td>
-                    <td><StatusBadge on={!!r.amazon_url && isValidAmazonUrl(r.amazon_url)} onLabel="Valid" offLabel="Missing" /></td>
+                    <td><StatusBadge on={!!r.affiliate_url && isValidAffiliateUrl(r.affiliate_url)} onLabel="Valid" offLabel="Missing" /></td>
                     <td><button onClick={() => toggleActive(r)} title="Toggle active"><StatusBadge on={r.active} onLabel="Active" offLabel="Inactive" /></button></td>
                     <td><StatusBadge on={r.featured} onLabel="Featured" offLabel="—" tone="primary" /></td>
                     <td className="text-xs text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}</td>

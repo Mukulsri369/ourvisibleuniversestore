@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { logOutboundClick } from "@/lib/store";
 
 /**
- * Opens the product's own stored Amazon affiliate URL, untouched.
+ * Opens the product's own stored retailer affiliate URL, untouched.
  * The URL is never rewritten — affiliate tracking parameters are preserved.
  */
 export function BuyButton({
@@ -12,7 +12,7 @@ export function BuyButton({
   url,
   size = "lg",
   className,
-  label = "Buy on Amazon",
+  label = "Buy now",
   track = true,
 }: {
   productId: string;
@@ -35,7 +35,7 @@ export function BuyButton({
       target="_blank"
       rel="nofollow sponsored noopener noreferrer"
       onClick={() => track && logOutboundClick(productId)}
-      className={cn(buttonVariants({ variant: "amazon", size }), className)}
+      className={cn(buttonVariants({ variant: "affiliate", size }), className)}
     >
       {label}
       <ExternalLink />
