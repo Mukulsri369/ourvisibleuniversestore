@@ -22,13 +22,6 @@ export const Route = createFileRoute("/_admin")({
   component: AdminShell,
 });
 
-const NAV = [
-  { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { to: "/admin/products", label: "Products", icon: Package },
-  { to: "/admin/categories", label: "Categories", icon: FolderTree },
-  { to: "/admin/settings", label: "Settings", icon: Settings },
-] as const;
-
 function AdminShell() {
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -47,12 +40,17 @@ function AdminShell() {
         <span className="size-2 rounded-full bg-primary shadow-glow" />
         <span className="font-display text-lg">OVU Admin</span>
       </Link>
-      {NAV.map((n) => (
+      {[
+        { to: "/admin" as const, label: "Dashboard", icon: LayoutDashboard, exact: true },
+        { to: "/admin/products" as const, label: "Products", icon: Package, exact: false },
+        { to: "/admin/categories" as const, label: "Categories", icon: FolderTree, exact: false },
+        { to: "/admin/settings" as const, label: "Settings", icon: Settings, exact: false },
+      ].map((n) => (
         <Link
           key={n.to}
           to={n.to}
           onClick={() => setOpen(false)}
-          activeOptions={{ exact: "exact" in n }}
+          activeOptions={{ exact: n.exact }}
           className="flex h-11 items-center gap-3 rounded-lg px-3 text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
           activeProps={{ className: "!bg-sidebar-accent !text-sidebar-foreground font-semibold" }}
         >
