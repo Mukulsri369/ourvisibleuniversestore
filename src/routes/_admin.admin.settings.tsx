@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { AdminTitle, Field, inputCls, Section, textareaCls } from "@/components/admin/ui";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import { pathFromUrl, removeStoragePaths, uploadImage } from "@/lib/admin";
 
 export const Route = createFileRoute("/_admin/admin/settings")({
@@ -17,10 +18,11 @@ function Settings() {
   const qc = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const { data, isLoading } = useQuery({ queryKey: ["admin", "settings"], queryFn: async () => { const r = await supabase.from("site_settings").select("*").eq("id", 1).single(); if (r.error) throw r.error; return r.data; } });
-  const [draft, setDraft] = useState<typeof data>();
+  type SettingsRow = Database["public"]["Tables"]["site_settings"]["Row"];
+  const [draft, setDraft] = useState<SettingsRow>();
   const [saving, setSaving] = useState(false);
   const s = draft ?? data;
-  const set = (p: Partial<NonNullable<typeof s>>) => setDraft((x) => ({ ...(x ?? data!), ...p }));
+  const set = (p: Partial<SettingsRow>) => setDraft((x) => ({ ...(x ?? data), ...p }));
 
   async function upload(file: File | undefined) {
     if (!file || !s) return;
