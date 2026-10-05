@@ -22,7 +22,10 @@ function Settings() {
   const [draft, setDraft] = useState<SettingsRow>();
   const [saving, setSaving] = useState(false);
   const s = draft ?? data;
-  const set = (p: Partial<SettingsRow>) => setDraft((x) => ({ ...(x ?? data), ...p }));
+  const set = (p: Partial<SettingsRow>) => {
+    if (!s) return;
+    setDraft({ ...s, ...p });
+  };
 
   async function upload(file: File | undefined) {
     if (!file || !s) return;
