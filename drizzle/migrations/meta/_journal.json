@@ -15,6 +15,27 @@
       "when": 1791225804513,
       "tag": "0001_tighten_helper_function_permissions",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791226272272,
+      "tag": "0002_protect_private_store_contact_settings",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791226359819,
+      "tag": "0003_restore_rls_admin_check_execution",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791226402581,
+      "tag": "0004_restore_live_product_policy_evaluation",
+      "breakpoints": true
     }
   ]
 }

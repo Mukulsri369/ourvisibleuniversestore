@@ -299,7 +299,39 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_site_settings: {
+        Row: {
+          affiliate_disclosure: string | null
+          footer_text: string | null
+          id: number | null
+          instagram_url: string | null
+          logo_url: string | null
+          social_links: Json | null
+          store_name: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          affiliate_disclosure?: string | null
+          footer_text?: string | null
+          id?: number | null
+          instagram_url?: string | null
+          logo_url?: string | null
+          social_links?: Json | null
+          store_name?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          affiliate_disclosure?: string | null
+          footer_text?: string | null
+          id?: number | null
+          instagram_url?: string | null
+          logo_url?: string | null
+          social_links?: Json | null
+          store_name?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       is_admin: { Args: never; Returns: boolean }
