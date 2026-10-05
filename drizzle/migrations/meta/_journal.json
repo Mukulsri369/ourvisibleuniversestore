@@ -43,6 +43,13 @@
       "when": 1791229400150,
       "tag": "0005_generalize_product_affiliate_links",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791229490488,
+      "tag": "0006_validate_retailer_affiliate_links",
+      "breakpoints": true
     }
   ]
 }
