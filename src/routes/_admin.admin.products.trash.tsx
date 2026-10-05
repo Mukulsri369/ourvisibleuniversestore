@@ -31,7 +31,7 @@ function Trash() {
 
   async function restore(r: AdminRow) {
     const { error } = await supabase.from("products").update({ deleted_at: null }).eq("id", r.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Product restored.");
     qc.invalidateQueries();
   }
@@ -41,7 +41,7 @@ function Trash() {
     const { data: imgs } = await supabase.from("product_images").select("storage_path").eq("product_id", purge.id);
     const { error } = await supabase.from("products").delete().eq("id", purge.id);
     setPurge(null);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     await removeStoragePaths((imgs ?? []).map((i) => i.storage_path));
     toast.success("Product permanently deleted.");
     qc.invalidateQueries();

@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_admin")({
   ssr: false,
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/admin/login" });
+    if (error || !data.user) throw redirect({ to: "/admin/login", search: {} });
     const { data: isAdmin } = await supabase.rpc("is_admin");
     if (!isAdmin) {
       await supabase.auth.signOut();
@@ -38,7 +38,7 @@ function AdminShell() {
     await qc.cancelQueries();
     qc.removeQueries({ queryKey: ["admin"] });
     await supabase.auth.signOut();
-    navigate({ to: "/admin/login", replace: true });
+    navigate({ to: "/admin/login", search: {}, replace: true });
   }
 
   const sidebar = (

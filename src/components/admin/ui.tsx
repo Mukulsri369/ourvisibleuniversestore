@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export function AdminTitle({ title, sub, action }: { title: string; sub?: string; action?: ReactNode }) {
+export function AdminTitle({ title, sub, action }: { title: string; sub?: string | undefined; action?: ReactNode | undefined }) {
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
       <div>
