@@ -140,9 +140,9 @@ function liveProducts() {
 export const settingsQuery = queryOptions({
   queryKey: ["settings"],
   queryFn: async () => {
-    const { data, error } = await publicDb().from("site_settings").select("*").eq("id", 1).maybeSingle();
+    const { data, error } = await publicDb().from("public_site_settings").select("*").eq("id", 1).maybeSingle();
     if (error) throw error;
-    return data;
+    return data ? { ...data, contact_email: null } : null;
   },
   staleTime: 60_000,
 });
