@@ -15,6 +15,13 @@
       "when": 1791225804513,
       "tag": "0001_tighten_helper_function_permissions",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791226272272,
+      "tag": "0002_protect_private_store_contact_settings",
+      "breakpoints": true
     }
   ]
 }
