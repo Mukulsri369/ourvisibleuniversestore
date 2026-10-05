@@ -4,7 +4,7 @@ import { Instagram, Menu, Search, X } from "lucide-react";
 import { useState } from "react";
 import { categoriesQuery, settingsQuery } from "@/lib/store";
 
-function Logo({ logo }: { logo?: string | null }) {
+function Logo({ logo }: { logo?: string | null | undefined }) {
   return (
     <Link to="/" className="flex items-center gap-2.5">
       {logo ? (
@@ -23,7 +23,7 @@ function Logo({ logo }: { logo?: string | null }) {
   );
 }
 
-export function SearchBox({ autoFocus, onDone, defaultValue }: { autoFocus?: boolean; onDone?: () => void; defaultValue?: string }) {
+export function SearchBox({ autoFocus, onDone, defaultValue }: { autoFocus?: boolean | undefined; onDone?: (() => void) | undefined; defaultValue?: string | undefined }) {
   const navigate = useNavigate();
   const [q, setQ] = useState(defaultValue ?? "");
   return (

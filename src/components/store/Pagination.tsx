@@ -32,7 +32,7 @@ export function EmptyState({ title, text, children }: { title: string; text?: st
   );
 }
 
-export function PageHeader({ eyebrow, title, text }: { eyebrow?: string; title: string; text?: string | null }) {
+export function PageHeader({ eyebrow, title, text }: { eyebrow?: string | undefined; title: string; text?: string | null | undefined }) {
   return (
     <div className="relative overflow-hidden border-b border-border">
       <div className="nebula starfield absolute inset-0 opacity-70" />

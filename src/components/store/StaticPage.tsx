@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { PageHeader } from "./Pagination";
 
-export function StaticPage({ eyebrow, title, intro, children }: { eyebrow: string; title: string; intro?: string; children: ReactNode }) {
+export function StaticPage({ eyebrow, title, intro, children }: { eyebrow: string; title: string; intro?: string | undefined; children: ReactNode }) {
   return (
     <>
       <PageHeader eyebrow={eyebrow} title={title} text={intro} />

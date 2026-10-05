@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { queryOptions } from "@tanstack/react-query";
 import type { Database } from "@/integrations/supabase/types";
 
-export const SITE_URL = (import.meta.env.VITE_SITE_URL as string | undefined) ?? "https://store.ourvisibleuniverse.com";
+export const SITE_URL = (import.meta.env['VITE_SITE_URL'] as string | undefined) ?? "https://store.ourvisibleuniverse.com";
 export const STORE_NAME = "Our Visible Universe";
 
 let _client: ReturnType<typeof createClient<Database>> | null = null;
@@ -10,8 +10,8 @@ let _client: ReturnType<typeof createClient<Database>> | null = null;
 /** Session-less client for public reads. Row Level Security limits it to live products. */
 export function publicDb() {
   if (_client) return _client;
-  const url = import.meta.env.VITE_SUPABASE_URL as string;
-  const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+  const url = import.meta.env['VITE_SUPABASE_URL'] as string;
+  const key = import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] as string;
   _client = createClient<Database>(url, key, {
     auth: { persistSession: false, autoRefreshToken: false, storage: undefined },
     global: {
@@ -179,14 +179,14 @@ export const homeQuery = queryOptions({
 });
 
 export type ListParams = {
-  q?: string;
-  category?: string; // slug
-  featured?: boolean;
-  sort?: "featured" | "newest" | "price_asc" | "price_desc";
-  min?: number;
-  max?: number;
-  page?: number;
-  pageSize?: number;
+  q?: string | undefined;
+  category?: string | undefined; // slug
+  featured?: boolean | undefined;
+  sort?: "featured" | "newest" | "price_asc" | "price_desc" | undefined;
+  min?: number | undefined;
+  max?: number | undefined;
+  page?: number | undefined;
+  pageSize?: number | undefined;
 };
 
 function clean(q: string) {
