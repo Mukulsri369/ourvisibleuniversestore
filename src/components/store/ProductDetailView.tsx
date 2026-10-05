@@ -77,17 +77,17 @@ export function ProductDetailView({ p, disclosure, preview }: { p: ProductFull; 
         {p.short_description && <p className="mt-5 text-lg text-muted-foreground">{p.short_description}</p>}
 
         <div className="glass mt-7 rounded-2xl p-5">
-          <p className="text-2xl font-semibold text-foreground">{price ?? "Check latest price on Amazon"}</p>
+          <p className="text-2xl font-semibold text-foreground">{price ?? "Check latest price"}</p>
           {price && (
             <p className="mt-1 text-xs text-muted-foreground">
-              Price shown may change. Final price is shown on Amazon{p.price_updated_at ? ` · last checked ${new Date(p.price_updated_at).toLocaleDateString()}` : ""}.
+              Price shown may change. The retailer's checkout shows the final price{p.price_updated_at ? ` · last checked ${new Date(p.price_updated_at).toLocaleDateString()}` : ""}.
             </p>
           )}
-          <BuyButton productId={p.id} url={p.amazon_url} size="xl" className="mt-5 w-full" label="BUY ON AMAZON" track={!preview} />
+          <BuyButton productId={p.id} url={p.affiliate_url} size="xl" className="mt-5 w-full" label="BUY NOW" track={!preview} />
           <p className="mt-4 flex gap-2 text-xs leading-relaxed text-muted-foreground">
             <ShieldCheck className="mt-0.5 size-4 shrink-0 text-accent" />
             <span>
-              {disclosure ?? "As an Amazon Associate, we earn from qualifying purchases."} Purchase, payment and delivery are handled by Amazon.
+              {disclosure ?? "We may earn a commission from qualifying purchases."} Purchase, payment and delivery are handled by the linked retailer.
             </span>
           </p>
         </div>
@@ -130,7 +130,7 @@ export function ProductDetailView({ p, disclosure, preview }: { p: ProductFull; 
 
       {!preview && (
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/90 p-3 backdrop-blur-xl lg:hidden">
-          <BuyButton productId={p.id} url={p.amazon_url} size="lg" className="w-full" label="BUY ON AMAZON" />
+          <BuyButton productId={p.id} url={p.affiliate_url} size="lg" className="w-full" label="BUY NOW" />
         </div>
       )}
     </div>
