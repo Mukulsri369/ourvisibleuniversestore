@@ -10,13 +10,13 @@ import { ProductDetailView } from "@/components/store/ProductDetailView";
 import { supabase } from "@/integrations/supabase/client";
 import { removeStoragePaths, uploadImage } from "@/lib/admin";
 import { adminCategoriesQuery } from "@/lib/admin-queries";
-import { isValidAmazonUrl, slugify, type ProductFull } from "@/lib/store";
+import { isValidAffiliateUrl, slugify, type ProductFull } from "@/lib/store";
 import { Field, inputCls, Section, textareaCls } from "./ui";
 
 type Img = { key: string; url: string; path: string | null; alt: string };
-type Errors = Partial<Record<"name" | "short" | "desc" | "category" | "images" | "amazon" | "price", string>>;
+type Errors = Partial<Record<"name" | "short" | "desc" | "category" | "images" | "affiliate" | "price", string>>;
 
-const MARKETS = ["amazon.in", "amazon.com", "amazon.co.uk", "amazon.ca", "amazon.de", "amazon.com.au", "amazon.ae"];
+const RETAILERS = ["Amazon", "Flipkart", "Other"];
 const CURRENCIES = ["INR", "USD", "GBP", "EUR", "CAD", "AUD", "AED"];
 
 export function ProductForm({ productId }: { productId?: string }) {
@@ -46,9 +46,9 @@ export function ProductForm({ productId }: { productId?: string }) {
   const [tagInput, setTagInput] = useState("");
   const [images, setImages] = useState<Img[]>([]);
   const [features, setFeatures] = useState<string[]>([]);
-  const [amazonUrl, setAmazonUrl] = useState("");
-  const [asin, setAsin] = useState("");
-  const [market, setMarket] = useState("amazon.in");
+  const [affiliateUrl, setAffiliateUrl] = useState("");
+  const [retailerProductId, setRetailerProductId] = useState("");
+  const [retailer, setRetailer] = useState("Amazon");
   const [price, setPrice] = useState("");
   const [currency, setCurrency] = useState("INR");
   const [priceDate, setPriceDate] = useState("");
@@ -83,9 +83,9 @@ export function ProductForm({ productId }: { productId?: string }) {
           .map((i) => ({ key: i.id, url: i.image_url, path: i.storage_path, alt: i.alt_text ?? "" })),
       );
       setFeatures([...(data.product_features ?? [])].sort((a, b) => a.sort_order - b.sort_order).map((f) => f.feature));
-      setAmazonUrl(data.amazon_url ?? "");
-      setAsin(data.amazon_asin ?? "");
-      setMarket(data.amazon_marketplace ?? "amazon.in");
+      setAffiliateUrl(data.affiliate_url ?? data.amazon_url ?? "");
+      setRetailerProductId(data.retailer_product_id ?? data.amazon_asin ?? "");
+      setRetailer(data.retailer ?? (data.amazon_url ? "Amazon" : "Other"));
       setPrice(data.price != null ? String(data.price) : "");
       setCurrency(data.currency ?? "INR");
       setPriceDate(data.price_updated_at ? data.price_updated_at.slice(0, 10) : "");
@@ -155,10 +155,10 @@ export function ProductForm({ productId }: { productId?: string }) {
       if (!desc.trim()) e.desc = "Description is required.";
       if (!categoryId) e.category = "Please select a category.";
       if (!images.length) e.images = "Please upload a primary image.";
-      if (!amazonUrl.trim()) e.amazon = "Amazon affiliate URL is required.";
-      else if (!isValidAmazonUrl(amazonUrl)) e.amazon = "Please enter a valid Amazon affiliate URL.";
-    } else if (amazonUrl.trim() && !isValidAmazonUrl(amazonUrl)) {
-      e.amazon = "Please enter a valid Amazon affiliate URL.";
+      if (!affiliateUrl.trim()) e.affiliate = "Affiliate URL is required.";
+      else if (!isValidAffiliateUrl(affiliateUrl)) e.affiliate = "Please enter a valid secure affiliate URL.";
+    } else if (affiliateUrl.trim() && !isValidAffiliateUrl(affiliateUrl)) {
+      e.affiliate = "Please enter a valid secure affiliate URL.";
     }
     if (price && (Number.isNaN(Number(price)) || Number(price) < 0)) e.price = "Enter a valid price or leave it empty.";
     return e;
@@ -195,9 +195,9 @@ export function ProductForm({ productId }: { productId?: string }) {
         category_id: categoryId || null,
         subcategory: subcategory.trim() || null,
         brand: brand.trim() || null,
-        amazon_url: amazonUrl.trim() || null, // stored exactly as entered — never altered
-        amazon_asin: asin.trim().toUpperCase() || null,
-        amazon_marketplace: market,
+        affiliate_url: affiliateUrl.trim() || null, // stored exactly as entered — never altered
+        retailer: retailer.trim() || null,
+        retailer_product_id: retailerProductId.trim() || null,
         price: price ? Number(price) : null,
         currency,
         price_updated_at: price ? (priceDate ? new Date(priceDate).toISOString() : new Date().toISOString()) : null,
@@ -264,9 +264,9 @@ export function ProductForm({ productId }: { productId?: string }) {
     description: desc || null,
     brand: brand || null,
     category_id: categoryId || null,
-    amazon_url: amazonUrl || null,
-    amazon_asin: asin || null,
-    amazon_marketplace: market,
+    affiliate_url: affiliateUrl || null,
+    retailer,
+    retailer_product_id: retailerProductId || null,
     price: price ? Number(price) : null,
     currency,
     price_updated_at: priceDate || null,
@@ -366,20 +366,20 @@ export function ProductForm({ productId }: { productId?: string }) {
         <Button type="button" variant="outline" onClick={() => setFeatures((s) => [...s, ""])}><Plus /> Add Feature</Button>
       </Section>
 
-      <Section title="4 · Amazon information">
-        <Field label="Amazon Affiliate URL" required error={errors.amazon} hint="Paste this product's own affiliate link exactly. It is stored and used unchanged.">
-          <input className={inputCls} type="url" inputMode="url" value={amazonUrl} onChange={(e) => setAmazonUrl(e.target.value)} onBlur={() => amazonUrl && !isValidAmazonUrl(amazonUrl) && setErrors((x) => ({ ...x, amazon: "Please enter a valid Amazon affiliate URL." }))} placeholder="https://www.amazon.in/dp/XXXXXXXXXX?tag=yourtag-21" />
+      <Section title="4 · Affiliate information">
+        <Field label="Affiliate URL" required error={errors.affiliate} hint="Paste this product's retailer affiliate link exactly. It is stored and used unchanged.">
+          <input className={inputCls} type="url" inputMode="url" value={affiliateUrl} onChange={(e) => setAffiliateUrl(e.target.value)} onBlur={() => affiliateUrl && !isValidAffiliateUrl(affiliateUrl) && setErrors((x) => ({ ...x, affiliate: "Please enter a valid secure affiliate URL." }))} placeholder="https://retailer.example/product/your-affiliate-link" />
         </Field>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Amazon ASIN"><input className={inputCls} value={asin} onChange={(e) => setAsin(e.target.value)} placeholder="B0XXXXXXXX" /></Field>
-          <Field label="Amazon Marketplace">
-            <select className={inputCls} value={market} onChange={(e) => setMarket(e.target.value)}>{MARKETS.map((m) => <option key={m}>{m}</option>)}</select>
+          <Field label="Retailer">
+            <select className={inputCls} value={retailer} onChange={(e) => setRetailer(e.target.value)}>{RETAILERS.map((name) => <option key={name}>{name}</option>)}</select>
           </Field>
+          <Field label="Retailer product ID" hint="Optional, for example an ASIN or Flipkart product ID."><input className={inputCls} value={retailerProductId} onChange={(e) => setRetailerProductId(e.target.value)} placeholder="Optional product ID" /></Field>
         </div>
       </Section>
 
       <Section title="5 · Price (optional)">
-        <p className="text-xs text-muted-foreground">Only enter a price you have verified on Amazon. If left empty, the store shows “Check latest price on Amazon”.</p>
+        <p className="text-xs text-muted-foreground">Only enter a price you have verified with the retailer. If left empty, the store shows “Check latest price”.</p>
         <div className="grid gap-4 sm:grid-cols-3">
           <Field label="Price" error={errors.price}><input className={inputCls} inputMode="decimal" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="e.g. 1499" /></Field>
           <Field label="Currency"><select className={inputCls} value={currency} onChange={(e) => setCurrency(e.target.value)}>{CURRENCIES.map((c) => <option key={c}>{c}</option>)}</select></Field>
