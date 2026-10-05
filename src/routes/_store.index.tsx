@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, BadgeCheck, Compass, Instagram, ShieldCheck, Sparkles } from "lucide-react";
 import heroImg from "@/assets/hero-nebula.jpg";
 import { buttonVariants } from "@/components/ui/button";
@@ -30,8 +30,8 @@ const INTERESTS = ["telescope", "galaxy", "Saturn", "moon", "projector", "astron
 
 function Home() {
   const { data: home } = useSuspenseQuery(homeQuery);
-  const { data: cats = [] } = useQuery(categoriesQuery);
-  const { data: settings } = useQuery(settingsQuery);
+  const { data: cats = [] } = useSuspenseQuery(categoriesQuery);
+  const { data: settings } = useSuspenseQuery(settingsQuery);
 
   return (
     <>

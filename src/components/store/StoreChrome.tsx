@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Instagram, Menu, Search, X } from "lucide-react";
 import { useState } from "react";
 import { categoriesQuery, settingsQuery } from "@/lib/store";
@@ -58,8 +58,8 @@ const NAV = [
 ] as const;
 
 export function StoreHeader() {
-  const { data: settings } = useQuery(settingsQuery);
-  const { data: cats } = useQuery(categoriesQuery);
+  const { data: settings } = useSuspenseQuery(settingsQuery);
+  const { data: cats } = useSuspenseQuery(categoriesQuery);
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
@@ -134,7 +134,7 @@ export function StoreHeader() {
 }
 
 export function StoreFooter() {
-  const { data: s } = useQuery(settingsQuery);
+  const { data: s } = useSuspenseQuery(settingsQuery);
   const social = (s?.social_links ?? {}) as Record<string, string>;
   return (
     <footer className="relative mt-24 border-t border-border">
