@@ -115,7 +115,7 @@ export function slugify(s: string) {
     .slice(0, 80);
 }
 
-const AMAZON_HOST = /^(www\.)?(amazon\.[a-z.]{2,8}|amzn\.(to|eu|in|asia)|a\.co)$/i;
+const AMAZON_HOST = /^(www\.)?(amazon\.[a-z.]{2,8}|link\.amazon|amzn\.(to|eu|in|asia)|a\.co)$/i;
 export function isValidAmazonUrl(value: string) {
   try {
     const u = new URL(value.trim());
