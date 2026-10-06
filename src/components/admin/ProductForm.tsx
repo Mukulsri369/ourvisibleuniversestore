@@ -372,7 +372,7 @@ export function ProductForm({ productId }: { productId?: string }) {
 
       <Section title="4 · Affiliate information">
         <Field label="Affiliate URL" required error={errors.affiliate} hint="Paste this product's retailer affiliate link exactly. It is stored and used unchanged.">
-          <input className={inputCls} type="url" inputMode="url" value={affiliateUrl} onChange={(e) => { setAffiliateUrl(e.target.value); setErrors((current) => ({ ...current, affiliate: undefined })); }} onBlur={() => affiliateUrl && !isValidAffiliateUrl(affiliateUrl) && setErrors((x) => ({ ...x, affiliate: "Please enter a valid secure affiliate URL." }))} placeholder="https://retailer.example/product/your-affiliate-link" />
+          <input className={inputCls} type="url" inputMode="url" value={affiliateUrl} onChange={(e) => { setAffiliateUrl(e.target.value); setErrors((current) => { const { affiliate: _affiliate, ...rest } = current; return rest; }); }} onBlur={() => affiliateUrl && !isValidAffiliateUrl(affiliateUrl) && setErrors((x) => ({ ...x, affiliate: "Please enter a valid secure affiliate URL." }))} placeholder="https://retailer.example/product/your-affiliate-link" />
         </Field>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Retailer">
