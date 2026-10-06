@@ -57,7 +57,7 @@ export type ProductFull = ProductCardData & {
 };
 
 export const CARD_SELECT =
-  "id,name,slug,short_description,price,currency,featured,affiliate_url,created_at,category_id,categories(name,slug),product_images(image_url,alt_text,sort_order)";
+  "id,name,slug,short_description,price,currency,featured,affiliate_url,amazon_url,created_at,category_id,categories(name,slug),product_images(image_url,alt_text,sort_order)";
 
 type RawCard = {
   id: string;
@@ -70,6 +70,7 @@ type RawCard = {
   affiliate_url: string | null;
   created_at: string;
   categories: { name: string; slug: string } | null;
+  amazon_url?: string | null;
   product_images: { image_url: string; alt_text: string | null; sort_order: number }[] | null;
 };
 
@@ -83,7 +84,7 @@ export function toCard(r: RawCard): ProductCardData {
     price: r.price,
     currency: r.currency,
     featured: r.featured,
-    affiliate_url: r.affiliate_url,
+    affiliate_url: r.affiliate_url?.trim() ? r.affiliate_url : r.amazon_url ?? null,
     created_at: r.created_at,
     category: r.categories,
     image: imgs[0]?.image_url ?? null,

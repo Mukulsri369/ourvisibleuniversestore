@@ -13,3 +13,4 @@
 - Products, categories, settings, images, and click events are database-backed; public access is limited by row-level policies and admin writes use an allowlisted authenticated email.
 - Store media uses private object storage served through a validated public image route so storage credentials never reach visitors.
 - Retailer affiliate URLs are stored per product and passed through unchanged; outbound click logging is best-effort and never blocks navigation.
+- Public product queries include the legacy Amazon URL and use it only when the retailer-neutral affiliate URL is missing, so older records retain working purchase links.
