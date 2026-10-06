@@ -11,6 +11,7 @@ import { AdminTitle, inputCls, StatusBadge, Thumb } from "@/components/admin/ui"
 import { supabase } from "@/integrations/supabase/client";
 import { adminCategoriesQuery, adminProductsQuery, firstImage, type AdminRow } from "@/lib/admin-queries";
 import { isValidAffiliateUrl } from "@/lib/store";
+import { productSaveErrorMessage } from "@/lib/product-errors";
 
 export const Route = createFileRoute("/_admin/admin/products/")({
   head: () => ({ meta: [{ title: "Products | OVU Admin" }] }),
@@ -32,7 +33,7 @@ function Products() {
       if (!firstImage(r)) { toast.error("Upload a primary image before activating."); return; }
     }
     const { error } = await supabase.from("products").update({ active: !r.active }).eq("id", r.id);
-    if (error) { toast.error(error.message); return; }
+    if (error) { toast.error(productSaveErrorMessage(error)); return; }
     toast.success(r.active ? "Product hidden from store." : "Product is live.");
     refresh();
   }

@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { removeStoragePaths, uploadImage } from "@/lib/admin";
 import { adminCategoriesQuery } from "@/lib/admin-queries";
 import { isValidAffiliateUrl, slugify, type ProductFull } from "@/lib/store";
+import { isDuplicateAffiliateError, productSaveErrorMessage } from "@/lib/product-errors";
 import { Field, inputCls, Section, textareaCls } from "./ui";
 
 type Img = { key: string; url: string; path: string | null; alt: string };
@@ -241,7 +242,9 @@ export function ProductForm({ productId }: { productId?: string }) {
         setDone({ slug: finalSlug, active: nextActive, published: mode === "publish" });
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not save the product.");
+      const message = productSaveErrorMessage(err);
+      if (isDuplicateAffiliateError(err)) setErrors((current) => ({ ...current, affiliate: message }));
+      toast.error(message);
     } finally {
       setSaving(null);
     }
@@ -369,7 +372,7 @@ export function ProductForm({ productId }: { productId?: string }) {
 
       <Section title="4 · Affiliate information">
         <Field label="Affiliate URL" required error={errors.affiliate} hint="Paste this product's retailer affiliate link exactly. It is stored and used unchanged.">
-          <input className={inputCls} type="url" inputMode="url" value={affiliateUrl} onChange={(e) => setAffiliateUrl(e.target.value)} onBlur={() => affiliateUrl && !isValidAffiliateUrl(affiliateUrl) && setErrors((x) => ({ ...x, affiliate: "Please enter a valid secure affiliate URL." }))} placeholder="https://retailer.example/product/your-affiliate-link" />
+          <input className={inputCls} type="url" inputMode="url" value={affiliateUrl} onChange={(e) => { setAffiliateUrl(e.target.value); setErrors((current) => ({ ...current, affiliate: undefined })); }} onBlur={() => affiliateUrl && !isValidAffiliateUrl(affiliateUrl) && setErrors((x) => ({ ...x, affiliate: "Please enter a valid secure affiliate URL." }))} placeholder="https://retailer.example/product/your-affiliate-link" />
         </Field>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Retailer">
