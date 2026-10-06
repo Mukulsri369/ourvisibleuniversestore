@@ -11,6 +11,7 @@ import { AdminTitle, Thumb } from "@/components/admin/ui";
 import { supabase } from "@/integrations/supabase/client";
 import { removeStoragePaths } from "@/lib/admin";
 import { ADMIN_SELECT, firstImage, type AdminRow } from "@/lib/admin-queries";
+import { productSaveErrorMessage } from "@/lib/product-errors";
 
 export const Route = createFileRoute("/_admin/admin/products/trash")({
   head: () => ({ meta: [{ title: "Trash | OVU Admin" }] }),
@@ -31,7 +32,7 @@ function Trash() {
 
   async function restore(r: AdminRow) {
     const { error } = await supabase.from("products").update({ deleted_at: null }).eq("id", r.id);
-    if (error) { toast.error(error.message); return; }
+    if (error) { toast.error(productSaveErrorMessage(error)); return; }
     toast.success("Product restored.");
     qc.invalidateQueries();
   }
