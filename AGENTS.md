@@ -14,3 +14,4 @@
 - Store media uses private object storage served through a validated public image route so storage credentials never reach visitors.
 - Retailer affiliate URLs are stored per product and passed through unchanged; outbound click logging is best-effort and never blocks navigation.
 - Public product queries include the legacy Amazon URL and use it only when the retailer-neutral affiliate URL is missing, so older records retain working purchase links.
+- A database trigger blocks publishing, activating, restoring live products, or changing live affiliate links when another record uses the same effective URL; drafts and trash count, self-edits do not, and URL comparison never rewrites stored links.
