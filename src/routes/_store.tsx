@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_store")({
 
 function StoreLayout() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="cosmic-store flex min-h-screen flex-col">
       <StoreHeader />
       <main className="flex-1">
         <Outlet />

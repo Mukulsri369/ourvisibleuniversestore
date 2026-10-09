@@ -14,6 +14,8 @@ export const Route = createFileRoute("/admin/login")({
       { name: "description", content: "Administrator sign in." },
       { property: "og:title", content: "Admin Sign In" },
       { property: "og:description", content: "Administrator sign in." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),

@@ -13,6 +13,8 @@ export const Route = createFileRoute("/_store/shop")({
       { name: "description", content: D },
       { property: "og:title", content: T },
       { property: "og:description", content: D },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Shop,

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, BadgeCheck, Compass, Instagram, ShieldCheck, Sparkles } from "lucide-react";
-import heroImg from "@/assets/hero-nebula.jpg";
+import { GalaxyScene } from "@/components/store/GalaxyScene";
 import { buttonVariants } from "@/components/ui/button";
 import { CategoryCard } from "@/components/store/CategoryCard";
 import { ProductGrid } from "@/components/store/ProductCard";
@@ -36,13 +36,12 @@ function Home() {
   return (
     <>
       {/* HERO */}
-      <section className="relative isolate overflow-hidden">
-        <img src={heroImg} alt="" width={1920} height={1088} fetchPriority="high" className="absolute inset-0 -z-10 h-full w-full object-cover object-[70%_center] opacity-80" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/75 to-background/10" />
-        <div className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-background to-transparent" />
-        <div className="mx-auto max-w-7xl px-4 pb-24 pt-20 sm:px-6 sm:pb-36 sm:pt-32">
-          <p className="eyebrow">Curated for curious minds</p>
-          <h1 className="mt-5 max-w-3xl text-5xl leading-[1.02] sm:text-7xl lg:text-8xl">
+      <section className="cosmic-hero relative isolate overflow-hidden">
+        <GalaxyScene />
+        <div className="cosmic-hero-shade absolute inset-0 -z-10" />
+        <div className="cosmic-hero-copy mx-auto max-w-7xl px-4 sm:px-6">
+          <p className="eyebrow">Our Visible Universe Store</p>
+          <h1 className="mt-5 max-w-2xl text-5xl leading-[1.06] sm:text-7xl lg:text-8xl">
             Bring the Universe <em className="text-gradient-gold">Closer.</em>
           </h1>
           <p className="mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">
