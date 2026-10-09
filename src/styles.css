@@ -60,6 +60,11 @@
 }
 
 :root {
+  --galaxy-core: #fff1dc;
+  --galaxy-dust: #cb877d;
+  --galaxy-blue: #7789b4;
+  --space-void: oklch(0.105 0.012 285);
+  --space-star: oklch(0.86 0.018 85 / 30%);
   --radius: 0.875rem;
   --background: oklch(0.12 0.025 265);
   --foreground: oklch(0.96 0.012 85);
@@ -124,7 +129,7 @@
   h3 {
     font-family: var(--font-display);
     font-weight: 400;
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
   }
 }
 
@@ -199,4 +204,37 @@
 }
 .prose-cosmic strong {
   color: var(--color-foreground);
+}
+
+.cosmic-store {
+  background-color: var(--space-void);
+  background-image: radial-gradient(1px 1px at 37px 61px, var(--space-star), transparent),
+    radial-gradient(1px 1px at 213px 172px, var(--space-star), transparent),
+    radial-gradient(1px 1px at 131px 309px, var(--space-star), transparent);
+  background-size: 347px 383px;
+}
+.cosmic-hero {
+  min-height: 640px;
+  background-color: var(--space-void);
+}
+.galaxy-scene {
+  position: absolute;
+  inset: 0;
+  z-index: -20;
+  pointer-events: none;
+  background-image: radial-gradient(1px 1px at 37px 61px, var(--space-star), transparent);
+  background-size: 137px 163px;
+}
+.galaxy-scene canvas { display: block; width: 100%; height: 100%; }
+.cosmic-hero-shade {
+  background: linear-gradient(90deg, var(--space-void), transparent 75%),
+    linear-gradient(0deg, var(--space-void), transparent 25%);
+}
+.cosmic-hero-copy { padding-top: 108px; padding-bottom: 108px; }
+@media (max-width: 639px) {
+  .cosmic-hero { min-height: 730px; }
+  .cosmic-hero-copy { padding-top: 340px; padding-bottom: 48px; }
+  .cosmic-hero-shade {
+    background: linear-gradient(0deg, var(--space-void) 5%, transparent 65%);
+  }
 }
