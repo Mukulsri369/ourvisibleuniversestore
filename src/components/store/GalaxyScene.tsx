@@ -42,14 +42,15 @@ export function GalaxyScene() {
         const colors = new Float32Array(count * 3);
         const sizes = new Float32Array(count);
         for (let i = 0; i < count; i++) {
-          const r = Math.pow(random(), 1.55) * radius;
+          const bulge = i % 4 === 0;
+          const r = Math.pow(random(), bulge ? 3.5 : 1.3) * (bulge ? radius * 0.32 : radius);
           const arm = i % 3;
-          const angle = arm * Math.PI * 2 / 3 + r * 1.85 + (random() - 0.5) * (0.2 + r * 0.16);
-          const spread = (random() - 0.5) * (0.08 + r * 0.13);
+          const angle = bulge ? random() * Math.PI * 2 : arm * Math.PI * 2 / 3 + r * 1.85 + (random() - 0.5) * (0.35 + r * 0.24);
+          const spread = (random() - 0.5) * (0.08 + r * 0.17);
           positions[i * 3] = stars ? (random() - 0.5) * 24 : Math.cos(angle) * r + spread;
           positions[i * 3 + 1] = stars ? (random() - 0.5) * 14 : Math.sin(angle) * r + spread;
           positions[i * 3 + 2] = stars ? -3 : (random() - 0.5) * 0.28;
-          const color = core.clone().lerp(i % 5 === 0 ? dust : blue, Math.min(r / radius * 1.3, 1));
+          const color = core.clone().lerp(i % 5 === 0 ? dust : blue, Math.min(r / radius * 0.85, 1));
           color.multiplyScalar(stars ? 0.2 + random() * 0.4 : 0.45 + random() * 0.55);
           colors.set([color.r, color.g, color.b], i * 3);
           sizes[i] = stars ? 0.6 + random() * 1.1 : 0.7 + random() * 1.3;

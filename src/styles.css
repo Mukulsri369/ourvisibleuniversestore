@@ -232,8 +232,8 @@
 }
 .cosmic-hero-copy { padding-top: 108px; padding-bottom: 108px; }
 @media (max-width: 639px) {
-  .cosmic-hero { min-height: 730px; }
-  .cosmic-hero-copy { padding-top: 340px; padding-bottom: 48px; }
+  .cosmic-hero { min-height: 680px; }
+  .cosmic-hero-copy { padding-top: 280px; padding-bottom: 36px; }
   .cosmic-hero-shade {
     background: linear-gradient(0deg, var(--space-void) 5%, transparent 65%);
   }

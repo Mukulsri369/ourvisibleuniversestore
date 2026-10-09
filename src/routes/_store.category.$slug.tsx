@@ -23,6 +23,8 @@ export const Route = createFileRoute("/_store/category/$slug")({
         { name: "description", content: d },
         { property: "og:title", content: t },
         { property: "og:description", content: d },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
         ...(img ? [{ property: "og:image", content: img }, { name: "twitter:image", content: img }] : []),
       ],
       links: [{ rel: "canonical", href: `${SITE_URL}/category/${params.slug}` }],

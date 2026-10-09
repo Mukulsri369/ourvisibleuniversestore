@@ -14,6 +14,8 @@ export const Route = createFileRoute("/_store/search")({
         { name: "description", content: d },
         { property: "og:title", content: t },
         { property: "og:description", content: d },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
         { name: "robots", content: "noindex, follow" },
       ],
     };

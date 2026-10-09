@@ -13,6 +13,8 @@ export const Route = createFileRoute("/admin/reset-password")({
       { name: "description", content: "Set a new administrator password." },
       { property: "og:title", content: "Set New Password" },
       { property: "og:description", content: "Set a new administrator password." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
