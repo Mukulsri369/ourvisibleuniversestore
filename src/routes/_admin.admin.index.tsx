@@ -7,7 +7,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { ADMIN_SELECT, firstImage, type AdminRow } from "@/lib/admin-queries";
 
 export const Route = createFileRoute("/_admin/admin/")({
-  head: () => ({ meta: [{ title: "Dashboard | OVU Admin" }] }),
+  head: () => ({ meta: [
+    { title: "Dashboard | OVU Admin" },
+    { name: "description", content: "Administrator dashboard for Our Visible Universe Store." },
+    { property: "og:title", content: "Dashboard | OVU Admin" },
+    { property: "og:description", content: "Administrator dashboard for Our Visible Universe Store." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex, nofollow" },
+  ] }),
   component: Dashboard,
 });
 

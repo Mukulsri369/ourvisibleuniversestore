@@ -13,7 +13,15 @@ import { adminCategoriesQuery } from "@/lib/admin-queries";
 import { slugify, type Category } from "@/lib/store";
 
 export const Route = createFileRoute("/_admin/admin/categories")({
-  head: () => ({ meta: [{ title: "Categories | OVU Admin" }] }),
+  head: () => ({ meta: [
+    { title: "Categories | OVU Admin" },
+    { name: "description", content: "Administrator categories for Our Visible Universe Store." },
+    { property: "og:title", content: "Categories | OVU Admin" },
+    { property: "og:description", content: "Administrator categories for Our Visible Universe Store." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex, nofollow" },
+  ] }),
   component: Categories,
 });
 

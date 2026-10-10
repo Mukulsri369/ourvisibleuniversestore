@@ -10,7 +10,15 @@ import type { Database } from "@/integrations/supabase/types";
 import { pathFromUrl, removeStoragePaths, uploadImage } from "@/lib/admin";
 
 export const Route = createFileRoute("/_admin/admin/settings")({
-  head: () => ({ meta: [{ title: "Settings | OVU Admin" }] }),
+  head: () => ({ meta: [
+    { title: "Settings | OVU Admin" },
+    { name: "description", content: "Administrator settings for Our Visible Universe Store." },
+    { property: "og:title", content: "Settings | OVU Admin" },
+    { property: "og:description", content: "Administrator settings for Our Visible Universe Store." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex, nofollow" },
+  ] }),
   component: Settings,
 });
 

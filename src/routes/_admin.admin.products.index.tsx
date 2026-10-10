@@ -14,7 +14,15 @@ import { isValidAffiliateUrl } from "@/lib/store";
 import { productSaveErrorMessage } from "@/lib/product-errors";
 
 export const Route = createFileRoute("/_admin/admin/products/")({
-  head: () => ({ meta: [{ title: "Products | OVU Admin" }] }),
+  head: () => ({ meta: [
+    { title: "Products | OVU Admin" },
+    { name: "description", content: "Administrator products for Our Visible Universe Store." },
+    { property: "og:title", content: "Products | OVU Admin" },
+    { property: "og:description", content: "Administrator products for Our Visible Universe Store." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex, nofollow" },
+  ] }),
   component: Products,
 });
 
