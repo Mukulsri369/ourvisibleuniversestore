@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { queryOptions } from "@tanstack/react-query";
 import type { Database } from "@/integrations/supabase/types";
+import { productCategoryIds } from "./product-categories";
 
 export const SITE_URL = (import.meta.env['VITE_SITE_URL'] as string | undefined) ?? "https://store.ourvisibleuniverse.com";
 export const STORE_NAME = "Our Visible Universe";
@@ -48,6 +49,8 @@ export type ProductFull = ProductCardData & {
   description: string | null;
   brand: string | null;
   category_id: string | null;
+  category_ids: string[];
+  assigned_categories: { name: string; slug: string }[];
   retailer: string | null;
   retailer_product_id: string | null;
   price_updated_at: string | null;
@@ -57,7 +60,7 @@ export type ProductFull = ProductCardData & {
 };
 
 export const CARD_SELECT =
-  "id,name,slug,short_description,price,currency,featured,affiliate_url,amazon_url,created_at,category_id,categories(name,slug),product_images(image_url,alt_text,sort_order)";
+  "id,name,slug,short_description,price,currency,featured,affiliate_url,amazon_url,created_at,category_id,category_ids,categories(name,slug),product_images(image_url,alt_text,sort_order)";
 
 type RawCard = {
   id: string;
@@ -202,7 +205,7 @@ export async function listProducts(p: ListParams) {
   if (p.category) {
     const { data: cat } = await db.from("categories").select("id").eq("slug", p.category).eq("active", true).maybeSingle();
     if (!cat) return { items: [] as ProductCardData[], total: 0, page, pageSize };
-    query = query.eq("category_id", cat.id);
+    query = query.contains("category_ids", [cat.id]);
   }
 
   const q = p.q ? clean(p.q) : "";
@@ -225,7 +228,7 @@ export async function listProducts(p: ListParams) {
       `brand.ilike.${pattern}`,
     ];
     if (ids.length) ors.push(`id.in.(${ids.join(",")})`);
-    if (catIds.length) ors.push(`category_id.in.(${catIds.join(",")})`);
+    if (catIds.length) ors.push(`category_ids.ov.{${catIds.join(",")}}`);
     query = query.or(ors.join(","));
   }
 
@@ -280,6 +283,7 @@ export async function fetchProductFull(slug: string): Promise<ProductFull | null
   if (!data) return null;
   const r = data as unknown as RawCard & {
     category_id: string | null;
+    category_ids: string[];
     description: string | null;
     brand: string | null;
     retailer: string | null;
@@ -289,9 +293,19 @@ export async function fetchProductFull(slug: string): Promise<ProductFull | null
     product_tags: { tag: string }[];
   };
   const imgs = [...(r.product_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
+  const categoryIds = productCategoryIds(r);
+  const { data: assigned, error: categoryError } = categoryIds.length
+    ? await publicDb().from("categories").select("id,name,slug").in("id", categoryIds).eq("active", true)
+    : { data: [], error: null };
+  if (categoryError) throw categoryError;
   return {
     ...toCard(r),
     category_id: r.category_id,
+    category_ids: categoryIds,
+    assigned_categories: categoryIds.flatMap((id) => {
+      const category = assigned?.find((c) => c.id === id);
+      return category ? [{ name: category.name, slug: category.slug }] : [];
+    }),
     description: r.description,
     brand: r.brand,
     retailer: r.retailer,
@@ -306,14 +320,15 @@ export async function fetchProductFull(slug: string): Promise<ProductFull | null
 export const productQuery = (slug: string) =>
   queryOptions({ queryKey: ["product", slug], queryFn: () => fetchProductFull(slug) });
 
-export const relatedQuery = (p: { id: string; category_id: string | null; tags: string[] }) =>
+export const relatedQuery = (p: { id: string; category_id: string | null; category_ids?: string[]; tags: string[] }) =>
   queryOptions({
-    queryKey: ["related", p.id],
+    queryKey: ["related", p.id, productCategoryIds(p), p.tags],
     queryFn: async () => {
       const db = publicDb();
       const out: ProductCardData[] = [];
-      if (p.category_id) {
-        const { data } = await liveProducts().eq("category_id", p.category_id).neq("id", p.id).order("featured", { ascending: false }).limit(4);
+      const categoryIds = productCategoryIds(p);
+      if (categoryIds.length) {
+        const { data } = await liveProducts().overlaps("category_ids", categoryIds).neq("id", p.id).order("featured", { ascending: false }).limit(4);
         out.push(...((data ?? []) as unknown as RawCard[]).map(toCard));
       }
       if (out.length < 4 && p.tags.length) {
