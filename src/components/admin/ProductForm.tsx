@@ -308,7 +308,7 @@ export function ProductForm({ productId }: { productId?: string }) {
           <textarea rows={8} className={textareaCls} value={desc} onChange={(e) => setDesc(e.target.value)} />
         </Field>
         <div className="grid gap-4 sm:grid-cols-3">
-          <CategorySelect categories={cats} value={categoryIds} onChange={(ids) => { setCategoryIds(ids); setErrors((current) => ({ ...current, category: undefined })); }} error={errors.category} />
+          <CategorySelect categories={cats} value={categoryIds} onChange={(ids) => { setCategoryIds(ids); setErrors((current) => { const { category: _category, ...rest } = current; return rest; }); }} error={errors.category} />
           <Field label="Subcategory"><input className={inputCls} value={subcategory} onChange={(e) => setSubcategory(e.target.value)} /></Field>
           <Field label="Brand"><input className={inputCls} value={brand} onChange={(e) => setBrand(e.target.value)} /></Field>
         </div>
