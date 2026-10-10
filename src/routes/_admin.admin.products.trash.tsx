@@ -14,7 +14,15 @@ import { ADMIN_SELECT, firstImage, type AdminRow } from "@/lib/admin-queries";
 import { productSaveErrorMessage } from "@/lib/product-errors";
 
 export const Route = createFileRoute("/_admin/admin/products/trash")({
-  head: () => ({ meta: [{ title: "Trash | OVU Admin" }] }),
+  head: () => ({ meta: [
+    { title: "Trash | OVU Admin" },
+    { name: "description", content: "Administrator trash for Our Visible Universe Store." },
+    { property: "og:title", content: "Trash | OVU Admin" },
+    { property: "og:description", content: "Administrator trash for Our Visible Universe Store." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex, nofollow" },
+  ] }),
   component: Trash,
 });
 
