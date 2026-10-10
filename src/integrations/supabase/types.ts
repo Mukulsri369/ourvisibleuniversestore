@@ -196,6 +196,7 @@ export type Database = {
           amazon_url: string | null
           brand: string | null
           category_id: string | null
+          category_ids: string[]
           created_at: string
           currency: string | null
           deleted_at: string | null
@@ -220,6 +221,7 @@ export type Database = {
           amazon_url?: string | null
           brand?: string | null
           category_id?: string | null
+          category_ids?: string[]
           created_at?: string
           currency?: string | null
           deleted_at?: string | null
@@ -244,6 +246,7 @@ export type Database = {
           amazon_url?: string | null
           brand?: string | null
           category_id?: string | null
+          category_ids?: string[]
           created_at?: string
           currency?: string | null
           deleted_at?: string | null
