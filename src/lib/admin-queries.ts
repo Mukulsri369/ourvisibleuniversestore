@@ -8,6 +8,7 @@ export type AdminRow = {
   active: boolean;
   featured: boolean;
   affiliate_url: string | null;
+  category_ids: string[];
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
@@ -15,7 +16,7 @@ export type AdminRow = {
   product_images: { image_url: string; sort_order: number }[];
 };
 
-export const ADMIN_SELECT = "id,name,slug,active,featured,affiliate_url,created_at,updated_at,deleted_at,categories(name),product_images(image_url,sort_order)";
+export const ADMIN_SELECT = "id,name,slug,active,featured,affiliate_url,category_ids,created_at,updated_at,deleted_at,categories(name),product_images(image_url,sort_order)";
 
 export function firstImage(r: AdminRow) {
   return [...(r.product_images ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0]?.image_url ?? null;
@@ -39,7 +40,7 @@ export const adminProductsQuery = (f: AdminFilters) =>
       const size = 20;
       let q = supabase.from("products").select(ADMIN_SELECT, { count: "exact" }).is("deleted_at", null);
       if (f.q) q = q.ilike("name", `%${f.q.replace(/[%,()]/g, " ")}%`);
-      if (f.category) q = q.eq("category_id", f.category);
+       if (f.category) q = q.contains("category_ids", [f.category]);
       if (f.status === "active") q = q.eq("active", true);
       if (f.status === "inactive") q = q.eq("active", false);
       if (f.featured === "yes") q = q.eq("featured", true);

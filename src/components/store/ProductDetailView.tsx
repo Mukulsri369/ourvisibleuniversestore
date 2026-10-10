@@ -64,14 +64,13 @@ export function ProductDetailView({ p, disclosure, preview }: { p: ProductFull; 
       </div>
 
       <div>
-        {p.category &&
-          (preview ? (
-            <p className="eyebrow">{p.category.name}</p>
+        <div className="flex flex-wrap gap-x-4 gap-y-2">
+          {p.assigned_categories.map((category) => preview ? (
+            <p key={category.slug} className="eyebrow">{category.name}</p>
           ) : (
-            <Link to="/category/$slug" params={{ slug: p.category.slug }} className="eyebrow hover:underline">
-              {p.category.name}
-            </Link>
+            <Link key={category.slug} to="/category/$slug" params={{ slug: category.slug }} className="eyebrow hover:underline">{category.name}</Link>
           ))}
+        </div>
         <h1 className="mt-3 text-4xl leading-tight text-foreground sm:text-5xl">{p.name}</h1>
         {p.brand && <p className="mt-2 text-sm text-muted-foreground">by {p.brand}</p>}
         {p.short_description && <p className="mt-5 text-lg text-muted-foreground">{p.short_description}</p>}

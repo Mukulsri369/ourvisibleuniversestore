@@ -51,9 +51,10 @@ export const Route = createFileRoute("/_store/product/$slug")({
 function ProductPage() {
   const { slug } = Route.useParams();
   const { data } = useSuspenseQuery(productQuery(slug));
-  const p = data!;
+  const p = data;
+  if (!p) throw notFound();
   const { data: settings } = useQuery(settingsQuery);
-  const { data: related = [] } = useQuery(relatedQuery({ id: p.id, category_id: p.category_id, tags: p.tags }));
+  const { data: related = [] } = useQuery(relatedQuery(p));
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-28 pt-6 sm:px-6 lg:pb-10">

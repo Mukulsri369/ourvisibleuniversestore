@@ -84,7 +84,7 @@ function Products() {
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-border bg-card/60">
-        {isLoading ? <p className="p-6 text-sm text-muted-foreground">Loading…</p> : isError ? <p className="p-6 text-sm text-destructive">Couldn't load products. Please refresh.</p> : data!.rows.length === 0 ? (
+        {isLoading ? <p className="p-6 text-sm text-muted-foreground">Loading…</p> : isError ? <p className="p-6 text-sm text-destructive">Couldn't load products. Please refresh.</p> : !data?.rows.length ? (
           <p className="p-6 text-sm text-muted-foreground">No products match.</p>
         ) : (
           <div className="overflow-x-auto">
@@ -93,10 +93,10 @@ function Products() {
                 <tr><th className="p-3">Product</th><th>Category</th><th>Affiliate URL</th><th>Status</th><th>Featured</th><th>Added</th><th>Updated</th><th className="p-3 text-right">Actions</th></tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {data!.rows.map((r) => (
+                {data?.rows.map((r) => (
                   <tr key={r.id}>
                     <td className="p-3"><div className="flex items-center gap-3"><Thumb src={firstImage(r)} /><span className="max-w-56 truncate font-medium">{r.name}</span></div></td>
-                    <td className="text-muted-foreground">{r.categories?.name ?? "—"}</td>
+                    <td className="max-w-56 py-2 pr-3 text-muted-foreground">{r.category_ids.map((id) => cats.find((c) => c.id === id)?.name).filter(Boolean).join(", ") || r.categories?.name || "—"}</td>
                     <td><StatusBadge on={!!r.affiliate_url && isValidAffiliateUrl(r.affiliate_url)} onLabel="Valid" offLabel="Missing" /></td>
                     <td><button onClick={() => toggleActive(r)} title="Toggle active"><StatusBadge on={r.active} onLabel="Active" offLabel="Inactive" /></button></td>
                     <td><StatusBadge on={r.featured} onLabel="Featured" offLabel="—" tone="primary" /></td>

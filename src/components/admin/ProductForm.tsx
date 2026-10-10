@@ -13,6 +13,8 @@ import { adminCategoriesQuery } from "@/lib/admin-queries";
 import { isValidAffiliateUrl, slugify, type ProductFull } from "@/lib/store";
 import { isDuplicateAffiliateError, productSaveErrorMessage } from "@/lib/product-errors";
 import { Field, inputCls, Section, textareaCls } from "./ui";
+import { CategorySelect } from "./CategorySelect";
+import { productCategoryIds } from "@/lib/product-categories";
 
 type Img = { key: string; url: string; path: string | null; alt: string };
 type Errors = Partial<Record<"name" | "short" | "desc" | "category" | "images" | "affiliate" | "price", string>>;
@@ -40,7 +42,7 @@ export function ProductForm({ productId }: { productId?: string }) {
   const [slugTouched, setSlugTouched] = useState(false);
   const [short, setShort] = useState("");
   const [desc, setDesc] = useState("");
-  const [categoryId, setCategoryId] = useState("");
+  const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [subcategory, setSubcategory] = useState("");
   const [brand, setBrand] = useState("");
   const [tags, setTags] = useState<string[]>([]);
@@ -74,7 +76,7 @@ export function ProductForm({ productId }: { productId?: string }) {
       setSlugTouched(true);
       setShort(data.short_description ?? "");
       setDesc(data.description ?? "");
-      setCategoryId(data.category_id ?? "");
+      setCategoryIds(productCategoryIds(data));
       setSubcategory(data.subcategory ?? "");
       setBrand(data.brand ?? "");
       setTags((data.product_tags ?? []).map((t) => t.tag));
@@ -154,7 +156,7 @@ export function ProductForm({ productId }: { productId?: string }) {
     if (full) {
       if (!short.trim()) e.short = "Short description is required.";
       if (!desc.trim()) e.desc = "Description is required.";
-      if (!categoryId) e.category = "Please select a category.";
+      if (!categoryIds.length) e.category = "Please select at least one category.";
       if (!images.length) e.images = "Please upload a primary image.";
       if (!affiliateUrl.trim()) e.affiliate = "Affiliate URL is required.";
       else if (!isValidAffiliateUrl(affiliateUrl)) e.affiliate = "Please enter a valid secure affiliate URL.";
@@ -193,7 +195,8 @@ export function ProductForm({ productId }: { productId?: string }) {
         slug: finalSlug,
         short_description: short.trim() || null,
         description: desc.trim() || null,
-        category_id: categoryId || null,
+        category_id: categoryIds[0] ?? null,
+        category_ids: categoryIds,
         subcategory: subcategory.trim() || null,
         brand: brand.trim() || null,
         affiliate_url: affiliateUrl.trim() || null, // stored exactly as entered — never altered
@@ -259,7 +262,10 @@ export function ProductForm({ productId }: { productId?: string }) {
       </div>
     );
 
-  const cat = cats.find((c) => c.id === categoryId);
+  const selectedCats = categoryIds.flatMap((id) => {
+    const c = cats.find((cat) => cat.id === id);
+    return c ? [{ name: c.name, slug: c.slug }] : [];
+  });
   const previewData: ProductFull = {
     id: productId ?? "preview",
     name: name || "Product name",
@@ -267,7 +273,9 @@ export function ProductForm({ productId }: { productId?: string }) {
     short_description: short || null,
     description: desc || null,
     brand: brand || null,
-    category_id: categoryId || null,
+    category_id: categoryIds[0] ?? null,
+    category_ids: categoryIds,
+    assigned_categories: selectedCats,
     affiliate_url: affiliateUrl || null,
     retailer,
     retailer_product_id: retailerProductId || null,
@@ -276,7 +284,7 @@ export function ProductForm({ productId }: { productId?: string }) {
     price_updated_at: priceDate || null,
     featured,
     created_at: new Date().toISOString(),
-    category: cat ? { name: cat.name, slug: cat.slug } : null,
+    category: selectedCats[0] ?? null,
     image: images[0]?.url ?? null,
     imageAlt: null,
     images: images.map((i) => ({ image_url: i.url, alt_text: i.alt })),
@@ -300,12 +308,7 @@ export function ProductForm({ productId }: { productId?: string }) {
           <textarea rows={8} className={textareaCls} value={desc} onChange={(e) => setDesc(e.target.value)} />
         </Field>
         <div className="grid gap-4 sm:grid-cols-3">
-          <Field label="Category" required error={errors.category}>
-            <select className={inputCls} value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-              <option value="">Select a category</option>
-              {cats.map((c) => <option key={c.id} value={c.id}>{c.name}{c.active ? "" : " (inactive)"}</option>)}
-            </select>
-          </Field>
+          <CategorySelect categories={cats} value={categoryIds} onChange={(ids) => { setCategoryIds(ids); setErrors((current) => ({ ...current, category: undefined })); }} error={errors.category} />
           <Field label="Subcategory"><input className={inputCls} value={subcategory} onChange={(e) => setSubcategory(e.target.value)} /></Field>
           <Field label="Brand"><input className={inputCls} value={brand} onChange={(e) => setBrand(e.target.value)} /></Field>
         </div>
