@@ -11,6 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { PlanetHero } from "@/components/store/PlanetHero";
+import { CelestialScrollWorld } from "@/components/store/CelestialScrollWorld";
 import { buttonVariants } from "@/components/ui/button";
 import { CategoryCard } from "@/components/store/CategoryCard";
 import { ProductScrollRail } from "@/components/store/ProductScrollRail";
@@ -90,14 +91,19 @@ function Home() {
   }, [cats, home.allProducts]);
 
   return (
-    <>
+    <div className="relative">
+      {/* CELESTIAL BACKGROUND SCROLL WORLD (Earth, Venus & Mars orbit down to bottom) */}
+      <CelestialScrollWorld />
+
       {/* HERO */}
-      <PlanetHero />
+      <div className="relative z-10">
+        <PlanetHero />
+      </div>
 
       {/* FESTIVAL SPECIAL — DIWALI (Single-Line Horizontal Rail) */}
       <section
         id="festival-special"
-        className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-16 pb-6 sm:px-6"
+        className="relative z-10 mx-auto max-w-7xl scroll-mt-20 px-4 pt-16 pb-6 sm:px-6"
       >
         <div className="relative overflow-hidden rounded-3xl border border-primary/25 bg-gradient-to-b from-primary/10 via-card/50 to-card/25 p-5 sm:p-8 md:p-10 shadow-glow">
           <div className="starfield absolute inset-0 opacity-40 pointer-events-none" />
@@ -139,7 +145,10 @@ function Home() {
       </section>
 
       {/* FEATURED CATEGORIES GATEWAY */}
-      <section id="categories" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-12 pb-8 sm:px-6">
+      <section
+        id="categories"
+        className="relative z-10 mx-auto max-w-7xl scroll-mt-20 px-4 pt-12 pb-8 sm:px-6"
+      >
         <SectionHead eyebrow="Constellations" title="Featured categories" />
         <div className="mt-6 sm:mt-8 grid grid-cols-2 gap-2.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
           {cats.slice(0, 8).map((c, i) => (
@@ -150,7 +159,7 @@ function Home() {
 
       {/* SEPARATE DEDICATED PRODUCT RAILS FOR EACH CATEGORY */}
       {categoriesWithProducts.length > 0 && (
-        <section id="category-rails" className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+        <section id="category-rails" className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6">
           <div className="space-y-6 sm:space-y-10">
             {categoriesWithProducts.map(({ category, products }) => (
               <div
@@ -178,7 +187,7 @@ function Home() {
 
       {/* FEATURED PRODUCTS (Horizontal Rail) */}
       {home.featured.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+        <section className="relative z-10 mx-auto max-w-7xl px-4 py-10 sm:px-6">
           <ProductScrollRail
             title="Featured products"
             eyebrow="Hand-picked"
@@ -191,7 +200,7 @@ function Home() {
 
       {/* NEW ARRIVALS (Horizontal Rail) */}
       {home.newest.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+        <section className="relative z-10 mx-auto max-w-7xl px-4 py-10 sm:px-6">
           <ProductScrollRail
             title="New arrivals"
             eyebrow="Just landed"
@@ -203,7 +212,7 @@ function Home() {
       )}
 
       {/* INTERESTS */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+      <section className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6">
         <SectionHead eyebrow="Navigate by curiosity" title="Explore by interest" />
         <div className="mt-8 flex flex-wrap gap-2.5">
           {INTERESTS.map((t) => (
@@ -220,7 +229,7 @@ function Home() {
       </section>
 
       {/* WHY OUR STORE */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+      <section className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6">
         <SectionHead eyebrow="Mission brief" title="Why our store" />
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           {[
@@ -250,7 +259,7 @@ function Home() {
       </section>
 
       {/* INSTAGRAM */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+      <section className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6">
         <div className="relative overflow-hidden rounded-3xl border border-border px-6 py-14 text-center sm:px-12">
           <div className="nebula starfield absolute inset-0" />
           <div className="relative">
@@ -272,7 +281,7 @@ function Home() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
 

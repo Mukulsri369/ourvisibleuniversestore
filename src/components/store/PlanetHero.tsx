@@ -155,7 +155,7 @@ export function PlanetHero() {
       <div className="planet-side-row">
         {sides.map((side, index) => (
           <Button
-            key={index}
+            key={side.id}
             type="button"
             variant="ghost"
             className={`planet-slot planet-slot-${index === 0 ? "left" : "right"}`}
