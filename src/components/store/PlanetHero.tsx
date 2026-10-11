@@ -72,7 +72,6 @@ export function PlanetHero() {
     if (!reducedMotion) setLoaded((current) => (current.includes(id) ? current : [...current, id]));
   }
 
-  const entrance = ready && !reducedMotion;
   return (
     <section ref={section} className="planet-hero" aria-label="Explore the planets">
       <div className="planet-sky" aria-hidden="true">
@@ -83,6 +82,7 @@ export function PlanetHero() {
               src={p.poster}
               alt=""
               fetchPriority={p.id === "earth" ? "high" : "auto"}
+              suppressHydrationWarning
             />
             <video
               ref={(video) => {
@@ -97,6 +97,7 @@ export function PlanetHero() {
               playsInline
               preload={p.id === featured ? "auto" : "none"}
               aria-hidden="true"
+              suppressHydrationWarning
             />
           </div>
         ))}
@@ -113,7 +114,7 @@ export function PlanetHero() {
           <AnimatePresence mode="sync" initial={false}>
             <motion.h1
               key={planet.id}
-              initial={entrance ? { y: "100%", opacity: 0 } : false}
+              initial={false}
               animate={{ y: 0, opacity: 1 }}
               exit={reducedMotion ? { opacity: 1 } : { y: "-60%", opacity: 0 }}
               transition={{ duration: reducedMotion ? 0 : 0.45, ease: [0.16, 1, 0.3, 1] }}
@@ -126,13 +127,13 @@ export function PlanetHero() {
         <motion.div
           className="planet-rule"
           initial={false}
-          animate={entrance ? { scaleX: [0, 1] } : { scaleX: 1 }}
+          animate={{ scaleX: 1 }}
           transition={{ duration: 0.65 }}
         />
         <motion.p
           key={planet.id}
           className="planet-lede"
-          initial={entrance ? { opacity: 0, y: 12 } : false}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reducedMotion ? 0 : 0.55 }}
         >
@@ -141,7 +142,7 @@ export function PlanetHero() {
         <motion.div
           className="planet-cta"
           initial={false}
-          animate={entrance ? { opacity: [0, 1], y: [8, 0] } : { opacity: 1, y: 0 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
         >
           <Link

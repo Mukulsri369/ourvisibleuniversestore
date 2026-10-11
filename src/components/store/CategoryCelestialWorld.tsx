@@ -35,13 +35,7 @@ export function CategoryCelestialWorld({ system, className }: CategoryCelestialW
   const planetRotate = useTransform(smoothY, [0, 800], [0, 18]);
   const moonParallax = useTransform(smoothY, [0, 800], [0, 140]);
 
-  if (!mounted) {
-    return (
-      <div className={cn("relative overflow-hidden py-6 sm:py-8", className)}>
-        <div className="h-44 w-full" />
-      </div>
-    );
-  }
+  const hasDynamicParallax = mounted && !prefersReduced;
 
   return (
     <div
@@ -110,7 +104,7 @@ export function CategoryCelestialWorld({ system, className }: CategoryCelestialW
         {/* LEFT / CENTER: THEMED CELESTIAL GLOBE & ORBITING MOONS */}
         <div className="relative flex-1 flex items-center justify-center py-4 w-full">
           <motion.div
-            style={prefersReduced ? undefined : { y: planetY }}
+            style={hasDynamicParallax ? { y: planetY } : undefined}
             className="relative flex items-center justify-center"
           >
             {/* ATMOSPHERIC CORONA BREATHING PULSE */}
@@ -150,11 +144,11 @@ export function CategoryCelestialWorld({ system, className }: CategoryCelestialW
             <motion.button
               type="button"
               onClick={() => setShowTelemetry(true)}
-              style={prefersReduced ? undefined : { rotate: planetRotate }}
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.98 }}
               className="group relative z-20 size-32 sm:size-40 rounded-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary shadow-2xl transition-transform"
               style={{
+                ...(hasDynamicParallax ? { rotate: planetRotate } : {}),
                 background: system.cutoutUrl ? undefined : system.textureGradient,
                 boxShadow: `inset -18px -18px 30px ${system.shadowColor}, 0 0 40px ${system.coronaGlow}`,
               }}
@@ -384,46 +378,50 @@ function MoonOrbit({ moon, system, index, prefersReduced, onHover, onClick }: Mo
       />
 
       {/* ORBITING MOON CONTAINER */}
-      <motion.div
-        animate={
-          prefersReduced
-            ? undefined
-            : {
-                rotate: 360,
-              }
-        }
-        transition={{
-          duration: animDuration,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-        className="absolute pointer-events-auto"
+      <div
+        className="absolute pointer-events-none"
         style={{
           width: `${moon.orbitRadiusX * 2}px`,
           height: `${moon.orbitRadiusY * 2}px`,
           transform: "rotateZ(-12deg)",
         }}
       >
-        <motion.button
-          type="button"
-          onMouseEnter={() => onHover(moon)}
-          onMouseLeave={() => onHover(null)}
-          onClick={onClick}
-          whileHover={{ scale: 1.25 }}
-          className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full cursor-pointer shadow-md focus:outline-none focus-visible:ring-1 focus-visible:ring-primary"
-          style={{
-            width: `${moon.size}px`,
-            height: `${moon.size}px`,
-            backgroundColor: moon.color,
-            boxShadow: `0 0 16px ${moon.glow}, inset -3px -3px 6px rgba(0,0,0,0.6)`,
+        <motion.div
+          animate={
+            prefersReduced
+              ? undefined
+              : {
+                  rotate: 360,
+                }
+          }
+          transition={{
+            duration: animDuration,
+            repeat: Infinity,
+            ease: "linear",
           }}
-          title={`${moon.name}: ${moon.description}`}
-          aria-label={`Inspect moon ${moon.name}`}
+          className="relative size-full pointer-events-auto"
         >
-          {/* Surface Texture Simulation */}
-          <div className="size-full rounded-full bg-gradient-to-tr from-black/50 via-transparent to-white/40" />
-        </motion.button>
-      </motion.div>
+          <motion.button
+            type="button"
+            onMouseEnter={() => onHover(moon)}
+            onMouseLeave={() => onHover(null)}
+            onClick={onClick}
+            whileHover={{ scale: 1.25 }}
+            className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full cursor-pointer shadow-md focus:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+            style={{
+              width: `${moon.size}px`,
+              height: `${moon.size}px`,
+              backgroundColor: moon.color,
+              boxShadow: `0 0 16px ${moon.glow}, inset -3px -3px 6px rgba(0,0,0,0.6)`,
+            }}
+            title={`${moon.name}: ${moon.description}`}
+            aria-label={`Inspect moon ${moon.name}`}
+          >
+            {/* Surface Texture Simulation */}
+            <div className="size-full rounded-full bg-gradient-to-tr from-black/50 via-transparent to-white/40" />
+          </motion.button>
+        </motion.div>
+      </div>
     </div>
   );
 }
