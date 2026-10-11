@@ -68,7 +68,7 @@ export function PlanetHero() {
         <p className="planet-brand">OUR VISIBLE UNIVERSE <span>STORE</span></p>
         <motion.p className="planet-eyebrow" initial={false} animate={{ opacity: 1, y: 0 }} >PLANET</motion.p>
         <div className="planet-title-mask" aria-live="polite" aria-atomic="true">
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="sync" initial={false}>
             <motion.h1 key={planet.id} initial={entrance ? { y: "100%", opacity: 0 } : false}
               animate={{ y: 0, opacity: 1 }} exit={reducedMotion ? { opacity: 1 } : { y: "-60%", opacity: 0 }}
               transition={{ duration: reducedMotion ? 0 : 0.45, ease: [0.16, 1, 0.3, 1] }} className="planet-title">{planet.name}</motion.h1>

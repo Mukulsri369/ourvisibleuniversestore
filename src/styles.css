@@ -288,7 +288,7 @@
   .planet-slot { top: 522px; }
 }
 @media (max-width: 639px) {
-  .planet-hero { min-height: 650px; height: calc(100svh - 104px); }
+  .planet-hero { min-height: 620px; height: calc(100svh - 124px); }
   .planet-copy { padding: 40px 24px 0; }
   .planet-brand { font-size: 12px; }
   .planet-eyebrow { margin-top: 36px; font-size: 18px; }
@@ -298,7 +298,7 @@
   .planet-lede { max-width: 350px; min-height: 106px; font-size: 15px; margin-top: 20px; }
   .planet-cta { margin-top: 26px; }
   .planet-shop { height: 54px; font-size: 13px; padding-inline: 24px; }
-  .planet-slot { top: 449px; width: 140px; height: 90px; }
+  .planet-slot { top: 480px; width: 140px; height: 90px; }
   .planet-slot-left { left: -44px; }
   .planet-slot-right { right: -44px; }
   .planet-cutouts { width: 90px; height: 90px; }
