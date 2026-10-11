@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, BadgeCheck, Compass, Instagram, ShieldCheck, Sparkles } from "lucide-react";
-import { GalaxyScene } from "@/components/store/GalaxyScene";
+import { PlanetHero } from "@/components/store/PlanetHero";
 import { buttonVariants } from "@/components/ui/button";
 import { CategoryCard } from "@/components/store/CategoryCard";
 import { ProductGrid } from "@/components/store/ProductCard";
@@ -36,27 +36,7 @@ function Home() {
   return (
     <>
       {/* HERO */}
-      <section className="cosmic-hero relative isolate overflow-hidden">
-        <GalaxyScene />
-        <div className="cosmic-hero-shade absolute inset-0 -z-10" />
-        <div className="cosmic-hero-copy mx-auto max-w-7xl px-4 sm:px-6">
-          <p className="eyebrow">Our Visible Universe Store</p>
-          <h1 className="mt-5 max-w-2xl text-5xl leading-[1.06] sm:text-7xl lg:text-8xl">
-            Bring the Universe <em className="text-gradient-gold">Closer.</em>
-          </h1>
-          <p className="mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">
-            Discover astronomy-inspired products, space gear, cosmic décor, apparel and gifts curated for curious minds.
-          </p>
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <Link to="/shop" className={buttonVariants({ variant: "affiliate", size: "xl" })}>
-              EXPLORE THE STORE <ArrowRight />
-            </Link>
-            <a href="#categories" className={buttonVariants({ variant: "glass", size: "xl" })}>
-              EXPLORE CATEGORIES
-            </a>
-          </div>
-        </div>
-      </section>
+      <PlanetHero />
 
       {/* CATEGORIES */}
       <section id="categories" className="mx-auto max-w-7xl scroll-mt-20 px-4 py-16 sm:px-6">
