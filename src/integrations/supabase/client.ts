@@ -31,19 +31,26 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 }
 
 function createSupabaseClient() {
-  // Use import.meta.env for client-side (Vite build-time replacement)
-  // Fall back to process.env for SSR (server-side rendering)
   const SUPABASE_URL =
-    import.meta.env["VITE_SUPABASE_URL"] ||
-    process.env["SUPABASE_URL"] ||
+    (typeof import.meta !== "undefined" && import.meta.env?.["VITE_SUPABASE_URL"]) ||
+    (typeof process !== "undefined"
+      ? process.env?.["VITE_SUPABASE_URL"] || process.env?.["SUPABASE_URL"]
+      : undefined) ||
     "https://mock.supabase.co";
   const SUPABASE_PUBLISHABLE_KEY =
-    import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
-    process.env["SUPABASE_PUBLISHABLE_KEY"] ||
+    (typeof import.meta !== "undefined" && import.meta.env?.["VITE_SUPABASE_PUBLISHABLE_KEY"]) ||
+    (typeof process !== "undefined"
+      ? process.env?.["VITE_SUPABASE_PUBLISHABLE_KEY"] || process.env?.["SUPABASE_PUBLISHABLE_KEY"]
+      : undefined) ||
     "sb_mock_key";
 
-  const isMock = !import.meta.env["VITE_SUPABASE_URL"] && !process.env["SUPABASE_URL"];
-  if (isMock) {
+  const isReal =
+    Boolean(SUPABASE_URL) &&
+    Boolean(SUPABASE_PUBLISHABLE_KEY) &&
+    SUPABASE_URL !== "https://mock.supabase.co" &&
+    !SUPABASE_URL.includes("mock.supabase.co");
+
+  if (!isReal) {
     console.warn(
       "[Supabase] Missing Supabase environment variable(s). Connect Supabase in Lovable Cloud or .env.",
     );
@@ -51,13 +58,13 @@ function createSupabaseClient() {
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
     global: {
-      fetch: isMock
-        ? async () =>
+      fetch: isReal
+        ? createSupabaseFetch(SUPABASE_PUBLISHABLE_KEY)
+        : async () =>
             new Response(JSON.stringify([]), {
               status: 200,
               headers: { "Content-Type": "application/json" },
-            })
-        : createSupabaseFetch(SUPABASE_PUBLISHABLE_KEY),
+            }),
     },
     auth: {
       storage: brokeredPreviewStorage(),

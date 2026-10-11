@@ -10,26 +10,52 @@ export const STORE_NAME = "Our Visible Universe";
 
 let _client: ReturnType<typeof createClient<Database>> | null = null;
 
+function getSupabaseUrl(): string {
+  if (typeof import.meta !== "undefined" && import.meta.env?.["VITE_SUPABASE_URL"]) {
+    return import.meta.env["VITE_SUPABASE_URL"] as string;
+  }
+  if (typeof process !== "undefined" && process.env) {
+    return (process.env["VITE_SUPABASE_URL"] || process.env["SUPABASE_URL"] || "") as string;
+  }
+  return "";
+}
+
+function getSupabaseKey(): string {
+  if (typeof import.meta !== "undefined" && import.meta.env?.["VITE_SUPABASE_PUBLISHABLE_KEY"]) {
+    return import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] as string;
+  }
+  if (typeof process !== "undefined" && process.env) {
+    return (process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
+      process.env["SUPABASE_PUBLISHABLE_KEY"] ||
+      "") as string;
+  }
+  return "";
+}
+
 /** Session-less client for public reads. Row Level Security limits it to live products. */
 export function publicDb() {
   if (_client) return _client;
-  const url = (import.meta.env["VITE_SUPABASE_URL"] as string) || "https://mock.supabase.co";
-  const key = (import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] as string) || "sb_mock_key_anon";
+  const url = getSupabaseUrl() || "https://mock.supabase.co";
+  const key = getSupabaseKey() || "sb_mock_key_anon";
+  const isReal =
+    Boolean(url) &&
+    Boolean(key) &&
+    url !== "https://mock.supabase.co" &&
+    !url.includes("mock.supabase.co");
+
   _client = createClient<Database>(url, key, {
     auth: { persistSession: false, autoRefreshToken: false, storage: undefined },
     global: {
-      fetch: async (input, init) => {
-        if (
-          !import.meta.env["VITE_SUPABASE_URL"] ||
-          !import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"]
-        ) {
+      fetch: (input, init) => {
+        if (!isReal) {
           const headersStr = JSON.stringify(init?.headers ?? {});
           const isSingle = headersStr.includes("vnd.pgrst.object+json");
-          const body = isSingle ? "null" : "[]";
-          return new Response(body, {
-            status: 200,
-            headers: { "Content-Type": "application/json", "content-range": "0-0/0" },
-          });
+          return Promise.resolve(
+            new Response(isSingle ? "null" : "[]", {
+              status: 200,
+              headers: { "Content-Type": "application/json", "content-range": "0-0/0" },
+            }),
+          );
         }
         const h = new Headers(init?.headers);
         if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`)

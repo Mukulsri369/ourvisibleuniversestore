@@ -33,12 +33,18 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 }
 
 function createSupabaseAdminClient() {
-  const SUPABASE_URL = process.env["SUPABASE_URL"] || "https://mock.supabase.co";
+  const SUPABASE_URL =
+    process.env["SUPABASE_URL"] || process.env["VITE_SUPABASE_URL"] || "https://mock.supabase.co";
   const SUPABASE_SERVICE_ROLE_KEY =
     process.env["SUPABASE_SERVICE_ROLE_KEY"] || "sb_mock_service_key";
 
-  const isMock = !process.env["SUPABASE_URL"] || !process.env["SUPABASE_SERVICE_ROLE_KEY"];
-  if (isMock) {
+  const isReal =
+    Boolean(SUPABASE_URL) &&
+    Boolean(SUPABASE_SERVICE_ROLE_KEY) &&
+    SUPABASE_URL !== "https://mock.supabase.co" &&
+    SUPABASE_SERVICE_ROLE_KEY !== "sb_mock_service_key";
+
+  if (!isReal) {
     console.warn(
       "[Supabase] Missing server Supabase environment variables. Connect Supabase in Lovable Cloud or .env.",
     );
