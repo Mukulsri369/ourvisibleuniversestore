@@ -94,7 +94,7 @@ export function PlanetHero() {
       </div>
       <Button variant="glass" size="icon" className="planet-scroll" aria-label="Explore categories"
         onClick={() => document.getElementById("categories")?.scrollIntoView({ behavior: reducedMotion ? "instant" : "smooth" })}><ArrowDown /></Button>
-      {!reducedMotion && <Button variant="ghost" size="icon" className="planet-playback" aria-label={paused ? "Play planet video" : "Pause planet video"}
+      {ready && !reducedMotion && <Button variant="ghost" size="icon" className="planet-playback" aria-label={paused ? "Play planet video" : "Pause planet video"}
         title={paused ? "Play planet video" : "Pause planet video"} onClick={() => setPaused((value) => !value)}>{paused ? <Play /> : <Pause />}</Button>}
     </section>
   );
