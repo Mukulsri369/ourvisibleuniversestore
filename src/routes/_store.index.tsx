@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import {
   ArrowRight,
   BadgeCheck,
@@ -12,7 +13,7 @@ import {
 import { PlanetHero } from "@/components/store/PlanetHero";
 import { buttonVariants } from "@/components/ui/button";
 import { CategoryCard } from "@/components/store/CategoryCard";
-import { ProductGrid } from "@/components/store/ProductCard";
+import { ProductScrollRail } from "@/components/store/ProductScrollRail";
 import { EmptyState } from "@/components/store/Pagination";
 import { categoriesQuery, homeQuery, settingsQuery } from "@/lib/store";
 
@@ -40,7 +41,7 @@ export const Route = createFileRoute("/_store/")({
       ]);
       return home;
     } catch {
-      return { featured: [], newest: [], festival: [] };
+      return { featured: [], newest: [], festival: [], allProducts: [] };
     }
   },
   component: Home,
@@ -65,17 +66,36 @@ function Home() {
   const { data: cats = [] } = useSuspenseQuery(categoriesQuery);
   const { data: settings } = useSuspenseQuery(settingsQuery);
 
+  // Group products by active category
+  const categoriesWithProducts = useMemo(() => {
+    const all = home.allProducts || [];
+    return cats
+      .map((cat) => {
+        const matching = all.filter(
+          (p) =>
+            p.category_id === cat.id ||
+            (p.category_ids && p.category_ids.includes(cat.id)) ||
+            (p.category && p.category.slug === cat.slug),
+        );
+        return {
+          category: cat,
+          products: matching,
+        };
+      })
+      .filter((entry) => entry.products.length > 0);
+  }, [cats, home.allProducts]);
+
   return (
     <>
       {/* HERO */}
       <PlanetHero />
 
-      {/* FESTIVAL SPECIAL — DIWALI */}
+      {/* FESTIVAL SPECIAL — DIWALI (Single-Line Horizontal Rail) */}
       <section
         id="festival-special"
         className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-16 pb-6 sm:px-6"
       >
-        <div className="relative overflow-hidden rounded-3xl border border-primary/25 bg-gradient-to-b from-primary/10 via-card/50 to-card/25 p-6 sm:p-8 md:p-10 shadow-glow">
+        <div className="relative overflow-hidden rounded-3xl border border-primary/25 bg-gradient-to-b from-primary/10 via-card/50 to-card/25 p-5 sm:p-8 md:p-10 shadow-glow">
           <div className="starfield absolute inset-0 opacity-40 pointer-events-none" />
           <div className="relative">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -83,10 +103,10 @@ function Home() {
                 <p className="eyebrow flex items-center gap-1.5 text-primary">
                   <Flame className="size-3.5 text-primary" /> Festival Special · Diwali
                 </p>
-                <h2 className="mt-2 text-3xl sm:text-5xl text-foreground">
+                <h2 className="mt-2 text-2xl sm:text-5xl font-semibold text-foreground">
                   Festival of Lights & Cosmic Glow
                 </h2>
-                <p className="mt-2.5 max-w-2xl text-sm text-muted-foreground sm:text-base">
+                <p className="mt-2.5 max-w-2xl text-xs sm:text-base text-muted-foreground">
                   Illuminate your home and celebrations with radiant galaxy night lights,
                   illuminated planets, handcrafted cosmic lamps, and festive starry glow.
                 </p>
@@ -100,9 +120,9 @@ function Home() {
               </Link>
             </div>
 
-            <div className="mt-8">
+            <div className="mt-6 sm:mt-8">
               {home.festival && home.festival.length > 0 ? (
-                <ProductGrid items={home.festival} />
+                <ProductScrollRail variant="festive" items={home.festival} className="my-0" />
               ) : (
                 <EmptyState
                   title="Festive illuminations are on their way."
@@ -114,46 +134,67 @@ function Home() {
         </div>
       </section>
 
-      {/* CATEGORIES */}
-      <section id="categories" className="mx-auto max-w-7xl scroll-mt-20 px-4 py-16 sm:px-6">
+      {/* FEATURED CATEGORIES GATEWAY */}
+      <section id="categories" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-12 pb-8 sm:px-6">
         <SectionHead eyebrow="Constellations" title="Featured categories" />
-        <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+        <div className="mt-6 sm:mt-8 grid grid-cols-2 gap-2.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
           {cats.slice(0, 8).map((c, i) => (
             <CategoryCard key={c.id} c={c} index={i} />
           ))}
         </div>
       </section>
 
-      {/* FEATURED */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-        <SectionHead
-          eyebrow="Hand-picked"
-          title="Featured products"
-          link={{ to: "/search", search: { featured: true }, label: "View all featured" }}
-        />
-        <div className="mt-8">
-          {home.featured.length ? (
-            <ProductGrid items={home.featured} />
-          ) : (
-            <EmptyState
-              title="New discoveries are on the way."
-              text="Our curators are charting the first products. Check back soon."
-            />
-          )}
-        </div>
-      </section>
-
-      {/* NEW */}
-      {home.newest.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-          <SectionHead
-            eyebrow="Just landed"
-            title="New arrivals"
-            link={{ to: "/search", search: { sort: "newest" }, label: "See everything new" }}
-          />
-          <div className="mt-8">
-            <ProductGrid items={home.newest} />
+      {/* SEPARATE DEDICATED PRODUCT RAILS FOR EACH CATEGORY */}
+      {categoriesWithProducts.length > 0 && (
+        <section id="category-rails" className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+          <div className="space-y-6 sm:space-y-10">
+            {categoriesWithProducts.map(({ category, products }) => (
+              <div
+                key={category.id}
+                className="rounded-2xl border border-border/40 bg-card/25 p-4 sm:p-6 backdrop-blur-sm"
+              >
+                <ProductScrollRail
+                  title={category.name}
+                  eyebrow="Constellation Collection"
+                  count={products.length}
+                  icon={<Sparkles className="size-3 text-primary" />}
+                  link={{
+                    to: "/category/$slug",
+                    params: { slug: category.slug },
+                    label: `Explore all ${category.name}`,
+                  }}
+                  items={products}
+                  className="my-0"
+                />
+              </div>
+            ))}
           </div>
+        </section>
+      )}
+
+      {/* FEATURED PRODUCTS (Horizontal Rail) */}
+      {home.featured.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+          <ProductScrollRail
+            title="Featured products"
+            eyebrow="Hand-picked"
+            link={{ to: "/search", search: { featured: true }, label: "View all featured" }}
+            items={home.featured}
+            className="my-0"
+          />
+        </section>
+      )}
+
+      {/* NEW ARRIVALS (Horizontal Rail) */}
+      {home.newest.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+          <ProductScrollRail
+            title="New arrivals"
+            eyebrow="Just landed"
+            link={{ to: "/search", search: { sort: "newest" }, label: "See everything new" }}
+            items={home.newest}
+            className="my-0"
+          />
         </section>
       )}
 
@@ -166,7 +207,7 @@ function Home() {
               key={t}
               to="/search"
               search={{ q: t }}
-              className="rounded-full border border-border bg-card/50 px-5 py-3 text-sm text-foreground transition-colors hover:border-primary/50 hover:text-primary"
+              className="rounded-full border border-border bg-card/50 px-4 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm text-foreground transition-colors hover:border-primary/50 hover:text-primary"
             >
               {t}
             </Link>
@@ -174,7 +215,7 @@ function Home() {
         </div>
       </section>
 
-      {/* WHY */}
+      {/* WHY OUR STORE */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
         <SectionHead eyebrow="Mission brief" title="Why our store" />
         <div className="mt-8 grid gap-4 md:grid-cols-3">
@@ -210,10 +251,10 @@ function Home() {
           <div className="nebula starfield absolute inset-0" />
           <div className="relative">
             <Sparkles className="mx-auto size-6 text-primary" />
-            <h2 className="mx-auto mt-4 max-w-2xl text-4xl sm:text-5xl">
+            <h2 className="mx-auto mt-4 max-w-2xl text-3xl sm:text-5xl font-semibold">
               Join the journey across the cosmos.
             </h2>
-            <p className="mx-auto mt-3 max-w-lg text-muted-foreground">
+            <p className="mx-auto mt-3 max-w-lg text-sm sm:text-base text-muted-foreground">
               Daily astronomy, deep-space imagery and new product drops on Instagram.
             </p>
             <a
@@ -244,13 +285,13 @@ function SectionHead({
     <div className="flex items-end justify-between gap-4">
       <div>
         <p className="eyebrow">{eyebrow}</p>
-        <h2 className="mt-2 text-3xl sm:text-5xl">{title}</h2>
+        <h2 className="mt-2 text-2xl sm:text-5xl font-semibold">{title}</h2>
       </div>
       {link && (
         <Link
           to={link.to}
           search={link.search}
-          className="hidden shrink-0 items-center gap-1 text-sm text-accent hover:underline sm:inline-flex"
+          className="hidden shrink-0 items-center gap-1 text-sm font-medium text-accent hover:underline sm:inline-flex"
         >
           {link.label} <ArrowRight className="size-4" />
         </Link>

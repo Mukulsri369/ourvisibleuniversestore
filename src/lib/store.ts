@@ -4,7 +4,7 @@ import type { Database } from "@/integrations/supabase/types";
 import { productCategoryIds } from "./product-categories";
 
 export const SITE_URL =
-  (import.meta.env["VITE_SITE_URL"] as string | undefined) ??
+  (import.meta.env?.["VITE_SITE_URL"] as string | undefined) ??
   "https://store.ourvisibleuniverse.com";
 export const STORE_NAME = "Our Visible Universe";
 
@@ -17,11 +17,11 @@ let _client: ReturnType<typeof createClient<Database>> | null = null;
 export function publicDb() {
   if (_client) return _client;
   const url =
-    (import.meta.env["VITE_SUPABASE_URL"] as string | undefined) ||
+    (import.meta.env?.["VITE_SUPABASE_URL"] as string | undefined) ||
     (process.env["SUPABASE_URL"] as string | undefined) ||
     DEFAULT_SUPABASE_URL;
   const key =
-    (import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] as string | undefined) ||
+    (import.meta.env?.["VITE_SUPABASE_PUBLISHABLE_KEY"] as string | undefined) ||
     (process.env["SUPABASE_PUBLISHABLE_KEY"] as string | undefined) ||
     DEFAULT_SUPABASE_KEY;
 
@@ -57,6 +57,8 @@ export type ProductCardData = {
   affiliate_url: string | null;
   created_at: string;
   category: { name: string; slug: string } | null;
+  category_id?: string | null;
+  category_ids?: string[];
   image: string | null;
   imageAlt: string | null;
 };
@@ -89,12 +91,19 @@ type RawCard = {
   affiliate_url: string | null;
   created_at: string;
   categories: { name: string; slug: string } | null;
+  category_id?: string | null;
+  category_ids?: string[] | null;
   amazon_url?: string | null;
   product_images: { image_url: string; alt_text: string | null; sort_order: number }[] | null;
 };
 
 export function toCard(r: RawCard): ProductCardData {
   const imgs = [...(r.product_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
+  const catIds = Array.isArray(r.category_ids)
+    ? r.category_ids
+    : r.category_id
+      ? [r.category_id]
+      : [];
   return {
     id: r.id,
     name: r.name,
@@ -106,6 +115,8 @@ export function toCard(r: RawCard): ProductCardData {
     affiliate_url: r.affiliate_url?.trim() ? r.affiliate_url : (r.amazon_url ?? null),
     created_at: r.created_at,
     category: r.categories,
+    category_id: r.category_id ?? null,
+    category_ids: catIds,
     image: imgs[0]?.image_url ?? null,
     imageAlt: imgs[0]?.alt_text ?? null,
   };
@@ -257,10 +268,11 @@ export const homeQuery = queryOptions({
   queryKey: ["home"],
   queryFn: async () => {
     try {
-      const [featured, newest, festival] = await Promise.all([
-        liveProducts().eq("featured", true).order("updated_at", { ascending: false }).limit(8),
-        liveProducts().order("created_at", { ascending: false }).limit(8),
+      const [featured, newest, festival, all] = await Promise.all([
+        liveProducts().eq("featured", true).order("updated_at", { ascending: false }).limit(16),
+        liveProducts().order("created_at", { ascending: false }).limit(16),
         fetchFestivalProducts(),
+        liveProducts().order("created_at", { ascending: false }).limit(120),
       ]);
       if (featured.error) throw featured.error;
       if (newest.error) throw newest.error;
@@ -268,12 +280,14 @@ export const homeQuery = queryOptions({
         featured: (featured.data as unknown as RawCard[]).map(toCard),
         newest: (newest.data as unknown as RawCard[]).map(toCard),
         festival,
+        allProducts: ((all.data ?? []) as unknown as RawCard[]).map(toCard),
       };
     } catch {
       return {
         featured: [],
         newest: [],
         festival: [],
+        allProducts: [],
       };
     }
   },
