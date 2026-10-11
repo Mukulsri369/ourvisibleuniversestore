@@ -61,17 +61,20 @@ export function ProductScrollRail({
     el.addEventListener("scroll", onScroll, { passive: true });
 
     // Resize observer to detect container and children dimension changes
-    const ro = new ResizeObserver(() => {
-      checkScroll();
-    });
-    ro.observe(el);
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      ro = new ResizeObserver(() => {
+        checkScroll();
+      });
+      ro.observe(el);
+    }
 
     // Window resize fallback
     window.addEventListener("resize", checkScroll, { passive: true });
 
     return () => {
       el.removeEventListener("scroll", onScroll);
-      ro.disconnect();
+      ro?.disconnect();
       window.removeEventListener("resize", checkScroll);
     };
   }, [checkScroll, items.length]);

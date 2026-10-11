@@ -44,10 +44,23 @@ export function PlanetHero() {
         const video = videos.current[p.id];
         if (!video) continue;
         if (p.id === featured && visible && !paused && !reducedMotion && !document.hidden) {
-          void video.play().catch(() => {
+          try {
+            const playPromise = video.play();
+            if (playPromise && typeof playPromise.catch === "function") {
+              playPromise.catch(() => {
+                /* The poster stays visible when autoplay is unavailable. */
+              });
+            }
+          } catch {
             /* The poster stays visible when autoplay is unavailable. */
-          });
-        } else video.pause();
+          }
+        } else {
+          try {
+            video.pause();
+          } catch {
+            /* Video pause fallback */
+          }
+        }
       }
     }
     synchronize();

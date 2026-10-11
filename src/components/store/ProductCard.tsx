@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ExternalLink, Sparkles, Telescope } from "lucide-react";
 import { useState } from "react";
-import { formatPrice, type ProductCardData } from "@/lib/store";
+import { formatPrice, logOutboundClick, type ProductCardData } from "@/lib/store";
 import { BuyButton } from "./BuyButton";
 import { cn } from "@/lib/utils";
 
@@ -122,6 +122,7 @@ export function ProductCard({
                   href={p.affiliate_url}
                   target="_blank"
                   rel="nofollow sponsored noopener noreferrer"
+                  onClick={() => logOutboundClick(p.id)}
                   aria-label={`Buy ${p.name}`}
                   className="inline-flex h-6 w-full sm:h-7 sm:w-auto sm:flex-1 items-center justify-center gap-1 rounded-full bg-primary/15 sm:bg-primary text-[9px] sm:text-[10px] font-semibold text-primary sm:text-primary-foreground hover:bg-primary/25 sm:hover:bg-primary/90 transition-colors"
                 >
