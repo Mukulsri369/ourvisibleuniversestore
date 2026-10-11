@@ -15,6 +15,7 @@ import { CelestialScrollWorld } from "@/components/store/CelestialScrollWorld";
 import { buttonVariants } from "@/components/ui/button";
 import { CategoryCard } from "@/components/store/CategoryCard";
 import { ProductScrollRail } from "@/components/store/ProductScrollRail";
+import { SpaceLaserLine } from "@/components/store/SpaceLaserLine";
 import { EmptyState } from "@/components/store/Pagination";
 import { categoriesQuery, homeQuery, settingsQuery } from "@/lib/store";
 
@@ -156,6 +157,15 @@ function Home() {
           ))}
         </div>
       </section>
+
+      {/* SPACE LASER LINE DIVIDER */}
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
+        <SpaceLaserLine
+          label="CONSTELLATION SECTORS"
+          coordinates="RA 05h 35m 17s · DEC -05° 23′ 28″ · ORION NEBULA"
+          className="my-4 sm:my-6"
+        />
+      </div>
 
       {/* SEPARATE DEDICATED PRODUCT RAILS FOR EACH CATEGORY */}
       {categoriesWithProducts.length > 0 && (

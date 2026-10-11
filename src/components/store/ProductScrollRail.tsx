@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { ProductCard } from "./ProductCard";
+import { ProductQuickPreviewModal } from "./ProductQuickPreviewModal";
 import type { ProductCardData } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +35,7 @@ export function ProductScrollRail({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [previewProduct, setPreviewProduct] = useState<ProductCardData | null>(null);
 
   const checkScroll = useCallback(() => {
     const el = scrollRef.current;
@@ -220,10 +222,17 @@ export function ProductScrollRail({
           aria-label={title || "Product carousel"}
         >
           {items.map((p) => (
-            <ProductCard key={p.id} p={p} compact />
+            <ProductCard
+              key={p.id}
+              p={p}
+              compact
+              onQuickPreview={(prod) => setPreviewProduct(prod)}
+            />
           ))}
         </div>
       </div>
+
+      <ProductQuickPreviewModal product={previewProduct} onClose={() => setPreviewProduct(null)} />
     </section>
   );
 }

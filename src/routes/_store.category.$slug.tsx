@@ -1,20 +1,17 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ProductBrowser, validateBrowseSearch } from "@/components/store/ProductBrowser";
-import { CategoryCelestialWorld } from "@/components/store/CategoryCelestialWorld";
-import { CategoryQualityBento } from "@/components/store/CategoryQualityBento";
+import { CategoryFullBackground } from "@/components/store/CategoryFullBackground";
+import { SpaceLaserLine } from "@/components/store/SpaceLaserLine";
 import { getCelestialSystemForCategory } from "@/lib/celestial-catalog";
-import { absoluteUrl, categoryQuery, categoryQualityProductsQuery, SITE_URL } from "@/lib/store";
+import { absoluteUrl, categoryQuery, SITE_URL } from "@/lib/store";
 
 export const Route = createFileRoute("/_store/category/$slug")({
   validateSearch: validateBrowseSearch,
   loader: async ({ context, params }) => {
-    const [cat, qualityProducts] = await Promise.all([
-      context.queryClient.ensureQueryData(categoryQuery(params.slug)),
-      context.queryClient.ensureQueryData(categoryQualityProductsQuery(params.slug)),
-    ]);
+    const cat = await context.queryClient.ensureQueryData(categoryQuery(params.slug));
     if (!cat) throw notFound();
-    return { cat, qualityProducts };
+    return { cat };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData)
@@ -25,8 +22,9 @@ export const Route = createFileRoute("/_store/category/$slug")({
         ],
       };
     const c = loaderData.cat;
+    const celestialSystem = getCelestialSystemForCategory(params.slug);
     const t = `${c.name} | Our Visible Universe Store`;
-    const d = c.description || `Explore ${c.name} curated by Our Visible Universe.`;
+    const d = `“${celestialSystem.quote.text}” — ${c.name} collection at Our Visible Universe.`;
     const img = absoluteUrl(c.image_url);
     return {
       meta: [
@@ -75,38 +73,46 @@ function CategoryPage() {
   const { slug } = Route.useParams();
   const search = Route.useSearch();
   const { data: cat } = useSuspenseQuery(categoryQuery(slug));
-  const { data: qualityProducts = [] } = useSuspenseQuery(categoryQualityProductsQuery(slug));
   const celestialSystem = getCelestialSystemForCategory(slug);
 
   return (
-    <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
-      {/* CELESTIAL ORBITAL STAGE (Planets, Moons, Atmospheric Corona, Telemetry HUD) */}
-      <div className="pt-6 sm:pt-8">
-        <CategoryCelestialWorld system={celestialSystem} />
-      </div>
+    <div className="relative min-h-screen overflow-hidden">
+      {/* FULL-HEIGHT CELESTIAL BACKGROUND MOVING TILL THE BOTTOM OF THE PAGE */}
+      <CategoryFullBackground system={celestialSystem} />
 
-      {/* TOP QUALITY PRODUCT BENTO GRID */}
-      {qualityProducts.length > 0 && (
-        <CategoryQualityBento products={qualityProducts} categoryName={cat!.name} />
-      )}
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 pt-6 sm:pt-8 pb-16">
+        {/* MINIMALIST CATEGORY HEADER WITH POETIC SPACE QUOTE */}
+        <div className="relative overflow-hidden border-b border-border/40 pb-6 sm:pb-8">
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-2 font-mono text-[11px] sm:text-xs uppercase tracking-widest text-primary">
+              <span className="inline-block size-1.5 rounded-full bg-primary animate-pulse" />
+              <span>SECTOR // {celestialSystem.planetName}</span>
+            </div>
 
-      {/* COMPLETE CATEGORY CATALOG BROWSER */}
-      <section className="relative pt-6 pb-16">
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-border/40 pb-4">
-          <div>
-            <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
-              Full Category Catalog
-            </span>
-            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-              All {cat!.name} Gear
-            </h3>
+            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground">
+              {cat.name}
+            </h1>
+
+            {/* POETIC SPACE QUOTE — NO EXTRA EXPLANATORY WORDING */}
+            <div className="mt-1 flex flex-wrap items-baseline gap-2 text-xs sm:text-sm text-muted-foreground/90 font-mono italic max-w-3xl">
+              <span>“{celestialSystem.quote.text}”</span>
+              <span className="text-[11px] sm:text-xs uppercase tracking-wider text-primary/80 not-italic shrink-0 font-sans font-medium">
+                — {celestialSystem.quote.author}
+              </span>
+            </div>
           </div>
-          {cat!.description && (
-            <p className="max-w-md text-xs sm:text-sm text-muted-foreground">{cat!.description}</p>
-          )}
         </div>
+
+        {/* COOL SPACE LASER LINE WITH CELESTIAL COORDINATES */}
+        <SpaceLaserLine
+          label={celestialSystem.laserLabel}
+          coordinates={celestialSystem.coordinates}
+          className="my-6 sm:my-8"
+        />
+
+        {/* DIRECT DENSE PRODUCT CATALOG BROWSER */}
         <ProductBrowser search={search} to={`/category/${slug}`} lockCategory={slug} />
-      </section>
+      </div>
     </div>
   );
 }

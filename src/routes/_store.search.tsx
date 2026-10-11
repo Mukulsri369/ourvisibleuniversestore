@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SearchBox } from "@/components/store/StoreChrome";
 import { ProductBrowser, validateBrowseSearch } from "@/components/store/ProductBrowser";
+import { SpaceLaserLine } from "@/components/store/SpaceLaserLine";
 
 export const Route = createFileRoute("/_store/search")({
   validateSearch: validateBrowseSearch,
@@ -29,18 +30,25 @@ function SearchPage() {
   const search = Route.useSearch();
   return (
     <>
-      <div className="border-b border-border">
-        <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+      <div className="border-b border-border/40">
+        <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 text-center">
           <p className="eyebrow">Search the cosmos</p>
-          <h1 className="mt-2 text-4xl sm:text-5xl">
+          <h1 className="mt-2 text-3xl sm:text-5xl font-bold tracking-tight">
             {search.q ? <>Results for “{search.q}”</> : "Search products"}
           </h1>
-          <div className="mt-6">
+          <div className="mt-6 max-w-xl mx-auto">
             <SearchBox key={search.q} defaultValue={search.q} />
           </div>
         </div>
       </div>
-      <ProductBrowser search={search} to="/search" />
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <SpaceLaserLine
+          label="SPECTRUM SCAN"
+          coordinates={search.q ? `TARGET: ${search.q.toUpperCase()}` : "DEEP SKY GRID"}
+          className="my-6 sm:my-8"
+        />
+        <ProductBrowser search={search} to="/search" />
+      </div>
     </>
   );
 }

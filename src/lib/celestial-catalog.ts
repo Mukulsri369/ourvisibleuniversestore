@@ -21,6 +21,12 @@ export interface CelestialSystemConfig {
   systemName: string;
   planetName: string;
   subtitle: string;
+  quote: {
+    text: string;
+    author: string;
+  };
+  coordinates: string;
+  laserLabel: string;
   bodyType:
     "terrestrial" | "gas_giant" | "ice_giant" | "star" | "dwarf_binary" | "pulsar" | "asteroid";
   hasRings?: boolean;
@@ -52,6 +58,12 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
     systemName: "Jovian System",
     planetName: "JUPITER",
     subtitle: "Lord of the Galilean Moons",
+    quote: {
+      text: "The cosmos is within us. We are made of star-stuff.",
+      author: "Carl Sagan",
+    },
+    coordinates: "RA 17h 52m 14s · DEC -23° 24′ 12″ · JOVIAN SECTOR",
+    laserLabel: "JOVIAN APERTURE & OPTICS AXIS",
     bodyType: "gas_giant",
     hasRings: false,
     primaryColor: "#f59e0b",
@@ -107,6 +119,12 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
     systemName: "Cronian System",
     planetName: "SATURN",
     subtitle: "Crown Jewel of Celestial Rings",
+    quote: {
+      text: "The universe is under no obligation to make sense to you.",
+      author: "Neil deGrasse Tyson",
+    },
+    coordinates: "RA 21h 32m 40s · DEC -15° 48′ 21″ · CRONIAN RING PLANE",
+    laserLabel: "CRONIAN KINETIC HARMONY",
     bodyType: "gas_giant",
     hasRings: true,
     ringColor:
@@ -163,6 +181,12 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
     systemName: "Terran System",
     planetName: "EARTH & LUNA",
     subtitle: "The Pale Blue Oasis",
+    quote: {
+      text: "Look again at that dot. That's here. That's home. That's us.",
+      author: "Carl Sagan",
+    },
+    coordinates: "RA 00h 00m 00s · DEC +00° 00′ 00″ · TERRAN HORIZON",
+    laserLabel: "TERRAN ORBITAL INTERIOR",
     bodyType: "terrestrial",
     hasRings: false,
     primaryColor: "#38bdf8",
@@ -206,6 +230,12 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
     systemName: "Poseidonian System",
     planetName: "NEPTUNE",
     subtitle: "Deep Voyager Ultramarine",
+    quote: {
+      text: "Somewhere, something incredible is waiting to be known.",
+      author: "Carl Sagan",
+    },
+    coordinates: "RA 23h 34m 58s · DEC -04° 12′ 33″ · POSEIDONIAN REALM",
+    laserLabel: "DEEP VOYAGER CRYOSPHERE",
     bodyType: "ice_giant",
     hasRings: false,
     primaryColor: "#0284c7",
@@ -249,6 +279,12 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
     systemName: "Heliosphere",
     planetName: "THE SUN & MERCURY",
     subtitle: "The Primordial Furnace of Visible Light",
+    quote: {
+      text: "Equipped with his senses, man explores the universe and calls the adventure Science.",
+      author: "Edwin Hubble",
+    },
+    coordinates: "SOLAR APEX · 1.00 AU · SPECTRAL CLASS G2V",
+    laserLabel: "PHOTOSPHERIC RADIANCE AXIS",
     bodyType: "star",
     hasRings: false,
     primaryColor: "#f97316",
@@ -293,6 +329,12 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
     systemName: "Aresian System",
     planetName: "MARS & PHOBOS",
     subtitle: "The Red Frontier of Science",
+    quote: {
+      text: "The iron in our blood was forged in the hearts of dying stars.",
+      author: "Carl Sagan",
+    },
+    coordinates: "RA 05h 12m 18s · DEC +24° 31′ 09″ · ARESIAN FRONTIER",
+    laserLabel: "ARESIAN LABORATORY TRANSECT",
     bodyType: "terrestrial",
     hasRings: false,
     primaryColor: "#ef4444",
@@ -336,6 +378,12 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
     systemName: "Uranian System",
     planetName: "URANUS",
     subtitle: "The Tilted Aquamarine Ice Giant",
+    quote: {
+      text: "For my part I know nothing with any certainty, but the sight of the stars makes me dream.",
+      author: "Vincent van Gogh",
+    },
+    coordinates: "RA 03h 02m 10s · DEC +17° 14′ 45″ · URANIAN OBLIQUITY",
+    laserLabel: "AQUAMARINE SPECTRAL TILT",
     bodyType: "ice_giant",
     hasRings: true,
     ringColor:
@@ -381,6 +429,12 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
     systemName: "Kuiper Binary System",
     planetName: "PLUTO & CHARON",
     subtitle: "The Nitrogen Heart of the Kuiper Belt",
+    quote: {
+      text: "Remember to look up at the stars and not down at your feet.",
+      author: "Stephen Hawking",
+    },
+    coordinates: "RA 19h 58m 22s · DEC -22° 11′ 05″ · KUIPER BINARY",
+    laserLabel: "TOMBAUGH EXPLORATION SECTOR",
     bodyType: "dwarf_binary",
     hasRings: false,
     primaryColor: "#c084fc",
@@ -424,6 +478,12 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
     systemName: "Orion Stellar Nursery",
     planetName: "PULSAR CORE",
     subtitle: "Relativistic Light Beacon of the Deep Sky",
+    quote: {
+      text: "We are a way for the cosmos to know itself.",
+      author: "Carl Sagan",
+    },
+    coordinates: "RA 05h 35m 17s · DEC -05° 23′ 28″ · ORION NEBULA CORE",
+    laserLabel: "RELATIVISTIC PULSAR BEACON",
     bodyType: "pulsar",
     hasRings: true,
     ringColor:
@@ -469,6 +529,12 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
     systemName: "Main Belt Protoplanet",
     planetName: "CERES & VESTA",
     subtitle: "Keepers of the Asteroid Belt",
+    quote: {
+      text: "Not only are we in the universe, the universe is in us.",
+      author: "Neil deGrasse Tyson",
+    },
+    coordinates: "RA 14h 22m 38s · DEC +11° 18′ 44″ · MAIN ASTEROID BELT",
+    laserLabel: "PLANETESIMAL FIELD VECTOR",
     bodyType: "asteroid",
     hasRings: false,
     primaryColor: "#94a3b8",
@@ -513,6 +579,12 @@ export const DEFAULT_CELESTIAL_SYSTEM: CelestialSystemConfig = {
   systemName: "Kepler Exoplanetary System",
   planetName: "KEPLER-452B",
   subtitle: "Cousin of the Visible World",
+  quote: {
+    text: "Across the sea of space, the stars are other suns.",
+    author: "Carl Sagan",
+  },
+  coordinates: "RA 19h 44m 00s · DEC +44° 16′ 39″ · KEPLER HABITABLE ZONE",
+  laserLabel: "EXOPLANETARY VECTOR",
   bodyType: "terrestrial",
   hasRings: true,
   ringColor:

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight, CheckCircle2, ExternalLink, Sparkles, Star } from "lucide-react";
+import { ArrowUpRight, ExternalLink, Star } from "lucide-react";
 import { formatPrice, logOutboundClick, type ProductCardData } from "@/lib/store";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -9,13 +9,6 @@ interface CategoryQualityBentoProps {
   categoryName: string;
   className?: string;
 }
-
-const QUALITY_BADGES = [
-  "Editor's Stellar Selection",
-  "Astronomer's Choice",
-  "Precision Specification",
-  "Cosmic Benchmark",
-];
 
 export function CategoryQualityBento({
   products,
@@ -30,22 +23,17 @@ export function CategoryQualityBento({
   return (
     <section className={cn("relative my-8 sm:my-12", className)}>
       {/* SECTION HEADER */}
-      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-border/30 pb-3">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono tracking-wider uppercase text-primary">
-            <Sparkles className="size-3.5" />
-            <span>Curated Quality Spotlight</span>
-            <span aria-hidden="true" className="text-border">
-              ·
-            </span>
-            <span>{categoryName}</span>
-          </div>
-          <h3 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-            Top Tier & Quality Rated
+          <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+            Featured Selections · {categoryName}
+          </span>
+          <h3 className="mt-0.5 text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+            Curated Highlights
           </h3>
         </div>
         <div className="text-xs text-muted-foreground font-mono">
-          <span>{products.length} Benchmark Selections</span>
+          <span>Our Visible Universe Benchmark</span>
         </div>
       </div>
 
@@ -58,11 +46,11 @@ export function CategoryQualityBento({
             <div className="pointer-events-none absolute -right-20 -top-20 size-64 rounded-full bg-primary/10 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-60" />
 
             <div>
-              {/* Card Meta & Quality Badge */}
+              {/* Card Meta */}
               <div className="flex items-center justify-between gap-3 text-xs">
                 <span className="flex items-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-primary">
                   <Star className="size-3.5 fill-primary text-primary" />
-                  <span>{QUALITY_BADGES[0]}</span>
+                  <span>Editor's Selection</span>
                 </span>
                 {leadProduct.price != null && (
                   <span className="font-mono text-sm font-bold tabular-nums text-foreground">
@@ -82,13 +70,12 @@ export function CategoryQualityBento({
                   />
                 ) : (
                   <div className="flex flex-col items-center justify-center p-8 text-center text-muted-foreground">
-                    <Sparkles className="size-8 text-primary/40 mb-2" />
-                    <span className="text-xs font-mono">Cosmic Optical Specimen</span>
+                    <span className="text-xs font-mono">Astronomical Specimen</span>
                   </div>
                 )}
               </div>
 
-              {/* Title & Short Description */}
+              {/* Title */}
               <h4 className="text-lg sm:text-xl font-bold tracking-tight text-foreground transition-colors group-hover:text-primary">
                 <Link
                   to="/product/$slug"
@@ -98,24 +85,6 @@ export function CategoryQualityBento({
                   {leadProduct.name}
                 </Link>
               </h4>
-
-              {leadProduct.short_description && (
-                <p className="mt-2 text-xs sm:text-sm text-muted-foreground line-clamp-2 leading-relaxed">
-                  {leadProduct.short_description}
-                </p>
-              )}
-
-              {/* Quality verification notes */}
-              <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-muted-foreground font-mono">
-                <span className="flex items-center gap-1">
-                  <CheckCircle2 className="size-3.5 text-emerald-500" />
-                  <span>Authentic Optics & Hardware</span>
-                </span>
-                <span aria-hidden="true" className="text-border">
-                  ·
-                </span>
-                <span>Verified Retailer</span>
-              </div>
             </div>
 
             {/* Actions */}
@@ -128,7 +97,7 @@ export function CategoryQualityBento({
                   "rounded-full px-5 py-2 text-xs font-semibold shadow-md shadow-primary/20",
                 )}
               >
-                <span>Inspect Spec</span>
+                <span>View Details</span>
                 <ArrowUpRight className="ml-1 size-3.5" />
               </Link>
 
@@ -143,7 +112,7 @@ export function CategoryQualityBento({
                     "rounded-full px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground",
                   )}
                 >
-                  <span>Check Price on Retailer</span>
+                  <span>Retailer</span>
                   <ExternalLink className="ml-1 size-3" />
                 </a>
               )}
@@ -153,7 +122,7 @@ export function CategoryQualityBento({
 
         {/* COMPANION CARDS (Takes 5 of 12 columns on desktop) */}
         <div className="flex flex-col gap-4 sm:gap-6 md:col-span-5">
-          {companionProducts.map((product, idx) => (
+          {companionProducts.map((product) => (
             <div
               key={product.id}
               className="group relative flex flex-col sm:flex-row items-center gap-4 overflow-hidden rounded-2xl border border-border/40 bg-card/40 p-4 backdrop-blur-md transition-all duration-300 hover:border-border/80 hover:bg-card/70"
@@ -168,7 +137,7 @@ export function CategoryQualityBento({
                     loading="lazy"
                   />
                 ) : (
-                  <Sparkles className="size-5 text-primary/40" />
+                  <span className="text-xs font-mono text-muted-foreground">Optics</span>
                 )}
               </div>
 
@@ -176,7 +145,7 @@ export function CategoryQualityBento({
               <div className="flex-1 min-w-0 space-y-1">
                 <div className="flex items-center justify-between gap-2">
                   <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                    {QUALITY_BADGES[idx + 1] ?? "Quality Rated"}
+                    Selected
                   </span>
                   {product.price != null && (
                     <span className="font-mono text-xs font-bold tabular-nums text-foreground">
@@ -185,7 +154,7 @@ export function CategoryQualityBento({
                   )}
                 </div>
 
-                <h5 className="font-semibold text-sm tracking-tight text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+                <h5 className="font-semibold text-sm tracking-tight text-foreground line-clamp-2 group-hover:text-primary transition-colors">
                   <Link
                     to="/product/$slug"
                     params={{ slug: product.slug }}
@@ -195,19 +164,13 @@ export function CategoryQualityBento({
                   </Link>
                 </h5>
 
-                {product.short_description && (
-                  <p className="text-[11px] text-muted-foreground line-clamp-1 leading-snug">
-                    {product.short_description}
-                  </p>
-                )}
-
                 <div className="pt-2 flex items-center gap-3 text-xs">
                   <Link
                     to="/product/$slug"
                     params={{ slug: product.slug }}
                     className="inline-flex items-center gap-1 font-mono text-[11px] font-medium text-primary hover:underline"
                   >
-                    <span>View Product</span>
+                    <span>View</span>
                     <ArrowUpRight className="size-3" />
                   </Link>
                   {product.affiliate_url && (
