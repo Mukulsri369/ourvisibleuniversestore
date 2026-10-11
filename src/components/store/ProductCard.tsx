@@ -1,12 +1,27 @@
 import { Link } from "@tanstack/react-router";
 import { Telescope } from "lucide-react";
+import { useState } from "react";
 import { formatPrice, type ProductCardData } from "@/lib/store";
 import { BuyButton } from "./BuyButton";
 
-export function ProductImage({ src, alt, className, eager }: { src: string | null; alt: string; className?: string; eager?: boolean }) {
-  if (!src) {
+export function ProductImage({
+  src,
+  alt,
+  className,
+  eager,
+}: {
+  src: string | null;
+  alt: string;
+  className?: string;
+  eager?: boolean;
+}) {
+  const [failed, setFailed] = useState(false);
+
+  if (!src || failed) {
     return (
-      <div className={`flex items-center justify-center bg-secondary nebula text-muted-foreground ${className ?? ""}`}>
+      <div
+        className={`flex items-center justify-center bg-secondary nebula text-muted-foreground ${className ?? ""}`}
+      >
         <Telescope className="size-10 opacity-50" />
       </div>
     );
@@ -17,6 +32,7 @@ export function ProductImage({ src, alt, className, eager }: { src: string | nul
       alt={alt}
       loading={eager ? "eager" : "lazy"}
       decoding="async"
+      onError={() => setFailed(true)}
       className={`object-cover ${className ?? ""}`}
     />
   );
@@ -26,7 +42,11 @@ export function ProductCard({ p }: { p: ProductCardData }) {
   const price = formatPrice(p.price, p.currency);
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card/60 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-card">
-      <Link to="/product/$slug" params={{ slug: p.slug }} className="relative block aspect-square overflow-hidden bg-secondary">
+      <Link
+        to="/product/$slug"
+        params={{ slug: p.slug }}
+        className="relative block aspect-square overflow-hidden bg-secondary"
+      >
         <ProductImage
           src={p.image}
           alt={p.imageAlt || p.name}
@@ -45,7 +65,9 @@ export function ProductCard({ p }: { p: ProductCardData }) {
             {p.name}
           </h3>
         </Link>
-        {p.short_description && <p className="line-clamp-2 text-sm text-muted-foreground">{p.short_description}</p>}
+        {p.short_description && (
+          <p className="line-clamp-2 text-sm text-muted-foreground">{p.short_description}</p>
+        )}
         <p className="mt-auto pt-1 text-sm font-semibold text-foreground">
           {price ?? <span className="font-normal text-muted-foreground">Check latest price</span>}
         </p>
@@ -57,7 +79,13 @@ export function ProductCard({ p }: { p: ProductCardData }) {
           >
             View
           </Link>
-          <BuyButton productId={p.id} url={p.affiliate_url} size="sm" label="Buy now" className="h-10 flex-[1.3] rounded-full" />
+          <BuyButton
+            productId={p.id}
+            url={p.affiliate_url}
+            size="sm"
+            label="Buy now"
+            className="h-10 flex-[1.3] rounded-full"
+          />
         </div>
       </div>
     </article>

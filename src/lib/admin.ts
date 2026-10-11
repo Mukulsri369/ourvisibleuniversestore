@@ -4,7 +4,8 @@ export const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 export const MAX_BYTES = 5 * 1024 * 1024;
 
 export function validateImage(file: File): string | null {
-  if (!ALLOWED_TYPES.includes(file.type)) return `${file.name}: only JPG, JPEG, PNG or WEBP images are allowed.`;
+  if (!ALLOWED_TYPES.includes(file.type))
+    return `${file.name}: only JPG, JPEG, PNG or WEBP images are allowed.`;
   if (file.size > MAX_BYTES * 2) return `${file.name}: image is larger than 10 MB.`;
   return null;
 }
@@ -32,8 +33,10 @@ export async function uploadImage(file: File, folder: "products" | "categories" 
   const err = validateImage(file);
   if (err) throw new Error(err);
   const blob = await optimize(file);
-  if (blob.size > MAX_BYTES) throw new Error(`${file.name}: image is still larger than 5 MB after optimisation.`);
-  const ext = blob.type === "image/webp" ? "webp" : file.name.split(".").pop()?.toLowerCase() || "jpg";
+  if (blob.size > MAX_BYTES)
+    throw new Error(`${file.name}: image is still larger than 5 MB after optimisation.`);
+  const ext =
+    blob.type === "image/webp" ? "webp" : file.name.split(".").pop()?.toLowerCase() || "jpg";
   const path = `${folder}/${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage.from("store-images").upload(path, blob, {
     contentType: blob.type || file.type,

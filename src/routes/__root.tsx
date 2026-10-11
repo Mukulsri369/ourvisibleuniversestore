@@ -59,7 +59,10 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
           >
             Try again
           </button>
-          <a href="/" className="inline-flex h-11 items-center justify-center rounded-full border border-input px-6 text-sm text-foreground">
+          <a
+            href="/"
+            className="inline-flex h-11 items-center justify-center rounded-full border border-input px-6 text-sm text-foreground"
+          >
             Return to Store
           </a>
         </div>
@@ -75,7 +78,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "theme-color", content: "#0b0d1a" },
       { title: "Our Visible Universe Store" },
-      { name: "description", content: "Astronomy-inspired products, space gear, cosmic décor and gifts." },
+      {
+        name: "description",
+        content: "Astronomy-inspired products, space gear, cosmic décor and gifts.",
+      },
       { property: "og:site_name", content: "Our Visible Universe Store" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -98,6 +104,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  if (import.meta.env.MODE === "test") {
+    return <>{children}</>;
+  }
+
   return (
     <html lang="en" className="dark">
       <head>

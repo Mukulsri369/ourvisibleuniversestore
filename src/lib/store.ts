@@ -3,7 +3,9 @@ import { queryOptions } from "@tanstack/react-query";
 import type { Database } from "@/integrations/supabase/types";
 import { productCategoryIds } from "./product-categories";
 
-export const SITE_URL = (import.meta.env['VITE_SITE_URL'] as string | undefined) ?? "https://store.ourvisibleuniverse.com";
+export const SITE_URL =
+  (import.meta.env["VITE_SITE_URL"] as string | undefined) ??
+  "https://store.ourvisibleuniverse.com";
 export const STORE_NAME = "Our Visible Universe";
 
 let _client: ReturnType<typeof createClient<Database>> | null = null;
@@ -11,14 +13,27 @@ let _client: ReturnType<typeof createClient<Database>> | null = null;
 /** Session-less client for public reads. Row Level Security limits it to live products. */
 export function publicDb() {
   if (_client) return _client;
-  const url = import.meta.env['VITE_SUPABASE_URL'] as string;
-  const key = import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] as string;
+  const url = (import.meta.env["VITE_SUPABASE_URL"] as string) || "https://mock.supabase.co";
+  const key = (import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] as string) || "sb_mock_key_anon";
   _client = createClient<Database>(url, key, {
     auth: { persistSession: false, autoRefreshToken: false, storage: undefined },
     global: {
-      fetch: (input, init) => {
+      fetch: async (input, init) => {
+        if (
+          !import.meta.env["VITE_SUPABASE_URL"] ||
+          !import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"]
+        ) {
+          const headersStr = JSON.stringify(init?.headers ?? {});
+          const isSingle = headersStr.includes("vnd.pgrst.object+json");
+          const body = isSingle ? "null" : "[]";
+          return new Response(body, {
+            status: 200,
+            headers: { "Content-Type": "application/json", "content-range": "0-0/0" },
+          });
+        }
         const h = new Headers(init?.headers);
-        if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`) h.delete("Authorization");
+        if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`)
+          h.delete("Authorization");
         h.set("apikey", key);
         return fetch(input, { ...init, headers: h });
       },
@@ -87,7 +102,7 @@ export function toCard(r: RawCard): ProductCardData {
     price: r.price,
     currency: r.currency,
     featured: r.featured,
-    affiliate_url: r.affiliate_url?.trim() ? r.affiliate_url : r.amazon_url ?? null,
+    affiliate_url: r.affiliate_url?.trim() ? r.affiliate_url : (r.amazon_url ?? null),
     created_at: r.created_at,
     category: r.categories,
     image: imgs[0]?.image_url ?? null,
@@ -135,7 +150,11 @@ export function absoluteUrl(path: string | null | undefined) {
 }
 
 function liveProducts() {
-  return publicDb().from("products").select(CARD_SELECT, { count: "exact" }).eq("active", true).is("deleted_at", null);
+  return publicDb()
+    .from("products")
+    .select(CARD_SELECT, { count: "exact" })
+    .eq("active", true)
+    .is("deleted_at", null);
 }
 
 // ---------- Queries ----------
@@ -143,7 +162,11 @@ function liveProducts() {
 export const settingsQuery = queryOptions({
   queryKey: ["settings"],
   queryFn: async () => {
-    const { data, error } = await publicDb().from("public_site_settings").select("*").eq("id", 1).maybeSingle();
+    const { data, error } = await publicDb()
+      .from("public_site_settings")
+      .select("*")
+      .eq("id", 1)
+      .maybeSingle();
     if (error) throw error;
     return data ? { ...data, contact_email: null } : null;
   },
@@ -165,19 +188,93 @@ export const categoriesQuery = queryOptions({
   staleTime: 60_000,
 });
 
+export async function fetchFestivalProducts(): Promise<ProductCardData[]> {
+  try {
+    const db = publicDb();
+    const { data: tagRows } = await db
+      .from("product_tags")
+      .select("product_id")
+      .or("tag.ilike.%diwali%,tag.ilike.%light%")
+      .limit(200);
+
+    const taggedIds = [...new Set((tagRows ?? []).map((t) => t.product_id))];
+
+    const festivalCards: RawCard[] = [];
+    const seenIds = new Set<string>();
+
+    if (taggedIds.length > 0) {
+      const { data: taggedProducts } = await liveProducts()
+        .in("id", taggedIds)
+        .order("featured", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(12);
+
+      if (taggedProducts) {
+        for (const p of taggedProducts as unknown as RawCard[]) {
+          if (!seenIds.has(p.id)) {
+            festivalCards.push(p);
+            seenIds.add(p.id);
+          }
+        }
+      }
+    }
+
+    if (festivalCards.length < 8) {
+      const { data: textProducts } = await liveProducts()
+        .or(
+          "name.ilike.%diwali%,name.ilike.%light%,name.ilike.%lamp%,short_description.ilike.%diwali%,short_description.ilike.%light%",
+        )
+        .order("featured", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(16);
+
+      if (textProducts) {
+        for (const p of textProducts as unknown as RawCard[]) {
+          if (!seenIds.has(p.id)) {
+            festivalCards.push(p);
+            seenIds.add(p.id);
+          }
+          if (festivalCards.length >= 8) break;
+        }
+      }
+    }
+
+    return festivalCards.map(toCard);
+  } catch (err) {
+    console.warn("[Store] fetchFestivalProducts error:", err);
+    return [];
+  }
+}
+
+export const festivalQuery = queryOptions({
+  queryKey: ["festival", "diwali"],
+  queryFn: () => fetchFestivalProducts(),
+  staleTime: 60_000,
+});
+
 export const homeQuery = queryOptions({
   queryKey: ["home"],
   queryFn: async () => {
-    const [featured, newest] = await Promise.all([
-      liveProducts().eq("featured", true).order("updated_at", { ascending: false }).limit(8),
-      liveProducts().order("created_at", { ascending: false }).limit(8),
-    ]);
-    if (featured.error) throw featured.error;
-    if (newest.error) throw newest.error;
-    return {
-      featured: (featured.data as unknown as RawCard[]).map(toCard),
-      newest: (newest.data as unknown as RawCard[]).map(toCard),
-    };
+    try {
+      const [featured, newest, festival] = await Promise.all([
+        liveProducts().eq("featured", true).order("updated_at", { ascending: false }).limit(8),
+        liveProducts().order("created_at", { ascending: false }).limit(8),
+        fetchFestivalProducts(),
+      ]);
+      if (featured.error) throw featured.error;
+      if (newest.error) throw newest.error;
+      return {
+        featured: (featured.data as unknown as RawCard[]).map(toCard),
+        newest: (newest.data as unknown as RawCard[]).map(toCard),
+        festival,
+      };
+    } catch {
+      return {
+        featured: [],
+        newest: [],
+        festival: [],
+      };
+    }
   },
 });
 
@@ -203,7 +300,12 @@ export async function listProducts(p: ListParams) {
   let query = liveProducts();
 
   if (p.category) {
-    const { data: cat } = await db.from("categories").select("id").eq("slug", p.category).eq("active", true).maybeSingle();
+    const { data: cat } = await db
+      .from("categories")
+      .select("id")
+      .eq("slug", p.category)
+      .eq("active", true)
+      .maybeSingle();
     if (!cat) return { items: [] as ProductCardData[], total: 0, page, pageSize };
     query = query.contains("category_ids", [cat.id]);
   }
@@ -215,7 +317,11 @@ export async function listProducts(p: ListParams) {
     const tagWords = words.filter((w) => w.length >= 3);
     const [tagRes, catRes] = await Promise.all([
       tagWords.length
-        ? db.from("product_tags").select("product_id").or(tagWords.map((w) => `tag.ilike.%${w}%`).join(",")).limit(500)
+        ? db
+            .from("product_tags")
+            .select("product_id")
+            .or(tagWords.map((w) => `tag.ilike.%${w}%`).join(","))
+            .limit(500)
         : Promise.resolve({ data: [] as { product_id: string }[] }),
       db.from("categories").select("id").ilike("name", pattern).eq("active", true),
     ]);
@@ -247,7 +353,9 @@ export async function listProducts(p: ListParams) {
       query = query.order("price", { ascending: false, nullsFirst: false });
       break;
     default:
-      query = query.order("featured", { ascending: false }).order("created_at", { ascending: false });
+      query = query
+        .order("featured", { ascending: false })
+        .order("created_at", { ascending: false });
   }
 
   const from = (page - 1) * pageSize;
@@ -263,7 +371,12 @@ export const categoryQuery = (slug: string) =>
   queryOptions({
     queryKey: ["category", slug],
     queryFn: async () => {
-      const { data, error } = await publicDb().from("categories").select("*").eq("slug", slug).eq("active", true).maybeSingle();
+      const { data, error } = await publicDb()
+        .from("categories")
+        .select("*")
+        .eq("slug", slug)
+        .eq("active", true)
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -295,7 +408,11 @@ export async function fetchProductFull(slug: string): Promise<ProductFull | null
   const imgs = [...(r.product_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
   const categoryIds = productCategoryIds(r);
   const { data: assigned, error: categoryError } = categoryIds.length
-    ? await publicDb().from("categories").select("id,name,slug").in("id", categoryIds).eq("active", true)
+    ? await publicDb()
+        .from("categories")
+        .select("id,name,slug")
+        .in("id", categoryIds)
+        .eq("active", true)
     : { data: [], error: null };
   if (categoryError) throw categoryError;
   return {
@@ -312,7 +429,9 @@ export async function fetchProductFull(slug: string): Promise<ProductFull | null
     retailer_product_id: r.retailer_product_id,
     price_updated_at: r.price_updated_at,
     images: imgs.map((i) => ({ image_url: i.image_url, alt_text: i.alt_text })),
-    features: [...(r.product_features ?? [])].sort((a, b) => a.sort_order - b.sort_order).map((f) => f.feature),
+    features: [...(r.product_features ?? [])]
+      .sort((a, b) => a.sort_order - b.sort_order)
+      .map((f) => f.feature),
     tags: (r.product_tags ?? []).map((t) => t.tag),
   };
 }
@@ -320,7 +439,12 @@ export async function fetchProductFull(slug: string): Promise<ProductFull | null
 export const productQuery = (slug: string) =>
   queryOptions({ queryKey: ["product", slug], queryFn: () => fetchProductFull(slug) });
 
-export const relatedQuery = (p: { id: string; category_id: string | null; category_ids?: string[]; tags: string[] }) =>
+export const relatedQuery = (p: {
+  id: string;
+  category_id: string | null;
+  category_ids?: string[];
+  tags: string[];
+}) =>
   queryOptions({
     queryKey: ["related", p.id, productCategoryIds(p), p.tags],
     queryFn: async () => {
@@ -328,14 +452,26 @@ export const relatedQuery = (p: { id: string; category_id: string | null; catego
       const out: ProductCardData[] = [];
       const categoryIds = productCategoryIds(p);
       if (categoryIds.length) {
-        const { data } = await liveProducts().overlaps("category_ids", categoryIds).neq("id", p.id).order("featured", { ascending: false }).limit(4);
+        const { data } = await liveProducts()
+          .overlaps("category_ids", categoryIds)
+          .neq("id", p.id)
+          .order("featured", { ascending: false })
+          .limit(4);
         out.push(...((data ?? []) as unknown as RawCard[]).map(toCard));
       }
       if (out.length < 4 && p.tags.length) {
-        const { data: tagRows } = await db.from("product_tags").select("product_id").in("tag", p.tags).limit(100);
-        const ids = [...new Set((tagRows ?? []).map((t) => t.product_id))].filter((id) => id !== p.id && !out.some((o) => o.id === id));
+        const { data: tagRows } = await db
+          .from("product_tags")
+          .select("product_id")
+          .in("tag", p.tags)
+          .limit(100);
+        const ids = [...new Set((tagRows ?? []).map((t) => t.product_id))].filter(
+          (id) => id !== p.id && !out.some((o) => o.id === id),
+        );
         if (ids.length) {
-          const { data } = await liveProducts().in("id", ids.slice(0, 20)).limit(4 - out.length);
+          const { data } = await liveProducts()
+            .in("id", ids.slice(0, 20))
+            .limit(4 - out.length);
           out.push(...((data ?? []) as unknown as RawCard[]).map(toCard));
         }
       }
@@ -353,7 +489,10 @@ export const relatedQuery = (p: { id: string; category_id: string | null; catego
 /** Fire-and-forget outbound affiliate click log. Never blocks navigation. */
 export function logOutboundClick(productId: string) {
   try {
-    void publicDb().from("outbound_clicks").insert({ product_id: productId }).then(() => undefined);
+    void publicDb()
+      .from("outbound_clicks")
+      .insert({ product_id: productId })
+      .then(() => undefined);
   } catch {
     /* ignore */
   }

@@ -10,6 +10,7 @@ IMPORTANT BUSINESS MODEL:
 This is NOT a traditional e-commerce store.
 
 I will NOT:
+
 - Keep physical inventory
 - Pack products
 - Ship products
@@ -28,8 +29,9 @@ Instead:
 The website must be designed around this workflow.
 
 ==================================================
+
 1. BRAND
-==================================================
+   \==================================================
 
 Brand name:
 
@@ -51,8 +53,7 @@ Do NOT make it look like a generic Amazon clone.
 
 Use a distinctive cosmic visual identity.
 
-==================================================
-2. WEBSITE URL / ARCHITECTURE
+================================================== 2. WEBSITE URL / ARCHITECTURE
 ==================================================
 
 This will be a completely separate website from the main Our Visible Universe application.
@@ -67,8 +68,7 @@ The main Our Visible Universe website will later have a simple “STORE” butto
 
 Do not depend on the main application for the store to function.
 
-==================================================
-3. TECHNOLOGY / ARCHITECTURE
+================================================== 3. TECHNOLOGY / ARCHITECTURE
 ==================================================
 
 Build this as a real database-backed web application.
@@ -89,8 +89,7 @@ The database must be the single source of truth for products.
 
 The architecture must be scalable enough to eventually handle hundreds or thousands of products.
 
-==================================================
-4. PUBLIC WEBSITE PAGES
+================================================== 4. PUBLIC WEBSITE PAGES
 ==================================================
 
 Create these public pages:
@@ -135,8 +134,7 @@ Privacy Policy
 
 Terms & Conditions
 
-==================================================
-5. ADMIN PAGES
+================================================== 5. ADMIN PAGES
 ==================================================
 
 Create a completely protected admin area:
@@ -159,8 +157,7 @@ Create a completely protected admin area:
 
 Only authenticated administrators can access these pages.
 
-==================================================
-6. ADMIN ACCOUNT
+================================================== 6. ADMIN ACCOUNT
 ==================================================
 
 The initial administrator email must be:
@@ -181,8 +178,7 @@ Only this authorized admin should initially have administrative privileges.
 
 Do NOT display the admin email publicly.
 
-==================================================
-7. ADMIN LOGIN
+================================================== 7. ADMIN LOGIN
 ==================================================
 
 Create a premium but simple admin login page.
@@ -225,8 +221,7 @@ IMPORTANT:
 
 Authentication and authorization must be enforced server-side/database-side, not only through frontend route protection.
 
-==================================================
-8. ADMIN DASHBOARD
+================================================== 8. ADMIN DASHBOARD
 ==================================================
 
 Create a professional dashboard.
@@ -251,7 +246,7 @@ Dashboard cards:
 
 Add a prominent:
 
-+ ADD PRODUCT
+- ADD PRODUCT
 
 button.
 
@@ -267,8 +262,7 @@ Each recent product should display:
 - Created date
 - Actions
 
-==================================================
-9. PRODUCT MANAGEMENT
+================================================== 9. PRODUCT MANAGEMENT
 ==================================================
 
 Admin must be able to:
@@ -311,13 +305,12 @@ Edit
 Delete
 Activate/Deactivate
 
-==================================================
-10. ADD PRODUCT
+================================================== 10. ADD PRODUCT
 ==================================================
 
 When admin clicks:
 
-+ ADD PRODUCT
+- ADD PRODUCT
 
 open:
 
@@ -353,8 +346,7 @@ Product Name must be required.
 
 Descriptions must support clean formatting.
 
-==================================================
-11. PRODUCT IMAGE MANAGEMENT
+================================================== 11. PRODUCT IMAGE MANAGEMENT
 ==================================================
 
 Add a dedicated:
@@ -392,8 +384,7 @@ Use lazy loading on the public website.
 
 Do NOT expose storage credentials.
 
-==================================================
-12. PRODUCT FEATURES
+================================================== 12. PRODUCT FEATURES
 ==================================================
 
 Allow the admin to add multiple product features.
@@ -408,12 +399,11 @@ Example:
 
 Interface:
 
-+ Add Feature
+- Add Feature
 
 Each feature can be edited or removed.
 
-==================================================
-13. AMAZON AFFILIATE INFORMATION
+================================================== 13. AMAZON AFFILIATE INFORMATION
 ==================================================
 
 Create a clearly separated:
@@ -457,8 +447,7 @@ Do not redirect all products to Amazon's homepage.
 
 Do not remove or alter affiliate tracking parameters.
 
-==================================================
-14. AMAZON LINK VALIDATION
+================================================== 14. AMAZON LINK VALIDATION
 ==================================================
 
 When an admin enters an Amazon URL:
@@ -475,8 +464,7 @@ Do not allow publishing until required Amazon information is valid.
 
 Do not automatically generate fake affiliate URLs.
 
-==================================================
-15. PRICE INFORMATION
+================================================== 15. PRICE INFORMATION
 ==================================================
 
 Allow optional fields:
@@ -505,8 +493,7 @@ instead.
 
 Design the architecture so official Amazon-supported product data/API integration can be added later.
 
-==================================================
-16. PRODUCT STATUS
+================================================== 16. PRODUCT STATUS
 ==================================================
 
 Every product should have:
@@ -525,8 +512,7 @@ It remains visible to the administrator.
 
 This allows temporary hiding without deleting.
 
-==================================================
-17. FEATURED PRODUCTS
+================================================== 17. FEATURED PRODUCTS
 ==================================================
 
 Add:
@@ -543,8 +529,7 @@ Featured products may appear on:
 
 Non-featured products remain searchable and accessible.
 
-==================================================
-18. SAVE / PUBLISH FLOW
+================================================== 18. SAVE / PUBLISH FLOW
 ==================================================
 
 At the bottom of Add Product:
@@ -574,8 +559,7 @@ Example:
 
 “Amazon affiliate URL is required.”
 
-==================================================
-19. AFTER PUBLISHING
+================================================== 19. AFTER PUBLISHING
 ==================================================
 
 When the admin successfully publishes a product:
@@ -599,8 +583,7 @@ NO redeployment.
 
 NO manual frontend changes.
 
-==================================================
-20. PRODUCT EDITING
+================================================== 20. PRODUCT EDITING
 ==================================================
 
 Admin clicks:
@@ -630,8 +613,7 @@ Save Changes
 
 The public website must reflect the changes.
 
-==================================================
-21. PRODUCT DELETE
+================================================== 21. PRODUCT DELETE
 ==================================================
 
 Admin must be able to delete products.
@@ -664,8 +646,7 @@ Admin can:
 
 Deleted products must never appear publicly.
 
-==================================================
-22. CATEGORY MANAGEMENT
+================================================== 22. CATEGORY MANAGEMENT
 ==================================================
 
 Create:
@@ -696,8 +677,7 @@ Initial categories:
 
 New categories created by admin must automatically become available in the Add Product form.
 
-==================================================
-23. HOMEPAGE
+================================================== 23. HOMEPAGE
 ==================================================
 
 Create an impressive astronomy-themed homepage.
@@ -718,8 +698,7 @@ Secondary CTA:
 
 EXPLORE CATEGORIES
 
-==================================================
-24. HOMEPAGE SECTIONS
+================================================== 24. HOMEPAGE SECTIONS
 ==================================================
 
 Include:
@@ -740,8 +719,7 @@ Instagram CTA
 
 Footer
 
-==================================================
-25. CATEGORY CARDS
+================================================== 25. CATEGORY CARDS
 ==================================================
 
 Create visually attractive category cards.
@@ -771,8 +749,7 @@ GALAXY & NEBULA
 
 “Cosmic-inspired objects and décor.”
 
-==================================================
-26. PRODUCT CARDS
+================================================== 26. PRODUCT CARDS
 ==================================================
 
 Product cards should contain:
@@ -789,8 +766,7 @@ Do not overcrowd the card.
 
 Use subtle hover effects.
 
-==================================================
-27. PRODUCT DETAILS PAGE
+================================================== 27. PRODUCT DETAILS PAGE
 ==================================================
 
 URL:
@@ -817,8 +793,7 @@ When clicked:
 
 Open the exact affiliate URL stored for that product.
 
-==================================================
-28. RELATED PRODUCTS
+================================================== 28. RELATED PRODUCTS
 ==================================================
 
 Show related products based on:
@@ -837,8 +812,7 @@ Galaxy projector:
 
 Show space décor and galaxy products.
 
-==================================================
-29. SEARCH
+================================================== 29. SEARCH
 ==================================================
 
 Create global product search.
@@ -876,8 +850,7 @@ Newest
 Price low to high
 Price high to low
 
-==================================================
-30. MOBILE-FIRST DESIGN
+================================================== 30. MOBILE-FIRST DESIGN
 ==================================================
 
 A significant amount of traffic may come from Instagram.
@@ -902,8 +875,7 @@ Mobile requirements:
 - Responsive navigation
 - Optimized images
 
-==================================================
-31. VISUAL DESIGN
+================================================== 31. VISUAL DESIGN
 ==================================================
 
 Use a premium deep-space visual identity.
@@ -932,8 +904,7 @@ TRUST
 
 over excessive visual effects.
 
-==================================================
-32. ADMIN DESIGN
+================================================== 32. ADMIN DESIGN
 ==================================================
 
 Admin dashboard should use the same brand identity but prioritize usability.
@@ -950,8 +921,7 @@ Use:
 
 Do not use heavy animations in admin.
 
-==================================================
-33. DATABASE
+================================================== 33. DATABASE
 ==================================================
 
 Create a proper database schema.
@@ -1015,8 +985,7 @@ active
 created_at
 updated_at
 
-==================================================
-34. DATABASE SECURITY
+================================================== 34. DATABASE SECURITY
 ==================================================
 
 Implement proper database access policies.
@@ -1024,12 +993,14 @@ Implement proper database access policies.
 PUBLIC:
 
 Can read:
+
 - Active products
 - Active categories
 
 ADMIN:
 
 Can:
+
 - Create products
 - Update products
 - Delete products
@@ -1039,8 +1010,7 @@ Can:
 
 Never allow public users to modify database records.
 
-==================================================
-35. ADMIN AUTHORIZATION
+================================================== 35. ADMIN AUTHORIZATION
 ==================================================
 
 The initial admin email:
@@ -1065,8 +1035,7 @@ Use Row Level Security policies.
 
 Do not expose service-role keys in the browser.
 
-==================================================
-36. SEO
+================================================== 36. SEO
 ==================================================
 
 Every product should automatically generate:
@@ -1088,8 +1057,7 @@ Galaxy Projector | Our Visible Universe Store
 
 Generate clean, human-readable URLs.
 
-==================================================
-37. AFFILIATE DISCLOSURE
+================================================== 37. AFFILIATE DISCLOSURE
 ==================================================
 
 Create a dedicated:
@@ -1104,8 +1072,7 @@ Also show an appropriate disclosure near affiliate purchase CTAs where required.
 
 Do not misrepresent the relationship with Amazon.
 
-==================================================
-38. AMAZON COMPLIANCE
+================================================== 38. AMAZON COMPLIANCE
 ==================================================
 
 IMPORTANT:
@@ -1126,8 +1093,7 @@ If an official API is added later:
 - Never expose credentials in frontend code.
 - Follow applicable Amazon Associates policies.
 
-==================================================
-39. OUTBOUND CLICK TRACKING
+================================================== 39. OUTBOUND CLICK TRACKING
 ==================================================
 
 Optionally record:
@@ -1145,8 +1111,7 @@ Admin dashboard may show:
 Total Amazon Clicks
 Most-clicked Products
 
-==================================================
-40. PERFORMANCE
+================================================== 40. PERFORMANCE
 ==================================================
 
 Optimize the website for speed.
@@ -1165,8 +1130,7 @@ Do not use a heavy 3D universe background on every page.
 
 The store should feel premium without becoming slow.
 
-==================================================
-41. ERROR HANDLING
+================================================== 41. ERROR HANDLING
 ==================================================
 
 Handle:
@@ -1191,8 +1155,7 @@ Button:
 
 “Return to Store”
 
-==================================================
-42. ADMIN SETTINGS
+================================================== 42. ADMIN SETTINGS
 ==================================================
 
 Create:
@@ -1211,8 +1174,7 @@ Allow admin to manage:
 
 Do not expose secrets.
 
-==================================================
-43. FOOTER
+================================================== 43. FOOTER
 ==================================================
 
 Footer:
@@ -1220,28 +1182,31 @@ Footer:
 OUR VISIBLE UNIVERSE
 
 Explore:
+
 - Shop
 - Categories
 - About
 
 Information:
+
 - Contact
 - FAQ
 
 Legal:
+
 - Privacy Policy
 - Terms & Conditions
 - Affiliate Disclosure
 
 Social:
+
 - Instagram
 
 Tagline:
 
 “Explore the universe. Discover something extraordinary.”
 
-==================================================
-44. COMPLETE ADMIN WORKFLOW
+================================================== 44. COMPLETE ADMIN WORKFLOW
 ==================================================
 
 The final workflow must be:
@@ -1274,8 +1239,7 @@ Product automatically appears on public website
 
 No code editing should ever be required to add a product.
 
-==================================================
-45. COMPLETE CUSTOMER WORKFLOW
+================================================== 45. COMPLETE CUSTOMER WORKFLOW
 ==================================================
 
 Customer:
@@ -1298,8 +1262,7 @@ Exact Amazon product page opens
 ↓
 Amazon handles purchase and delivery
 
-==================================================
-46. CRITICAL REQUIREMENT
+================================================== 46. CRITICAL REQUIREMENT
 ==================================================
 
 The public website and admin dashboard MUST use the same database.
@@ -1330,8 +1293,7 @@ When admin deletes it:
 
 It disappears from the public store.
 
-==================================================
-47. FINAL ACCEPTANCE TEST
+================================================== 47. FINAL ACCEPTANCE TEST
 ==================================================
 
 Before completing the project, test the following:
@@ -1368,8 +1330,7 @@ Before completing the project, test the following:
 29. Verify unauthorized users cannot access admin routes.
 30. Verify another product can have a completely different Amazon affiliate URL.
 
-==================================================
-48. DO NOT DO THESE THINGS
+================================================== 48. DO NOT DO THESE THINGS
 ==================================================
 
 DO NOT:
@@ -1388,8 +1349,7 @@ DO NOT:
 - Require code changes whenever a product is added
 - Require redeployment after adding products
 
-==================================================
-49. FINAL GOAL
+================================================== 49. FINAL GOAL
 ==================================================
 
 I want a complete standalone astronomy-themed affiliate store.

@@ -66,8 +66,15 @@
   --planet-button-ink: #071227;
   --planet-button-middle: #d9ecfe;
   --planet-shade: oklch(0.08 0.012 260 / 35%);
-  --gradient-planet: linear-gradient(180deg, var(--planet-ink), var(--planet-button-middle) 72%, var(--planet-ink));
-  --shadow-planet: 0 10px 18px -8px oklch(1 0 0 / 50%), 0 0 26px oklch(1 0 0 / 18%), inset 0 0 0 2px oklch(1 0 0 / 90%);
+  --gradient-planet: linear-gradient(
+    180deg,
+    var(--planet-ink),
+    var(--planet-button-middle) 72%,
+    var(--planet-ink)
+  );
+  --shadow-planet:
+    0 10px 18px -8px oklch(1 0 0 / 50%), 0 0 26px oklch(1 0 0 / 18%),
+    inset 0 0 0 2px oklch(1 0 0 / 90%);
   --galaxy-core: #fff1dc;
   --galaxy-dust: #cb877d;
   --galaxy-blue: #7789b4;
@@ -110,7 +117,8 @@
   --sidebar-border: oklch(1 0 0 / 8%);
   --sidebar-ring: oklch(0.83 0.14 78 / 60%);
 
-  --gradient-nebula: radial-gradient(60% 50% at 80% 0%, oklch(0.55 0.16 340 / 0.22), transparent 70%),
+  --gradient-nebula:
+    radial-gradient(60% 50% at 80% 0%, oklch(0.55 0.16 340 / 0.22), transparent 70%),
     radial-gradient(50% 45% at 10% 20%, oklch(0.76 0.11 195 / 0.16), transparent 70%),
     radial-gradient(40% 40% at 60% 90%, oklch(0.83 0.14 78 / 0.08), transparent 70%);
   --gradient-gold: linear-gradient(120deg, oklch(0.9 0.1 85), oklch(0.8 0.15 70));
@@ -193,8 +201,12 @@
 @utility bg-gradient-gold {
   background-image: var(--gradient-gold);
 }
-@utility bg-gradient-planet { background-image: var(--gradient-planet); }
-@utility shadow-planet { box-shadow: var(--shadow-planet); }
+@utility bg-gradient-planet {
+  background-image: var(--gradient-planet);
+}
+@utility shadow-planet {
+  box-shadow: var(--shadow-planet);
+}
 
 .prose-cosmic p {
   margin-bottom: 0.9em;
@@ -218,7 +230,8 @@
 
 .cosmic-store {
   background-color: var(--space-void);
-  background-image: radial-gradient(1px 1px at 37px 61px, var(--space-star), transparent),
+  background-image:
+    radial-gradient(1px 1px at 37px 61px, var(--space-star), transparent),
     radial-gradient(1px 1px at 213px 172px, var(--space-star), transparent),
     radial-gradient(1px 1px at 131px 309px, var(--space-star), transparent);
   background-size: 347px 383px;
@@ -235,12 +248,20 @@
   background-image: radial-gradient(1px 1px at 37px 61px, var(--space-star), transparent);
   background-size: 137px 163px;
 }
-.galaxy-scene canvas { display: block; width: 100%; height: 100%; }
+.galaxy-scene canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 .cosmic-hero-shade {
-  background: linear-gradient(90deg, var(--space-void), transparent 75%),
+  background:
+    linear-gradient(90deg, var(--space-void), transparent 75%),
     linear-gradient(0deg, var(--space-void), transparent 25%);
 }
-.cosmic-hero-copy { padding-top: 108px; padding-bottom: 108px; }
+.cosmic-hero-copy {
+  padding-top: 108px;
+  padding-bottom: 108px;
+}
 .planet-hero {
   position: relative;
   isolation: isolate;
@@ -252,82 +273,309 @@
   background: var(--space-void);
   font-family: "Hanken Grotesk", var(--font-sans);
 }
-.planet-sky, .planet-backdrop, .planet-shade { position: absolute; inset: 0; }
-.planet-sky { z-index: -3; }
-.planet-backdrop { opacity: 0; transition: opacity .22s linear; }
-.planet-backdrop.is-active { opacity: 1; }
-.planet-poster, .planet-backdrop video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.planet-shade { z-index: -2; background: linear-gradient(180deg, var(--planet-shade), transparent 80%); }
-.planet-copy { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 54px 24px 0; }
-.planet-brand { font-size: 14px; font-weight: 600; letter-spacing: 0; }
-.planet-brand span { color: var(--planet-cyan); margin-left: 6px; }
-.planet-eyebrow { margin-top: 42px; font-size: 22px; }
-.planet-title-mask { overflow: hidden; margin-top: 14px; height: 126px; }
-.planet-title { font-family: "Prata", var(--font-display); font-size: 104px; line-height: 1.2; letter-spacing: 0; }
-.planet-rule { width: 88px; height: 4px; border-radius: 2px; margin-top: 18px; background: var(--planet-cyan); }
-.planet-lede { max-width: 550px; min-height: 78px; margin-top: 24px; font-size: 17px; line-height: 1.65; text-wrap: pretty; }
-.planet-cta { margin-top: 30px; position: relative; z-index: 3; }
-.planet-shop { height: 60px; }
-.planet-side-row { position: absolute; inset: 0; pointer-events: none; }
-.planet-slot { position: absolute; top: 480px; width: 250px; height: 130px; padding: 0; pointer-events: auto; color: var(--planet-ink); border-radius: 0; }
-.planet-slot:hover { background: transparent; }
-.planet-slot-left { left: -62px; }
-.planet-slot-right { right: -62px; flex-direction: row-reverse; }
-.planet-cutouts { display: block; position: relative; width: 130px; height: 130px; flex-shrink: 0; transition: transform .45s cubic-bezier(.22,1,.36,1); }
-.planet-cutouts img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; visibility: hidden; }
-.planet-cutouts img.is-shown { visibility: visible; }
-.planet-slot:hover .planet-cutouts { transform: scale(1.045); }
-.planet-slot-name { font-family: "Prata", var(--font-display); font-size: 17px; }
-.planet-scroll { position: absolute; left: calc(50% - 30px); bottom: 26px; width: 60px; height: 60px; border-radius: 50%; color: var(--planet-ink); }
-.planet-scroll svg { width: 24px; height: 24px; }
-.planet-playback { position: absolute; right: 20px; bottom: 24px; color: var(--planet-ink); }
+.planet-sky,
+.planet-backdrop,
+.planet-shade {
+  position: absolute;
+  inset: 0;
+}
+.planet-sky {
+  z-index: -3;
+}
+.planet-backdrop {
+  opacity: 0;
+  transition: opacity 0.22s linear;
+}
+.planet-backdrop.is-active {
+  opacity: 1;
+}
+.planet-poster,
+.planet-backdrop video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.planet-shade {
+  z-index: -2;
+  background: linear-gradient(180deg, var(--planet-shade), transparent 80%);
+}
+.planet-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 54px 24px 0;
+}
+.planet-brand {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.planet-brand span {
+  color: var(--planet-cyan);
+  margin-left: 6px;
+}
+.planet-eyebrow {
+  margin-top: 42px;
+  font-size: 22px;
+}
+.planet-title-mask {
+  overflow: hidden;
+  margin-top: 14px;
+  height: 126px;
+}
+.planet-title {
+  font-family: "Prata", var(--font-display);
+  font-size: 104px;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+.planet-rule {
+  width: 88px;
+  height: 4px;
+  border-radius: 2px;
+  margin-top: 18px;
+  background: var(--planet-cyan);
+}
+.planet-lede {
+  max-width: 550px;
+  min-height: 78px;
+  margin-top: 24px;
+  font-size: 17px;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+.planet-cta {
+  margin-top: 30px;
+  position: relative;
+  z-index: 3;
+}
+.planet-shop {
+  height: 60px;
+}
+.planet-side-row {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.planet-slot {
+  position: absolute;
+  top: 480px;
+  width: 250px;
+  height: 130px;
+  padding: 0;
+  pointer-events: auto;
+  color: var(--planet-ink);
+  border-radius: 0;
+}
+.planet-slot:hover {
+  background: transparent;
+}
+.planet-slot-left {
+  left: -62px;
+}
+.planet-slot-right {
+  right: -62px;
+  flex-direction: row-reverse;
+}
+.planet-cutouts {
+  display: block;
+  position: relative;
+  width: 130px;
+  height: 130px;
+  flex-shrink: 0;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.planet-cutouts img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  visibility: hidden;
+}
+.planet-cutouts img.is-shown {
+  visibility: visible;
+}
+.planet-slot:hover .planet-cutouts {
+  transform: scale(1.045);
+}
+.planet-slot-name {
+  font-family: "Prata", var(--font-display);
+  font-size: 17px;
+}
+.planet-scroll {
+  position: absolute;
+  left: calc(50% - 30px);
+  bottom: 26px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  color: var(--planet-ink);
+}
+.planet-scroll svg {
+  width: 24px;
+  height: 24px;
+}
+.planet-playback {
+  position: absolute;
+  right: 20px;
+  bottom: 24px;
+  color: var(--planet-ink);
+}
 @media (min-height: 850px) and (min-width: 640px) {
-  .planet-copy { padding-top: 80px; }
-  .planet-eyebrow { margin-top: 50px; }
-  .planet-cta { margin-top: 46px; }
-  .planet-slot { top: 522px; }
+  .planet-copy {
+    padding-top: 80px;
+  }
+  .planet-eyebrow {
+    margin-top: 50px;
+  }
+  .planet-cta {
+    margin-top: 46px;
+  }
+  .planet-slot {
+    top: 522px;
+  }
 }
 @media (max-width: 639px) {
-  .planet-hero { min-height: 620px; height: calc(100svh - 124px); }
-  .planet-copy { padding: 40px 24px 0; }
-  .planet-brand { font-size: 12px; }
-  .planet-eyebrow { margin-top: 36px; font-size: 18px; }
-  .planet-title-mask { height: 92px; margin-top: 14px; }
-  .planet-title { font-size: 72px; }
-  .planet-rule { margin-top: 16px; width: 64px; }
-  .planet-lede { max-width: 350px; min-height: 106px; font-size: 15px; margin-top: 20px; }
-  .planet-cta { margin-top: 26px; }
-  .planet-shop { height: 54px; font-size: 13px; padding-inline: 24px; }
-  .planet-slot { top: 480px; width: 140px; height: 90px; }
-  .planet-slot-left { left: -44px; }
-  .planet-slot-right { right: -44px; }
-  .planet-cutouts { width: 90px; height: 90px; }
-  .planet-slot-name { position: absolute; top: 96px; font-size: 14px; }
-  .planet-slot-left .planet-slot-name { left: 70px; }
-  .planet-slot-right .planet-slot-name { right: 70px; }
-  .planet-scroll { bottom: 18px; width: 48px; height: 48px; left: calc(50% - 24px); }
-  .planet-playback { top: 8px; right: 8px; bottom: auto; }
+  .planet-hero {
+    min-height: 620px;
+    height: calc(100svh - 124px);
+  }
+  .planet-copy {
+    padding: 40px 24px 0;
+  }
+  .planet-brand {
+    font-size: 12px;
+  }
+  .planet-eyebrow {
+    margin-top: 36px;
+    font-size: 18px;
+  }
+  .planet-title-mask {
+    height: 92px;
+    margin-top: 14px;
+  }
+  .planet-title {
+    font-size: 72px;
+  }
+  .planet-rule {
+    margin-top: 16px;
+    width: 64px;
+  }
+  .planet-lede {
+    max-width: 350px;
+    min-height: 106px;
+    font-size: 15px;
+    margin-top: 20px;
+  }
+  .planet-cta {
+    margin-top: 26px;
+  }
+  .planet-shop {
+    height: 54px;
+    font-size: 13px;
+    padding-inline: 24px;
+  }
+  .planet-slot {
+    top: 480px;
+    width: 140px;
+    height: 90px;
+  }
+  .planet-slot-left {
+    left: -44px;
+  }
+  .planet-slot-right {
+    right: -44px;
+  }
+  .planet-cutouts {
+    width: 90px;
+    height: 90px;
+  }
+  .planet-slot-name {
+    position: absolute;
+    top: 96px;
+    font-size: 14px;
+  }
+  .planet-slot-left .planet-slot-name {
+    left: 70px;
+  }
+  .planet-slot-right .planet-slot-name {
+    right: 70px;
+  }
+  .planet-scroll {
+    bottom: 18px;
+    width: 48px;
+    height: 48px;
+    left: calc(50% - 24px);
+  }
+  .planet-playback {
+    top: 8px;
+    right: 8px;
+    bottom: auto;
+  }
 }
 @media (max-height: 660px) and (min-width: 640px) {
-  .planet-hero { min-height: 515px; }
-  .planet-copy { padding-top: 26px; }
-  .planet-eyebrow { margin-top: 20px; font-size: 18px; }
-  .planet-title-mask { height: 90px; margin-top: 8px; }
-  .planet-title { font-size: 72px; }
-  .planet-rule { margin-top: 12px; }
-  .planet-lede { margin-top: 16px; min-height: 56px; font-size: 15px; }
-  .planet-cta { margin-top: 24px; }
-  .planet-slot { top: 285px; }
-  .planet-scroll { bottom: 18px; width: 44px; height: 44px; left: calc(50% - 22px); }
+  .planet-hero {
+    min-height: 515px;
+  }
+  .planet-copy {
+    padding-top: 26px;
+  }
+  .planet-eyebrow {
+    margin-top: 20px;
+    font-size: 18px;
+  }
+  .planet-title-mask {
+    height: 90px;
+    margin-top: 8px;
+  }
+  .planet-title {
+    font-size: 72px;
+  }
+  .planet-rule {
+    margin-top: 12px;
+  }
+  .planet-lede {
+    margin-top: 16px;
+    min-height: 56px;
+    font-size: 15px;
+  }
+  .planet-cta {
+    margin-top: 24px;
+  }
+  .planet-slot {
+    top: 285px;
+  }
+  .planet-scroll {
+    bottom: 18px;
+    width: 44px;
+    height: 44px;
+    left: calc(50% - 22px);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .planet-backdrop, .planet-cutouts { transition: none; }
-  .planet-backdrop video { display: none; }
-  .planet-slot:hover .planet-cutouts { transform: none; }
+  .planet-backdrop,
+  .planet-cutouts {
+    transition: none;
+  }
+  .planet-backdrop video {
+    display: none;
+  }
+  .planet-slot:hover .planet-cutouts {
+    transform: none;
+  }
 }
 @media (max-width: 639px) {
-  .cosmic-hero { min-height: 680px; }
-  .cosmic-hero-copy { padding-top: 280px; padding-bottom: 36px; }
+  .cosmic-hero {
+    min-height: 680px;
+  }
+  .cosmic-hero-copy {
+    padding-top: 280px;
+    padding-bottom: 36px;
+  }
   .cosmic-hero-shade {
     background: linear-gradient(0deg, var(--space-void) 5%, transparent 65%);
   }

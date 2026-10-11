@@ -12,16 +12,31 @@ export const Route = createFileRoute("/_store/contact")({
 function Contact() {
   const { data: s } = useQuery(settingsQuery);
   return (
-    <StaticPage eyebrow="Open a channel" title="Contact" intro="Questions, product suggestions or partnerships — we'd love to hear from you.">
-      <p>For order, payment, delivery or return questions, please contact the retailer shown on the linked product page.</p>
+    <StaticPage
+      eyebrow="Open a channel"
+      title="Contact"
+      intro="Questions, product suggestions or partnerships — we'd love to hear from you."
+    >
+      <p>
+        For order, payment, delivery or return questions, please contact the retailer shown on the
+        linked product page.
+      </p>
       <div className="not-prose mt-6 grid gap-3 sm:grid-cols-2">
         {s?.contact_email && (
-          <a href={`mailto:${s.contact_email}`} className="glass flex items-center gap-3 rounded-2xl p-5 text-foreground hover:border-primary/40">
+          <a
+            href={`mailto:${s.contact_email}`}
+            className="glass flex items-center gap-3 rounded-2xl p-5 text-foreground hover:border-primary/40"
+          >
             <Mail className="size-5 text-primary" /> {s.contact_email}
           </a>
         )}
         {s?.instagram_url && (
-          <a href={s.instagram_url} target="_blank" rel="noopener noreferrer" className="glass flex items-center gap-3 rounded-2xl p-5 text-foreground hover:border-primary/40">
+          <a
+            href={s.instagram_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="glass flex items-center gap-3 rounded-2xl p-5 text-foreground hover:border-primary/40"
+          >
             <Instagram className="size-5 text-primary" /> Message us on Instagram
           </a>
         )}

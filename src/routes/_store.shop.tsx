@@ -3,7 +3,8 @@ import { PageHeader } from "@/components/store/Pagination";
 import { ProductBrowser, validateBrowseSearch } from "@/components/store/ProductBrowser";
 
 const T = "Shop All Products | Our Visible Universe Store";
-const D = "Browse every astronomy and space product in the Our Visible Universe collection — telescopes, décor, apparel and gifts.";
+const D =
+  "Browse every astronomy and space product in the Our Visible Universe collection — telescopes, décor, apparel and gifts.";
 
 export const Route = createFileRoute("/_store/shop")({
   validateSearch: validateBrowseSearch,
@@ -24,7 +25,11 @@ function Shop() {
   const search = Route.useSearch();
   return (
     <>
-      <PageHeader eyebrow="The full catalogue" title="All products" text="Every discovery in the Our Visible Universe collection." />
+      <PageHeader
+        eyebrow="The full catalogue"
+        title="All products"
+        text="Every discovery in the Our Visible Universe collection."
+      />
       <ProductBrowser search={search} to="/shop" />
     </>
   );

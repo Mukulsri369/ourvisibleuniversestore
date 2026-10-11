@@ -19,7 +19,8 @@ const buttonVariants = cva(
         affiliate:
           "bg-gradient-gold text-primary-foreground font-semibold tracking-wide shadow-glow hover:brightness-110",
         glass: "glass text-foreground hover:bg-secondary/80",
-        planet: "bg-gradient-planet text-planet-button-ink font-semibold shadow-planet hover:brightness-110",
+        planet:
+          "bg-gradient-planet text-planet-button-ink font-semibold shadow-planet hover:brightness-110",
       },
       size: {
         default: "h-10 px-4 py-2",

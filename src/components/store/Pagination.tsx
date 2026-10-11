@@ -1,12 +1,28 @@
 import { Link } from "@tanstack/react-router";
 
-export function Pager({ page, total, pageSize, to, search }: { page: number; total: number; pageSize: number; to: string; search: Record<string, unknown> }) {
+export function Pager({
+  page,
+  total,
+  pageSize,
+  to,
+  search,
+}: {
+  page: number;
+  total: number;
+  pageSize: number;
+  to: string;
+  search: Record<string, unknown>;
+}) {
   const pages = Math.ceil(total / pageSize);
   if (pages <= 1) return null;
   return (
     <nav className="mt-12 flex items-center justify-center gap-3" aria-label="Pagination">
       {page > 1 && (
-        <Link to={to} search={{ ...search, page: page - 1 }} className="inline-flex h-11 items-center rounded-full border border-input px-5 text-sm hover:bg-secondary">
+        <Link
+          to={to}
+          search={{ ...search, page: page - 1 }}
+          className="inline-flex h-11 items-center rounded-full border border-input px-5 text-sm hover:bg-secondary"
+        >
           ← Previous
         </Link>
       )}
@@ -14,7 +30,11 @@ export function Pager({ page, total, pageSize, to, search }: { page: number; tot
         {page} / {pages}
       </span>
       {page < pages && (
-        <Link to={to} search={{ ...search, page: page + 1 }} className="inline-flex h-11 items-center rounded-full border border-input px-5 text-sm hover:bg-secondary">
+        <Link
+          to={to}
+          search={{ ...search, page: page + 1 }}
+          className="inline-flex h-11 items-center rounded-full border border-input px-5 text-sm hover:bg-secondary"
+        >
           Next →
         </Link>
       )}
@@ -22,7 +42,15 @@ export function Pager({ page, total, pageSize, to, search }: { page: number; tot
   );
 }
 
-export function EmptyState({ title, text, children }: { title: string; text?: string; children?: React.ReactNode }) {
+export function EmptyState({
+  title,
+  text,
+  children,
+}: {
+  title: string;
+  text?: string;
+  children?: React.ReactNode;
+}) {
   return (
     <div className="glass mx-auto max-w-lg rounded-3xl px-6 py-14 text-center">
       <h3 className="text-3xl">{title}</h3>
@@ -32,7 +60,15 @@ export function EmptyState({ title, text, children }: { title: string; text?: st
   );
 }
 
-export function PageHeader({ eyebrow, title, text }: { eyebrow?: string | undefined; title: string; text?: string | null | undefined }) {
+export function PageHeader({
+  eyebrow,
+  title,
+  text,
+}: {
+  eyebrow?: string | undefined;
+  title: string;
+  text?: string | null | undefined;
+}) {
   return (
     <div className="relative overflow-hidden border-b border-border">
       <div className="nebula starfield absolute inset-0 opacity-70" />

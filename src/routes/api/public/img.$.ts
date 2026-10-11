@@ -7,7 +7,11 @@ export const Route = createFileRoute("/api/public/img/$")({
     handlers: {
       GET: async ({ params }) => {
         const path = (params as { _splat?: string })._splat ?? "";
-        if (!/^[a-zA-Z0-9/_\-.]+$/.test(path) || path.includes("..") || !/^(products|categories|branding)\//.test(path)) {
+        if (
+          !/^[a-zA-Z0-9/_\-.]+$/.test(path) ||
+          path.includes("..") ||
+          !/^(products|categories|branding)\//.test(path)
+        ) {
           return new Response("Not found", { status: 404 });
         }
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

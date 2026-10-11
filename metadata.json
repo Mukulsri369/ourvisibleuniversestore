@@ -1,0 +1,6 @@
+{
+  "name": "Our Visible Universe Store",
+  "description": "Astronomy-inspired products, space gear, cosmic décor and gifts.",
+  "permissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

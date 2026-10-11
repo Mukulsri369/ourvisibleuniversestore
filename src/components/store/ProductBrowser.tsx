@@ -20,39 +20,66 @@ export function validateBrowseSearch(s: Record<string, unknown>): BrowseSearch {
   const num = (v: unknown) => (v === undefined || v === "" ? undefined : Number(v));
   const sorts = ["featured", "newest", "price_asc", "price_desc"];
   return {
-    q: typeof s['q'] === "string" && s['q'] ? s['q'].slice(0, 100) : undefined,
-    category: typeof s['category'] === "string" && s['category'] ? s['category'] : undefined,
-    featured: s['featured'] === true || s['featured'] === "true" ? true : undefined,
-    sort: sorts.includes(String(s['sort'])) ? (s['sort'] as ListParams["sort"]) : undefined,
-    min: Number.isFinite(num(s['min'])) ? num(s['min']) : undefined,
-    max: Number.isFinite(num(s['max'])) ? num(s['max']) : undefined,
-    page: Number.isFinite(num(s['page'])) && Number(s['page']) > 1 ? Number(s['page']) : undefined,
+    q: typeof s["q"] === "string" && s["q"] ? s["q"].slice(0, 100) : undefined,
+    category: typeof s["category"] === "string" && s["category"] ? s["category"] : undefined,
+    featured: s["featured"] === true || s["featured"] === "true" ? true : undefined,
+    sort: sorts.includes(String(s["sort"])) ? (s["sort"] as ListParams["sort"]) : undefined,
+    min: Number.isFinite(num(s["min"])) ? num(s["min"]) : undefined,
+    max: Number.isFinite(num(s["max"])) ? num(s["max"]) : undefined,
+    page: Number.isFinite(num(s["page"])) && Number(s["page"]) > 1 ? Number(s["page"]) : undefined,
   };
 }
 
-export function ProductBrowser({ search, to, lockCategory }: { search: BrowseSearch; to: string; lockCategory?: string }) {
+export function ProductBrowser({
+  search,
+  to,
+  lockCategory,
+}: {
+  search: BrowseSearch;
+  to: string;
+  lockCategory?: string;
+}) {
   const navigate = useNavigate();
-  const params: ListParams = { ...search, category: lockCategory ?? search.category, page: search.page ?? 1 };
+  const params: ListParams = {
+    ...search,
+    category: lockCategory ?? search.category,
+    page: search.page ?? 1,
+  };
   const { data, isLoading, isError, refetch } = useQuery(productsQuery(params));
   const { data: cats = [] } = useQuery(categoriesQuery);
   const [showFilters, setShowFilters] = useState(false);
 
   const set = (patch: Partial<BrowseSearch>) =>
-    navigate({ to, search: (prev: BrowseSearch) => ({ ...prev, ...patch, page: undefined }), replace: true } as never);
+    navigate({
+      to,
+      search: (prev: BrowseSearch) => ({ ...prev, ...patch, page: undefined }),
+      replace: true,
+    } as never);
 
-  const field = "h-11 rounded-full border border-input bg-secondary/60 px-4 text-sm text-foreground focus:border-primary/50 focus:outline-none";
+  const field =
+    "h-11 rounded-full border border-input bg-secondary/60 px-4 text-sm text-foreground focus:border-primary/50 focus:outline-none";
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground" aria-live="polite">
-          {isLoading ? "Scanning the skies…" : `${data?.total ?? 0} product${data?.total === 1 ? "" : "s"} found`}
+          {isLoading
+            ? "Scanning the skies…"
+            : `${data?.total ?? 0} product${data?.total === 1 ? "" : "s"} found`}
         </p>
         <div className="flex items-center gap-2">
-          <button onClick={() => setShowFilters((s) => !s)} className={`${field} inline-flex items-center gap-2 md:hidden`}>
+          <button
+            onClick={() => setShowFilters((s) => !s)}
+            className={`${field} inline-flex items-center gap-2 md:hidden`}
+          >
             <SlidersHorizontal className="size-4" /> Filters
           </button>
-          <select aria-label="Sort" value={search.sort ?? "featured"} onChange={(e) => set({ sort: e.target.value as BrowseSearch["sort"] })} className={field}>
+          <select
+            aria-label="Sort"
+            value={search.sort ?? "featured"}
+            onChange={(e) => set({ sort: e.target.value as BrowseSearch["sort"] })}
+            className={field}
+          >
             <option value="featured">Featured</option>
             <option value="newest">Newest</option>
             <option value="price_asc">Price: low to high</option>
@@ -63,7 +90,12 @@ export function ProductBrowser({ search, to, lockCategory }: { search: BrowseSea
 
       <div className={`${showFilters ? "flex" : "hidden"} mt-4 flex-wrap gap-2 md:flex`}>
         {!lockCategory && (
-          <select aria-label="Category" value={search.category ?? ""} onChange={(e) => set({ category: e.target.value || undefined })} className={field}>
+          <select
+            aria-label="Category"
+            value={search.category ?? ""}
+            onChange={(e) => set({ category: e.target.value || undefined })}
+            className={field}
+          >
             <option value="">All categories</option>
             {cats.map((c) => (
               <option key={c.id} value={c.slug}>
@@ -72,10 +104,31 @@ export function ProductBrowser({ search, to, lockCategory }: { search: BrowseSea
             ))}
           </select>
         )}
-        <input type="number" min={0} inputMode="decimal" placeholder="Min price" defaultValue={search.min} onBlur={(e) => set({ min: e.target.value ? Number(e.target.value) : undefined })} className={`${field} w-32`} />
-        <input type="number" min={0} inputMode="decimal" placeholder="Max price" defaultValue={search.max} onBlur={(e) => set({ max: e.target.value ? Number(e.target.value) : undefined })} className={`${field} w-32`} />
+        <input
+          type="number"
+          min={0}
+          inputMode="decimal"
+          placeholder="Min price"
+          defaultValue={search.min}
+          onBlur={(e) => set({ min: e.target.value ? Number(e.target.value) : undefined })}
+          className={`${field} w-32`}
+        />
+        <input
+          type="number"
+          min={0}
+          inputMode="decimal"
+          placeholder="Max price"
+          defaultValue={search.max}
+          onBlur={(e) => set({ max: e.target.value ? Number(e.target.value) : undefined })}
+          className={`${field} w-32`}
+        />
         <label className={`${field} inline-flex cursor-pointer items-center gap-2`}>
-          <input type="checkbox" checked={!!search.featured} onChange={(e) => set({ featured: e.target.checked || undefined })} className="accent-primary" />
+          <input
+            type="checkbox"
+            checked={!!search.featured}
+            onChange={(e) => set({ featured: e.target.checked || undefined })}
+            className="accent-primary"
+          />
           Featured only
         </label>
       </div>
@@ -88,18 +141,33 @@ export function ProductBrowser({ search, to, lockCategory }: { search: BrowseSea
             ))}
           </div>
         ) : isError ? (
-          <EmptyState title="Signal lost." text="We couldn't reach the product catalogue. Check your connection and try again.">
-            <button onClick={() => refetch()} className="h-11 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground">
+          <EmptyState
+            title="Signal lost."
+            text="We couldn't reach the product catalogue. Check your connection and try again."
+          >
+            <button
+              onClick={() => refetch()}
+              className="h-11 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground"
+            >
               Try again
             </button>
           </EmptyState>
         ) : data && data.items.length ? (
           <>
             <ProductGrid items={data.items} />
-            <Pager page={data.page} total={data.total} pageSize={data.pageSize} to={to} search={search} />
+            <Pager
+              page={data.page}
+              total={data.total}
+              pageSize={data.pageSize}
+              to={to}
+              search={search}
+            />
           </>
         ) : (
-          <EmptyState title="No products in this orbit." text="Try a different search or browse all categories." />
+          <EmptyState
+            title="No products in this orbit."
+            text="Try a different search or browse all categories."
+          />
         )}
       </div>
     </div>

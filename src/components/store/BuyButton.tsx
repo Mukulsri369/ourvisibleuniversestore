@@ -24,7 +24,13 @@ export function BuyButton({
 }) {
   if (!url) {
     return (
-      <span className={cn(buttonVariants({ variant: "outline", size }), "pointer-events-none opacity-60", className)}>
+      <span
+        className={cn(
+          buttonVariants({ variant: "outline", size }),
+          "pointer-events-none opacity-60",
+          className,
+        )}
+      >
         Link unavailable
       </span>
     );

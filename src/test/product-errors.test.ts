@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { DUPLICATE_AFFILIATE_MESSAGE, isDuplicateAffiliateError, productSaveErrorMessage } from "@/lib/product-errors";
+import {
+  DUPLICATE_AFFILIATE_MESSAGE,
+  isDuplicateAffiliateError,
+  productSaveErrorMessage,
+} from "@/lib/product-errors";
 
 describe("affiliate publishing errors", () => {
   it("recognizes database duplicate errors returned as plain objects", () => {

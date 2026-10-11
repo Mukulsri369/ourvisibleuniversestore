@@ -17,13 +17,23 @@ function Logo({ logo }: { logo?: string | null | undefined }) {
       )}
       <span className="leading-none">
         <span className="block font-display text-lg text-foreground">Our Visible Universe</span>
-        <span className="block font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground">Store</span>
+        <span className="block font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground">
+          Store
+        </span>
       </span>
     </Link>
   );
 }
 
-export function SearchBox({ autoFocus, onDone, defaultValue }: { autoFocus?: boolean | undefined; onDone?: (() => void) | undefined; defaultValue?: string | undefined }) {
+export function SearchBox({
+  autoFocus,
+  onDone,
+  defaultValue,
+}: {
+  autoFocus?: boolean | undefined;
+  onDone?: (() => void) | undefined;
+  defaultValue?: string | undefined;
+}) {
   const navigate = useNavigate();
   const [q, setQ] = useState(defaultValue ?? "");
   return (
@@ -68,30 +78,61 @@ export function StoreHeader() {
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
         <Logo logo={settings?.logo_url} />
         <nav className="ml-8 hidden items-center gap-7 text-sm text-muted-foreground lg:flex">
-          <Link to="/shop" className="hover:text-foreground" activeProps={{ className: "text-foreground" }}>Shop</Link>
+          <Link
+            to="/shop"
+            className="hover:text-foreground"
+            activeProps={{ className: "text-foreground" }}
+          >
+            Shop
+          </Link>
           <div className="group relative">
             <button className="hover:text-foreground">Categories</button>
             <div className="invisible absolute left-0 top-full z-50 w-72 pt-3 opacity-0 transition-all group-hover:visible group-hover:opacity-100">
               <div className="glass rounded-xl p-2">
                 {cats?.map((c) => (
-                  <Link key={c.id} to="/category/$slug" params={{ slug: c.slug }} className="block rounded-lg px-3 py-2 text-sm text-foreground hover:bg-secondary">
+                  <Link
+                    key={c.id}
+                    to="/category/$slug"
+                    params={{ slug: c.slug }}
+                    className="block rounded-lg px-3 py-2 text-sm text-foreground hover:bg-secondary"
+                  >
                     {c.name}
                   </Link>
                 ))}
               </div>
             </div>
           </div>
-          <Link to="/about" className="hover:text-foreground" activeProps={{ className: "text-foreground" }}>About</Link>
-          <Link to="/contact" className="hover:text-foreground" activeProps={{ className: "text-foreground" }}>Contact</Link>
+          <Link
+            to="/about"
+            className="hover:text-foreground"
+            activeProps={{ className: "text-foreground" }}
+          >
+            About
+          </Link>
+          <Link
+            to="/contact"
+            className="hover:text-foreground"
+            activeProps={{ className: "text-foreground" }}
+          >
+            Contact
+          </Link>
         </nav>
         <div className="ml-auto hidden w-72 md:block">
           <SearchBox />
         </div>
         <div className="ml-auto flex items-center gap-1 md:ml-0 lg:hidden">
-          <button aria-label="Search" onClick={() => setSearchOpen((s) => !s)} className="flex size-11 items-center justify-center rounded-full hover:bg-secondary md:hidden">
+          <button
+            aria-label="Search"
+            onClick={() => setSearchOpen((s) => !s)}
+            className="flex size-11 items-center justify-center rounded-full hover:bg-secondary md:hidden"
+          >
             <Search className="size-5" />
           </button>
-          <button aria-label="Menu" onClick={() => setOpen(true)} className="flex size-11 items-center justify-center rounded-full hover:bg-secondary">
+          <button
+            aria-label="Menu"
+            onClick={() => setOpen(true)}
+            className="flex size-11 items-center justify-center rounded-full hover:bg-secondary"
+          >
             <Menu className="size-5" />
           </button>
         </div>
@@ -105,7 +146,11 @@ export function StoreHeader() {
         <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-xl lg:hidden">
           <div className="flex h-16 items-center justify-between border-b border-border px-4">
             <Logo logo={settings?.logo_url} />
-            <button aria-label="Close menu" onClick={() => setOpen(false)} className="flex size-11 items-center justify-center rounded-full hover:bg-secondary">
+            <button
+              aria-label="Close menu"
+              onClick={() => setOpen(false)}
+              className="flex size-11 items-center justify-center rounded-full hover:bg-secondary"
+            >
               <X className="size-5" />
             </button>
           </div>
@@ -113,7 +158,12 @@ export function StoreHeader() {
             <SearchBox onDone={() => setOpen(false)} />
             <nav className="mt-6 flex flex-col">
               {NAV.filter((n) => !("hash" in n)).map((n) => (
-                <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="border-b border-border py-4 font-display text-2xl">
+                <Link
+                  key={n.to}
+                  to={n.to}
+                  onClick={() => setOpen(false)}
+                  className="border-b border-border py-4 font-display text-2xl"
+                >
                   {n.label}
                 </Link>
               ))}
@@ -121,7 +171,13 @@ export function StoreHeader() {
             <p className="eyebrow mt-8">Categories</p>
             <div className="mt-3 grid grid-cols-1 gap-1">
               {cats?.map((c) => (
-                <Link key={c.id} to="/category/$slug" params={{ slug: c.slug }} onClick={() => setOpen(false)} className="rounded-lg py-3 text-base text-muted-foreground hover:text-foreground">
+                <Link
+                  key={c.id}
+                  to="/category/$slug"
+                  params={{ slug: c.slug }}
+                  onClick={() => setOpen(false)}
+                  className="rounded-lg py-3 text-base text-muted-foreground hover:text-foreground"
+                >
                   {c.name}
                 </Link>
               ))}
@@ -141,7 +197,9 @@ export function StoreFooter() {
       <div className="nebula absolute inset-0 opacity-40" />
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-5">
         <div className="md:col-span-2">
-          <p className="font-sans text-sm font-bold uppercase tracking-[0.25em]">Our Visible Universe</p>
+          <p className="font-sans text-sm font-bold uppercase tracking-[0.25em]">
+            Our Visible Universe
+          </p>
           <p className="mt-3 max-w-xs font-display text-2xl italic text-muted-foreground">
             {s?.footer_text ?? "Explore the universe. Discover something extraordinary."}
           </p>
@@ -149,24 +207,52 @@ export function StoreFooter() {
             {s?.affiliate_disclosure}
           </p>
         </div>
-        <FooterCol title="Explore" links={[{ to: "/shop", l: "Shop" }, { to: "/search", l: "Categories" }, { to: "/about", l: "About" }]} />
-        <FooterCol title="Information" links={[{ to: "/contact", l: "Contact" }, { to: "/faq", l: "FAQ" }]} />
+        <FooterCol
+          title="Explore"
+          links={[
+            { to: "/shop", l: "Shop" },
+            { to: "/search", l: "Categories" },
+            { to: "/about", l: "About" },
+          ]}
+        />
+        <FooterCol
+          title="Information"
+          links={[
+            { to: "/contact", l: "Contact" },
+            { to: "/faq", l: "FAQ" },
+          ]}
+        />
         <div>
           <FooterCol
             title="Legal"
-            links={[{ to: "/privacy", l: "Privacy Policy" }, { to: "/terms", l: "Terms & Conditions" }, { to: "/affiliate-disclosure", l: "Affiliate Disclosure" }]}
+            links={[
+              { to: "/privacy", l: "Privacy Policy" },
+              { to: "/terms", l: "Terms & Conditions" },
+              { to: "/affiliate-disclosure", l: "Affiliate Disclosure" },
+            ]}
           />
           <p className="eyebrow mt-8">Social</p>
           <div className="mt-3 flex flex-wrap gap-3 text-sm">
             {s?.instagram_url && (
-              <a href={s.instagram_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground">
+              <a
+                href={s.instagram_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
+              >
                 <Instagram className="size-4" /> Instagram
               </a>
             )}
             {Object.entries(social)
               .filter(([, v]) => v)
               .map(([k, v]) => (
-                <a key={k} href={v} target="_blank" rel="noopener noreferrer" className="capitalize text-muted-foreground hover:text-foreground">
+                <a
+                  key={k}
+                  href={v}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="capitalize text-muted-foreground hover:text-foreground"
+                >
                   {k}
                 </a>
               ))}

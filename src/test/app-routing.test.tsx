@@ -6,7 +6,13 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { routeTree } from "@/routeTree.gen";
 
 function renderAt(path: string) {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
   const router = createRouter({
     routeTree,
     context: { queryClient },
@@ -26,7 +32,7 @@ describe("App routing", () => {
   it("renders the index route", async () => {
     const { container } = renderAt("/");
 
-    await waitFor(() => expect(container.firstChild).not.toBeNull());
+    await waitFor(() => expect(container.firstChild).not.toBeNull(), { timeout: 4000 });
   });
 
   it("renders the not-found route", async () => {

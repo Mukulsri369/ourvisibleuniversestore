@@ -1,6 +1,16 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowDown, ArrowUp, CheckCircle2, ImagePlus, Loader2, Plus, Star, Trash2, X } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  CheckCircle2,
+  ImagePlus,
+  Loader2,
+  Plus,
+  Star,
+  Trash2,
+  X,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -17,7 +27,9 @@ import { CategorySelect } from "./CategorySelect";
 import { productCategoryIds } from "@/lib/product-categories";
 
 type Img = { key: string; url: string; path: string | null; alt: string };
-type Errors = Partial<Record<"name" | "short" | "desc" | "category" | "images" | "affiliate" | "price", string>>;
+type Errors = Partial<
+  Record<"name" | "short" | "desc" | "category" | "images" | "affiliate" | "price", string>
+>;
 
 const RETAILERS = ["Amazon", "Flipkart", "Other"];
 const CURRENCIES = ["INR", "USD", "GBP", "EUR", "CAD", "AUD", "AED"];
@@ -34,7 +46,9 @@ export function ProductForm({ productId }: { productId?: string }) {
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [preview, setPreview] = useState(false);
-  const [done, setDone] = useState<null | { slug: string; active: boolean; published: boolean }>(null);
+  const [done, setDone] = useState<null | { slug: string; active: boolean; published: boolean }>(
+    null,
+  );
   const [removed, setRemoved] = useState<string[]>([]);
 
   const [name, setName] = useState("");
@@ -83,9 +97,18 @@ export function ProductForm({ productId }: { productId?: string }) {
       setImages(
         [...(data.product_images ?? [])]
           .sort((a, b) => a.sort_order - b.sort_order)
-          .map((i) => ({ key: i.id, url: i.image_url, path: i.storage_path, alt: i.alt_text ?? "" })),
+          .map((i) => ({
+            key: i.id,
+            url: i.image_url,
+            path: i.storage_path,
+            alt: i.alt_text ?? "",
+          })),
       );
-      setFeatures([...(data.product_features ?? [])].sort((a, b) => a.sort_order - b.sort_order).map((f) => f.feature));
+      setFeatures(
+        [...(data.product_features ?? [])]
+          .sort((a, b) => a.sort_order - b.sort_order)
+          .map((f) => f.feature),
+      );
       setAffiliateUrl(data.affiliate_url ?? data.amazon_url ?? "");
       setRetailerProductId(data.retailer_product_id ?? data.amazon_asin ?? "");
       setRetailer(data.retailer ?? (data.amazon_url ? "Amazon" : "Other"));
@@ -133,10 +156,11 @@ export function ProductForm({ productId }: { productId?: string }) {
       n[j] = current;
       return n;
     });
-  const makePrimary = (i: number) => setImages((s) => {
-    const selected = s[i];
-    return selected ? [selected, ...s.filter((_, k) => k !== i)] : s;
-  });
+  const makePrimary = (i: number) =>
+    setImages((s) => {
+      const selected = s[i];
+      return selected ? [selected, ...s.filter((_, k) => k !== i)] : s;
+    });
   const removeImg = (i: number) =>
     setImages((s) => {
       const p = s[i]?.path;
@@ -145,7 +169,10 @@ export function ProductForm({ productId }: { productId?: string }) {
     });
 
   function addTag(raw: string) {
-    const parts = raw.split(",").map((t) => t.trim().toLowerCase()).filter(Boolean);
+    const parts = raw
+      .split(",")
+      .map((t) => t.trim().toLowerCase())
+      .filter(Boolean);
     setTags((s) => [...new Set([...s, ...parts])].slice(0, 30));
     setTagInput("");
   }
@@ -159,11 +186,13 @@ export function ProductForm({ productId }: { productId?: string }) {
       if (!categoryIds.length) e.category = "Please select at least one category.";
       if (!images.length) e.images = "Please upload a primary image.";
       if (!affiliateUrl.trim()) e.affiliate = "Affiliate URL is required.";
-      else if (!isValidAffiliateUrl(affiliateUrl)) e.affiliate = "Please enter a valid secure affiliate URL.";
+      else if (!isValidAffiliateUrl(affiliateUrl))
+        e.affiliate = "Please enter a valid secure affiliate URL.";
     } else if (affiliateUrl.trim() && !isValidAffiliateUrl(affiliateUrl)) {
       e.affiliate = "Please enter a valid secure affiliate URL.";
     }
-    if (price && (Number.isNaN(Number(price)) || Number(price) < 0)) e.price = "Enter a valid price or leave it empty.";
+    if (price && (Number.isNaN(Number(price)) || Number(price) < 0))
+      e.price = "Enter a valid price or leave it empty.";
     return e;
   }
 
@@ -204,7 +233,11 @@ export function ProductForm({ productId }: { productId?: string }) {
         retailer_product_id: retailerProductId.trim() || null,
         price: price ? Number(price) : null,
         currency,
-        price_updated_at: price ? (priceDate ? new Date(priceDate).toISOString() : new Date().toISOString()) : null,
+        price_updated_at: price
+          ? priceDate
+            ? new Date(priceDate).toISOString()
+            : new Date().toISOString()
+          : null,
         featured,
         active: nextActive,
       };
@@ -213,7 +246,11 @@ export function ProductForm({ productId }: { productId?: string }) {
         const { error } = await supabase.from("products").update(payload).eq("id", id);
         if (error) throw error;
       } else {
-        const { data, error } = await supabase.from("products").insert(payload).select("id").single();
+        const { data, error } = await supabase
+          .from("products")
+          .insert(payload)
+          .select("id")
+          .single();
         if (error) throw error;
         id = data.id;
       }
@@ -226,10 +263,28 @@ export function ProductForm({ productId }: { productId?: string }) {
       ]);
       const ops = [];
       if (images.length)
-        ops.push(supabase.from("product_images").insert(images.map((im, i) => ({ product_id: pid, image_url: im.url, storage_path: im.path, alt_text: im.alt || name, sort_order: i }))));
+        ops.push(
+          supabase.from("product_images").insert(
+            images.map((im, i) => ({
+              product_id: pid,
+              image_url: im.url,
+              storage_path: im.path,
+              alt_text: im.alt || name,
+              sort_order: i,
+            })),
+          ),
+        );
       const feats = features.map((f) => f.trim()).filter(Boolean);
-      if (feats.length) ops.push(supabase.from("product_features").insert(feats.map((f, i) => ({ product_id: pid, feature: f, sort_order: i }))));
-      if (tags.length) ops.push(supabase.from("product_tags").insert(tags.map((t) => ({ product_id: pid, tag: t }))));
+      if (feats.length)
+        ops.push(
+          supabase
+            .from("product_features")
+            .insert(feats.map((f, i) => ({ product_id: pid, feature: f, sort_order: i }))),
+        );
+      if (tags.length)
+        ops.push(
+          supabase.from("product_tags").insert(tags.map((t) => ({ product_id: pid, tag: t }))),
+        );
       const results = await Promise.all(ops);
       const failed = results.find((r) => r.error);
       if (failed?.error) throw failed.error;
@@ -246,7 +301,8 @@ export function ProductForm({ productId }: { productId?: string }) {
       }
     } catch (err) {
       const message = productSaveErrorMessage(err);
-      if (isDuplicateAffiliateError(err)) setErrors((current) => ({ ...current, affiliate: message }));
+      if (isDuplicateAffiliateError(err))
+        setErrors((current) => ({ ...current, affiliate: message }));
       toast.error(message);
     } finally {
       setSaving(null);
@@ -258,7 +314,9 @@ export function ProductForm({ productId }: { productId?: string }) {
     return (
       <div className="rounded-2xl border border-border p-6">
         <p className="text-destructive">{loadError}</p>
-        <Link to="/admin/products" className="mt-4 inline-block text-sm text-accent">Back to Products</Link>
+        <Link to="/admin/products" className="mt-4 inline-block text-sm text-accent">
+          Back to Products
+        </Link>
       </div>
     );
 
@@ -296,35 +354,106 @@ export function ProductForm({ productId }: { productId?: string }) {
     <div className="space-y-5 pb-28">
       <Section title="1 · Basic product information">
         <Field label="Product Name" required error={errors.name}>
-          <input className={inputCls} value={name} onChange={(e) => setName(e.target.value)} placeholder="Galaxy Star Projector" />
+          <input
+            className={inputCls}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Galaxy Star Projector"
+          />
         </Field>
         <Field label="URL slug" hint={`Public URL: /product/${slug || "…"}`}>
-          <input className={inputCls} value={slug} onChange={(e) => { setSlugTouched(true); setSlug(slugify(e.target.value)); }} />
+          <input
+            className={inputCls}
+            value={slug}
+            onChange={(e) => {
+              setSlugTouched(true);
+              setSlug(slugify(e.target.value));
+            }}
+          />
         </Field>
-        <Field label="Short Description" required error={errors.short} hint="One or two sentences shown on product cards.">
-          <textarea rows={2} maxLength={300} className={textareaCls} value={short} onChange={(e) => setShort(e.target.value)} />
+        <Field
+          label="Short Description"
+          required
+          error={errors.short}
+          hint="One or two sentences shown on product cards."
+        >
+          <textarea
+            rows={2}
+            maxLength={300}
+            className={textareaCls}
+            value={short}
+            onChange={(e) => setShort(e.target.value)}
+          />
         </Field>
-        <Field label="Full Description" required error={errors.desc} hint="Leave a blank line between paragraphs. Start lines with “- ” for bullet points.">
-          <textarea rows={8} className={textareaCls} value={desc} onChange={(e) => setDesc(e.target.value)} />
+        <Field
+          label="Full Description"
+          required
+          error={errors.desc}
+          hint="Leave a blank line between paragraphs. Start lines with “- ” for bullet points."
+        >
+          <textarea
+            rows={8}
+            className={textareaCls}
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}
+          />
         </Field>
         <div className="grid gap-4 sm:grid-cols-3">
-          <CategorySelect categories={cats} value={categoryIds} onChange={(ids) => { setCategoryIds(ids); setErrors((current) => { const { category: _category, ...rest } = current; return rest; }); }} error={errors.category} />
-          <Field label="Subcategory"><input className={inputCls} value={subcategory} onChange={(e) => setSubcategory(e.target.value)} /></Field>
-          <Field label="Brand"><input className={inputCls} value={brand} onChange={(e) => setBrand(e.target.value)} /></Field>
+          <CategorySelect
+            categories={cats}
+            value={categoryIds}
+            onChange={(ids) => {
+              setCategoryIds(ids);
+              setErrors((current) => {
+                const { category: _category, ...rest } = current;
+                return rest;
+              });
+            }}
+            error={errors.category}
+          />
+          <Field label="Subcategory">
+            <input
+              className={inputCls}
+              value={subcategory}
+              onChange={(e) => setSubcategory(e.target.value)}
+            />
+          </Field>
+          <Field label="Brand">
+            <input className={inputCls} value={brand} onChange={(e) => setBrand(e.target.value)} />
+          </Field>
         </div>
-        <Field label="Tags" hint="Press Enter or comma to add. e.g. astronomy, galaxy, telescope, NASA">
+        <Field
+          label="Tags"
+          hint="Press Enter or comma to add. e.g. astronomy, galaxy, telescope, NASA"
+        >
           <div className="flex flex-wrap gap-1.5 rounded-lg border border-input bg-secondary/50 p-2">
             {tags.map((t) => (
-              <span key={t} className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-1 text-xs text-primary">
+              <span
+                key={t}
+                className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-1 text-xs text-primary"
+              >
                 {t}
-                <button type="button" aria-label={`Remove ${t}`} onClick={() => setTags((s) => s.filter((x) => x !== t))}><X className="size-3" /></button>
+                <button
+                  type="button"
+                  aria-label={`Remove ${t}`}
+                  onClick={() => setTags((s) => s.filter((x) => x !== t))}
+                >
+                  <X className="size-3" />
+                </button>
               </span>
             ))}
             <input
               className="min-w-32 flex-1 bg-transparent px-1 text-sm focus:outline-none"
               value={tagInput}
-              onChange={(e) => (e.target.value.includes(",") ? addTag(e.target.value) : setTagInput(e.target.value))}
-              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addTag(tagInput); } }}
+              onChange={(e) =>
+                e.target.value.includes(",") ? addTag(e.target.value) : setTagInput(e.target.value)
+              }
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addTag(tagInput);
+                }
+              }}
               onBlur={() => tagInput && addTag(tagInput)}
               placeholder="Add tag…"
             />
@@ -333,20 +462,65 @@ export function ProductForm({ productId }: { productId?: string }) {
       </Section>
 
       <Section title="2 · Product images">
-        <p className="text-xs text-muted-foreground">JPG, JPEG, PNG or WEBP. Images are automatically optimised. The first image is the primary image.</p>
-        {errors.images && <p role="alert" className="text-xs text-destructive">{errors.images}</p>}
+        <p className="text-xs text-muted-foreground">
+          JPG, JPEG, PNG or WEBP. Images are automatically optimised. The first image is the primary
+          image.
+        </p>
+        {errors.images && (
+          <p role="alert" className="text-xs text-destructive">
+            {errors.images}
+          </p>
+        )}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {images.map((im, i) => (
-            <div key={im.key} className={`overflow-hidden rounded-xl border ${i === 0 ? "border-primary" : "border-border"} bg-secondary`}>
+            <div
+              key={im.key}
+              className={`overflow-hidden rounded-xl border ${i === 0 ? "border-primary" : "border-border"} bg-secondary`}
+            >
               <div className="relative aspect-square">
                 <img src={im.url} alt="" className="h-full w-full object-cover" />
-                {i === 0 && <span className="absolute left-2 top-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">PRIMARY</span>}
+                {i === 0 && (
+                  <span className="absolute left-2 top-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">
+                    PRIMARY
+                  </span>
+                )}
               </div>
               <div className="flex items-center justify-between p-1">
-                <button type="button" aria-label="Move left" onClick={() => move(i, -1)} className="p-2 text-muted-foreground hover:text-foreground"><ArrowUp className="size-4 -rotate-90" /></button>
-                <button type="button" aria-label="Move right" onClick={() => move(i, 1)} className="p-2 text-muted-foreground hover:text-foreground"><ArrowDown className="size-4 -rotate-90" /></button>
-                {i !== 0 && <button type="button" aria-label="Make primary" title="Make primary" onClick={() => makePrimary(i)} className="p-2 text-muted-foreground hover:text-primary"><Star className="size-4" /></button>}
-                <button type="button" aria-label="Delete image" onClick={() => removeImg(i)} className="p-2 text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
+                <button
+                  type="button"
+                  aria-label="Move left"
+                  onClick={() => move(i, -1)}
+                  className="p-2 text-muted-foreground hover:text-foreground"
+                >
+                  <ArrowUp className="size-4 -rotate-90" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Move right"
+                  onClick={() => move(i, 1)}
+                  className="p-2 text-muted-foreground hover:text-foreground"
+                >
+                  <ArrowDown className="size-4 -rotate-90" />
+                </button>
+                {i !== 0 && (
+                  <button
+                    type="button"
+                    aria-label="Make primary"
+                    title="Make primary"
+                    onClick={() => makePrimary(i)}
+                    className="p-2 text-muted-foreground hover:text-primary"
+                  >
+                    <Star className="size-4" />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  aria-label="Delete image"
+                  onClick={() => removeImg(i)}
+                  className="p-2 text-muted-foreground hover:text-destructive"
+                >
+                  <Trash2 className="size-4" />
+                </button>
               </div>
             </div>
           ))}
@@ -356,65 +530,178 @@ export function ProductForm({ productId }: { productId?: string }) {
             disabled={uploading}
             className="flex aspect-square flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-input text-sm text-muted-foreground hover:border-primary/50 hover:text-foreground"
           >
-            {uploading ? <Loader2 className="size-6 animate-spin" /> : <ImagePlus className="size-6" />}
+            {uploading ? (
+              <Loader2 className="size-6 animate-spin" />
+            ) : (
+              <ImagePlus className="size-6" />
+            )}
             {uploading ? "Uploading…" : images.length ? "Add images" : "Upload primary image"}
           </button>
         </div>
-        <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onChange={(e) => onFiles(e.target.files)} />
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          multiple
+          hidden
+          onChange={(e) => onFiles(e.target.files)}
+        />
       </Section>
 
       <Section title="3 · Product features">
         {features.map((f, i) => (
           <div key={i} className="flex gap-2">
-            <input className={inputCls} value={f} placeholder="e.g. HD galaxy projection" onChange={(e) => setFeatures((s) => s.map((x, k) => (k === i ? e.target.value : x)))} />
-            <Button type="button" variant="ghost" size="icon" aria-label="Remove feature" onClick={() => setFeatures((s) => s.filter((_, k) => k !== i))}><Trash2 /></Button>
+            <input
+              className={inputCls}
+              value={f}
+              placeholder="e.g. HD galaxy projection"
+              onChange={(e) => setFeatures((s) => s.map((x, k) => (k === i ? e.target.value : x)))}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="Remove feature"
+              onClick={() => setFeatures((s) => s.filter((_, k) => k !== i))}
+            >
+              <Trash2 />
+            </Button>
           </div>
         ))}
-        <Button type="button" variant="outline" onClick={() => setFeatures((s) => [...s, ""])}><Plus /> Add Feature</Button>
+        <Button type="button" variant="outline" onClick={() => setFeatures((s) => [...s, ""])}>
+          <Plus /> Add Feature
+        </Button>
       </Section>
 
       <Section title="4 · Affiliate information">
-        <Field label="Affiliate URL" required error={errors.affiliate} hint="Paste this product's retailer affiliate link exactly. It is stored and used unchanged.">
-          <input className={inputCls} type="url" inputMode="url" value={affiliateUrl} onChange={(e) => { setAffiliateUrl(e.target.value); setErrors((current) => { const { affiliate: _affiliate, ...rest } = current; return rest; }); }} onBlur={() => affiliateUrl && !isValidAffiliateUrl(affiliateUrl) && setErrors((x) => ({ ...x, affiliate: "Please enter a valid secure affiliate URL." }))} placeholder="https://retailer.example/product/your-affiliate-link" />
+        <Field
+          label="Affiliate URL"
+          required
+          error={errors.affiliate}
+          hint="Paste this product's retailer affiliate link exactly. It is stored and used unchanged."
+        >
+          <input
+            className={inputCls}
+            type="url"
+            inputMode="url"
+            value={affiliateUrl}
+            onChange={(e) => {
+              setAffiliateUrl(e.target.value);
+              setErrors((current) => {
+                const { affiliate: _affiliate, ...rest } = current;
+                return rest;
+              });
+            }}
+            onBlur={() =>
+              affiliateUrl &&
+              !isValidAffiliateUrl(affiliateUrl) &&
+              setErrors((x) => ({ ...x, affiliate: "Please enter a valid secure affiliate URL." }))
+            }
+            placeholder="https://retailer.example/product/your-affiliate-link"
+          />
         </Field>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Retailer">
-            <select className={inputCls} value={retailer} onChange={(e) => setRetailer(e.target.value)}>{RETAILERS.map((name) => <option key={name}>{name}</option>)}</select>
+            <select
+              className={inputCls}
+              value={retailer}
+              onChange={(e) => setRetailer(e.target.value)}
+            >
+              {RETAILERS.map((name) => (
+                <option key={name}>{name}</option>
+              ))}
+            </select>
           </Field>
-          <Field label="Retailer product ID" hint="Optional, for example an ASIN or Flipkart product ID."><input className={inputCls} value={retailerProductId} onChange={(e) => setRetailerProductId(e.target.value)} placeholder="Optional product ID" /></Field>
+          <Field
+            label="Retailer product ID"
+            hint="Optional, for example an ASIN or Flipkart product ID."
+          >
+            <input
+              className={inputCls}
+              value={retailerProductId}
+              onChange={(e) => setRetailerProductId(e.target.value)}
+              placeholder="Optional product ID"
+            />
+          </Field>
         </div>
       </Section>
 
       <Section title="5 · Price (optional)">
-        <p className="text-xs text-muted-foreground">Only enter a price you have verified with the retailer. If left empty, the store shows “Check latest price”.</p>
+        <p className="text-xs text-muted-foreground">
+          Only enter a price you have verified with the retailer. If left empty, the store shows
+          “Check latest price”.
+        </p>
         <div className="grid gap-4 sm:grid-cols-3">
-          <Field label="Price" error={errors.price}><input className={inputCls} inputMode="decimal" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="e.g. 1499" /></Field>
-          <Field label="Currency"><select className={inputCls} value={currency} onChange={(e) => setCurrency(e.target.value)}>{CURRENCIES.map((c) => <option key={c}>{c}</option>)}</select></Field>
-          <Field label="Price last updated"><input type="date" className={inputCls} value={priceDate} onChange={(e) => setPriceDate(e.target.value)} /></Field>
+          <Field label="Price" error={errors.price}>
+            <input
+              className={inputCls}
+              inputMode="decimal"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="e.g. 1499"
+            />
+          </Field>
+          <Field label="Currency">
+            <select
+              className={inputCls}
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+            >
+              {CURRENCIES.map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Price last updated">
+            <input
+              type="date"
+              className={inputCls}
+              value={priceDate}
+              onChange={(e) => setPriceDate(e.target.value)}
+            />
+          </Field>
         </div>
       </Section>
 
       <Section title="6 · Visibility">
         <label className="flex items-center justify-between gap-4">
-          <span><span className="block text-sm font-medium">Active</span><span className="text-xs text-muted-foreground">Visible on the public store.</span></span>
+          <span>
+            <span className="block text-sm font-medium">Active</span>
+            <span className="text-xs text-muted-foreground">Visible on the public store.</span>
+          </span>
           <Switch checked={active} onCheckedChange={setActive} />
         </label>
         <label className="flex items-center justify-between gap-4">
-          <span><span className="block text-sm font-medium">Featured Product</span><span className="text-xs text-muted-foreground">Shown on the homepage and featured sections.</span></span>
+          <span>
+            <span className="block text-sm font-medium">Featured Product</span>
+            <span className="text-xs text-muted-foreground">
+              Shown on the homepage and featured sections.
+            </span>
+          </span>
           <Switch checked={featured} onCheckedChange={setFeatured} />
         </label>
       </Section>
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 backdrop-blur lg:left-60">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-end gap-2 px-4 py-3 sm:px-8">
-          <Link to="/admin/products" className={buttonVariants({ variant: "ghost" })}>Cancel</Link>
-          <Button variant="outline" onClick={() => setPreview(true)}>Preview</Button>
+          <Link to="/admin/products" className={buttonVariants({ variant: "ghost" })}>
+            Cancel
+          </Link>
+          <Button variant="outline" onClick={() => setPreview(true)}>
+            Preview
+          </Button>
           {productId ? (
-            <Button variant="affiliate" disabled={!!saving} onClick={() => save("save")}>{saving && <Loader2 className="animate-spin" />} Save Changes</Button>
+            <Button variant="affiliate" disabled={!!saving} onClick={() => save("save")}>
+              {saving && <Loader2 className="animate-spin" />} Save Changes
+            </Button>
           ) : (
             <>
-              <Button variant="secondary" disabled={!!saving} onClick={() => save("draft")}>{saving === "draft" && <Loader2 className="animate-spin" />} Save Draft</Button>
-              <Button variant="affiliate" disabled={!!saving} onClick={() => save("publish")}>{saving === "publish" && <Loader2 className="animate-spin" />} Publish Product</Button>
+              <Button variant="secondary" disabled={!!saving} onClick={() => save("draft")}>
+                {saving === "draft" && <Loader2 className="animate-spin" />} Save Draft
+              </Button>
+              <Button variant="affiliate" disabled={!!saving} onClick={() => save("publish")}>
+                {saving === "publish" && <Loader2 className="animate-spin" />} Publish Product
+              </Button>
             </>
           )}
         </div>
@@ -430,11 +717,28 @@ export function ProductForm({ productId }: { productId?: string }) {
       <Dialog open={!!done} onOpenChange={(o) => !o && setDone(null)}>
         <DialogContent className="max-w-sm bg-background text-center">
           <CheckCircle2 className="mx-auto size-10 text-success" />
-          <DialogTitle className="text-2xl">{done?.published ? "Product published successfully." : "Changes saved."}</DialogTitle>
-          {done && !done.active && <p className="text-sm text-muted-foreground">This product is inactive, so it is hidden from the store.</p>}
+          <DialogTitle className="text-2xl">
+            {done?.published ? "Product published successfully." : "Changes saved."}
+          </DialogTitle>
+          {done && !done.active && (
+            <p className="text-sm text-muted-foreground">
+              This product is inactive, so it is hidden from the store.
+            </p>
+          )}
           <div className="mt-2 flex flex-col gap-2">
-            {done?.active && <a href={`/product/${done.slug}`} target="_blank" rel="noopener" className={buttonVariants({ variant: "affiliate" })}>View Product</a>}
-            <Link to="/admin/products" className={buttonVariants({ variant: "outline" })}>Back to Products</Link>
+            {done?.active && (
+              <a
+                href={`/product/${done.slug}`}
+                target="_blank"
+                rel="noopener"
+                className={buttonVariants({ variant: "affiliate" })}
+              >
+                View Product
+              </a>
+            )}
+            <Link to="/admin/products" className={buttonVariants({ variant: "outline" })}>
+              Back to Products
+            </Link>
           </div>
         </DialogContent>
       </Dialog>
