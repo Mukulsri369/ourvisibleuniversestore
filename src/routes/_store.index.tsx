@@ -33,7 +33,12 @@ export const Route = createFileRoute("/_store/")({
   }),
   loader: async ({ context }) => {
     try {
-      return await context.queryClient.ensureQueryData(homeQuery);
+      const [home] = await Promise.all([
+        context.queryClient.ensureQueryData(homeQuery),
+        context.queryClient.ensureQueryData(categoriesQuery),
+        context.queryClient.ensureQueryData(settingsQuery),
+      ]);
+      return home;
     } catch {
       return { featured: [], newest: [], festival: [] };
     }

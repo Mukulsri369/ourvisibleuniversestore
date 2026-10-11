@@ -30,41 +30,22 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
   };
 }
 
+const DEFAULT_SUPABASE_URL = "https://c--e5dc52fc-4129-47cd-9ba2-1c20a9af2f78-prod.lovable.cloud";
+const DEFAULT_SUPABASE_KEY = "sb_publishable_LnvKmEnYxmXbvplWO-pkgw_6cxxCkYL";
+
 function createSupabaseClient() {
+  // Use import.meta.env for client-side (Vite build-time replacement)
+  // Fall back to process.env for SSR (server-side rendering)
   const SUPABASE_URL =
-    (typeof import.meta !== "undefined" && import.meta.env?.["VITE_SUPABASE_URL"]) ||
-    (typeof process !== "undefined"
-      ? process.env?.["VITE_SUPABASE_URL"] || process.env?.["SUPABASE_URL"]
-      : undefined) ||
-    "https://mock.supabase.co";
+    import.meta.env["VITE_SUPABASE_URL"] || process.env["SUPABASE_URL"] || DEFAULT_SUPABASE_URL;
   const SUPABASE_PUBLISHABLE_KEY =
-    (typeof import.meta !== "undefined" && import.meta.env?.["VITE_SUPABASE_PUBLISHABLE_KEY"]) ||
-    (typeof process !== "undefined"
-      ? process.env?.["VITE_SUPABASE_PUBLISHABLE_KEY"] || process.env?.["SUPABASE_PUBLISHABLE_KEY"]
-      : undefined) ||
-    "sb_mock_key";
-
-  const isReal =
-    Boolean(SUPABASE_URL) &&
-    Boolean(SUPABASE_PUBLISHABLE_KEY) &&
-    SUPABASE_URL !== "https://mock.supabase.co" &&
-    !SUPABASE_URL.includes("mock.supabase.co");
-
-  if (!isReal) {
-    console.warn(
-      "[Supabase] Missing Supabase environment variable(s). Connect Supabase in Lovable Cloud or .env.",
-    );
-  }
+    import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
+    process.env["SUPABASE_PUBLISHABLE_KEY"] ||
+    DEFAULT_SUPABASE_KEY;
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
     global: {
-      fetch: isReal
-        ? createSupabaseFetch(SUPABASE_PUBLISHABLE_KEY)
-        : async () =>
-            new Response(JSON.stringify([]), {
-              status: 200,
-              headers: { "Content-Type": "application/json" },
-            }),
+      fetch: createSupabaseFetch(SUPABASE_PUBLISHABLE_KEY),
     },
     auth: {
       storage: brokeredPreviewStorage(),

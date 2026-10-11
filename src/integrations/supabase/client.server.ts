@@ -33,32 +33,22 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 }
 
 function createSupabaseAdminClient() {
-  const SUPABASE_URL =
-    process.env["SUPABASE_URL"] || process.env["VITE_SUPABASE_URL"] || "https://mock.supabase.co";
-  const SUPABASE_SERVICE_ROLE_KEY =
-    process.env["SUPABASE_SERVICE_ROLE_KEY"] || "sb_mock_service_key";
+  const SUPABASE_URL = process.env["SUPABASE_URL"];
+  const SUPABASE_SERVICE_ROLE_KEY = process.env["SUPABASE_SERVICE_ROLE_KEY"];
 
-  const isReal =
-    Boolean(SUPABASE_URL) &&
-    Boolean(SUPABASE_SERVICE_ROLE_KEY) &&
-    SUPABASE_URL !== "https://mock.supabase.co" &&
-    SUPABASE_SERVICE_ROLE_KEY !== "sb_mock_service_key";
-
-  if (!isReal) {
-    console.warn(
-      "[Supabase] Missing server Supabase environment variables. Connect Supabase in Lovable Cloud or .env.",
-    );
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    const missing = [
+      ...(!SUPABASE_URL ? ["SUPABASE_URL"] : []),
+      ...(!SUPABASE_SERVICE_ROLE_KEY ? ["SUPABASE_SERVICE_ROLE_KEY"] : []),
+    ];
+    const message = `Missing Supabase environment variable(s): ${missing.join(", ")}. Connect Supabase in Lovable Cloud.`;
+    console.error(`[Supabase] ${message}`);
+    throw new Error(message);
   }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
     global: {
-      fetch: isMock
-        ? async () =>
-            new Response(JSON.stringify([]), {
-              status: 200,
-              headers: { "Content-Type": "application/json" },
-            })
-        : createSupabaseFetch(SUPABASE_SERVICE_ROLE_KEY),
+      fetch: createSupabaseFetch(SUPABASE_SERVICE_ROLE_KEY),
     },
     auth: {
       storage: undefined,

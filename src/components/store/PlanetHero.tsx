@@ -21,6 +21,10 @@ export function PlanetHero() {
     setReady(true);
     const element = section.current;
     if (!element) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setVisible(true);
+      return;
+    }
     const observer = new IntersectionObserver(
       ([entry]) => setVisible(entry?.isIntersecting ?? false),
       { threshold: 0.05 },
