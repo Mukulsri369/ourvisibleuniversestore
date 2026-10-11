@@ -306,6 +306,7 @@
   .planet-slot-left .planet-slot-name { left: 70px; }
   .planet-slot-right .planet-slot-name { right: 70px; }
   .planet-scroll { bottom: 18px; width: 48px; height: 48px; left: calc(50% - 24px); }
+  .planet-playback { top: 8px; right: 8px; bottom: auto; }
 }
 @media (max-height: 660px) and (min-width: 640px) {
   .planet-hero { min-height: 515px; }
