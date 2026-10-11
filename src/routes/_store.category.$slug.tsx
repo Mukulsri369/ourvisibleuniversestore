@@ -1,15 +1,20 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { PageHeader } from "@/components/store/Pagination";
 import { ProductBrowser, validateBrowseSearch } from "@/components/store/ProductBrowser";
-import { absoluteUrl, categoryQuery, SITE_URL } from "@/lib/store";
+import { CategoryCelestialWorld } from "@/components/store/CategoryCelestialWorld";
+import { CategoryQualityBento } from "@/components/store/CategoryQualityBento";
+import { getCelestialSystemForCategory } from "@/lib/celestial-catalog";
+import { absoluteUrl, categoryQuery, categoryQualityProductsQuery, SITE_URL } from "@/lib/store";
 
 export const Route = createFileRoute("/_store/category/$slug")({
   validateSearch: validateBrowseSearch,
   loader: async ({ context, params }) => {
-    const cat = await context.queryClient.ensureQueryData(categoryQuery(params.slug));
+    const [cat, qualityProducts] = await Promise.all([
+      context.queryClient.ensureQueryData(categoryQuery(params.slug)),
+      context.queryClient.ensureQueryData(categoryQualityProductsQuery(params.slug)),
+    ]);
     if (!cat) throw notFound();
-    return { cat };
+    return { cat, qualityProducts };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData)
@@ -70,10 +75,38 @@ function CategoryPage() {
   const { slug } = Route.useParams();
   const search = Route.useSearch();
   const { data: cat } = useSuspenseQuery(categoryQuery(slug));
+  const { data: qualityProducts = [] } = useSuspenseQuery(categoryQualityProductsQuery(slug));
+  const celestialSystem = getCelestialSystemForCategory(slug);
+
   return (
-    <>
-      <PageHeader eyebrow="Category" title={cat!.name} text={cat!.description} />
-      <ProductBrowser search={search} to={`/category/${slug}`} lockCategory={slug} />
-    </>
+    <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
+      {/* CELESTIAL ORBITAL STAGE (Planets, Moons, Atmospheric Corona, Telemetry HUD) */}
+      <div className="pt-6 sm:pt-8">
+        <CategoryCelestialWorld system={celestialSystem} />
+      </div>
+
+      {/* TOP QUALITY PRODUCT BENTO GRID */}
+      {qualityProducts.length > 0 && (
+        <CategoryQualityBento products={qualityProducts} categoryName={cat!.name} />
+      )}
+
+      {/* COMPLETE CATEGORY CATALOG BROWSER */}
+      <section className="relative pt-6 pb-16">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-border/40 pb-4">
+          <div>
+            <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+              Full Category Catalog
+            </span>
+            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+              All {cat!.name} Gear
+            </h3>
+          </div>
+          {cat!.description && (
+            <p className="max-w-md text-xs sm:text-sm text-muted-foreground">{cat!.description}</p>
+          )}
+        </div>
+        <ProductBrowser search={search} to={`/category/${slug}`} lockCategory={slug} />
+      </section>
+    </div>
   );
 }

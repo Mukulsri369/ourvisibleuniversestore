@@ -501,6 +501,60 @@ export const relatedQuery = (p: {
     },
   });
 
+export async function fetchCategoryQualityProducts(slug: string): Promise<ProductCardData[]> {
+  try {
+    const db = publicDb();
+    const { data: cat } = await db
+      .from("categories")
+      .select("id")
+      .eq("slug", slug)
+      .eq("active", true)
+      .maybeSingle();
+
+    if (!cat) return [];
+
+    // Prioritize explicitly featured products in this category
+    const { data: featuredData } = await liveProducts()
+      .contains("category_ids", [cat.id])
+      .eq("featured", true)
+      .order("created_at", { ascending: false })
+      .limit(4);
+
+    const cards: ProductCardData[] = ((featuredData ?? []) as unknown as RawCard[]).map(toCard);
+    const seenIds = new Set(cards.map((c) => c.id));
+
+    // If fewer than 4, fill remaining slots with the latest products in this category
+    if (cards.length < 4) {
+      const { data: moreData } = await liveProducts()
+        .contains("category_ids", [cat.id])
+        .order("created_at", { ascending: false })
+        .limit(8);
+
+      if (moreData) {
+        for (const item of moreData as unknown as RawCard[]) {
+          if (!seenIds.has(item.id)) {
+            cards.push(toCard(item));
+            seenIds.add(item.id);
+            if (cards.length >= 4) break;
+          }
+        }
+      }
+    }
+
+    return cards;
+  } catch (err) {
+    console.error("Failed to fetch quality products for category:", err);
+    return [];
+  }
+}
+
+export const categoryQualityProductsQuery = (slug: string) =>
+  queryOptions({
+    queryKey: ["category-quality-products", slug],
+    queryFn: () => fetchCategoryQualityProducts(slug),
+    staleTime: 60_000,
+  });
+
 /** Fire-and-forget outbound affiliate click log. Never blocks navigation. */
 export function logOutboundClick(productId: string) {
   try {

@@ -1,27 +1,23 @@
-# Celestial Scroll World: Interactive Earth, Venus & Mars Background Experience
+# Category Cosmic Worlds & Quality Product Bento Grid
 
-Transform the storefront landing page into an immersive cosmic journey where high-detail globes of Earth, Venus, and Mars pop into view as visitors scroll past the hero, traveling smoothly along celestial orbital pathways down to the footer while providing interactive collection highlights and atmospheric depth.
+A bespoke celestial design and interactive experience for every product category page in Our Visible Universe, mapping unique planets and moons with orbital drift animations, atmospheric corona pulses, real-time telemetry inspection, and a top-tier quality product bento grid.
 
 ### User Review & Critical Decisions
 
 > [!IMPORTANT]
-> The planetary flight paths and styling have been aligned based on your selections. Please review the planned interaction model, performance guardrails, and category integration below.
+> The following directions were confirmed during interactive clarification and form the foundation for this implementation:
 
-- **Confirmed: Orbital Motion Pattern**: Earth, Venus, and Mars emerge sequentially as the visitor scrolls down and glide along subtle alternating curved orbital tracks across each storefront section down to the footer.
-- **Confirmed: Visual Fidelity**: High-detail spherical globes with realistic day/night limb gradients, atmospheric rim illumination, cloud and surface texturing, and dynamic axial rotation linked to scroll velocity.
-- **Confirmed: Interactive Affordance**: Hovering a planet highlights its celestial glow and reveals a mini telemetry card linking directly to curated themed product collections (e.g., Earth Eco-Tech, Venus Radiance & Luxury, Mars Extreme Durability & Outdoors).
-- **SSR & Hydration Safety**: All scroll animations and viewport-dependent measurements are mounted client-side after initial hydration with `useScroll` and `useTransform` from Motion React, completely eliminating hydration attribute mismatches.
+- **Confirmed Decision 1 (Celestial System Mapping)**: Pre-mapped unique gas giants, ice worlds, terrestrial planets, and moons tailored to the theme and vibe of each category (e.g., Jupiter & Europa for Telescopes, Saturn & Titan for Gadgets, Earth & Luna for Décor, Neptune & Triton for Apparel, Sun & Solar Corona for Lamps/Lighting, Mars & Phobos for Science, Pluto & Charon for Kids).
+- **Confirmed Decision 2 (Quality Showcase Grid)**: A curated cosmic bento grid at the top of each category page spotlighting 3–4 quality-tagged products with luminous orbital accent borders, editorial badges ("Top Tier", "Staff Pick", "Cosmic Spec"), and rapid affiliate routing.
+- **Confirmed Decision 3 (Animation & Motion)**: Dynamic orbital drift with atmospheric corona pulse and interactive celestial telemetry cards on hover/touch, powered by Motion React with spring physics and strict `prefers-reduced-motion` fallbacks.
 
 ---
 
 ### 1. Overview & Core Concept
 
-- **What It Does**: As the visitor scrolls past the opening planet hero, three iconic celestial bodies—**Earth**, **Venus**, and **Mars**—smoothly emerge from the deep cosmic background. Each planet follows an orchestrated orbital descent:
-  - **Earth** glides along the right periphery near the Festival Specials rail with an azure ozone glow.
-  - **Venus** sweeps toward the center-left across the Gadgets & Electronics rail with golden-amber cloud radiance.
-  - **Mars** enters the lower catalog sections near the Footer with rust-crimson textures and atmospheric rim lighting.
-- **Target Audience & Persona**: Shoppers exploring tech, festival gifts, and gadgets who appreciate a cinematic, futuristic cosmic brand identity that feels responsive and alive.
-- **Key Value**: Replaces static page backgrounds with a living space-world narrative that increases page engagement and dwell time without interfering with product legibility or shopping ergonomics.
+- **What It Does**: Transforms every category browsing page (`/category/$slug`) into an immersive astronomical expedition. Visitors encounter a distinctive planetary system (e.g. Jupiter with its icy moon Europa, or ringed Saturn with Titan) orbiting in the background and header with atmospheric corona glow, paired with a top-level cosmic bento grid highlighting the highest-quality tagged products for that category before transitioning into the filterable product catalog.
+- **Target Audience / Persona**: Astronomy enthusiasts, stargazers, sci-fi fans, and gift shoppers seeking premium space-themed gear, apparel, optical instruments, and lighting.
+- **Key Value**: Elevates category pages from static e-commerce lists into narrative celestial experiences, dramatically improving engagement, dwell time, and affiliate conversion through prominent quality curation.
 
 ---
 
@@ -29,89 +25,79 @@ Transform the storefront landing page into an immersive cosmic journey where hig
 
 #### Key User Flows
 
-1. **Hero Departure (Scroll 0% → 15%)**: As the initial hero title fades, a subtle particle dust trail signals Earth popping into perspective with a gentle elastic spring and axial spin.
-2. **Mid-Page Descent (Scroll 15% → 60%)**: Venus joins the background field, moving opposite to Earth in an organic elliptical drift that creates true 2.5D parallax depth behind the product rail cards.
-3. **Deep Storefront Transition (Scroll 60% → 100%)**: Mars ascends from the lower quadrant as the user reaches the featured category rows, completing the planetary triad before settling into orbital positions around the footer.
-4. **Interactive Hover & Explore**: Hovering or tapping any drifting planet dims background distraction, enlarges its atmospheric corona, and reveals a floating prompt (e.g., _"Explore Mars Collection"_ or _"Earth-Friendly Tech"_), providing a natural path to thematic product filters.
+1. **Category Navigation & Celestial Reveal**:
+   - The visitor navigates to any category (e.g. `/category/astronomy-telescopes` or `/category/lamp`).
+   - The page header smoothly enters with category coordinates, astronomical classification, and a high-resolution orbiting planet + orbiting moon system tailored to that category.
+   - The celestial body breathes with an atmospheric corona pulse that softly illuminates the dark obsidian background.
+2. **Interactive Telemetry Inspection**:
+   - Hovering or tapping the celestial body displays a floating HUD telemetry card detailing celestial specs (Radius, Distance, Atmosphere, Celestial Lore, Category Tagline) without obstructing navigation.
+3. **Quality Product Bento Showcase**:
+   - Directly beneath the header, a responsive 3–4 card cosmic bento grid showcases the finest products tagged in that category.
+   - The primary featured item takes an expansive left or top anchor slot with feature highlights and live pricing; companion slots display curated specs and rapid Amazon/affiliate checkout links.
+4. **Seamless Catalog Transition**:
+   - Below the bento showcase, the complete category inventory is available with faceted search, price sliders, sorting, and pagination, while background celestial bodies continue gentle orbital parallax as the user scrolls.
 
 #### Visual Identity & Theme
 
-- **Color Palette & Mood**:
-  - Deep space vacuum canvas: `#060814` to `#0B0F19` with subtle stellar nebulas.
-  - **Earth**: Azure cyan `#38BDF8`, deep ocean cobalt `#1E40AF`, and swirling cloud whites.
-  - **Venus**: Warm amber `#F59E0B`, sulfuric gold `#FBBF24`, and luminous corona.
-  - **Mars**: Terracotta crimson `#EF4444`, iron rust `#DC2626`, and dusk violet rim.
-- **Depth & Contrast**:
-  - Planets are positioned with `z-index: 0` to `z-index: 5`, floating behind store content cards (`z-index: 10`) and navigation chrome (`z-index: 50`).
-  - Subtle dark radial backdrops behind product cards ensure text and product images remain 100% legible without visual interference.
-- **Motion & Accessibility Rules**:
-  - Respects `prefers-reduced-motion`: When reduced motion is enabled, planets render in fixed, elegant ambient positions without parallax scroll translation.
-  - Compositor-only properties (`transform: translate3d(...)` and `opacity`) ensure a locked 60/120 FPS on mobile and low-power devices.
+- **Dominant Tone**: Deep cosmic obsidian (`#07090E` / `#0B0E17`) with 1px hairline borders (`border-border/40`) and soft nebula backdrops.
+- **Atmospheric Palette**:
+  - _Jupiter & Galilean Moons_: Amber gold `#f59e0b`, storm ochre `#d97706`, Europa ice azure `#38bdf8`.
+  - _Saturn & Titan_: Muted golden rings `#eab308`, methane haze `#fde047`, champagne corona.
+  - _Neptune & Triton_: Deep voyager azure `#0284c7`, electric cyan `#06b6d4`, cryovolcanic teal `#14b8a6`.
+  - _Sun & Solar Flares_: Radiant plasma gold `#f97316`, solar corona `#fbbf24`, flare orange `#ef4444`.
+  - _Earth & Luna_: Azure oceans `#0284c7`, cloud white `#f8fafc`, regolith silver `#94a3b8`.
+  - _Mars & Phobos_: Rust crimson `#dc2626`, iron oxide `#b91c1c`, dust amber `#f59e0b`.
+  - _Pluto & Charon_: Nitrogen glacier silver `#cbd5e1`, tholin copper `#b45309`, cryo lavender `#c084fc`.
+- **Typographic Hierarchy**:
+  - Headings in clean geometric sans with wide tracking for orbital coordinates.
+  - Telemetry and data points in monospace (`font-mono tabular-nums`).
+  - Editorial metadata as clean unboxed text separated by subtle interpuncts (`·`), adhering strictly to zero-pill guidelines.
 
 ---
 
 ### 3. Key Product Decisions & Trade-Offs
 
-- **Decision 1: Motion React (`motion/react`) vs Heavy WebGL Instances**
-  - _Chosen Approach_: Leverage Motion React's hardware-accelerated SVG/CSS 3D spherical rendering with high-resolution texture maps, limb shading, and compositor-driven `useScroll` transforms.
-  - _Why_: Ultra-fast initial page load, zero CPU/GPU lockup on mobile, seamless SSR hydration without WebGL context thrashing, and full synchronization with page scroll.
-  - _Alternatives Considered_: Three.js full-screen canvas (already present in lightweight GalaxyScene, but multi-object 3D meshes increase memory consumption and battery drain on mobile devices).
-
-- **Decision 2: Interactive Planets Without Shopping Friction**
-  - _Chosen Approach_: Soft pointer hit-boxes with subtle magnetic hover and themed category chips that slide out unobtrusively without blocking product card clicks.
-  - _Why_: Delivers high delight without frustrating visitors attempting to click "Buy Now" or "View Details" on products.
-
-- **Decision 3: Compact Single-Line Category Rails with Dynamic Arrows**
-  - _Chosen Approach_: Maintain single-line horizontal product rails showing 5–6 items on desktop and 4–5 items on mobile, with intelligent scroll indicators and arrow buttons that automatically hide when the edges are reached.
+- **Decision 1: Pre-Mapped Celestial Taxonomy vs. Dynamic Generative Worlds**:
+  - _Chosen Approach_: Static mapping connecting category slugs to authentic Solar System planetary/lunar systems with fallback celestial definitions for newly created categories.
+  - _Why_: Ensures scientifically authentic celestial aesthetics, tailored atmospheric color stories, and ultra-fast client rendering without latency or generative artifacts.
+- **Decision 2: Top Quality Bento Grid Data Strategy**:
+  - _Chosen Approach_: Query highest-rated, featured, or quality-tagged items (`tag` matching "quality", "bestseller", "premium", "top", or category-featured products) with graceful degradation to top-sorted products when specific tags are sparse.
+  - _Why_: Guarantees the showcase always renders 3–4 compelling items regardless of catalog size or custom merchant tagging.
+- **Decision 3: Layering & Pointer Events**:
+  - _Chosen Approach_: Celestial systems use non-blocking `pointer-events-none` for ambient orbit paths, while interactive hotspots and telemetry HUD triggers have dedicated hit areas.
+  - _Why_: Ensures filters, search bars, and product cards remain 100% accessible and responsive with zero click-blocking.
 
 ---
 
 ### 4. Technical Architecture & Data Strategy
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                       StoreChrome                           │
-│  - Navigation Top Bar Contract (Wordmark · Links · Cart)     │
-└─────────────────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────▼───────────────────────────────┐
-│                    ScrollWorldController                     │
-│  - Tracks window scroll progress (0.0 → 1.0) via useScroll   │
-│  - Computes orbital transforms for Earth, Venus & Mars      │
-│  - Handles reduced-motion and touch gesture throttling       │
-└─────────────────────────────────────────────────────────────┘
-        │                             │
-        ▼                             ▼
-┌─────────────────────────┐   ┌───────────────────────────────┐
-│ CelestialOrbitalLayer   │   │ Storefront Content Layer      │
-│ (z-index: 0–5)          │   │ (z-index: 10)                 │
-│ ├─ Earth Globe & Halo   │   │ ├─ PlanetHero Opening         │
-│ ├─ Venus Globe & Corona │   │ ├─ Festival Specials Rail     │
-│ └─ Mars Globe & Dust    │   │ ├─ Category Product Rails     │
-│ └─ Interactive Tooltips │   │ └─ Store Footer               │
-└─────────────────────────┘   └───────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                   Category Page Route (_store.category.$slug.tsx)      │
+└────────────────────────────────────┬───────────────────────────────────┘
+                                     │
+         ┌───────────────────────────┴───────────────────────────┐
+         ▼                                                       ▼
+┌──────────────────────────────────┐   ┌─────────────────────────────────┐
+│ CategoryCelestialWorld           │   │ CategoryQualityBento            │
+│ ┌──────────────────────────────┐ │   │ ┌─────────────────────────────┐ │
+│ │ CategoryCelestialSystem      │ │   │ │ Featured Lead Card (Large)  │ │
+│ │ • Primary Planet             │ │   │ ├─────────────────────────────┤ │
+│ │ • Orbiting Moon / Ring       │ │   │ │ Spec Spotlight Cards (x2-3) │ │
+│ │ • Corona Pulse Animation     │ │   │ └─────────────────────────────┘ │
+│ │ • Telemetry HUD Modal/Hover  │ │   │ • Quality / Rating Badges       │
+│ └──────────────────────────────┘ │   │ • Direct Affiliate Links        │
+└──────────────────────────────────┘   └─────────────────────────────────┘
+                                     │
+                                     ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ ProductBrowser (Faceted filters, sort order, full catalog grid)        │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
-#### Component & State Implementation Plan
+#### Core Components to Create:
 
-1. **`src/components/store/CelestialScrollWorld.tsx`**:
-   - Master controller component mounted inside the store layout.
-   - Uses `useScroll` and smooth spring transforms for `x`, `y`, `scale`, and `rotate`.
-   - Coordinates Earth, Venus, and Mars trajectories down the full page height.
-2. **`src/components/store/CelestialPlanet.tsx`**:
-   - Renders individual planets with multi-layer spherical shading (surface map, atmospheric halo, shadow terminator, and hover aura).
-   - Contains interactive trigger linking to curated category collections.
-3. **`src/routes/_store.index.tsx` Integration**:
-   - Wraps the landing page content with the `CelestialScrollWorld` canvas.
-   - Cleans up hydration attributes to prevent SSR discrepancies.
-4. **Product Rails Refinement**:
-   - Verifies all category rails maintain compact item sizing (5–6 desktop, 4–5 mobile) and intuitive touch/arrow scrolling.
-
----
-
-### Verification & Testing Plan
-
-- **Hydration & SSR**: Verify `npm run build` and check server-rendered HTML for zero attribute mismatch warnings.
-- **Scroll Performance**: Verify smooth 60fps scrolling on both desktop viewports and mobile touch simulation.
-- **Responsive Layout**: Check layout at 375px (mobile), 768px (tablet), 1024px (laptop), and 1440px (wide desktop).
-- **Reduced Motion**: Verify that toggling `prefers-reduced-motion` settles planets into static decorative coordinates.
+1. `src/lib/celestial-catalog.ts`: Comprehensive celestial taxonomy mapping categories to planetary bodies, moons, atmospheric color palettes, corona glows, orbital velocities, and astronomical telemetry data.
+2. `src/components/store/CategoryCelestialWorld.tsx`: Parallax scroll and orbital drift orchestrator rendering the category's primary planet, orbiting moon, atmospheric corona pulse, and interactive HUD telemetry card.
+3. `src/components/store/CategoryQualityBento.tsx`: High-contrast, responsive bento grid showcasing 3–4 quality-tagged products at the top of each category page with feature highlights and quick actions.
+4. `src/routes/_store.category.$slug.tsx`: Enhanced route seamlessly integrating the celestial world, quality bento grid, and product browser.
