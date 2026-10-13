@@ -24,9 +24,12 @@ import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin.admin.index'
 import { Route as AdminAdminCategoriesRouteImport } from './routes/_admin.admin.categories'
+import { Route as AdminAdminFestivalRouteImport } from './routes/_admin.admin.festival'
 import { Route as AdminAdminSettingsRouteImport } from './routes/_admin.admin.settings'
 import { Route as StoreCategorySlugRouteImport } from './routes/_store.category.$slug'
 import { Route as StoreProductSlugRouteImport } from './routes/_store.product.$slug'
+import { Route as ApiAdminCheckPriceRouteImport } from './routes/api/admin/check-price'
+import { Route as ApiAdminScrapeProductRouteImport } from './routes/api/admin/scrape-product'
 import { Route as AdminAdminProductsIndexRouteImport } from './routes/_admin.admin.products.index'
 import { Route as AdminAdminProductsNewRouteImport } from './routes/_admin.admin.products.new'
 import { Route as AdminAdminProductsTrashRouteImport } from './routes/_admin.admin.products.trash'
@@ -107,6 +110,11 @@ const AdminAdminCategoriesRoute = AdminAdminCategoriesRouteImport.update({
   path: '/admin/categories',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAdminFestivalRoute = AdminAdminFestivalRouteImport.update({
+  id: '/admin/festival',
+  path: '/admin/festival',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAdminSettingsRoute = AdminAdminSettingsRouteImport.update({
   id: '/admin/settings',
   path: '/admin/settings',
@@ -121,6 +129,16 @@ const StoreProductSlugRoute = StoreProductSlugRouteImport.update({
   id: '/product/$slug',
   path: '/product/$slug',
   getParentRoute: () => StoreRoute,
+} as any)
+const ApiAdminCheckPriceRoute = ApiAdminCheckPriceRouteImport.update({
+  id: '/api/admin/check-price',
+  path: '/api/admin/check-price',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminScrapeProductRoute = ApiAdminScrapeProductRouteImport.update({
+  id: '/api/admin/scrape-product',
+  path: '/api/admin/scrape-product',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminAdminProductsIndexRoute = AdminAdminProductsIndexRouteImport.update({
   id: '/admin/products/',
@@ -162,9 +180,12 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/categories': typeof AdminAdminCategoriesRoute
+  '/admin/festival': typeof AdminAdminFestivalRoute
   '/admin/settings': typeof AdminAdminSettingsRoute
   '/category/$slug': typeof StoreCategorySlugRoute
   '/product/$slug': typeof StoreProductSlugRoute
+  '/api/admin/check-price': typeof ApiAdminCheckPriceRoute
+  '/api/admin/scrape-product': typeof ApiAdminScrapeProductRoute
   '/admin/': typeof AdminAdminIndexRoute
   '/admin/products/new': typeof AdminAdminProductsNewRoute
   '/admin/products/trash': typeof AdminAdminProductsTrashRoute
@@ -185,9 +206,12 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/categories': typeof AdminAdminCategoriesRoute
+  '/admin/festival': typeof AdminAdminFestivalRoute
   '/admin/settings': typeof AdminAdminSettingsRoute
   '/category/$slug': typeof StoreCategorySlugRoute
   '/product/$slug': typeof StoreProductSlugRoute
+  '/api/admin/check-price': typeof ApiAdminCheckPriceRoute
+  '/api/admin/scrape-product': typeof ApiAdminScrapeProductRoute
   '/admin': typeof AdminAdminIndexRoute
   '/admin/products/new': typeof AdminAdminProductsNewRoute
   '/admin/products/trash': typeof AdminAdminProductsTrashRoute
@@ -211,9 +235,12 @@ export interface FileRoutesById {
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/_store/': typeof StoreIndexRoute
   '/_admin/admin/categories': typeof AdminAdminCategoriesRoute
+  '/_admin/admin/festival': typeof AdminAdminFestivalRoute
   '/_admin/admin/settings': typeof AdminAdminSettingsRoute
   '/_store/category/$slug': typeof StoreCategorySlugRoute
   '/_store/product/$slug': typeof StoreProductSlugRoute
+  '/api/admin/check-price': typeof ApiAdminCheckPriceRoute
+  '/api/admin/scrape-product': typeof ApiAdminScrapeProductRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
   '/_admin/admin/products/new': typeof AdminAdminProductsNewRoute
   '/_admin/admin/products/trash': typeof AdminAdminProductsTrashRoute
@@ -236,9 +263,12 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/reset-password'
     | '/admin/categories'
+    | '/admin/festival'
     | '/admin/settings'
     | '/category/$slug'
     | '/product/$slug'
+    | '/api/admin/check-price'
+    | '/api/admin/scrape-product'
     | '/admin/'
     | '/admin/products/new'
     | '/admin/products/trash'
@@ -259,9 +289,12 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/reset-password'
     | '/admin/categories'
+    | '/admin/festival'
     | '/admin/settings'
     | '/category/$slug'
     | '/product/$slug'
+    | '/api/admin/check-price'
+    | '/api/admin/scrape-product'
     | '/admin'
     | '/admin/products/new'
     | '/admin/products/trash'
@@ -284,9 +317,12 @@ export interface FileRouteTypes {
     | '/admin/reset-password'
     | '/_store/'
     | '/_admin/admin/categories'
+    | '/_admin/admin/festival'
     | '/_admin/admin/settings'
     | '/_store/category/$slug'
     | '/_store/product/$slug'
+    | '/api/admin/check-price'
+    | '/api/admin/scrape-product'
     | '/_admin/admin/'
     | '/_admin/admin/products/new'
     | '/_admin/admin/products/trash'
@@ -300,6 +336,8 @@ export interface RootRouteChildren {
   StoreRoute: typeof StoreRouteWithChildren
   AdminLoginRoute: typeof AdminLoginRoute
   AdminResetPasswordRoute: typeof AdminResetPasswordRoute
+  ApiAdminCheckPriceRoute: typeof ApiAdminCheckPriceRoute
+  ApiAdminScrapeProductRoute: typeof ApiAdminScrapeProductRoute
   ApiPublicImgSplatRoute: typeof ApiPublicImgSplatRoute
 }
 
@@ -410,6 +448,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminCategoriesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_admin/admin/festival': {
+      id: '/_admin/admin/festival'
+      path: '/admin/festival'
+      fullPath: '/admin/festival'
+      preLoaderRoute: typeof AdminAdminFestivalRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_admin/admin/settings': {
       id: '/_admin/admin/settings'
       path: '/admin/settings'
@@ -430,6 +475,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/product/$slug'
       preLoaderRoute: typeof StoreProductSlugRouteImport
       parentRoute: typeof StoreRoute
+    }
+    '/api/admin/check-price': {
+      id: '/api/admin/check-price'
+      path: '/api/admin/check-price'
+      fullPath: '/api/admin/check-price'
+      preLoaderRoute: typeof ApiAdminCheckPriceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/scrape-product': {
+      id: '/api/admin/scrape-product'
+      path: '/api/admin/scrape-product'
+      fullPath: '/api/admin/scrape-product'
+      preLoaderRoute: typeof ApiAdminScrapeProductRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_admin/admin/products/': {
       id: '/_admin/admin/products/'
@@ -471,6 +530,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAdminCategoriesRoute: typeof AdminAdminCategoriesRoute
+  AdminAdminFestivalRoute: typeof AdminAdminFestivalRoute
   AdminAdminSettingsRoute: typeof AdminAdminSettingsRoute
   AdminAdminIndexRoute: typeof AdminAdminIndexRoute
   AdminAdminProductsNewRoute: typeof AdminAdminProductsNewRoute
@@ -481,6 +541,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAdminCategoriesRoute: AdminAdminCategoriesRoute,
+  AdminAdminFestivalRoute: AdminAdminFestivalRoute,
   AdminAdminSettingsRoute: AdminAdminSettingsRoute,
   AdminAdminIndexRoute: AdminAdminIndexRoute,
   AdminAdminProductsNewRoute: AdminAdminProductsNewRoute,
@@ -526,6 +587,8 @@ const rootRouteChildren: RootRouteChildren = {
   StoreRoute: StoreRouteWithChildren,
   AdminLoginRoute: AdminLoginRoute,
   AdminResetPasswordRoute: AdminResetPasswordRoute,
+  ApiAdminCheckPriceRoute: ApiAdminCheckPriceRoute,
+  ApiAdminScrapeProductRoute: ApiAdminScrapeProductRoute,
   ApiPublicImgSplatRoute: ApiPublicImgSplatRoute,
 }
 export const routeTree = rootRouteImport
