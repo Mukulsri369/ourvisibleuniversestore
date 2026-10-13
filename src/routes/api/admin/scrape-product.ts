@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import * as cheerio from "cheerio";
+import * as cheerio from "cheerio/slim";
 import { slugify } from "@/lib/store";
 
 const BROWSER_HEADERS: Record<string, string> = {
