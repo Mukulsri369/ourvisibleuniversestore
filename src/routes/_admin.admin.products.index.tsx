@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Eye, Pencil, Plus, Trash2 } from "lucide-react";
+import { Eye, Flame, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -96,6 +96,9 @@ function Products() {
         sub={data ? `${data.total} products` : undefined}
         action={
           <div className="flex gap-2">
+            <Link to="/admin/festival" className={buttonVariants({ variant: "outline" })}>
+              <Flame className="size-4 text-primary" /> Festival Special
+            </Link>
             <Link to="/admin/products/trash" className={buttonVariants({ variant: "outline" })}>
               <Trash2 /> Trash
             </Link>

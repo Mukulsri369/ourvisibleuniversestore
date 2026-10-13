@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Check, ShieldCheck } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { formatPrice, type ProductFull } from "@/lib/store";
 import { BuyButton } from "./BuyButton";
 import { ProductImage } from "./ProductCard";
@@ -46,28 +47,89 @@ export function ProductDetailView({
   preview?: boolean | undefined;
 }) {
   const [active, setActive] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const price = formatPrice(p.price, p.currency);
   const main = p.images[active] ?? p.images[0];
+
+  // Reset to first image when navigating between products
+  useEffect(() => {
+    setActive(0);
+    setIsPaused(false);
+  }, [p.id]);
+
+  // Auto-advance images every 3 seconds when multiple images exist and user isn't hovering
+  useEffect(() => {
+    if (p.images.length <= 1 || isPaused) return;
+
+    const timer = setInterval(() => {
+      setActive((prev) => (prev + 1) % p.images.length);
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [p.images.length, isPaused]);
+
+  // Keep active thumbnail smoothly visible in scrollable container
+  useEffect(() => {
+    const el = thumbnailRefs.current[active];
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+    }
+  }, [active]);
 
   return (
     <div className="grid gap-8 lg:grid-cols-2 lg:gap-14">
       <div>
-        <div className="aspect-square overflow-hidden rounded-3xl border border-border bg-secondary">
-          <ProductImage
-            src={main?.image_url ?? null}
-            alt={main?.alt_text || p.name}
-            className="h-full w-full"
-            eager
-          />
+        <div
+          className="relative aspect-square overflow-hidden rounded-3xl border border-border bg-secondary"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          aria-roledescription="carousel"
+          aria-label={`${p.name} image gallery`}
+        >
+          <AnimatePresence initial={false}>
+            <motion.div
+              key={main?.image_url || active}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+              className="absolute inset-0 h-full w-full"
+            >
+              <ProductImage
+                src={main?.image_url ?? null}
+                alt={main?.alt_text || p.name}
+                className="h-full w-full object-cover"
+                eager
+              />
+            </motion.div>
+          </AnimatePresence>
         </div>
         {p.images.length > 1 && (
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+          <div
+            className="mt-3 flex gap-2 overflow-x-auto pb-1"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            role="tablist"
+            aria-label="Image thumbnails"
+          >
             {p.images.map((im, i) => (
               <button
                 key={im.image_url + i}
-                onClick={() => setActive(i)}
-                aria-label={`Show image ${i + 1}`}
-                className={`size-18 shrink-0 overflow-hidden rounded-xl border-2 ${i === active ? "border-primary" : "border-transparent opacity-70"}`}
+                ref={(el) => {
+                  thumbnailRefs.current[i] = el;
+                }}
+                onClick={() => {
+                  setActive(i);
+                }}
+                aria-label={`Show image ${i + 1} of ${p.images.length}`}
+                aria-selected={i === active}
+                role="tab"
+                className={`size-18 shrink-0 overflow-hidden rounded-xl border-2 transition-all duration-200 ${
+                  i === active
+                    ? "border-primary ring-2 ring-primary/30"
+                    : "border-transparent opacity-70 hover:opacity-100"
+                }`}
               >
                 <img
                   src={im.image_url}

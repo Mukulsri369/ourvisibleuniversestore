@@ -1,79 +1,68 @@
-# Implementation Plan — Minimalist Category Pages with Poetic Space Quotes & Direct Visual Grids (Completed)
+# Troubleshooting & Resolution Plan: Fixing GitHub "Permission Denied" in AI Studio (Active)
 
-Align all product category pages with the clean, clutter-free aesthetic established on the All Products page. Remove heavy Bento grids and explanatory wordings, elevating each category with a focused atmospheric header, an inspiring astronomical quote, a minimalist laser coordinate line, and direct access to the dense 5–6 column visual product catalogue.
+## Problem Overview
 
-## User Review & Critical Decisions
+When attempting to push commits to GitHub directly from AI Studio, the operation failed with:
+> `Failed to push commit to GitHub: permission denied. Please try again.`
 
-> [!IMPORTANT]
-> The following directions have been completed:
-
-- **Confirmed Decision 1 (Category Header)**: Clean category title paired with a concise, poetic space quote and laser coordinate line instead of bulky overview text or telemetry tables.
-- **Confirmed Decision 2 (Product Arrangement)**: Eliminated the top Quality Bento blocks entirely and take visitors directly into the responsive 5–6 column visual grid with quick-view slideshow popups.
-- **Confirmed Decision 3 (Background Animation)**: Retained the full-height ambient celestial particle starfield and planetary aura running smoothly to the bottom of the page behind the content.
+This indicates that GitHub is rejecting the push operation due to missing write authorization on the connected GitHub App or OAuth grant for this repository.
 
 ---
 
-## 1. Overview & Core Concept
+## Action Items to Resolve Immediately
 
-- **What It Does**: Transforms every category route (`/category/$slug`) into an ultra-clean, modern celestial gallery. Visitors are welcomed with the category name, an evocative celestial quote, a sleek laser beam with sector coordinates, and the complete product catalog in an edge-to-edge dense visual grid.
-- **Target Audience / Persona**: Astronomy enthusiasts, stargazers, astrophotographers, and gift seekers who want instant visual product discovery without reading through repetitive promotional paragraphs.
-- **Key Value**: Consistency and speed — matching the streamlined, high-end look and feel of `/shop`, emphasizing product imagery, and providing immediate interactive previews without extra page loads.
+### Action 1: Grant Repository Access in GitHub Settings (Most Common Cause)
 
----
-
-## 2. User Experience & Visual Design
-
-### Key User Flows
-
-1. **Category Navigation**: When a user selects a category (e.g. Telescopes, Binoculars, Astrophotography, Apparel, Décor) from the navigation, homepage, or category browser:
-   - The page smoothly loads the category's atmospheric background aura (tuned to its planetary palette).
-   - At the top: A minimalist header presents the category title in bold geometric typography, accompanied by a single poetic astronomical quote (e.g., *"The cosmos is within us. We are made of star-stuff."* — Carl Sagan).
-2. **Space Laser Coordinate Axis**:
-   - Immediately below the quote, a minimalist `SpaceLaserLine` anchors the layout with celestial coordinates (e.g. `JOVIAN APERTURE & OPTICS AXIS · RA 17h 52m 14s · DEC -23° 24′ 12″ · JOVIAN SECTOR`).
-3. **Instant Visual Catalogue**:
-   - The catalog appears directly below the laser line in a dense 5–6 item responsive grid (2 columns on mobile, 3–4 on tablet, 5–6 on desktop).
-   - Product cards prioritize edge-to-edge photos with compact metadata (`text-[9px]` category mono, `text-xs` titles, clear price tags).
-4. **Instant Hover & Tap Slideshow Modal**:
-   - Hovering or tapping a card or the **Peek** action triggers `ProductQuickPreviewModal` with an interactive multi-image carousel, image indicator dots, price, and affiliate buy link.
-
-### Visual Identity & Theme
-
-- **Palette**: Deep space obsidian backdrop with category-specific coronal glow (amber for Jupiter, ice cyan for Neptune/Uranus, crimson for Mars, solar gold for Sun/Solar).
-- **Typography & Hierarchy**:
-  - Category Eyebrow: `text-[11px] sm:text-xs font-mono uppercase tracking-widest text-primary`
-  - Category Title: `text-3xl sm:text-5xl font-bold tracking-tight text-foreground`
-  - Space Quote: `text-xs sm:text-sm font-mono italic text-muted-foreground/90 max-w-3xl`
-- **Minimalism & Anti-Slop Discipline**:
-  - Zero static pill badges, zero compound score capsules.
-  - No redundant "All [Category] Gear" duplicate headings or "Category Collection" sub-headers.
-  - No heavy Bento boxes pushing catalog items below the fold.
+1. Open your browser and navigate directly to:
+   **[https://github.com/settings/installations](https://github.com/settings/installations)**
+2. Find the application for **Google AI Studio** / **Lovable** in the list.
+3. Click **Configure**.
+4. Check the **Repository access** section:
+   - If set to **"Only select repositories"**, click the dropdown, search for your repository, and select it to grant access.
+   - Alternatively, change it to **"All repositories"** so future projects and updates are never blocked.
+5. Click **Save**.
 
 ---
 
-## 3. Key Product Decisions & Trade-Offs
+### Action 2: Reconnect Your GitHub Account in AI Studio
 
-- **Decision 1: Direct Grid vs. Preserving Bento Highlights**
-  - *Chosen Approach*: Removed the duplicate `CategoryQualityBento` component from the category route, routing all items directly into `ProductBrowser`.
-  - *Why*: Bento cards duplicated items that already appear in the catalog and pushed the rest of the collection below the fold. Direct grids maximize browsability and photo density.
-
-- **Decision 2: Curated Poetic Quotes per Category**
-  - *Chosen Approach*: Provided a dedicated map of bespoke, inspiring space quotes tied to each celestial system and category domain (Carl Sagan, Galileo, Albert Einstein, Arthur C. Clarke, Edwin Hubble, and classic celestial wisdom).
-  - *Why*: Adds authentic character and wonder without clutter or marketing buzzwords.
-
-- **Decision 3: Seamless Full-Height Background**
-  - *Chosen Approach*: Kept `CategoryFullBackground` covering the entire document height with passive CSS/pointer-events-none layering so scrolling reveals subtle parallax star dust and ambient planetary watermarks without impacting interaction or scrolling performance.
+If the token expired or lost write scopes:
+1. In the AI Studio interface, open the GitHub connection menu (usually next to the push/export button or your avatar).
+2. Click **Disconnect** or **Log out of GitHub**.
+3. Click **Connect to GitHub** to initiate a clean OAuth connection.
+4. When prompted by GitHub, ensure:
+   - You authorize with the account that owns the repository (`mukul.sri.25`).
+   - You grant permission to access repositories (Read and Write).
+5. Once reconnected, click **Push changes to GitHub** again.
 
 ---
 
-## 4. Technical Architecture & Completed Changes
+### Action 3: Verify Branch Protection Rules on Your GitHub Repository
 
-1. **`src/lib/celestial-catalog.ts`**:
-   - Added `quote: { text: string; author: string }`, `coordinates: string`, and `laserLabel: string` across all 10 celestial systems and default fallback.
-2. **`src/components/store/CategoryFullBackground.tsx`**:
-   - Fixed style binding collision.
-   - Built full-height starfield particle animation with subtle parallax scrolling down the entire page.
-   - Added an ambient planetary watermark with slow rotation and soft corona glow.
-3. **`src/routes/_store.category.$slug.tsx`**:
-   - Replaced multi-section layout with clean minimalist header (Sector eyebrow, Category name, poetic space quote with author).
-   - Embedded `SpaceLaserLine` with celestial coordinates.
-   - Mounted `ProductBrowser` directly with dense 5–6 column visual grid, compact typography, and quick preview popup modal.
+If your GitHub repository has branch rules enabled:
+1. Go to your repository on GitHub: `https://github.com/<your-username>/<your-repo-name>`
+2. Go to **Settings** → **Branches**.
+3. Under **Branch protection rules**, check if the default branch (`main` or `master`) has:
+   - *"Require a pull request before merging"*
+   - *"Restrict who can push to matching branches"*
+4. If enabled, temporarily uncheck these restrictions or add your authorized app/account to the allowlist, then save.
+
+---
+
+### Fallback: Push Directly from Your Local Terminal
+
+If you prefer to bypass web authorization completely and push via your terminal using your local SSH key or Personal Access Token:
+```bash
+# In your local project folder:
+git fetch origin
+git pull --rebase origin main
+git push origin main
+```
+
+---
+
+## Project Status
+
+- **App Compilation**: Succeeded (`npm run build` passes with 0 errors).
+- **Codebase Linting**: Succeeded (0 lint errors).
+- **All Previous Features**: 5s landing card auto-rotation, 3s detail crossfade, `/admin/festival` curation dashboard, and 3-card mobile category rails are built and operational.

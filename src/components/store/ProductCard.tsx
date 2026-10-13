@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { ExternalLink, Eye, Sparkles, Telescope } from "lucide-react";
-import { useState } from "react";
+import { ExternalLink, Eye, Telescope } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { formatPrice, logOutboundClick, type ProductCardData } from "@/lib/store";
 import { BuyButton } from "./BuyButton";
 import { ProductQuickPreviewModal } from "./ProductQuickPreviewModal";
@@ -18,6 +19,10 @@ export function ProductImage({
   eager?: boolean;
 }) {
   const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [src]);
 
   if (!src || failed) {
     return (
@@ -55,25 +60,127 @@ export function ProductCard({
   onQuickPreview?: (p: ProductCardData) => void;
 }) {
   const price = formatPrice(p.price, p.currency);
+  const [active, setActive] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const isFirstRun = useRef(true);
+
+  // Normalize image list
+  const imageList =
+    p.images && p.images.length > 0
+      ? p.images
+      : p.image
+        ? [{ image_url: p.image, alt_text: p.imageAlt }]
+        : [];
+  const hasMultipleImages = imageList.length > 1;
+
+  // Reset to first image if product changes
+  useEffect(() => {
+    setActive(0);
+    setIsHovered(false);
+    isFirstRun.current = true;
+  }, [p.id]);
+
+  // 5-second automatic image rotation for cards with multiple images
+  useEffect(() => {
+    if (!hasMultipleImages || isHovered) return;
+
+    // Honor reduced-motion preference
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+
+    // Deterministic organic stagger offset (0 to 2400ms) based on product ID
+    let hash = 0;
+    for (let i = 0; i < p.id.length; i++) {
+      hash = (hash << 5) - hash + p.id.charCodeAt(i);
+      hash |= 0;
+    }
+    const staggerOffset = Math.abs(hash) % 2400;
+
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      timeoutId = setTimeout(() => {
+        setActive((prev) => (prev + 1) % imageList.length);
+        intervalId = setInterval(() => {
+          setActive((prev) => (prev + 1) % imageList.length);
+        }, 5000);
+      }, 5000 + staggerOffset);
+    } else {
+      intervalId = setInterval(() => {
+        setActive((prev) => (prev + 1) % imageList.length);
+      }, 5000);
+    }
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [hasMultipleImages, isHovered, imageList.length, p.id]);
+
+  const currentImg = imageList[active] ?? imageList[0];
+  const currentSrc = currentImg?.image_url ?? p.image;
+  const currentAlt = currentImg?.alt_text || p.imageAlt || p.name;
 
   if (compact) {
     return (
       <article
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         className={cn(
           "group relative flex flex-col overflow-hidden rounded-xl sm:rounded-2xl border border-border/70 bg-card/70 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_8px_25px_-5px_rgba(139,92,246,0.18)] snap-start shrink-0 select-none",
-          "w-[85px] min-w-[85px] max-w-[95px] sm:w-[130px] sm:min-w-[130px] md:w-[155px] md:min-w-[155px] lg:w-[calc((100%-5*14px)/6)] lg:min-w-[160px] xl:w-[calc((100%-5*16px)/6)] xl:min-w-[172px]",
+          "w-[calc((100vw-50px)/3)] min-w-[calc((100vw-50px)/3)] max-w-[calc((100vw-50px)/3)] sm:max-w-none sm:w-[130px] sm:min-w-[130px] md:w-[155px] md:min-w-[155px] lg:w-[calc((100%-5*14px)/6)] lg:min-w-[160px] xl:w-[calc((100%-5*16px)/6)] xl:min-w-[172px]",
           className,
         )}
       >
         {/* COMPACT IMAGE CONTAINER */}
         <div className="relative aspect-square w-full overflow-hidden bg-secondary/60">
-          <Link to="/product/$slug" params={{ slug: p.slug }} className="block size-full">
-            <ProductImage
-              src={p.image}
-              alt={p.imageAlt || p.name}
-              className="h-full w-full transition-transform duration-500 group-hover:scale-105"
-            />
+          <Link to="/product/$slug" params={{ slug: p.slug }} className="block size-full relative">
+            {hasMultipleImages ? (
+              <AnimatePresence initial={false}>
+                <motion.div
+                  key={currentSrc || active}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.45, ease: "easeInOut" }}
+                  className="absolute inset-0 h-full w-full"
+                >
+                  <ProductImage
+                    src={currentSrc}
+                    alt={currentAlt}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </motion.div>
+              </AnimatePresence>
+            ) : (
+              <ProductImage
+                src={p.image}
+                alt={p.imageAlt || p.name}
+                className="h-full w-full transition-transform duration-500 group-hover:scale-105"
+              />
+            )}
           </Link>
+
+          {/* SUBTLE MULTI-IMAGE INDICATOR DOTS (VISIBLE ON HOVER) */}
+          {hasMultipleImages && (
+            <div className="absolute bottom-1 left-0 right-0 z-10 flex justify-center gap-0.5 sm:gap-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              {imageList.map((_, idx) => (
+                <span
+                  key={idx}
+                  className={cn(
+                    "h-1 rounded-full transition-all duration-300",
+                    idx === active ? "w-2.5 sm:w-3 bg-primary shadow-sm" : "w-1 bg-foreground/40",
+                  )}
+                />
+              ))}
+            </div>
+          )}
 
           {/* QUICK PREVIEW BUTTON ON HOVER / TAP */}
           {onQuickPreview && (
@@ -108,7 +215,7 @@ export function ProductCard({
             )}
             <Link to="/product/$slug" params={{ slug: p.slug }}>
               <h3
-                className="line-clamp-2 text-[9px] sm:text-[11px] font-medium leading-tight text-foreground transition-colors group-hover:text-primary"
+                className="line-clamp-2 text-[10px] sm:text-[11px] font-medium leading-tight text-foreground transition-colors group-hover:text-primary"
                 title={p.name}
               >
                 {p.name}
@@ -117,7 +224,7 @@ export function ProductCard({
           </div>
 
           <div className="pt-0.5">
-            <p className="text-[9px] sm:text-[11px] font-bold text-primary truncate">
+            <p className="text-[10px] sm:text-[11px] font-bold text-primary truncate">
               {price ?? <span className="font-normal text-[8px] text-muted-foreground">Price</span>}
             </p>
 
@@ -125,7 +232,7 @@ export function ProductCard({
               {onQuickPreview && (
                 <button
                   onClick={() => onQuickPreview(p)}
-                  className="sm:hidden flex-1 h-5 rounded-full bg-secondary/80 text-[8px] font-medium text-foreground hover:text-primary"
+                  className="sm:hidden flex-1 h-5.5 rounded-full bg-secondary/80 text-[8.5px] font-medium text-foreground hover:text-primary"
                 >
                   Peek
                 </button>
@@ -137,7 +244,7 @@ export function ProductCard({
                   rel="nofollow sponsored noopener noreferrer"
                   onClick={() => logOutboundClick(p.id)}
                   aria-label={`Buy ${p.name}`}
-                  className="inline-flex h-5 sm:h-6 w-full sm:w-auto sm:flex-1 items-center justify-center gap-0.5 rounded-full bg-primary/15 sm:bg-primary text-[8px] sm:text-[9px] font-semibold text-primary sm:text-primary-foreground hover:bg-primary/25 sm:hover:bg-primary/90 transition-colors"
+                  className="inline-flex h-5.5 sm:h-6 w-full sm:w-auto sm:flex-1 items-center justify-center gap-0.5 rounded-full bg-primary/15 sm:bg-primary text-[8.5px] sm:text-[9px] font-semibold text-primary sm:text-primary-foreground hover:bg-primary/25 sm:hover:bg-primary/90 transition-colors"
                 >
                   <span>Buy</span>
                   <ExternalLink className="size-2 sm:size-2.5 shrink-0" />
@@ -153,6 +260,8 @@ export function ProductCard({
   // STANDARD PRODUCT CARD (DENSE, MAX PHOTO, COMPACT TYPOGRAPHY)
   return (
     <article
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/65 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5",
         className,
@@ -160,13 +269,47 @@ export function ProductCard({
     >
       {/* MAX PHOTO CONTAINER (70%+ OF CARD HEIGHT) */}
       <div className="relative aspect-square w-full overflow-hidden bg-secondary/50">
-        <Link to="/product/$slug" params={{ slug: p.slug }} className="block size-full">
-          <ProductImage
-            src={p.image}
-            alt={p.imageAlt || p.name}
-            className="h-full w-full transition-transform duration-500 group-hover:scale-105"
-          />
+        <Link to="/product/$slug" params={{ slug: p.slug }} className="block size-full relative">
+          {hasMultipleImages ? (
+            <AnimatePresence initial={false}>
+              <motion.div
+                key={currentSrc || active}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.45, ease: "easeInOut" }}
+                className="absolute inset-0 h-full w-full"
+              >
+                <ProductImage
+                  src={currentSrc}
+                  alt={currentAlt}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </motion.div>
+            </AnimatePresence>
+          ) : (
+            <ProductImage
+              src={p.image}
+              alt={p.imageAlt || p.name}
+              className="h-full w-full transition-transform duration-500 group-hover:scale-105"
+            />
+          )}
         </Link>
+
+        {/* SUBTLE MULTI-IMAGE INDICATOR DOTS (VISIBLE ON HOVER) */}
+        {hasMultipleImages && (
+          <div className="absolute bottom-2 left-0 right-0 z-10 flex justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            {imageList.map((_, idx) => (
+              <span
+                key={idx}
+                className={cn(
+                  "h-1 rounded-full transition-all duration-300",
+                  idx === active ? "w-3.5 bg-primary shadow-sm" : "w-1 bg-foreground/40",
+                )}
+              />
+            ))}
+          </div>
+        )}
 
         {/* QUICK PREVIEW BUTTON ON HOVER / TAP */}
         {onQuickPreview && (

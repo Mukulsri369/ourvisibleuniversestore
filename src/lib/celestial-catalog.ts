@@ -619,7 +619,7 @@ export const DEFAULT_CELESTIAL_SYSTEM: CelestialSystemConfig = {
     temperature: "-8 °C (equilibrium estimate)",
     mission: "Kepler Space Telescope & Habitable Worlds Obs",
     astronomicalLore:
-      "A super-Earth orbiting within the habitable zone of a solar twin, 1,402 light-years distant in the constellation Cygnus.",
+      "A super-Earth orbiting within the habitable zone of a solar twin, 1,402 light-years distant in the Cygnus celestial sector.",
   },
 };
 

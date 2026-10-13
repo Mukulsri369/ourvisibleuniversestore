@@ -61,6 +61,7 @@ export type ProductCardData = {
   category_ids?: string[];
   image: string | null;
   imageAlt: string | null;
+  images?: { image_url: string; alt_text: string | null }[];
 };
 
 export type ProductFull = ProductCardData & {
@@ -119,6 +120,10 @@ export function toCard(r: RawCard): ProductCardData {
     category_ids: catIds,
     image: imgs[0]?.image_url ?? null,
     imageAlt: imgs[0]?.alt_text ?? null,
+    images: imgs.map((img) => ({
+      image_url: img.image_url,
+      alt_text: img.alt_text,
+    })),
   };
 }
 
@@ -200,9 +205,61 @@ export const categoriesQuery = queryOptions({
   staleTime: 60_000,
 });
 
+export type FestivalSpecialConfig = {
+  product_ids?: string[];
+  title?: string;
+  eyebrow?: string;
+  description?: string;
+  enabled?: boolean;
+};
+
 export async function fetchFestivalProducts(): Promise<ProductCardData[]> {
   try {
     const db = publicDb();
+
+    // 1. Check if configured in site_settings (via public_site_settings view)
+    const { data: settingsRow } = await db
+      .from("public_site_settings")
+      .select("social_links")
+      .eq("id", 1)
+      .maybeSingle();
+
+    const social = (settingsRow?.social_links as Record<string, unknown> | null) || {};
+    const festSpecial = (social.festival_special as Record<string, unknown> | undefined) || {};
+
+    // If admin explicitly disabled festival section, return empty list
+    if (festSpecial.enabled === false) {
+      return [];
+    }
+
+    const configuredIds: string[] | null = Array.isArray(social.festival_product_ids)
+      ? (social.festival_product_ids as string[])
+      : Array.isArray(festSpecial.product_ids)
+        ? (festSpecial.product_ids as string[])
+        : null;
+
+    if (configuredIds !== null) {
+      if (configuredIds.length === 0) {
+        return [];
+      }
+      const { data: products } = await liveProducts().in("id", configuredIds);
+      if (products && products.length > 0) {
+        const productMap = new Map<string, RawCard>();
+        for (const p of products as unknown as RawCard[]) {
+          productMap.set(p.id, p);
+        }
+        // Preserve exact admin-curated order
+        const ordered: RawCard[] = [];
+        for (const id of configuredIds) {
+          const item = productMap.get(id);
+          if (item) ordered.push(item);
+        }
+        return ordered.map(toCard);
+      }
+      return [];
+    }
+
+    // Fallback: automatic detection by diwali and light tags
     const { data: tagRows } = await db
       .from("product_tags")
       .select("product_id")
@@ -254,6 +311,59 @@ export async function fetchFestivalProducts(): Promise<ProductCardData[]> {
     return festivalCards.map(toCard);
   } catch (err) {
     console.warn("[Store] fetchFestivalProducts error:", err);
+    return [];
+  }
+}
+
+export async function fetchAutoFestivalProductIds(): Promise<string[]> {
+  try {
+    const db = publicDb();
+    const { data: tagRows } = await db
+      .from("product_tags")
+      .select("product_id")
+      .or("tag.ilike.%diwali%,tag.ilike.%light%")
+      .limit(100);
+
+    const taggedIds = [...new Set((tagRows ?? []).map((t) => t.product_id))];
+    const ids: string[] = [];
+    const seen = new Set<string>();
+
+    if (taggedIds.length > 0) {
+      const { data } = await liveProducts()
+        .in("id", taggedIds)
+        .order("featured", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(16);
+      if (data) {
+        for (const p of data as unknown as RawCard[]) {
+          if (!seen.has(p.id)) {
+            ids.push(p.id);
+            seen.add(p.id);
+          }
+        }
+      }
+    }
+
+    if (ids.length < 8) {
+      const { data } = await liveProducts()
+        .or(
+          "name.ilike.%diwali%,name.ilike.%light%,name.ilike.%lamp%,short_description.ilike.%diwali%,short_description.ilike.%light%",
+        )
+        .order("featured", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(16);
+      if (data) {
+        for (const p of data as unknown as RawCard[]) {
+          if (!seen.has(p.id)) {
+            ids.push(p.id);
+            seen.add(p.id);
+          }
+          if (ids.length >= 16) break;
+        }
+      }
+    }
+    return ids;
+  } catch {
     return [];
   }
 }

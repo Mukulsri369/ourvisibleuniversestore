@@ -1,9 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ImagePlus } from "lucide-react";
+import { Flame, ImagePlus } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { AdminTitle, Field, inputCls, Section, textareaCls } from "@/components/admin/ui";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
@@ -135,6 +135,25 @@ function Settings() {
             onChange={(e) => set({ instagram_url: e.target.value || null })}
           />
         </Field>
+      </Section>
+      <Section title="Festival Special">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-medium text-foreground">
+              Diwali & Seasonal Festival Showcase
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Add, remove, and reorder products displayed in the featured Festival Special carousel
+              on the homepage.
+            </p>
+          </div>
+          <Link
+            to="/admin/festival"
+            className={buttonVariants({ variant: "outline", className: "gap-2 shrink-0" })}
+          >
+            <Flame className="size-4 text-primary" /> Curate Festival Products →
+          </Link>
+        </div>
       </Section>
       <Section title="Legal & footer">
         <Field label="Affiliate disclosure">

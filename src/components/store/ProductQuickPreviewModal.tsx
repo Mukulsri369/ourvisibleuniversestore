@@ -33,9 +33,11 @@ export function ProductQuickPreviewModal({ product, onClose }: ProductQuickPrevi
   const images =
     fullProduct?.images && fullProduct.images.length > 0
       ? fullProduct.images
-      : product?.image
-        ? [{ image_url: product.image, alt_text: product.imageAlt || product.name }]
-        : [];
+      : product?.images && product.images.length > 0
+        ? product.images
+        : product?.image
+          ? [{ image_url: product.image, alt_text: product.imageAlt || product.name }]
+          : [];
 
   // Reset image index when product changes
   useEffect(() => {

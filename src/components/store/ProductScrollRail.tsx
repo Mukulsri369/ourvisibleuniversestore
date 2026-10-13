@@ -123,11 +123,16 @@ export function ProductScrollRail({
             {title && (
               <h2
                 className={cn(
-                  "mt-1 font-sans font-semibold tracking-tight text-foreground",
+                  "mt-1 font-sans font-semibold tracking-tight text-foreground flex items-center gap-2",
                   isFestive ? "text-2xl sm:text-4xl" : "text-xl sm:text-3xl",
                 )}
               >
-                {title}
+                <span>{title}</span>
+                {!eyebrow && typeof count === "number" && (
+                  <span className="rounded-full bg-secondary/80 px-2 py-0.5 font-mono text-[10px] sm:text-xs font-normal text-muted-foreground">
+                    {count} {count === 1 ? "item" : "items"}
+                  </span>
+                )}
               </h2>
             )}
           </div>

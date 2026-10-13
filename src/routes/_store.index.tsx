@@ -91,6 +91,22 @@ function Home() {
       .filter((entry) => entry.products.length > 0);
   }, [cats, home.allProducts]);
 
+  const social = (settings?.social_links as Record<string, unknown> | null) || {};
+  const festSpecial = (social.festival_special as Record<string, unknown> | undefined) || {};
+  const showFestival = festSpecial.enabled !== false;
+  const festivalEyebrow =
+    typeof festSpecial.eyebrow === "string" && festSpecial.eyebrow
+      ? festSpecial.eyebrow
+      : "Festival Special · Diwali";
+  const festivalTitle =
+    typeof festSpecial.title === "string" && festSpecial.title
+      ? festSpecial.title
+      : "Festival of Lights & Cosmic Glow";
+  const festivalDesc =
+    typeof festSpecial.description === "string" && festSpecial.description
+      ? festSpecial.description
+      : "Illuminate your home and celebrations with radiant galaxy night lights, illuminated planets, handcrafted cosmic lamps, and festive starry glow.";
+
   return (
     <div className="relative">
       {/* CELESTIAL BACKGROUND SCROLL WORLD (Earth, Venus & Mars orbit down to bottom) */}
@@ -102,55 +118,56 @@ function Home() {
       </div>
 
       {/* FESTIVAL SPECIAL — DIWALI (Single-Line Horizontal Rail) */}
-      <section
-        id="festival-special"
-        className="relative z-10 mx-auto max-w-7xl scroll-mt-20 px-4 pt-16 pb-6 sm:px-6"
-      >
-        <div className="relative overflow-hidden rounded-3xl border border-primary/25 bg-gradient-to-b from-primary/10 via-card/50 to-card/25 p-5 sm:p-8 md:p-10 shadow-glow">
-          <div className="starfield absolute inset-0 opacity-40 pointer-events-none" />
-          <div className="relative">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="eyebrow flex items-center gap-1.5 text-primary">
-                  <Flame className="size-3.5 text-primary" /> Festival Special · Diwali
-                </p>
-                <h2 className="mt-2 text-2xl sm:text-5xl font-semibold text-foreground">
-                  Festival of Lights & Cosmic Glow
-                </h2>
-                <p className="mt-2.5 max-w-2xl text-xs sm:text-base text-muted-foreground">
-                  Illuminate your home and celebrations with radiant galaxy night lights,
-                  illuminated planets, handcrafted cosmic lamps, and festive starry glow.
-                </p>
+      {showFestival && (
+        <section
+          id="festival-special"
+          className="relative z-10 mx-auto max-w-7xl scroll-mt-20 px-4 pt-16 pb-6 sm:px-6"
+        >
+          <div className="relative overflow-hidden rounded-3xl border border-primary/25 bg-gradient-to-b from-primary/10 via-card/50 to-card/25 p-5 sm:p-8 md:p-10 shadow-glow">
+            <div className="starfield absolute inset-0 opacity-40 pointer-events-none" />
+            <div className="relative">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="eyebrow flex items-center gap-1.5 text-primary">
+                    <Flame className="size-3.5 text-primary" /> {festivalEyebrow}
+                  </p>
+                  <h2 className="mt-2 text-2xl sm:text-5xl font-semibold text-foreground">
+                    {festivalTitle}
+                  </h2>
+                  <p className="mt-2.5 max-w-2xl text-xs sm:text-base text-muted-foreground">
+                    {festivalDesc}
+                  </p>
+                </div>
+                <Link
+                  to="/search"
+                  search={{ q: "light" }}
+                  className="hidden shrink-0 items-center gap-1 text-sm font-medium text-accent hover:underline sm:inline-flex"
+                >
+                  Explore all lights <ArrowRight className="size-4" />
+                </Link>
               </div>
-              <Link
-                to="/search"
-                search={{ q: "light" }}
-                className="hidden shrink-0 items-center gap-1 text-sm font-medium text-accent hover:underline sm:inline-flex"
-              >
-                Explore all lights <ArrowRight className="size-4" />
-              </Link>
-            </div>
 
-            <div className="mt-6 sm:mt-8">
-              {home.festival && home.festival.length > 0 ? (
-                <ProductScrollRail variant="festive" items={home.festival} className="my-0" />
-              ) : (
-                <EmptyState
-                  title="Festive illuminations are on their way."
-                  text="Discover glowing lamps and radiant cosmic pieces for Diwali celebrations."
-                />
-              )}
+              <div className="mt-6 sm:mt-8">
+                {home.festival && home.festival.length > 0 ? (
+                  <ProductScrollRail variant="festive" items={home.festival} className="my-0" />
+                ) : (
+                  <EmptyState
+                    title="Festive illuminations are on their way."
+                    text="Discover glowing lamps and radiant cosmic pieces for Diwali celebrations."
+                  />
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* FEATURED CATEGORIES GATEWAY */}
       <section
         id="categories"
         className="relative z-10 mx-auto max-w-7xl scroll-mt-20 px-4 pt-12 pb-8 sm:px-6"
       >
-        <SectionHead eyebrow="Constellations" title="Featured categories" />
+        <SectionHead title="Featured categories" />
         <div className="mt-6 sm:mt-8 grid grid-cols-2 gap-2.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
           {cats.slice(0, 8).map((c, i) => (
             <CategoryCard key={c.id} c={c} index={i} />
@@ -161,7 +178,7 @@ function Home() {
       {/* SPACE LASER LINE DIVIDER */}
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
         <SpaceLaserLine
-          label="CONSTELLATION SECTORS"
+          label="EXPLORE CATEGORIES"
           coordinates="RA 05h 35m 17s · DEC -05° 23′ 28″ · ORION NEBULA"
           className="my-4 sm:my-6"
         />
@@ -178,7 +195,6 @@ function Home() {
               >
                 <ProductScrollRail
                   title={category.name}
-                  eyebrow="Constellation Collection"
                   count={products.length}
                   icon={<Sparkles className="size-3 text-primary" />}
                   link={{
