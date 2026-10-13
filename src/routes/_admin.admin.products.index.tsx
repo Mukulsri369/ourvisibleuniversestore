@@ -88,6 +88,8 @@ function Products() {
         success?: boolean;
         price?: number;
         currency?: string;
+        inStock?: boolean;
+        stockMessage?: string;
         error?: string;
       } | null = null;
       try {
@@ -97,6 +99,36 @@ function Products() {
         toast.error("Unable to check price: Retailer returned non-JSON response.");
         return;
       }
+
+      // Check if product is out of stock on retailer site
+      if (res.ok && result?.success && result?.inStock === false) {
+        const nowIso = new Date().toISOString();
+        const { error } = await supabase
+          .from("products")
+          .update({
+            active: false,
+            ...(result.price != null
+              ? {
+                  price: result.price,
+                  currency: result.currency || "INR",
+                  price_updated_at: nowIso,
+                }
+              : {}),
+          })
+          .eq("id", r.id);
+
+        if (error) {
+          toast.error(`Out of stock detected but failed to deactivate: ${error.message}`);
+        } else {
+          toast.warning(
+            `⚠️ "${r.name.slice(0, 32)}…" is Out of Stock on retailer site. Product has been automatically deactivated to prevent dead clicks.`,
+            { duration: 6000 },
+          );
+          refresh();
+        }
+        return;
+      }
+
       if (!res.ok || !result?.success || result?.price == null) {
         toast.warning(result?.error || "Could not detect active price on retailer page.");
         return;
@@ -170,6 +202,7 @@ function Products() {
 
       let updatedCount = 0;
       let unchangedCount = 0;
+      let deactivatedCount = 0;
       let failedCount = 0;
 
       for (let i = 0; i < eligible.length; i++) {
@@ -186,6 +219,7 @@ function Products() {
             success?: boolean;
             price?: number;
             currency?: string;
+            inStock?: boolean;
             error?: string;
           } | null = null;
           try {
@@ -195,21 +229,42 @@ function Products() {
             failedCount++;
             continue;
           }
-          if (res.ok && result?.success && result?.price != null) {
-            const nowIso = new Date().toISOString();
-            await supabase
-              .from("products")
-              .update({
-                price: result.price,
-                currency: result.currency || "INR",
-                price_updated_at: nowIso,
-              })
-              .eq("id", p.id);
 
-            if (p.price != null && p.price !== result.price) {
-              updatedCount++;
+          if (res.ok && result?.success) {
+            const nowIso = new Date().toISOString();
+            if (result.inStock === false) {
+              // Automatically deactivate out-of-stock product
+              deactivatedCount++;
+              await supabase
+                .from("products")
+                .update({
+                  active: false,
+                  ...(result.price != null
+                    ? {
+                        price: result.price,
+                        currency: result.currency || "INR",
+                        price_updated_at: nowIso,
+                      }
+                    : {}),
+                })
+                .eq("id", p.id);
+            } else if (result.price != null) {
+              await supabase
+                .from("products")
+                .update({
+                  price: result.price,
+                  currency: result.currency || "INR",
+                  price_updated_at: nowIso,
+                })
+                .eq("id", p.id);
+
+              if (p.price != null && p.price !== result.price) {
+                updatedCount++;
+              } else {
+                unchangedCount++;
+              }
             } else {
-              unchangedCount++;
+              failedCount++;
             }
           } else {
             failedCount++;
@@ -220,8 +275,8 @@ function Products() {
       }
 
       toast.success(
-        `🎉 Batch update complete: ${updatedCount} updated, ${unchangedCount} verified${failedCount > 0 ? `, ${failedCount} could not be detected` : ""}.`,
-        { id: "batch-price-update", duration: 5000 },
+        `🎉 Batch update complete: ${updatedCount} updated, ${unchangedCount} verified${deactivatedCount > 0 ? `, ${deactivatedCount} out-of-stock deactivated` : ""}${failedCount > 0 ? `, ${failedCount} could not be detected` : ""}.`,
+        { id: "batch-price-update", duration: 6000 },
       );
       refresh();
     } catch (err) {

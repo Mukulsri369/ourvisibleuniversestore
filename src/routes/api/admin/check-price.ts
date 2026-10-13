@@ -168,15 +168,129 @@ export const Route = createFileRoute("/api/admin/check-price")({
             }
           }
 
+          function detectStockStatus(
+            $: cheerio.CheerioAPI,
+            retailer: string,
+            jsonLdAvailability?: string,
+          ): { inStock: boolean; reason?: string } {
+            // 1. JSON-LD availability check
+            if (jsonLdAvailability) {
+              const avail = jsonLdAvailability.toLowerCase();
+              if (
+                avail.includes("outofstock") ||
+                avail.includes("soldout") ||
+                avail.includes("discontinued") ||
+                avail.includes("backorder")
+              ) {
+                return { inStock: false, reason: "Schema.org reported OutOfStock" };
+              }
+              if (
+                avail.includes("instock") ||
+                avail.includes("preorder") ||
+                avail.includes("limitedavailability")
+              ) {
+                return { inStock: true, reason: "Schema.org reported InStock" };
+              }
+            }
+
+            // 2. OpenGraph / Meta tag checks
+            const ogAvail = (
+              $('meta[property="og:availability"]').attr("content") ||
+              $('meta[property="product:availability"]').attr("content") ||
+              $('meta[name="availability"]').attr("content") ||
+              ""
+            ).toLowerCase();
+            if (ogAvail) {
+              if (
+                ogAvail.includes("out of stock") ||
+                ogAvail.includes("oos") ||
+                ogAvail.includes("unavailable")
+              ) {
+                return { inStock: false, reason: "Meta tag indicated out of stock" };
+              }
+              if (ogAvail.includes("in stock") || ogAvail.includes("instock")) {
+                return { inStock: true, reason: "Meta tag indicated in stock" };
+              }
+            }
+
+            // 3. Amazon specific checks
+            if (retailer === "Amazon") {
+              const availText = $("#availability").text().trim().toLowerCase();
+              if (
+                availText.includes("currently unavailable") ||
+                availText.includes("we don't know when or if this item will be back in stock") ||
+                availText.includes("temporarily out of stock") ||
+                availText.includes("out of stock")
+              ) {
+                return {
+                  inStock: false,
+                  reason: "Amazon reported: Currently unavailable / Out of stock",
+                };
+              }
+
+              if ($("#outOfStock").length > 0) {
+                return { inStock: false, reason: "Amazon #outOfStock container detected" };
+              }
+
+              if (
+                availText.includes("in stock") ||
+                (availText.includes("only") && availText.includes("left in stock")) ||
+                availText.includes("usually dispatched") ||
+                availText.includes("order within")
+              ) {
+                return { inStock: true, reason: "Amazon reported: In stock" };
+              }
+            }
+
+            // 4. Flipkart specific checks
+            if (retailer === "Flipkart") {
+              const fkOosText = [
+                $("div._16FRp0").text(),
+                $("div._3q9tY2").text(),
+                $("div._2jc05C").text(),
+                $("div._1V4wWZ").text(),
+                $("span._1TP29H").text(),
+              ]
+                .join(" ")
+                .toLowerCase();
+
+              if (
+                fkOosText.includes("currently out of stock") ||
+                fkOosText.includes("sold out") ||
+                fkOosText.includes("item is currently out of stock") ||
+                fkOosText.includes("coming soon")
+              ) {
+                return { inStock: false, reason: "Flipkart reported: Currently Out of Stock" };
+              }
+            }
+
+            // 5. Generic HTML out-of-stock tags
+            const genericOos = $(
+              '[class*="out-of-stock"], [class*="outofstock"], [class*="sold-out"], [class*="soldout"], [id*="out-of-stock"], [id*="sold-out"]',
+            );
+            if (genericOos.length > 0) {
+              const txt = genericOos.text().trim().toLowerCase();
+              if (
+                txt.includes("out of stock") ||
+                txt.includes("sold out") ||
+                txt.includes("unavailable")
+              ) {
+                return { inStock: false, reason: "Page indicated out of stock" };
+              }
+            }
+
+            return { inStock: true };
+          }
+
           const $ = cheerio.load(html);
 
           let detectedPriceNum: number | null = null;
           let detectedCurrency = retailer === "Amazon" && hostname.endsWith(".com") ? "USD" : "INR";
           let rawPriceText = "";
+          let jsonLdAvailability: string | undefined;
 
           // 1. Check Schema.org JSON-LD offers
           $('script[type="application/ld+json"]').each((_, el) => {
-            if (detectedPriceNum != null) return;
             try {
               const content = $(el).html();
               if (!content) return;
@@ -190,13 +304,18 @@ export const Route = createFileRoute("/api/admin/check-price")({
               for (const item of items) {
                 if (item?.offers) {
                   const offer = Array.isArray(item.offers) ? item.offers[0] : item.offers;
-                  if (offer?.price) {
+                  if (offer?.availability && !jsonLdAvailability) {
+                    jsonLdAvailability = String(offer.availability);
+                  }
+                  if (item?.availability && !jsonLdAvailability) {
+                    jsonLdAvailability = String(item.availability);
+                  }
+                  if (detectedPriceNum == null && offer?.price) {
                     const parsedNum = parsePriceNumber(String(offer.price));
                     if (parsedNum) {
                       detectedPriceNum = parsedNum;
                       rawPriceText = String(offer.price);
                       if (offer.priceCurrency) detectedCurrency = String(offer.priceCurrency);
-                      break;
                     }
                   }
                 }
@@ -289,11 +408,29 @@ export const Route = createFileRoute("/api/admin/check-price")({
             }
           }
 
+          const stockResult = detectStockStatus($, retailer, jsonLdAvailability);
+
           if (detectedPriceNum == null) {
+            if (!stockResult.inStock) {
+              return new Response(
+                JSON.stringify({
+                  success: true,
+                  price: null,
+                  currency: detectedCurrency,
+                  inStock: false,
+                  retailer,
+                  url: finalUrlStr,
+                  stockMessage: stockResult.reason || "Product is out of stock on retailer site",
+                }),
+                { status: 200, headers: { "content-type": "application/json" } },
+              );
+            }
+
             return new Response(
               JSON.stringify({
                 success: false,
                 error: "Could not detect active price from retailer link",
+                inStock: true,
                 retailer,
                 url: finalUrlStr,
               }),
@@ -307,8 +444,10 @@ export const Route = createFileRoute("/api/admin/check-price")({
               price: detectedPriceNum,
               currency: detectedCurrency,
               rawPriceText,
+              inStock: stockResult.inStock,
               retailer,
               url: finalUrlStr,
+              stockMessage: stockResult.reason,
             }),
             { status: 200, headers: { "content-type": "application/json" } },
           );

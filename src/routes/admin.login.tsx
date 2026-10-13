@@ -74,8 +74,53 @@ function Login() {
           setError("Password must be at least 8 characters.");
           return;
         }
+
+        const cleanEmail = email.trim().toLowerCase();
+
+        // Check if this email has been invited or approved by an existing admin
+        let isApproved = false;
+        try {
+          // 1. Check RPC function
+          const { data: rpcApproved } = await supabase.rpc("is_approved_admin_email", {
+            check_email: cleanEmail,
+          });
+          if (rpcApproved === true) isApproved = true;
+        } catch {
+          // Ignore RPC error if not yet present
+        }
+
+        if (!isApproved) {
+          try {
+            // 2. Check site_settings approved_admins list
+            const { data: sData } = await supabase
+              .from("site_settings")
+              .select("social_links")
+              .eq("id", 1)
+              .maybeSingle();
+            const approvedList = (
+              ((sData?.social_links as Record<string, unknown>)?.approved_admins as string[]) || []
+            ).map((e) => e.toLowerCase());
+            if (approvedList.includes(cleanEmail)) isApproved = true;
+          } catch {
+            // Ignore settings read error
+          }
+        }
+
+        // 3. Fallback for primary store owner emails
+        const PRIMARY_ADMINS = ["mukul.srivastava.025@gmail.com", "mukul.sri.25@gmail.com"];
+        if (PRIMARY_ADMINS.includes(cleanEmail)) {
+          isApproved = true;
+        }
+
+        if (!isApproved) {
+          setError(
+            "This email is not authorized for administrator access. Only pre-approved emails can set up an admin account. Please contact an existing administrator to invite you.",
+          );
+          return;
+        }
+
         const { error } = await supabase.auth.signUp({
-          email: email.trim(),
+          email: cleanEmail,
           password,
           options: { emailRedirectTo: `${window.location.origin}/admin/login` },
         });

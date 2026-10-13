@@ -1,6 +1,6 @@
 {
-  "summary": "Implementation plan for adding individual and batch price update buttons in the admin products list and edit form to check live affiliate link prices and automatically update the database.",
-  "updatedAt": "2026-10-13T09:07:38.891509899Z",
+  "summary": "Implementation plan for admin invitation/approval gates and automatic out-of-stock detection with product deactivation during price refresh.",
+  "updatedAt": "2026-10-13T10:11:25.807156105Z",
   "requestFeedback": true,
   "userFacing": true
 }

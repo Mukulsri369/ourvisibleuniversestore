@@ -341,6 +341,7 @@ export type Database = {
     };
     Functions: {
       is_admin: { Args: never; Returns: boolean };
+      is_approved_admin_email: { Args: { check_email: string }; Returns: boolean };
       product_is_live: { Args: { _pid: string }; Returns: boolean };
     };
     Enums: {

@@ -217,6 +217,8 @@ export function ProductForm({ productId }: { productId?: string }) {
         success?: boolean;
         price?: number;
         currency?: string;
+        inStock?: boolean;
+        stockMessage?: string;
         error?: string;
       } | null = null;
       try {
@@ -226,6 +228,42 @@ export function ProductForm({ productId }: { productId?: string }) {
         toast.error("Unable to check price: Retailer response was non-JSON.");
         return;
       }
+
+      // Check if product is out of stock on retailer site
+      if (res.ok && data?.success && data?.inStock === false) {
+        setActive(false);
+        const newPriceNum = data.price ?? (price ? parseFloat(price) : null);
+        const newCurrency = data.currency || currency || "INR";
+        if (data.price != null) {
+          setPrice(String(data.price));
+          setCurrency(newCurrency);
+          setPriceDate(new Date().toISOString().slice(0, 10));
+        }
+
+        if (productId) {
+          await supabase
+            .from("products")
+            .update({
+              active: false,
+              ...(newPriceNum != null
+                ? {
+                    price: newPriceNum,
+                    currency: newCurrency,
+                    price_updated_at: new Date().toISOString(),
+                  }
+                : {}),
+            })
+            .eq("id", productId);
+          qc.invalidateQueries({ queryKey: ["admin"] });
+        }
+
+        toast.warning(
+          `⚠️ Product is Out of Stock on retailer site (${data.stockMessage || "Currently unavailable"}). Deactivated product automatically to prevent dead clicks.`,
+          { duration: 6000 },
+        );
+        return;
+      }
+
       if (!res.ok || !data?.success || data?.price == null) {
         toast.warning(data?.error || "Could not detect active price from retailer link.");
         return;
