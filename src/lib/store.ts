@@ -81,11 +81,15 @@ export type ProductFull = ProductCardData & {
 export const CARD_SELECT =
   "id,name,slug,short_description,price,currency,featured,affiliate_url,amazon_url,created_at,category_id,category_ids,categories(name,slug),product_images(image_url,alt_text,sort_order)";
 
+export const SEARCH_SELECT = `${CARD_SELECT},description,brand`;
+
 type RawCard = {
   id: string;
   name: string;
   slug: string;
   short_description: string | null;
+  description?: string | null;
+  brand?: string | null;
   price: number | null;
   currency: string | null;
   featured: boolean;
@@ -415,13 +419,256 @@ export type ListParams = {
 };
 
 function clean(q: string) {
-  return q.replace(/[%,()*\\"']/g, " ").trim();
+  return q.replace(/[%(),*\\"':;!?[\]{}]/g, " ").trim();
+}
+
+/**
+ * Computes a fine-grained relevance score for a product against a search query.
+ * Heavily prioritizes matching user terms in short_description and description fields,
+ * with exact phrase rewards and all-term coverage multipliers.
+ */
+export function computeProductRelevance(
+  p: {
+    name: string;
+    short_description?: string | null;
+    description?: string | null;
+    brand?: string | null;
+    categories?: { name: string; slug: string } | null;
+  },
+  fullQuery: string,
+  searchTerms: string[],
+): number {
+  const qClean = fullQuery.toLowerCase().trim();
+  if (!qClean || searchTerms.length === 0) return 0;
+
+  const shortDesc = (p.short_description || "").toLowerCase();
+  const desc = (p.description || "").toLowerCase();
+  const name = (p.name || "").toLowerCase();
+  const brand = (p.brand || "").toLowerCase();
+  const catName = (p.categories?.name || "").toLowerCase();
+
+  let score = 0;
+  let termsFoundInShortDesc = 0;
+  let termsFoundInDesc = 0;
+  let termsFoundInAny = 0;
+
+  // 1. EXACT FULL-PHRASE MATCHES (Highest signal for user's intent)
+  if (shortDesc.includes(qClean)) score += 180;
+  if (desc.includes(qClean)) score += 120;
+  if (name.includes(qClean)) score += 160;
+
+  // 2. PER-TERM MATCHING WITH HEAVY EMPHASIS ON SHORT_DESCRIPTION AND DESCRIPTION
+  for (const term of searchTerms) {
+    let termFoundInProduct = false;
+    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const wholeWordRegex = new RegExp(`\\b${escaped}\\b`, "gi");
+
+    // --- SHORT DESCRIPTION (Primary highlight requested) ---
+    const shortExactMatches = (shortDesc.match(wholeWordRegex) || []).length;
+    if (shortExactMatches > 0) {
+      score += Math.min(shortExactMatches, 5) * 40; // 40 pts per exact whole-word match
+      termsFoundInShortDesc++;
+      termFoundInProduct = true;
+    } else if (shortDesc.includes(term)) {
+      score += 20; // 20 pts per substring match
+      termsFoundInShortDesc++;
+      termFoundInProduct = true;
+    }
+
+    // --- DESCRIPTION FIELD (Rich specs, materials, and use-cases) ---
+    const descExactMatches = (desc.match(wholeWordRegex) || []).length;
+    if (descExactMatches > 0) {
+      score += Math.min(descExactMatches, 8) * 25; // 25 pts per exact whole-word match
+      termsFoundInDesc++;
+      termFoundInProduct = true;
+    } else if (desc.includes(term)) {
+      score += 14; // 14 pts per substring match
+      termsFoundInDesc++;
+      termFoundInProduct = true;
+    }
+
+    // --- NAME / TITLE ---
+    const nameExactMatches = (name.match(wholeWordRegex) || []).length;
+    if (nameExactMatches > 0) {
+      score += Math.min(nameExactMatches, 3) * 35;
+      termFoundInProduct = true;
+    } else if (name.includes(term)) {
+      score += 18;
+      termFoundInProduct = true;
+    }
+
+    // --- BRAND & CATEGORY ---
+    if (brand.includes(term)) {
+      score += 20;
+      termFoundInProduct = true;
+    }
+    if (catName.includes(term)) {
+      score += 25;
+      termFoundInProduct = true;
+    }
+
+    if (termFoundInProduct) {
+      termsFoundInAny++;
+    }
+  }
+
+  // 3. COVERAGE REWARD (Multi-word queries: products containing all words beat single-word repeats)
+  const coverageRatio = termsFoundInAny / searchTerms.length;
+  if (coverageRatio === 1) {
+    score += 120; // All words specified by the user exist in the product!
+  } else if (coverageRatio >= 0.75) {
+    score += 60;
+  } else if (coverageRatio >= 0.5) {
+    score += 30;
+  }
+
+  // Extra bonus if all search words are present within the short description
+  if (searchTerms.length > 1 && termsFoundInShortDesc === searchTerms.length) {
+    score += 70;
+  }
+  // Extra bonus if all search words are present within the description
+  if (searchTerms.length > 1 && termsFoundInDesc === searchTerms.length) {
+    score += 50;
+  }
+
+  return score;
 }
 
 export async function listProducts(p: ListParams) {
   const db = publicDb();
   const pageSize = p.pageSize ?? 24;
   const page = Math.max(1, p.page ?? 1);
+
+  const q = p.q ? clean(p.q) : "";
+
+  // ----------------------------------------------------
+  // INTELLIGENT RELEVANCE-BASED SEARCH (when p.q is present)
+  // ----------------------------------------------------
+  if (q) {
+    const rawWords = q
+      .split(/\s+/)
+      .map((w) => w.replace(/[^a-zA-Z0-9]/g, "").toLowerCase())
+      .filter((w) => w.length > 0);
+
+    const STOP_WORDS = new Set([
+      "a",
+      "an",
+      "the",
+      "and",
+      "or",
+      "in",
+      "on",
+      "at",
+      "to",
+      "for",
+      "of",
+      "with",
+      "is",
+      "it",
+      "by",
+      "from",
+    ]);
+    const coreWords = rawWords.filter((w) => !STOP_WORDS.has(w) && w.length >= 2);
+    const searchTerms = coreWords.length > 0 ? coreWords : rawWords;
+
+    // Build PostgREST candidate filter across name, short_description, description, brand & tags
+    const tagWords = searchTerms.filter((w) => w.length >= 2);
+    const [tagRes, catRes] = await Promise.all([
+      tagWords.length
+        ? db
+            .from("product_tags")
+            .select("product_id")
+            .or(tagWords.map((w) => `tag.ilike.%${w}%`).join(","))
+            .limit(500)
+        : Promise.resolve({ data: [] as { product_id: string }[] }),
+      searchTerms.length
+        ? db
+            .from("categories")
+            .select("id")
+            .or(searchTerms.map((w) => `name.ilike.%${w}%`).join(","))
+            .eq("active", true)
+        : Promise.resolve({ data: [] as { id: string }[] }),
+    ]);
+
+    const tagProductIds = [...new Set((tagRes.data ?? []).map((t) => t.product_id))];
+    const matchingCatIds = (catRes.data ?? []).map((c) => c.id);
+
+    const ors: string[] = [];
+    for (const term of searchTerms) {
+      ors.push(`name.ilike.%${term}%`);
+      ors.push(`short_description.ilike.%${term}%`);
+      ors.push(`description.ilike.%${term}%`);
+      ors.push(`brand.ilike.%${term}%`);
+    }
+    if (tagProductIds.length) ors.push(`id.in.(${tagProductIds.slice(0, 100).join(",")})`);
+    if (matchingCatIds.length) ors.push(`category_ids.ov.{${matchingCatIds.join(",")}}`);
+
+    let searchQuery = publicDb()
+      .from("products")
+      .select(SEARCH_SELECT)
+      .eq("active", true)
+      .is("deleted_at", null);
+
+    if (p.category) {
+      const { data: cat } = await db
+        .from("categories")
+        .select("id")
+        .eq("slug", p.category)
+        .eq("active", true)
+        .maybeSingle();
+      if (!cat) return { items: [] as ProductCardData[], total: 0, page, pageSize };
+      searchQuery = searchQuery.contains("category_ids", [cat.id]);
+    }
+
+    if (ors.length > 0) {
+      searchQuery = searchQuery.or(ors.join(","));
+    }
+    if (p.featured) searchQuery = searchQuery.eq("featured", true);
+    if (p.min != null && !Number.isNaN(p.min)) searchQuery = searchQuery.gte("price", p.min);
+    if (p.max != null && !Number.isNaN(p.max)) searchQuery = searchQuery.lte("price", p.max);
+
+    // Fetch candidate products (up to 200 matches)
+    const { data: candidates, error: searchErr } = await searchQuery.limit(200);
+    if (searchErr) throw searchErr;
+
+    const rawList = (candidates as unknown as RawCard[]) ?? [];
+
+    // Calculate fine-grained relevance score prioritizing short_description and description
+    const scoredList = rawList
+      .map((item) => ({
+        item,
+        score: computeProductRelevance(item, q, searchTerms),
+      }))
+      .filter((x) => x.score > 0);
+
+    // Sort by user's explicit preference or by highest relevance score
+    if (p.sort === "price_asc") {
+      scoredList.sort((a, b) => (a.item.price ?? Infinity) - (b.item.price ?? Infinity));
+    } else if (p.sort === "price_desc") {
+      scoredList.sort((a, b) => (b.item.price ?? -Infinity) - (a.item.price ?? -Infinity));
+    } else if (p.sort === "newest") {
+      scoredList.sort(
+        (a, b) => new Date(b.item.created_at).getTime() - new Date(a.item.created_at).getTime(),
+      );
+    } else {
+      // Default: Highest relevance score first. Ties broken by featured status, then newest
+      scoredList.sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        if (b.item.featured !== a.item.featured) return b.item.featured ? 1 : -1;
+        return new Date(b.item.created_at).getTime() - new Date(a.item.created_at).getTime();
+      });
+    }
+
+    const total = scoredList.length;
+    const from = (page - 1) * pageSize;
+    const paged = scoredList.slice(from, from + pageSize).map((x) => toCard(x.item));
+
+    return { items: paged, total, page, pageSize };
+  }
+
+  // ----------------------------------------------------
+  // STANDARD CATALOG BROWSING (when no search query is specified)
+  // ----------------------------------------------------
   let query = liveProducts();
 
   if (p.category) {
@@ -433,34 +680,6 @@ export async function listProducts(p: ListParams) {
       .maybeSingle();
     if (!cat) return { items: [] as ProductCardData[], total: 0, page, pageSize };
     query = query.contains("category_ids", [cat.id]);
-  }
-
-  const q = p.q ? clean(p.q) : "";
-  if (q) {
-    const words = q.split(/\s+/).filter(Boolean);
-    const pattern = `%${words.join("%")}%`;
-    const tagWords = words.filter((w) => w.length >= 3);
-    const [tagRes, catRes] = await Promise.all([
-      tagWords.length
-        ? db
-            .from("product_tags")
-            .select("product_id")
-            .or(tagWords.map((w) => `tag.ilike.%${w}%`).join(","))
-            .limit(500)
-        : Promise.resolve({ data: [] as { product_id: string }[] }),
-      db.from("categories").select("id").ilike("name", pattern).eq("active", true),
-    ]);
-    const ids = [...new Set((tagRes.data ?? []).map((t) => t.product_id))];
-    const catIds = (catRes.data ?? []).map((c) => c.id);
-    const ors = [
-      `name.ilike.${pattern}`,
-      `short_description.ilike.${pattern}`,
-      `description.ilike.${pattern}`,
-      `brand.ilike.${pattern}`,
-    ];
-    if (ids.length) ors.push(`id.in.(${ids.join(",")})`);
-    if (catIds.length) ors.push(`category_ids.ov.{${catIds.join(",")}}`);
-    query = query.or(ors.join(","));
   }
 
   if (p.featured) query = query.eq("featured", true);

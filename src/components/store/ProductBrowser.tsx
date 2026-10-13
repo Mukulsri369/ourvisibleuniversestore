@@ -64,8 +64,10 @@ export function ProductBrowser({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground" aria-live="polite">
           {isLoading
-            ? "Scanning the skies…"
-            : `${data?.total ?? 0} product${data?.total === 1 ? "" : "s"} found`}
+            ? "Scanning titles and descriptions…"
+            : search.q
+              ? `${data?.total ?? 0} best-matching product${data?.total === 1 ? "" : "s"} for “${search.q}”`
+              : `${data?.total ?? 0} product${data?.total === 1 ? "" : "s"} found`}
         </p>
         <div className="flex items-center gap-2">
           <button
@@ -80,7 +82,7 @@ export function ProductBrowser({
             onChange={(e) => set({ sort: e.target.value as BrowseSearch["sort"] })}
             className={field}
           >
-            <option value="featured">Featured</option>
+            <option value="featured">{search.q ? "Best match (Relevance)" : "Featured"}</option>
             <option value="newest">Newest</option>
             <option value="price_asc">Price: low to high</option>
             <option value="price_desc">Price: high to low</option>
@@ -165,8 +167,12 @@ export function ProductBrowser({
           </>
         ) : (
           <EmptyState
-            title="No products in this orbit."
-            text="Try a different search or browse all categories."
+            title={search.q ? `No products matched “${search.q}”` : "No products in this orbit."}
+            text={
+              search.q
+                ? "Try searching with broader cosmic terms, checking spelling, or browsing our categories below."
+                : "Try a different search or browse all categories."
+            }
           />
         )}
       </div>
