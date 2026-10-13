@@ -9,6 +9,9 @@ export type AdminRow = {
   featured: boolean;
   affiliate_url: string | null;
   category_ids: string[];
+  price: number | null;
+  currency: string | null;
+  price_updated_at: string | null;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
@@ -17,7 +20,7 @@ export type AdminRow = {
 };
 
 export const ADMIN_SELECT =
-  "id,name,slug,active,featured,affiliate_url,category_ids,created_at,updated_at,deleted_at,categories(name),product_images(image_url,sort_order)";
+  "id,name,slug,active,featured,affiliate_url,category_ids,price,currency,price_updated_at,created_at,updated_at,deleted_at,categories(name),product_images(image_url,sort_order)";
 
 export function firstImage(r: AdminRow) {
   return (

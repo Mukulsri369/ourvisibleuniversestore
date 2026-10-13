@@ -5,8 +5,11 @@ import {
   ArrowUp,
   CheckCircle2,
   ImagePlus,
+  Link2,
   Loader2,
   Plus,
+  RefreshCw,
+  Sparkles,
   Star,
   Trash2,
   X,
@@ -20,7 +23,7 @@ import { ProductDetailView } from "@/components/store/ProductDetailView";
 import { supabase } from "@/integrations/supabase/client";
 import { removeStoragePaths, uploadImage } from "@/lib/admin";
 import { adminCategoriesQuery } from "@/lib/admin-queries";
-import { isValidAffiliateUrl, slugify, type ProductFull } from "@/lib/store";
+import { formatPrice, isValidAffiliateUrl, slugify, type ProductFull } from "@/lib/store";
 import { isDuplicateAffiliateError, productSaveErrorMessage } from "@/lib/product-errors";
 import { Field, inputCls, Section, textareaCls } from "./ui";
 import { CategorySelect } from "./CategorySelect";
@@ -71,6 +74,214 @@ export function ProductForm({ productId }: { productId?: string }) {
   const [priceDate, setPriceDate] = useState("");
   const [active, setActive] = useState(false);
   const [featured, setFeatured] = useState(false);
+
+  // Auto-fetch from affiliate / e-commerce product URL
+  const [fetchUrl, setFetchUrl] = useState("");
+  const [fetching, setFetching] = useState(false);
+  const [checkingPrice, setCheckingPrice] = useState(false);
+
+  async function handleAutoFetch() {
+    const targetUrl = fetchUrl.trim() || affiliateUrl.trim();
+    if (!targetUrl) {
+      toast.error("Please enter a product URL to auto-fetch details.");
+      return;
+    }
+
+    try {
+      new URL(targetUrl);
+    } catch {
+      toast.error("Please enter a valid URL (e.g. starting with https://).");
+      return;
+    }
+
+    setFetching(true);
+    const toastId = toast.loading("Analyzing link & extracting product specifications and photos…");
+
+    try {
+      const res = await fetch("/api/admin/scrape-product", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ url: targetUrl }),
+      });
+
+      let json: {
+        success?: boolean;
+        error?: string;
+        data?: {
+          name?: string;
+          slug?: string;
+          short_description?: string;
+          description?: string;
+          brand?: string;
+          price?: number | string;
+          currency?: string;
+          retailer?: string;
+          retailer_product_id?: string;
+          affiliate_url?: string;
+          features?: string[];
+          tags?: string[];
+          images?: string[];
+        };
+      } | null = null;
+      try {
+        const text = await res.text();
+        json = JSON.parse(text);
+      } catch {
+        throw new Error(
+          "Unable to parse retailer response. The retailer site or network returned an unexpected non-JSON response.",
+        );
+      }
+
+      // If partial metadata was detected (e.g. Ubuy affiliate link with Amazon ASIN)
+      if (json?.data) {
+        const d = json.data;
+        if (d.retailer) setRetailer(d.retailer);
+        if (d.retailer_product_id) setRetailerProductId(d.retailer_product_id);
+        if (d.affiliate_url && !affiliateUrl) setAffiliateUrl(d.affiliate_url);
+      }
+
+      if (!res.ok || json?.error || !json?.data) {
+        throw new Error(json?.error || "Failed to extract product details from URL");
+      }
+
+      const d = json.data;
+      if (d.name) setName(d.name);
+      if (d.slug) {
+        setSlug(d.slug);
+        setSlugTouched(true);
+      }
+      if (d.short_description) setShort(d.short_description);
+      if (d.description) setDesc(d.description);
+      if (d.brand) setBrand(d.brand);
+      if (d.price) setPrice(String(d.price));
+      if (d.currency) setCurrency(d.currency);
+      if (d.retailer) setRetailer(d.retailer);
+      if (d.retailer_product_id) setRetailerProductId(d.retailer_product_id);
+      if (d.affiliate_url && !affiliateUrl) setAffiliateUrl(d.affiliate_url);
+      if (Array.isArray(d.features) && d.features.length) {
+        setFeatures(d.features);
+      }
+
+      // Merge suggested tags without duplicates
+      if (Array.isArray(d.tags) && d.tags.length) {
+        setTags((prev) => [...new Set([...prev, ...d.tags])]);
+      }
+
+      // Add extracted high-res gallery images
+      if (Array.isArray(d.images) && d.images.length) {
+        const newImgs: Img[] = d.images.map((url: string, idx: number) => ({
+          key: `auto-${Date.now()}-${idx}`,
+          url,
+          path: null,
+          alt: `${d.name || "Product"} photo ${idx + 1}`,
+        }));
+        setImages((prev) => {
+          // If previous images were auto-fetched, cleanly replace them with the authentic product photos
+          const manuallyAdded = prev.filter((i) => !i.key.startsWith("auto-"));
+          if (manuallyAdded.length === 0) {
+            return newImgs;
+          }
+          const existing = new Set(manuallyAdded.map((i) => i.url));
+          const additions = newImgs.filter((i) => !existing.has(i.url));
+          return [...manuallyAdded, ...additions];
+        });
+      }
+
+      toast.success(
+        `✨ Product details and ${d.images?.length ?? 0} photos extracted! Review and adjust below.`,
+        { id: toastId },
+      );
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to auto-fetch details from URL.", {
+        id: toastId,
+      });
+    } finally {
+      setFetching(false);
+    }
+  }
+
+  async function handleUpdatePriceFromLink() {
+    const urlToCheck = affiliateUrl.trim() || fetchUrl.trim();
+    if (!urlToCheck) {
+      toast.error("Please enter an affiliate URL first.");
+      return;
+    }
+    setCheckingPrice(true);
+    try {
+      const res = await fetch("/api/admin/check-price", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: urlToCheck, productId }),
+      });
+      let data: {
+        success?: boolean;
+        price?: number;
+        currency?: string;
+        error?: string;
+      } | null = null;
+      try {
+        const text = await res.text();
+        data = JSON.parse(text);
+      } catch {
+        toast.error("Unable to check price: Retailer response was non-JSON.");
+        return;
+      }
+      if (!res.ok || !data?.success || data?.price == null) {
+        toast.warning(data?.error || "Could not detect active price from retailer link.");
+        return;
+      }
+
+      const newPriceNum = data.price;
+      const newCurrency = data.currency || "INR";
+      const todayIso = new Date().toISOString().slice(0, 10);
+      const oldPriceNum = price ? parseFloat(price) : null;
+
+      setPrice(String(newPriceNum));
+      setCurrency(newCurrency);
+      setPriceDate(todayIso);
+
+      // If editing an existing product, save immediately to database as requested
+      if (productId) {
+        const { error } = await supabase
+          .from("products")
+          .update({
+            price: newPriceNum,
+            currency: newCurrency,
+            price_updated_at: new Date().toISOString(),
+          })
+          .eq("id", productId);
+
+        if (error) {
+          toast.error(
+            `Price found (${formatPrice(newPriceNum, newCurrency)}) but failed to save: ${error.message}`,
+          );
+          return;
+        }
+
+        qc.invalidateQueries({ queryKey: ["admin"] });
+
+        if (oldPriceNum != null && oldPriceNum !== newPriceNum) {
+          toast.success(
+            `✨ Price updated from ${formatPrice(oldPriceNum, currency)} to ${formatPrice(newPriceNum, newCurrency)} and saved to database!`,
+          );
+        } else if (oldPriceNum === newPriceNum) {
+          toast.info(
+            `Price verified at ${formatPrice(newPriceNum, newCurrency)} and saved to database.`,
+          );
+        } else {
+          toast.success(
+            `✨ Price set to ${formatPrice(newPriceNum, newCurrency)} and saved to database!`,
+          );
+        }
+      } else {
+        toast.success(`✨ Price populated from link: ${formatPrice(newPriceNum, newCurrency)}`);
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to check price from link.");
+    } finally {
+      setCheckingPrice(false);
+    }
+  }
 
   useEffect(() => {
     if (!productId) return;
@@ -352,6 +563,67 @@ export function ProductForm({ productId }: { productId?: string }) {
 
   return (
     <div className="space-y-5 pb-28">
+      {/* 🪄 AUTO-FILL FROM AFFILIATE URL */}
+      <div className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/10 via-card/80 to-primary/5 p-4 sm:p-5 shadow-lg backdrop-blur-sm">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2">
+            <span className="flex size-7 items-center justify-center rounded-lg bg-primary/20 text-primary text-sm font-bold shadow-inner">
+              🪄
+            </span>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="font-display text-sm sm:text-base font-semibold text-foreground">
+                  Auto-Fill from Affiliate URL
+                </h3>
+                <span className="rounded-full bg-primary/15 border border-primary/20 px-2 py-0.5 font-mono text-[10px] text-primary font-medium">
+                  Amazon · Flipkart · Brand Stores
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Paste any product link below. Auto-extracts title, price, descriptions, features,
+                and high-res photos for your review.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3.5 flex flex-col sm:flex-row gap-2">
+          <div className="relative flex-1">
+            <Link2 className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="url"
+              value={fetchUrl}
+              onChange={(e) => setFetchUrl(e.target.value)}
+              placeholder="Paste affiliate or product link (e.g. https://www.amazon.in/dp/... or https://amzn.to/...)"
+              className="h-10 w-full rounded-xl border border-border/80 bg-background/90 pl-10 pr-3 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+              disabled={fetching}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleAutoFetch();
+                }
+              }}
+            />
+          </div>
+          <Button
+            type="button"
+            onClick={handleAutoFetch}
+            disabled={fetching || !fetchUrl.trim()}
+            className="h-10 px-4 gap-2 text-xs font-semibold shrink-0"
+          >
+            {fetching ? (
+              <>
+                <Loader2 className="size-3.5 animate-spin" /> Fetching details…
+              </>
+            ) : (
+              <>
+                <Sparkles className="size-3.5" /> Auto-Fetch & Pre-fill
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+
       <Section title="1 · Basic product information">
         <Field label="Product Name" required error={errors.name}>
           <input
@@ -626,10 +898,35 @@ export function ProductForm({ productId }: { productId?: string }) {
         </div>
       </Section>
 
-      <Section title="5 · Price (optional)">
+      <Section
+        title="5 · Price (optional)"
+        action={
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-8 gap-1.5 text-xs"
+            disabled={checkingPrice || (!affiliateUrl.trim() && !fetchUrl.trim())}
+            onClick={handleUpdatePriceFromLink}
+            title={
+              affiliateUrl.trim() || fetchUrl.trim()
+                ? "Check live price from retailer link and save"
+                : "Enter an affiliate URL first"
+            }
+          >
+            {checkingPrice ? (
+              <Loader2 className="size-3.5 animate-spin text-primary" />
+            ) : (
+              <RefreshCw className="size-3.5" />
+            )}
+            Update Price from Link
+          </Button>
+        }
+      >
         <p className="text-xs text-muted-foreground">
           Only enter a price you have verified with the retailer. If left empty, the store shows
-          “Check latest price”.
+          “Check latest price”. Click “Update Price from Link” to inspect the live retailer page
+          anytime.
         </p>
         <div className="grid gap-4 sm:grid-cols-3">
           <Field label="Price" error={errors.price}>

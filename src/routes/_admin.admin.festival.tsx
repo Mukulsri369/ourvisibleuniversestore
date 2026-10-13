@@ -8,6 +8,7 @@ import {
   Check,
   ExternalLink,
   Flame,
+  GripVertical,
   Plus,
   RotateCcw,
   Search,
@@ -18,6 +19,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   AdminTitle,
   Field,
@@ -101,6 +103,11 @@ function FestivalAdmin() {
   // Track initial state to detect unsaved changes
   const [initialIds, setInitialIds] = useState<string[]>([]);
   const [initialMeta, setInitialMeta] = useState<FestivalMeta>(DEFAULT_META);
+
+  // Drag and drop state for easily reordering products
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [dropPosition, setDropPosition] = useState<"before" | "after">("before");
 
   // Initialize state once settings and products are loaded
   useEffect(() => {
@@ -231,6 +238,33 @@ function FestivalAdmin() {
     const [item] = next.splice(index, 1);
     next.push(item);
     setSelectedIds(next);
+  }
+
+  // Drag and drop reordering
+  function handleDropReorder(fromIndex: number, targetIndex: number, position: "before" | "after") {
+    if (fromIndex === targetIndex) return;
+
+    setSelectedIds((prev) => {
+      const next = [...prev];
+      const [movedItem] = next.splice(fromIndex, 1);
+      if (!movedItem) return prev;
+
+      let insertAt = targetIndex;
+      if (fromIndex < targetIndex) {
+        insertAt = position === "before" ? targetIndex - 1 : targetIndex;
+      } else {
+        insertAt = position === "before" ? targetIndex : targetIndex + 1;
+      }
+      insertAt = Math.max(0, Math.min(insertAt, next.length));
+      next.splice(insertAt, 0, movedItem);
+      return next;
+    });
+
+    const prod = productMap.get(selectedIds[fromIndex]);
+    const targetProd = productMap.get(selectedIds[targetIndex]);
+    toast.success(
+      `Reordered "${prod?.name || "Product"}" ${position === "before" ? "above" : "below"} "${targetProd?.name || "Product"}"`,
+    );
   }
 
   // Add & remove actions
@@ -451,10 +485,15 @@ function FestivalAdmin() {
         title={`Featured Products in Carousel (${festivalProducts.length} ${festivalProducts.length === 1 ? "product" : "products"})`}
       >
         <div className="flex flex-wrap items-center justify-between gap-2 pb-2">
-          <p className="text-xs text-muted-foreground">
-            Products appear on the homepage exactly in the sequence shown below (#1 is leftmost).
-            Use the arrows to reorder.
-          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-xs text-muted-foreground">
+              Products appear on the homepage in the sequence shown below (#1 is leftmost). Drag and
+              drop any product using the handle to quickly reorder, or use the arrows.
+            </p>
+            <span className="hidden sm:inline-flex rounded-full bg-primary/10 border border-primary/25 px-2 py-0.5 font-mono text-[10px] text-primary">
+              ✦ Drag & Drop Enabled
+            </span>
+          </div>
           <div className="flex gap-2">
             <Button
               size="sm"
@@ -496,14 +535,75 @@ function FestivalAdmin() {
             {festivalProducts.map((p, index) => {
               const isFirst = index === 0;
               const isLast = index === festivalProducts.length - 1;
+              const isDragging = draggedIndex === index;
+              const isOver = dragOverIndex === index && draggedIndex !== index;
 
               return (
                 <div
                   key={p.id}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/80 bg-background/60 p-2.5 sm:p-3 transition-colors hover:border-primary/40 hover:bg-background/90"
+                  draggable
+                  onDragStart={(e) => {
+                    setDraggedIndex(index);
+                    e.dataTransfer.effectAllowed = "move";
+                    e.dataTransfer.setData("text/plain", String(index));
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "move";
+                    if (draggedIndex === null) return;
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const midY = rect.top + rect.height / 2;
+                    const pos = e.clientY < midY ? "before" : "after";
+                    if (dragOverIndex !== index || dropPosition !== pos) {
+                      setDragOverIndex(index);
+                      setDropPosition(pos);
+                    }
+                  }}
+                  onDragLeave={(e) => {
+                    const related = e.relatedTarget as Node | null;
+                    if (!e.currentTarget.contains(related)) {
+                      if (dragOverIndex === index) {
+                        setDragOverIndex(null);
+                      }
+                    }
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (draggedIndex !== null && draggedIndex !== index) {
+                      handleDropReorder(draggedIndex, index, dropPosition);
+                    }
+                    setDraggedIndex(null);
+                    setDragOverIndex(null);
+                  }}
+                  onDragEnd={() => {
+                    setDraggedIndex(null);
+                    setDragOverIndex(null);
+                  }}
+                  className={cn(
+                    "group flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-background/60 p-2.5 sm:p-3 transition-all duration-150 select-none",
+                    isDragging
+                      ? "opacity-35 scale-[0.98] border-dashed border-primary bg-primary/5 ring-2 ring-primary/30"
+                      : "hover:border-primary/40 hover:bg-background/90",
+                    isOver &&
+                      dropPosition === "before" &&
+                      "border-t-2 border-t-primary bg-primary/5 shadow-[0_-4px_12px_rgba(139,92,246,0.25)]",
+                    isOver &&
+                      dropPosition === "after" &&
+                      "border-b-2 border-b-primary bg-primary/5 shadow-[0_4px_12px_rgba(139,92,246,0.25)]",
+                    !isDragging && !isOver && "border-border/80",
+                  )}
                 >
-                  {/* POSITION & THUMBNAIL & INFO */}
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                  {/* DRAG HANDLE & POSITION & THUMBNAIL & INFO */}
+                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                    {/* Visual Drag Handle */}
+                    <div
+                      className="cursor-grab active:cursor-grabbing p-1 -ml-1 text-muted-foreground/50 hover:text-primary transition-colors rounded hover:bg-secondary shrink-0"
+                      title="Click and drag to reorder"
+                      aria-label="Drag handle"
+                    >
+                      <GripVertical className="size-4" />
+                    </div>
+
                     <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-secondary font-mono text-xs font-semibold text-primary">
                       #{index + 1}
                     </span>

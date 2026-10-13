@@ -1,68 +1,104 @@
-# Troubleshooting & Resolution Plan: Fixing GitHub "Permission Denied" in AI Studio (Active)
+# Live Retailer Price Update for Admin Products
 
-## Problem Overview
+## Summary
 
-When attempting to push commits to GitHub directly from AI Studio, the operation failed with:
-> `Failed to push commit to GitHub: permission denied. Please try again.`
-
-This indicates that GitHub is rejecting the push operation due to missing write authorization on the connected GitHub App or OAuth grant for this repository.
+Add individual and batch "Update Price" actions for store administrators across the Admin Products list table and the Product Edit form. Clicking the button checks the live retailer price from the product's affiliate link using real browser-grade fetching and immediately updates the database with the verified price, displaying instant toast feedback with previous and new pricing.
 
 ---
 
-## Action Items to Resolve Immediately
+## User Review & Critical Decisions
 
-### Action 1: Grant Repository Access in GitHub Settings (Most Common Cause)
-
-1. Open your browser and navigate directly to:
-   **[https://github.com/settings/installations](https://github.com/settings/installations)**
-2. Find the application for **Google AI Studio** / **Lovable** in the list.
-3. Click **Configure**.
-4. Check the **Repository access** section:
-   - If set to **"Only select repositories"**, click the dropdown, search for your repository, and select it to grant access.
-   - Alternatively, change it to **"All repositories"** so future projects and updates are never blocked.
-5. Click **Save**.
+> [!IMPORTANT]
+> The following user preferences were confirmed during clarification:
+>
+> - **Placement**: Price update buttons will be available in **both the admin products list table and the product edit form**.
+> - **Execution**: The system will **save immediately to the database** upon checking the link and display an informative toast showing the updated price (and old price if changed).
+> - **Batch Capability**: In addition to per-product update buttons, a **"Refresh All Prices"** batch button will be provided in the admin products header to check and synchronize all live products.
 
 ---
 
-### Action 2: Reconnect Your GitHub Account in AI Studio
+## 1. Overview & Core Concept
 
-If the token expired or lost write scopes:
-1. In the AI Studio interface, open the GitHub connection menu (usually next to the push/export button or your avatar).
-2. Click **Disconnect** or **Log out of GitHub**.
-3. Click **Connect to GitHub** to initiate a clean OAuth connection.
-4. When prompted by GitHub, ensure:
-   - You authorize with the account that owns the repository (`mukul.sri.25`).
-   - You grant permission to access repositories (Read and Write).
-5. Once reconnected, click **Push changes to GitHub** again.
+When an admin clicks "Update Price" on any product:
 
----
-
-### Action 3: Verify Branch Protection Rules on Your GitHub Repository
-
-If your GitHub repository has branch rules enabled:
-1. Go to your repository on GitHub: `https://github.com/<your-username>/<your-repo-name>`
-2. Go to **Settings** → **Branches**.
-3. Under **Branch protection rules**, check if the default branch (`main` or `master`) has:
-   - *"Require a pull request before merging"*
-   - *"Restrict who can push to matching branches"*
-4. If enabled, temporarily uncheck these restrictions or add your authorized app/account to the allowlist, then save.
+1. The server takes the product's affiliate link (e.g. Amazon, Flipkart, or redirect shortlink) and fetches the current page with modern Chromium headers.
+2. It scrapes the exact active price and currency from the retailer's DOM (checking `.a-price .a-offscreen`, `.priceToPay`, JSON-LD schema offers, etc.).
+3. If an existing `productId` is provided, the database record (`products.price`, `products.currency`, and `products.price_updated_at`) is updated automatically.
+4. The client receives the verified price data, shows a toast notification (e.g. `✨ Price updated from ₹4,018 to ₹3,899` or `Price verified: unchanged at ₹3,899`), and refreshes the table row.
+5. In the Product Edit form, the price input and last updated date are populated and saved immediately.
+6. The batch "Refresh All Prices" button iterates over all products with affiliate URLs, showing live progress and a final summary of changes.
 
 ---
 
-### Fallback: Push Directly from Your Local Terminal
+## 2. User Experience & Visual Design
 
-If you prefer to bypass web authorization completely and push via your terminal using your local SSH key or Personal Access Token:
-```bash
-# In your local project folder:
-git fetch origin
-git pull --rebase origin main
-git push origin main
+### Admin Products Table (`/_admin/admin/products/`)
+
+- **New Price Column**:
+  - Displays the formatted price (e.g., `₹4,018.00` or `—` if not set) alongside a subtle relative time indicator (e.g., `Updated 2d ago`).
+  - Next to each price, a dedicated "Update Price" button with a refresh icon (`RefreshCw`) allows 1-click price checking.
+  - While fetching, the button transitions into a spinning loader and is disabled to prevent duplicate requests.
+- **Top Bar Batch Action**:
+  - Added alongside "Add Product" and "Festival Special": a **"Refresh All Prices"** button.
+  - Clicking triggers sequential or throttled parallel price checks for all products in the store.
+  - An interactive Sonner loading toast displays live progress (`Checking prices: 4 / 22...`) followed by a success summary (`🎉 22 products checked: 3 updated, 19 unchanged`).
+
+### Admin Product Form (`src/components/admin/ProductForm.tsx`)
+
+- In the **Pricing** section:
+  - An inline **"Check Link Price"** button is placed directly inside the Price input header.
+  - Clicking inspects the current affiliate URL, fetches the latest price, sets the field, and (if editing an existing product) persists it to the database with a success toast.
+
+---
+
+## 3. Key Product Decisions & Trade-Offs
+
+- **Decision 1: Dedicated Server Endpoint `/api/admin/check-price`**
+  - _Chosen Approach_: Create a fast, lightweight server route dedicated specifically to price extraction without re-scraping the entire gallery and full text description.
+  - _Why_: Much faster response times (under 1 second per product) which is crucial for responsive 1-click updates and batch refreshing.
+
+- **Decision 2: Direct Database Persistence vs. Form-Only Pre-fill**
+  - _Chosen Approach_: When triggered from the products table or when editing an existing product, persist directly to Supabase and update `price_updated_at`.
+  - _Why_: Saves admin time by avoiding an unnecessary multi-step save confirmation for routine price checks.
+
+- **Decision 3: Handling Missing or Out-of-Stock Prices**
+  - _Chosen Approach_: If the retailer page does not display an active price (e.g. temporarily out of stock or coupon-only), the system will notify the admin with a clear warning toast without wiping out the existing recorded price.
+
+---
+
+## 4. Technical Architecture & Data Strategy
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│ Admin UI: _admin.admin.products.index.tsx                      │
+│ - Price Column with individual "Update Price" button           │
+│ - Header "Refresh All Prices" batch action                     │
+└───────────────────────────────┬────────────────────────────────┘
+                                │ POST /api/admin/check-price
+                                ▼
+┌────────────────────────────────────────────────────────────────┐
+│ Server Route: src/routes/api/admin/check-price.ts               │
+│ - Resolves redirects with Chromium headers                     │
+│ - Extracts current price from DOM / JSON-LD                    │
+│ - Updates products table: price, currency, price_updated_at    │
+│ - Returns { success: true, price, currency, previousPrice }    │
+└───────────────────────────────┬────────────────────────────────┘
+                                │
+                                ▼
+┌────────────────────────────────────────────────────────────────┐
+│ TanStack Query Cache Invalidation & Feedback:                  │
+│ - Invalidate ['admin', 'products']                             │
+│ - Sonner toast: "✨ Price updated: ₹3,899 (was ₹4,018)"        │
+└────────────────────────────────────────────────────────────────┘
 ```
 
----
+### Affected Files
 
-## Project Status
-
-- **App Compilation**: Succeeded (`npm run build` passes with 0 errors).
-- **Codebase Linting**: Succeeded (0 lint errors).
-- **All Previous Features**: 5s landing card auto-rotation, 3s detail crossfade, `/admin/festival` curation dashboard, and 3-card mobile category rails are built and operational.
+1. **`src/routes/api/admin/check-price.ts`** (New):
+   - Fast server endpoint to extract current retailer price from affiliate URLs and optionally update the product in Supabase.
+2. **`src/routes/_admin.admin.products.index.tsx`**:
+   - Add Price column to the table.
+   - Add per-row "Update Price" action with spinning state.
+   - Add "Refresh All Prices" batch action button to the header with progress toast.
+3. **`src/components/admin/ProductForm.tsx`**:
+   - Add "Check Link Price" button beside the Price field.

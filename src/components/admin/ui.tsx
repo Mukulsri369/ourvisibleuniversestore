@@ -77,12 +77,23 @@ export function Field({
   );
 }
 
-export function Section({ title, children }: { title: string; children: ReactNode }) {
+export function Section({
+  title,
+  action,
+  children,
+}: {
+  title: string;
+  action?: ReactNode | undefined;
+  children: ReactNode;
+}) {
   return (
     <section className="rounded-2xl border border-border bg-card/60 p-5 sm:p-6">
-      <h2 className="mb-5 font-sans text-xs font-bold uppercase tracking-[0.18em] text-accent">
-        {title}
-      </h2>
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-sans text-xs font-bold uppercase tracking-[0.18em] text-accent">
+          {title}
+        </h2>
+        {action}
+      </div>
       <div className="space-y-4">{children}</div>
     </section>
   );

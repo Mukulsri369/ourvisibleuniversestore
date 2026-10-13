@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Eye, Flame, Pencil, Plus, Trash2 } from "lucide-react";
+import { Eye, Flame, Loader2, Pencil, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -22,7 +22,7 @@ import {
   firstImage,
   type AdminRow,
 } from "@/lib/admin-queries";
-import { isValidAffiliateUrl } from "@/lib/store";
+import { formatPrice, isValidAffiliateUrl } from "@/lib/store";
 import { productSaveErrorMessage } from "@/lib/product-errors";
 
 export const Route = createFileRoute("/_admin/admin/products/")({
@@ -43,14 +43,196 @@ export const Route = createFileRoute("/_admin/admin/products/")({
   component: Products,
 });
 
+function formatRelativePriceTime(dateStr: string | null) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diffHours = Math.round((now.getTime() - d.getTime()) / (1000 * 60 * 60));
+  if (diffHours < 1) return "Just now";
+  if (diffHours < 24) return `${diffHours}h ago`;
+  const diffDays = Math.round(diffHours / 24);
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 30) return `${diffDays}d ago`;
+  return d.toLocaleDateString();
+}
+
 function Products() {
   const qc = useQueryClient();
   const [f, setF] = useState({ q: "", category: "", status: "", featured: "", page: 1 });
   const { data, isLoading, isError } = useQuery(adminProductsQuery(f));
   const { data: cats = [] } = useQuery(adminCategoriesQuery);
   const [del, setDel] = useState<AdminRow | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [isBatchUpdating, setIsBatchUpdating] = useState(false);
+  const [batchProgress, setBatchProgress] = useState<{ current: number; total: number }>({
+    current: 0,
+    total: 0,
+  });
+
   const set = (p: Partial<typeof f>) => setF((s) => ({ ...s, ...p, page: p.page ?? 1 }));
   const refresh = () => qc.invalidateQueries({ queryKey: ["admin"] });
+
+  async function handleUpdateSinglePrice(r: AdminRow) {
+    if (!r.affiliate_url) {
+      toast.error("Product has no affiliate URL to check.");
+      return;
+    }
+    setUpdatingId(r.id);
+    try {
+      const res = await fetch("/api/admin/check-price", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: r.affiliate_url, productId: r.id }),
+      });
+      let result: {
+        success?: boolean;
+        price?: number;
+        currency?: string;
+        error?: string;
+      } | null = null;
+      try {
+        const text = await res.text();
+        result = JSON.parse(text);
+      } catch {
+        toast.error("Unable to check price: Retailer returned non-JSON response.");
+        return;
+      }
+      if (!res.ok || !result?.success || result?.price == null) {
+        toast.warning(result?.error || "Could not detect active price on retailer page.");
+        return;
+      }
+
+      const newPrice = result.price;
+      const newCurrency = result.currency || "INR";
+      const nowIso = new Date().toISOString();
+
+      const { error } = await supabase
+        .from("products")
+        .update({
+          price: newPrice,
+          currency: newCurrency,
+          price_updated_at: nowIso,
+        })
+        .eq("id", r.id);
+
+      if (error) {
+        toast.error(
+          `Price found (${formatPrice(newPrice, newCurrency)}) but failed to save: ${error.message}`,
+        );
+        return;
+      }
+
+      if (r.price != null && r.price !== newPrice) {
+        toast.success(
+          `✨ Price updated from ${formatPrice(r.price, r.currency)} to ${formatPrice(newPrice, newCurrency)} for "${r.name.slice(0, 32)}…"`,
+        );
+      } else if (r.price === newPrice) {
+        toast.info(`Price verified: unchanged at ${formatPrice(newPrice, newCurrency)}.`);
+      } else {
+        toast.success(
+          `✨ Price set to ${formatPrice(newPrice, newCurrency)} for "${r.name.slice(0, 32)}…"`,
+        );
+      }
+
+      refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to update price.");
+    } finally {
+      setUpdatingId(null);
+    }
+  }
+
+  async function handleBatchUpdatePrices() {
+    setIsBatchUpdating(true);
+    try {
+      const { data: prods, error } = await supabase
+        .from("products")
+        .select("id, name, affiliate_url, amazon_url, price, currency")
+        .is("deleted_at", null);
+
+      if (error || !prods) {
+        toast.error(
+          "Failed to load products for batch update: " + (error?.message || "Unknown error"),
+        );
+        return;
+      }
+
+      const eligible = prods.filter((p) => p.affiliate_url || p.amazon_url);
+      if (!eligible.length) {
+        toast.info("No products with affiliate links found to update.");
+        return;
+      }
+
+      setBatchProgress({ current: 0, total: eligible.length });
+      toast.loading(`Refreshing prices for ${eligible.length} products…`, {
+        id: "batch-price-update",
+      });
+
+      let updatedCount = 0;
+      let unchangedCount = 0;
+      let failedCount = 0;
+
+      for (let i = 0; i < eligible.length; i++) {
+        const p = eligible[i];
+        setBatchProgress({ current: i + 1, total: eligible.length });
+        const targetUrl = p.affiliate_url || p.amazon_url;
+        try {
+          const res = await fetch("/api/admin/check-price", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url: targetUrl, productId: p.id }),
+          });
+          let result: {
+            success?: boolean;
+            price?: number;
+            currency?: string;
+            error?: string;
+          } | null = null;
+          try {
+            const text = await res.text();
+            result = JSON.parse(text);
+          } catch {
+            failedCount++;
+            continue;
+          }
+          if (res.ok && result?.success && result?.price != null) {
+            const nowIso = new Date().toISOString();
+            await supabase
+              .from("products")
+              .update({
+                price: result.price,
+                currency: result.currency || "INR",
+                price_updated_at: nowIso,
+              })
+              .eq("id", p.id);
+
+            if (p.price != null && p.price !== result.price) {
+              updatedCount++;
+            } else {
+              unchangedCount++;
+            }
+          } else {
+            failedCount++;
+          }
+        } catch {
+          failedCount++;
+        }
+      }
+
+      toast.success(
+        `🎉 Batch update complete: ${updatedCount} updated, ${unchangedCount} verified${failedCount > 0 ? `, ${failedCount} could not be detected` : ""}.`,
+        { id: "batch-price-update", duration: 5000 },
+      );
+      refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Batch price refresh failed", {
+        id: "batch-price-update",
+      });
+    } finally {
+      setIsBatchUpdating(false);
+      setBatchProgress({ current: 0, total: 0 });
+    }
+  }
 
   async function toggleActive(r: AdminRow) {
     if (!r.active) {
@@ -95,14 +277,42 @@ function Products() {
         title="Products"
         sub={data ? `${data.total} products` : undefined}
         action={
-          <div className="flex gap-2">
-            <Link to="/admin/festival" className={buttonVariants({ variant: "outline" })}>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={isBatchUpdating}
+              onClick={handleBatchUpdatePrices}
+              className="gap-1.5"
+              title="Check live prices for all products with affiliate URLs"
+            >
+              {isBatchUpdating ? (
+                <>
+                  <Loader2 className="size-3.5 animate-spin text-primary" />
+                  Refreshing ({batchProgress.current}/{batchProgress.total})
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="size-3.5" /> Refresh All Prices
+                </>
+              )}
+            </Button>
+            <Link
+              to="/admin/festival"
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
               <Flame className="size-4 text-primary" /> Festival Special
             </Link>
-            <Link to="/admin/products/trash" className={buttonVariants({ variant: "outline" })}>
+            <Link
+              to="/admin/products/trash"
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
               <Trash2 /> Trash
             </Link>
-            <Link to="/admin/products/new" className={buttonVariants({ variant: "affiliate" })}>
+            <Link
+              to="/admin/products/new"
+              className={buttonVariants({ variant: "affiliate", size: "sm" })}
+            >
               <Plus /> Add Product
             </Link>
           </div>
@@ -161,6 +371,7 @@ function Products() {
                 <tr>
                   <th className="p-3">Product</th>
                   <th>Category</th>
+                  <th>Price</th>
                   <th>Affiliate URL</th>
                   <th>Status</th>
                   <th>Featured</th>
@@ -185,6 +396,45 @@ function Products() {
                         .join(", ") ||
                         r.categories?.name ||
                         "—"}
+                    </td>
+                    <td className="py-2 pr-3 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <div>
+                          <div className="font-medium text-foreground">
+                            {r.price != null ? (
+                              formatPrice(r.price, r.currency || "INR")
+                            ) : (
+                              <span className="font-normal text-muted-foreground">—</span>
+                            )}
+                          </div>
+                          {r.price_updated_at && (
+                            <div
+                              className="text-[10px] text-muted-foreground"
+                              title={new Date(r.price_updated_at).toLocaleString()}
+                            >
+                              {formatRelativePriceTime(r.price_updated_at)}
+                            </div>
+                          )}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="size-7 text-muted-foreground hover:text-foreground"
+                          disabled={updatingId === r.id || isBatchUpdating || !r.affiliate_url}
+                          title={
+                            r.affiliate_url
+                              ? "Check and update latest price from retailer link"
+                              : "No affiliate link set"
+                          }
+                          onClick={() => handleUpdateSinglePrice(r)}
+                        >
+                          {updatingId === r.id ? (
+                            <Loader2 className="size-3.5 animate-spin text-primary" />
+                          ) : (
+                            <RefreshCw className="size-3.5" />
+                          )}
+                        </Button>
+                      </div>
                     </td>
                     <td>
                       <StatusBadge
