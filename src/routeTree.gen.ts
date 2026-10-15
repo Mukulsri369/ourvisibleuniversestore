@@ -24,6 +24,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
 import { Route as AdminAdminIndexRouteImport } from './routes/_admin.admin.index'
 import { Route as AdminAdminCategoriesRouteImport } from './routes/_admin.admin.categories'
+import { Route as AdminAdminDuplicatesRouteImport } from './routes/_admin.admin.duplicates'
 import { Route as AdminAdminFestivalRouteImport } from './routes/_admin.admin.festival'
 import { Route as AdminAdminSettingsRouteImport } from './routes/_admin.admin.settings'
 import { Route as StoreCategorySlugRouteImport } from './routes/_store.category.$slug'
@@ -110,6 +111,11 @@ const AdminAdminCategoriesRoute = AdminAdminCategoriesRouteImport.update({
   path: '/admin/categories',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAdminDuplicatesRoute = AdminAdminDuplicatesRouteImport.update({
+  id: '/admin/duplicates',
+  path: '/admin/duplicates',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAdminFestivalRoute = AdminAdminFestivalRouteImport.update({
   id: '/admin/festival',
   path: '/admin/festival',
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/categories': typeof AdminAdminCategoriesRoute
+  '/admin/duplicates': typeof AdminAdminDuplicatesRoute
   '/admin/festival': typeof AdminAdminFestivalRoute
   '/admin/settings': typeof AdminAdminSettingsRoute
   '/category/$slug': typeof StoreCategorySlugRoute
@@ -206,6 +213,7 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/categories': typeof AdminAdminCategoriesRoute
+  '/admin/duplicates': typeof AdminAdminDuplicatesRoute
   '/admin/festival': typeof AdminAdminFestivalRoute
   '/admin/settings': typeof AdminAdminSettingsRoute
   '/category/$slug': typeof StoreCategorySlugRoute
@@ -235,6 +243,7 @@ export interface FileRoutesById {
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/_store/': typeof StoreIndexRoute
   '/_admin/admin/categories': typeof AdminAdminCategoriesRoute
+  '/_admin/admin/duplicates': typeof AdminAdminDuplicatesRoute
   '/_admin/admin/festival': typeof AdminAdminFestivalRoute
   '/_admin/admin/settings': typeof AdminAdminSettingsRoute
   '/_store/category/$slug': typeof StoreCategorySlugRoute
@@ -263,6 +272,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/reset-password'
     | '/admin/categories'
+    | '/admin/duplicates'
     | '/admin/festival'
     | '/admin/settings'
     | '/category/$slug'
@@ -289,6 +299,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/reset-password'
     | '/admin/categories'
+    | '/admin/duplicates'
     | '/admin/festival'
     | '/admin/settings'
     | '/category/$slug'
@@ -317,6 +328,7 @@ export interface FileRouteTypes {
     | '/admin/reset-password'
     | '/_store/'
     | '/_admin/admin/categories'
+    | '/_admin/admin/duplicates'
     | '/_admin/admin/festival'
     | '/_admin/admin/settings'
     | '/_store/category/$slug'
@@ -448,6 +460,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminCategoriesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_admin/admin/duplicates': {
+      id: '/_admin/admin/duplicates'
+      path: '/admin/duplicates'
+      fullPath: '/admin/duplicates'
+      preLoaderRoute: typeof AdminAdminDuplicatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_admin/admin/festival': {
       id: '/_admin/admin/festival'
       path: '/admin/festival'
@@ -530,6 +549,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAdminCategoriesRoute: typeof AdminAdminCategoriesRoute
+  AdminAdminDuplicatesRoute: typeof AdminAdminDuplicatesRoute
   AdminAdminFestivalRoute: typeof AdminAdminFestivalRoute
   AdminAdminSettingsRoute: typeof AdminAdminSettingsRoute
   AdminAdminIndexRoute: typeof AdminAdminIndexRoute
@@ -541,6 +561,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAdminCategoriesRoute: AdminAdminCategoriesRoute,
+  AdminAdminDuplicatesRoute: AdminAdminDuplicatesRoute,
   AdminAdminFestivalRoute: AdminAdminFestivalRoute,
   AdminAdminSettingsRoute: AdminAdminSettingsRoute,
   AdminAdminIndexRoute: AdminAdminIndexRoute,
