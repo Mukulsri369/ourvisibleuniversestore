@@ -19,6 +19,55 @@ const BROWSER_HEADERS: Record<string, string> = {
   "Cache-Control": "max-age=0",
 };
 
+const MOBILE_HEADERS: Record<string, string> = {
+  "User-Agent":
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+  Accept:
+    "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+  "Accept-Language": "en-IN,en;q=0.9,en-US;q=0.8",
+  "Sec-Fetch-Dest": "document",
+  "Sec-Fetch-Mode": "navigate",
+  "Sec-Fetch-Site": "none",
+  "Sec-Fetch-User": "?1",
+  "Upgrade-Insecure-Requests": "1",
+  "Cache-Control": "max-age=0",
+};
+
+async function fetchAmazonMobile(
+  hostname: string,
+  asin: string,
+): Promise<{ html: string; status: number; domain: string } | null> {
+  const domains = [
+    hostname.includes("amazon.") ? hostname : "www.amazon.in",
+    "www.amazon.in",
+    "www.amazon.com",
+  ];
+  const uniqueDomains = Array.from(new Set(domains));
+
+  for (const domain of uniqueDomains) {
+    try {
+      const url = `https://${domain}/gp/aw/d/${asin}`;
+      const res = await fetch(url, {
+        headers: MOBILE_HEADERS,
+        redirect: "follow",
+      });
+      if (res.ok) {
+        const text = await res.text();
+        if (
+          text.length > 2000 &&
+          !text.includes("503 - Service Unavailable") &&
+          !text.includes("Robot Check")
+        ) {
+          return { html: text, status: res.status, domain };
+        }
+      }
+    } catch {
+      // try next candidate domain
+    }
+  }
+  return null;
+}
+
 function isBlockedOrGenericTitle(title: string | undefined): boolean {
   if (!title) return true;
   const t = title.trim().toLowerCase();
@@ -200,22 +249,55 @@ export const Route = createFileRoute("/api/admin/scrape-product")({
             html.includes("cf-browser-verification") ||
             html.toLowerCase().includes("just a moment...");
 
-          if (isCloudflareChallenge) {
-            let errorMsg = `The retailer (${hostname}) is protected by Cloudflare Bot Management (HTTP 403) and blocks automated scraping requests.`;
-            if (retailer === "Ubuy" && retailerProductId) {
-              errorMsg = `Ubuy (${hostname}) is protected by Cloudflare Bot Management (HTTP 403 Forbidden). This product corresponds to Amazon ASIN "${retailerProductId}". To auto-import full details and gallery photos, you can paste https://www.amazon.in/dp/${retailerProductId} (or https://www.amazon.com/dp/${retailerProductId}) into the fetcher, and keep your Ubuy link in the Affiliate URL field.`;
+          const isBlockedOrEmpty =
+            res.status !== 200 ||
+            html.length < 2000 ||
+            html.includes("503 - Service Unavailable") ||
+            html.includes("Robot Check") ||
+            isCloudflareChallenge;
+
+          if (
+            (retailer === "Amazon" || retailer === "Ubuy") &&
+            retailerProductId &&
+            isBlockedOrEmpty
+          ) {
+            const mobResult = await fetchAmazonMobile(hostname, retailerProductId);
+            if (mobResult) {
+              html = mobResult.html;
+              if (retailer === "Ubuy") retailer = "Amazon";
+            } else if (isCloudflareChallenge) {
+              let errorMsg = `The retailer (${hostname}) is protected by Cloudflare Bot Management (HTTP 403) and blocks automated scraping requests.`;
+              if (retailer === "Ubuy" && retailerProductId) {
+                errorMsg = `Ubuy (${hostname}) is protected by Cloudflare Bot Management (HTTP 403 Forbidden). This product corresponds to Amazon ASIN "${retailerProductId}". To auto-import full details and gallery photos, you can paste https://www.amazon.in/dp/${retailerProductId} (or https://www.amazon.com/dp/${retailerProductId}) into the fetcher, and keep your Ubuy link in the Affiliate URL field.`;
+              }
+              return new Response(
+                JSON.stringify({
+                  success: false,
+                  error: errorMsg,
+                  data: {
+                    retailer,
+                    retailer_product_id: retailerProductId,
+                    affiliate_url: rawUrl,
+                    suggested_source_url: retailerProductId
+                      ? `https://www.amazon.in/dp/${retailerProductId}`
+                      : undefined,
+                  },
+                }),
+                {
+                  status: 200,
+                  headers: { "content-type": "application/json" },
+                },
+              );
             }
+          } else if (isCloudflareChallenge) {
             return new Response(
               JSON.stringify({
                 success: false,
-                error: errorMsg,
+                error: `The retailer (${hostname}) is protected by Cloudflare Bot Management (HTTP 403).`,
                 data: {
                   retailer,
                   retailer_product_id: retailerProductId,
                   affiliate_url: rawUrl,
-                  suggested_source_url: retailerProductId
-                    ? `https://www.amazon.in/dp/${retailerProductId}`
-                    : undefined,
                 },
               }),
               {

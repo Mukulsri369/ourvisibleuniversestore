@@ -62,7 +62,6 @@ export function ProductCard({
   const price = formatPrice(p.price, p.currency);
   const [active, setActive] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const isFirstRun = useRef(true);
 
   // Normalize image list
   const imageList =
@@ -77,51 +76,7 @@ export function ProductCard({
   useEffect(() => {
     setActive(0);
     setIsHovered(false);
-    isFirstRun.current = true;
   }, [p.id]);
-
-  // 5-second automatic image rotation for cards with multiple images
-  useEffect(() => {
-    if (!hasMultipleImages || isHovered) return;
-
-    // Honor reduced-motion preference
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      return;
-    }
-
-    // Deterministic organic stagger offset (0 to 2400ms) based on product ID
-    let hash = 0;
-    for (let i = 0; i < p.id.length; i++) {
-      hash = (hash << 5) - hash + p.id.charCodeAt(i);
-      hash |= 0;
-    }
-    const staggerOffset = Math.abs(hash) % 2400;
-
-    let intervalId: ReturnType<typeof setInterval> | null = null;
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-    if (isFirstRun.current) {
-      isFirstRun.current = false;
-      timeoutId = setTimeout(() => {
-        setActive((prev) => (prev + 1) % imageList.length);
-        intervalId = setInterval(() => {
-          setActive((prev) => (prev + 1) % imageList.length);
-        }, 5000);
-      }, 5000 + staggerOffset);
-    } else {
-      intervalId = setInterval(() => {
-        setActive((prev) => (prev + 1) % imageList.length);
-      }, 5000);
-    }
-
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [hasMultipleImages, isHovered, imageList.length, p.id]);
 
   const currentImg = imageList[active] ?? imageList[0];
   const currentSrc = currentImg?.image_url ?? p.image;
@@ -167,17 +122,30 @@ export function ProductCard({
             )}
           </Link>
 
-          {/* SUBTLE MULTI-IMAGE INDICATOR DOTS (VISIBLE ON HOVER) */}
+          {/* SUBTLE MULTI-IMAGE INDICATOR DOTS (CLICKABLE ON HOVER/FOCUS) */}
           {hasMultipleImages && (
-            <div className="absolute bottom-1 left-0 right-0 z-10 flex justify-center gap-0.5 sm:gap-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            <div className="absolute bottom-1 left-0 right-0 z-10 flex justify-center items-center gap-0.5 sm:gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               {imageList.map((_, idx) => (
-                <span
+                <button
                   key={idx}
-                  className={cn(
-                    "h-1 rounded-full transition-all duration-300",
-                    idx === active ? "w-2.5 sm:w-3 bg-primary shadow-sm" : "w-1 bg-foreground/40",
-                  )}
-                />
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setActive(idx);
+                  }}
+                  aria-label={`View image ${idx + 1}`}
+                  className="p-0.5 focus:outline-none"
+                >
+                  <span
+                    className={cn(
+                      "block h-1 rounded-full transition-all duration-300",
+                      idx === active
+                        ? "w-2.5 sm:w-3 bg-primary shadow-sm"
+                        : "w-1 bg-foreground/50 hover:bg-foreground/80",
+                    )}
+                  />
+                </button>
               ))}
             </div>
           )}
@@ -296,17 +264,30 @@ export function ProductCard({
           )}
         </Link>
 
-        {/* SUBTLE MULTI-IMAGE INDICATOR DOTS (VISIBLE ON HOVER) */}
+        {/* SUBTLE MULTI-IMAGE INDICATOR DOTS (CLICKABLE ON HOVER/FOCUS) */}
         {hasMultipleImages && (
-          <div className="absolute bottom-2 left-0 right-0 z-10 flex justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+          <div className="absolute bottom-2 left-0 right-0 z-10 flex justify-center items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             {imageList.map((_, idx) => (
-              <span
+              <button
                 key={idx}
-                className={cn(
-                  "h-1 rounded-full transition-all duration-300",
-                  idx === active ? "w-3.5 bg-primary shadow-sm" : "w-1 bg-foreground/40",
-                )}
-              />
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setActive(idx);
+                }}
+                aria-label={`View image ${idx + 1}`}
+                className="p-1 focus:outline-none"
+              >
+                <span
+                  className={cn(
+                    "block h-1 rounded-full transition-all duration-300",
+                    idx === active
+                      ? "w-4 bg-primary shadow-sm"
+                      : "w-1.5 bg-foreground/50 hover:bg-foreground/80",
+                  )}
+                />
+              </button>
             ))}
           </div>
         )}

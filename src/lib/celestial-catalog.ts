@@ -51,19 +51,26 @@ export interface CelestialSystemConfig {
 }
 
 export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
-  // 1. Astronomy & Telescopes -> Jupiter & Europa System
+  // 1. Books & Field Guides -> Jupiter & Europa System
   {
     id: "jupiter-system",
-    categorySlugMatch: ["astronomy-telescopes", "telescopes", "optics"],
+    categorySlugMatch: [
+      "books-guides",
+      "books",
+      "guides",
+      "astronomy-telescopes",
+      "telescopes",
+      "optics",
+    ],
     systemName: "Jovian System",
     planetName: "JUPITER",
-    subtitle: "Lord of the Galilean Moons",
+    subtitle: "Lord of the Galilean Moons & Deep Space Guides",
     quote: {
       text: "The cosmos is within us. We are made of star-stuff.",
       author: "Carl Sagan",
     },
     coordinates: "RA 17h 52m 14s · DEC -23° 24′ 12″ · JOVIAN SECTOR",
-    laserLabel: "JOVIAN APERTURE & OPTICS AXIS",
+    laserLabel: "JOVIAN KNOWLEDGE & OBSERVATION AXIS",
     bodyType: "gas_giant",
     hasRings: false,
     primaryColor: "#f59e0b",
@@ -112,19 +119,19 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
     },
   },
 
-  // 2. Space Gadgets & Showpieces -> Saturn & Titan System
+  // 2. Space Party Supplies -> Saturn & Titan System
   {
     id: "saturn-system",
-    categorySlugMatch: ["space-gadgets", "showpieces", "gadgets"],
+    categorySlugMatch: ["space-party-supplies", "space-b-day-party", "party", "space-party"],
     systemName: "Cronian System",
     planetName: "SATURN",
-    subtitle: "Crown Jewel of Celestial Rings",
+    subtitle: "Crown Jewel of Cosmic Celebrations",
     quote: {
       text: "The universe is under no obligation to make sense to you.",
       author: "Neil deGrasse Tyson",
     },
     coordinates: "RA 21h 32m 40s · DEC -15° 48′ 21″ · CRONIAN RING PLANE",
-    laserLabel: "CRONIAN KINETIC HARMONY",
+    laserLabel: "CRONIAN CELEBRATION RING PLANE",
     bodyType: "gas_giant",
     hasRings: true,
     ringColor:
@@ -170,23 +177,23 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
       temperature: "-140 °C (1 bar level)",
       mission: "Cassini-Huygens Mission",
       astronomicalLore:
-        "Surrounded by billions of ice particles spinning in millimeter-thin orbital rings, Saturn exemplifies cosmic precision and mechanical harmony.",
+        "Surrounded by billions of ice particles spinning in millimeter-thin orbital rings, Saturn exemplifies cosmic precision and celebratory wonder.",
     },
   },
 
-  // 3. Space Décor & Solar System -> Earth & Luna System
+  // 3. Space Décor & Showpieces -> Earth & Luna System
   {
     id: "earth-system",
-    categorySlugMatch: ["space-decor", "solar-system", "decor"],
+    categorySlugMatch: ["space-decor", "showpieces", "decor", "solar-system"],
     systemName: "Terran System",
     planetName: "EARTH & LUNA",
-    subtitle: "The Pale Blue Oasis",
+    subtitle: "The Pale Blue Oasis of Cosmic Décor",
     quote: {
       text: "Look again at that dot. That's here. That's home. That's us.",
       author: "Carl Sagan",
     },
     coordinates: "RA 00h 00m 00s · DEC +00° 00′ 00″ · TERRAN HORIZON",
-    laserLabel: "TERRAN ORBITAL INTERIOR",
+    laserLabel: "TERRAN ORBITAL & DÉCOR INTERIOR",
     bodyType: "terrestrial",
     hasRings: false,
     primaryColor: "#38bdf8",
@@ -223,19 +230,19 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
     },
   },
 
-  // 4. Astronomy Apparel & Clothing -> Neptune & Triton System
+  // 4. Clocks & Timepieces -> Neptune & Triton System
   {
     id: "neptune-system",
-    categorySlugMatch: ["astronomy-apparel", "clothing", "apparel"],
+    categorySlugMatch: ["clocks-timepieces", "clock", "clocks", "timepieces", "astronomy-apparel"],
     systemName: "Poseidonian System",
     planetName: "NEPTUNE",
-    subtitle: "Deep Voyager Ultramarine",
+    subtitle: "Deep Voyager Ultramarine & Precision Orbital Cycles",
     quote: {
       text: "Somewhere, something incredible is waiting to be known.",
       author: "Carl Sagan",
     },
     coordinates: "RA 23h 34m 58s · DEC -04° 12′ 33″ · POSEIDONIAN REALM",
-    laserLabel: "DEEP VOYAGER CRYOSPHERE",
+    laserLabel: "DEEP VOYAGER CHRONOLOGY VECTOR",
     bodyType: "ice_giant",
     hasRings: false,
     primaryColor: "#0284c7",
@@ -272,19 +279,19 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
     },
   },
 
-  // 5. Lamp & Lights -> Helios & Mercury System (Solar Flare & Corona)
+  // 5. Cosmic Lighting & Projectors -> Helios & Mercury System
   {
     id: "sun-system",
-    categorySlugMatch: ["lamp", "lights", "lighting"],
+    categorySlugMatch: ["cosmic-lighting", "lamp", "lights", "lighting", "projectors"],
     systemName: "Heliosphere",
     planetName: "THE SUN & MERCURY",
-    subtitle: "The Primordial Furnace of Visible Light",
+    subtitle: "The Primordial Furnace of Visible Illumination",
     quote: {
       text: "Equipped with his senses, man explores the universe and calls the adventure Science.",
       author: "Edwin Hubble",
     },
     coordinates: "SOLAR APEX · 1.00 AU · SPECTRAL CLASS G2V",
-    laserLabel: "PHOTOSPHERIC RADIANCE AXIS",
+    laserLabel: "PHOTOSPHERIC RADIANCE & LIGHTING AXIS",
     bodyType: "star",
     hasRings: false,
     primaryColor: "#f97316",
@@ -372,18 +379,19 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
   },
 
   // 7. Astronomy Gifts -> Uranus & Titania System
+  // 7. Astronomy Gifts & Keepsakes -> Uranus & Titania System
   {
     id: "uranus-system",
-    categorySlugMatch: ["astronomy-gifts", "gifts"],
+    categorySlugMatch: ["astronomy-gifts", "gifts", "keepsakes"],
     systemName: "Uranian System",
     planetName: "URANUS",
-    subtitle: "The Tilted Aquamarine Ice Giant",
+    subtitle: "The Tilted Aquamarine Sphere of Keepsakes",
     quote: {
       text: "For my part I know nothing with any certainty, but the sight of the stars makes me dream.",
       author: "Vincent van Gogh",
     },
     coordinates: "RA 03h 02m 10s · DEC +17° 14′ 45″ · URANIAN OBLIQUITY",
-    laserLabel: "AQUAMARINE SPECTRAL TILT",
+    laserLabel: "AQUAMARINE KEEPSAKE SPHERE TILT",
     bodyType: "ice_giant",
     hasRings: true,
     ringColor:
@@ -422,19 +430,19 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
     },
   },
 
-  // 8. Kids & Learning -> Pluto & Charon Binary System
+  // 8. Kids & STEM Learning -> Pluto & Charon Binary System
   {
     id: "pluto-system",
-    categorySlugMatch: ["kids-learning", "kids"],
+    categorySlugMatch: ["kids-learning", "kids", "stem", "learning"],
     systemName: "Kuiper Binary System",
     planetName: "PLUTO & CHARON",
-    subtitle: "The Nitrogen Heart of the Kuiper Belt",
+    subtitle: "The Nitrogen Heart of Young Explorers",
     quote: {
       text: "Remember to look up at the stars and not down at your feet.",
       author: "Stephen Hawking",
     },
     coordinates: "RA 19h 58m 22s · DEC -22° 11′ 05″ · KUIPER BINARY",
-    laserLabel: "TOMBAUGH EXPLORATION SECTOR",
+    laserLabel: "TOMBAUGH STEM EXPLORATION SECTOR",
     bodyType: "dwarf_binary",
     hasRings: false,
     primaryColor: "#c084fc",
@@ -471,19 +479,26 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
     },
   },
 
-  // 9. Galaxy & Nebula & Projectors -> Stellar Pulsar Core System
+  // 9. Space Wall Art & Posters -> Stellar Pulsar Core System
   {
     id: "pulsar-system",
-    categorySlugMatch: ["galaxy-nebula", "projectors", "nebula"],
+    categorySlugMatch: [
+      "space-wall-art",
+      "spaceart",
+      "art",
+      "posters",
+      "wall-art",
+      "galaxy-nebula",
+    ],
     systemName: "Orion Stellar Nursery",
     planetName: "PULSAR CORE",
-    subtitle: "Relativistic Light Beacon of the Deep Sky",
+    subtitle: "Relativistic Light Beacon of Celestial Wall Art",
     quote: {
       text: "We are a way for the cosmos to know itself.",
       author: "Carl Sagan",
     },
     coordinates: "RA 05h 35m 17s · DEC -05° 23′ 28″ · ORION NEBULA CORE",
-    laserLabel: "RELATIVISTIC PULSAR BEACON",
+    laserLabel: "RELATIVISTIC ART & NEBULA EMISSION",
     bodyType: "pulsar",
     hasRings: true,
     ringColor:
@@ -522,19 +537,26 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
     },
   },
 
-  // 10. Space Accessories -> Ceres & Asteroid Belt
+  // 10. Tech & Daily Accessories -> Ceres & Asteroid Belt
   {
     id: "ceres-system",
-    categorySlugMatch: ["space-accessories", "accessories"],
+    categorySlugMatch: [
+      "tech-accessories",
+      "mobile-accessories",
+      "space-accessories",
+      "accessories",
+      "space-gadgets",
+      "gadgets",
+    ],
     systemName: "Main Belt Protoplanet",
     planetName: "CERES & VESTA",
-    subtitle: "Keepers of the Asteroid Belt",
+    subtitle: "Keepers of Everyday Space Instrumentation",
     quote: {
       text: "Not only are we in the universe, the universe is in us.",
       author: "Neil deGrasse Tyson",
     },
     coordinates: "RA 14h 22m 38s · DEC +11° 18′ 44″ · MAIN ASTEROID BELT",
-    laserLabel: "PLANETESIMAL FIELD VECTOR",
+    laserLabel: "TECH & DAILY INSTRUMENTATION VECTOR",
     bodyType: "asteroid",
     hasRings: false,
     primaryColor: "#94a3b8",

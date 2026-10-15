@@ -1,11 +1,17 @@
 import { Link } from "@tanstack/react-router";
 import {
   ArrowUpRight,
+  BookOpen,
+  Clock,
   Gift,
   GraduationCap,
+  Lightbulb,
   Orbit,
+  Palette,
+  PartyPopper,
   Rocket,
   Shirt,
+  Smartphone,
   Sparkles,
   Star,
   Telescope,
@@ -15,15 +21,31 @@ import {
 import type { Category } from "@/lib/store";
 
 const ICONS: Record<string, typeof Star> = {
-  "astronomy-telescopes": Telescope,
+  "cosmic-lighting": Lightbulb,
+  "space-wall-art": Palette,
+  "kids-learning": Baby,
+  "space-party-supplies": PartyPopper,
+  "clocks-timepieces": Clock,
+  "books-guides": BookOpen,
+  "space-decor": Orbit,
+  "astronomy-gifts": Gift,
+  "tech-accessories": Smartphone,
+  // Backward compatibility legacy slugs
+  lights: Lightbulb,
+  lamp: Lamp,
+  projectors: Sparkles,
+  spaceart: Palette,
+  posters: Palette,
+  clock: Clock,
+  books: BookOpen,
+  "space-b-day-party": PartyPopper,
+  "mobile-accessories": Smartphone,
   "space-gadgets": Rocket,
+  "astronomy-telescopes": Telescope,
   "astronomy-apparel": Shirt,
   "galaxy-nebula": Sparkles,
   "solar-system": Orbit,
-  "space-decor": Lamp,
-  "astronomy-gifts": Gift,
   "educational-science": GraduationCap,
-  "kids-learning": Baby,
 };
 
 export function CategoryCard({ c, index = 0 }: { c: Category; index?: number }) {

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Check, ShieldCheck } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, ShieldCheck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { formatPrice, type ProductFull } from "@/lib/store";
@@ -47,7 +47,6 @@ export function ProductDetailView({
   preview?: boolean | undefined;
 }) {
   const [active, setActive] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
   const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const price = formatPrice(p.price, p.currency);
   const main = p.images[active] ?? p.images[0];
@@ -55,19 +54,17 @@ export function ProductDetailView({
   // Reset to first image when navigating between products
   useEffect(() => {
     setActive(0);
-    setIsPaused(false);
   }, [p.id]);
 
-  // Auto-advance images every 3 seconds when multiple images exist and user isn't hovering
-  useEffect(() => {
-    if (p.images.length <= 1 || isPaused) return;
+  const handlePrevImage = () => {
+    if (p.images.length <= 1) return;
+    setActive((prev) => (prev - 1 + p.images.length) % p.images.length);
+  };
 
-    const timer = setInterval(() => {
-      setActive((prev) => (prev + 1) % p.images.length);
-    }, 3000);
-
-    return () => clearInterval(timer);
-  }, [p.images.length, isPaused]);
+  const handleNextImage = () => {
+    if (p.images.length <= 1) return;
+    setActive((prev) => (prev + 1) % p.images.length);
+  };
 
   // Keep active thumbnail smoothly visible in scrollable container
   useEffect(() => {
@@ -81,10 +78,7 @@ export function ProductDetailView({
     <div className="grid gap-8 lg:grid-cols-2 lg:gap-14">
       <div>
         <div
-          className="relative aspect-square overflow-hidden rounded-3xl border border-border bg-secondary"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-          aria-roledescription="carousel"
+          className="group relative aspect-square overflow-hidden rounded-3xl border border-border bg-secondary"
           aria-label={`${p.name} image gallery`}
         >
           <AnimatePresence initial={false}>
@@ -104,12 +98,32 @@ export function ProductDetailView({
               />
             </motion.div>
           </AnimatePresence>
+
+          {/* Manual Previous / Next Buttons */}
+          {p.images.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={handlePrevImage}
+                aria-label="Previous product image"
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-10 flex size-10 items-center justify-center rounded-full bg-background/80 text-foreground backdrop-blur-md border border-border/60 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity hover:bg-background hover:scale-105 shadow-md focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <ChevronLeft className="size-5" />
+              </button>
+              <button
+                type="button"
+                onClick={handleNextImage}
+                aria-label="Next product image"
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-10 flex size-10 items-center justify-center rounded-full bg-background/80 text-foreground backdrop-blur-md border border-border/60 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity hover:bg-background hover:scale-105 shadow-md focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <ChevronRight className="size-5" />
+              </button>
+            </>
+          )}
         </div>
         {p.images.length > 1 && (
           <div
             className="mt-3 flex gap-2 overflow-x-auto pb-1"
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
             role="tablist"
             aria-label="Image thumbnails"
           >
@@ -184,21 +198,21 @@ export function ProductDetailView({
             url={p.affiliate_url}
             size="xl"
             className="mt-5 w-full"
-            label="BUY NOW"
+            label="Buy now"
             track={!preview}
           />
           <p className="mt-4 flex gap-2 text-xs leading-relaxed text-muted-foreground">
             <ShieldCheck className="mt-0.5 size-4 shrink-0 text-accent" />
             <span>
-              {disclosure ?? "We may earn a commission from qualifying purchases."} Purchase,
-              payment and delivery are handled by the linked retailer.
+              {disclosure ?? "We may earn a commission from qualifying purchases."} Purchases and
+              delivery are fulfilled by the retailer.
             </span>
           </p>
         </div>
 
         {p.features.length > 0 && (
           <div className="mt-8">
-            <h2 className="text-2xl">Highlights</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold">Highlights</h2>
             <ul className="mt-4 space-y-3">
               {p.features.map((f, i) => (
                 <li key={i} className="flex gap-3 text-sm text-foreground">
@@ -212,7 +226,7 @@ export function ProductDetailView({
 
         {p.description && (
           <div className="mt-8">
-            <h2 className="mb-3 text-2xl">About this product</h2>
+            <h2 className="mb-3 text-xl sm:text-2xl font-semibold">About</h2>
             <Description text={p.description} />
           </div>
         )}
@@ -249,7 +263,7 @@ export function ProductDetailView({
             url={p.affiliate_url}
             size="lg"
             className="w-full"
-            label="BUY NOW"
+            label="Buy now"
           />
         </div>
       )}

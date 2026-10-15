@@ -149,7 +149,7 @@ export function PlanetHero() {
             to="/shop"
             className={buttonVariants({ variant: "planet", size: "xl", className: "planet-shop" })}
           >
-            EXPLORE THE STORE <ArrowRight />
+            Explore collection <ArrowRight />
           </Link>
         </motion.div>
       </div>
@@ -183,12 +183,15 @@ export function PlanetHero() {
         variant="glass"
         size="icon"
         className="planet-scroll"
-        aria-label="Explore categories"
-        onClick={() =>
-          document
-            .getElementById("categories")
-            ?.scrollIntoView({ behavior: reducedMotion ? "instant" : "smooth" })
-        }
+        aria-label="Explore products"
+        onClick={() => {
+          const target =
+            document.getElementById("festival-special") ||
+            document.getElementById("featured-products") ||
+            document.getElementById("store-content") ||
+            document.getElementById("categories");
+          target?.scrollIntoView({ behavior: reducedMotion ? "instant" : "smooth" });
+        }}
       >
         <ArrowDown />
       </Button>

@@ -1,6 +1,6 @@
 {
-  "summary": "Implementation plan for admin invitation/approval gates and automatic out-of-stock detection with product deactivation during price refresh.",
-  "updatedAt": "2026-10-13T10:11:25.807156105Z",
+  "summary": "Architecture and design plan for landing page category spotlight showcases with collapsible descriptions and admin display product selection.",
+  "updatedAt": "2026-10-15T06:20:15.480629585Z",
   "requestFeedback": true,
   "userFacing": true
 }

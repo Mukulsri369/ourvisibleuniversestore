@@ -113,8 +113,8 @@ export function ProductQuickPreviewModal({ product, onClose }: ProductQuickPrevi
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center text-muted-foreground p-6 text-center">
-                  <Telescope className="size-10 opacity-40 mb-2" />
-                  <span className="text-xs font-mono">Cosmic Optical Specimen</span>
+                  <Telescope className="size-8 opacity-40 mb-2" />
+                  <span className="text-xs">No image available</span>
                 </div>
               )}
 
@@ -210,24 +210,24 @@ export function ProductQuickPreviewModal({ product, onClose }: ProductQuickPrevi
                 </p>
               )}
 
-              {/* CELESTIAL BRAND LABEL */}
-              <div className="mt-4 flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground/80">
+              {/* CURATED BRAND LABEL */}
+              <div className="mt-3 flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground/80">
                 <Sparkles className="size-3 text-primary shrink-0" />
-                <span>Our Visible Universe Specimen</span>
+                <span>Curated by Our Visible Universe</span>
               </div>
             </div>
 
             {/* ACTION BUTTONS */}
-            <div className="mt-6 flex flex-col gap-2.5 pt-4 border-t border-border/50">
+            <div className="mt-5 flex flex-col gap-2 pt-3 border-t border-border/50">
               {product.affiliate_url && (
                 <a
                   href={product.affiliate_url}
                   target="_blank"
                   rel="nofollow sponsored noopener noreferrer"
                   onClick={() => logOutboundClick(product.id)}
-                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-primary text-xs font-semibold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
+                  className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-full bg-primary text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors"
                 >
-                  <span>Buy on Retailer</span>
+                  <span>Buy on retailer</span>
                   <ExternalLink className="size-3.5" />
                 </a>
               )}
@@ -238,10 +238,10 @@ export function ProductQuickPreviewModal({ product, onClose }: ProductQuickPrevi
                 onClick={onClose}
                 className={cn(
                   buttonVariants({ variant: "outline" }),
-                  "h-10 w-full rounded-full border-border/80 text-xs font-medium text-foreground hover:bg-secondary justify-center",
+                  "h-9 w-full rounded-full border-border/80 text-xs font-medium text-foreground hover:bg-secondary justify-center",
                 )}
               >
-                <span>View Full Details & Specs</span>
+                <span>View product</span>
                 <ArrowUpRight className="ml-1.5 size-3.5" />
               </Link>
             </div>

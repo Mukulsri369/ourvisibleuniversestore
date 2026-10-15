@@ -8,6 +8,7 @@ export type AdminRow = {
   active: boolean;
   featured: boolean;
   affiliate_url: string | null;
+  amazon_url?: string | null;
   category_ids: string[];
   price: number | null;
   currency: string | null;
@@ -20,7 +21,7 @@ export type AdminRow = {
 };
 
 export const ADMIN_SELECT =
-  "id,name,slug,active,featured,affiliate_url,category_ids,price,currency,price_updated_at,created_at,updated_at,deleted_at,categories(name),product_images(image_url,sort_order)";
+  "id,name,slug,active,featured,affiliate_url,amazon_url,category_ids,price,currency,price_updated_at,created_at,updated_at,deleted_at,categories(name),product_images(image_url,sort_order)";
 
 export function firstImage(r: AdminRow) {
   return (
@@ -72,3 +73,20 @@ export const adminProductsQuery = (f: AdminFilters) =>
       return { rows: (data ?? []) as unknown as AdminRow[], total: count ?? 0, size };
     },
   });
+
+export const DUPLICATE_CATALOG_SELECT =
+  "id,name,slug,short_description,description,active,featured,price,currency,retailer,affiliate_url,amazon_url,category_ids,categories(name),product_images(image_url,sort_order)";
+
+export const adminDuplicateCatalogQuery = queryOptions({
+  queryKey: ["admin", "duplicate-catalog"],
+  queryFn: async () => {
+    const { data, error } = await supabase
+      .from("products")
+      .select(DUPLICATE_CATALOG_SELECT)
+      .is("deleted_at", null)
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return (data ?? []) as unknown as import("./duplicate-detector").CatalogProduct[];
+  },
+  staleTime: 1000 * 60 * 2, // 2 minutes cache
+});

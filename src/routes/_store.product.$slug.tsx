@@ -47,30 +47,29 @@ export const Route = createFileRoute("/_store/product/$slug")({
   },
   notFoundComponent: () => (
     <div className="mx-auto max-w-lg px-4 py-24 text-center">
-      <p className="eyebrow">Product unavailable</p>
-      <h1 className="mt-3 text-4xl">Cosmic coordinates not found.</h1>
-      <p className="mt-2 text-muted-foreground">
+      <h1 className="text-3xl font-semibold">Product not found</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
         This product may have moved or is no longer available.
       </p>
       <Link
         to="/shop"
-        className="mt-6 inline-flex h-12 items-center rounded-full bg-primary px-7 text-sm font-semibold text-primary-foreground"
+        className="mt-6 inline-flex h-10 items-center rounded-full bg-primary px-6 text-xs sm:text-sm font-semibold text-primary-foreground"
       >
-        Return to Store
+        Back to store
       </Link>
     </div>
   ),
   errorComponent: () => (
     <div className="mx-auto max-w-lg px-4 py-24 text-center">
-      <h1 className="text-4xl">Signal lost.</h1>
-      <p className="mt-2 text-muted-foreground">
-        We couldn't load this product. Please check your connection and try again.
+      <h1 className="text-3xl font-semibold">Unable to load product</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Please check your connection and try again.
       </p>
       <Link
         to="/shop"
-        className="mt-6 inline-flex h-12 items-center rounded-full bg-primary px-7 text-sm font-semibold text-primary-foreground"
+        className="mt-6 inline-flex h-10 items-center rounded-full bg-primary px-6 text-xs sm:text-sm font-semibold text-primary-foreground"
       >
-        Return to Store
+        Back to store
       </Link>
     </div>
   ),
@@ -110,10 +109,9 @@ function ProductPage() {
       </nav>
       <ProductDetailView p={p} disclosure={settings?.affiliate_disclosure} />
       {related.length > 0 && (
-        <section className="mt-20">
-          <p className="eyebrow">Nearby in the cosmos</p>
-          <h2 className="mt-2 text-3xl sm:text-4xl">Related products</h2>
-          <div className="mt-8">
+        <section className="mt-16 sm:mt-20">
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">Related products</h2>
+          <div className="mt-6 sm:mt-8">
             <ProductGrid items={related} />
           </div>
         </section>

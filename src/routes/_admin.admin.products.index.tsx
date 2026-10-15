@@ -73,8 +73,9 @@ function Products() {
   const refresh = () => qc.invalidateQueries({ queryKey: ["admin"] });
 
   async function handleUpdateSinglePrice(r: AdminRow) {
-    if (!r.affiliate_url) {
-      toast.error("Product has no affiliate URL to check.");
+    const targetUrl = r.affiliate_url || r.amazon_url;
+    if (!targetUrl) {
+      toast.error("Product has no affiliate URL or product link to check.");
       return;
     }
     setUpdatingId(r.id);
@@ -82,7 +83,7 @@ function Products() {
       const res = await fetch("/api/admin/check-price", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: r.affiliate_url, productId: r.id }),
+        body: JSON.stringify({ url: targetUrl, productId: r.id }),
       });
       let result: {
         success?: boolean;
@@ -90,6 +91,9 @@ function Products() {
         currency?: string;
         inStock?: boolean;
         stockMessage?: string;
+        title?: string;
+        retailer?: string;
+        retailer_product_id?: string;
         error?: string;
       } | null = null;
       try {
@@ -107,6 +111,16 @@ function Products() {
           .from("products")
           .update({
             active: false,
+            updated_at: nowIso,
+            ...(result.retailer ? { retailer: result.retailer } : {}),
+            ...(result.retailer_product_id
+              ? {
+                  retailer_product_id: result.retailer_product_id,
+                  ...(result.retailer === "Amazon"
+                    ? { amazon_asin: result.retailer_product_id }
+                    : {}),
+                }
+              : {}),
             ...(result.price != null
               ? {
                   price: result.price,
@@ -144,6 +158,16 @@ function Products() {
           price: newPrice,
           currency: newCurrency,
           price_updated_at: nowIso,
+          updated_at: nowIso,
+          ...(result.retailer ? { retailer: result.retailer } : {}),
+          ...(result.retailer_product_id
+            ? {
+                retailer_product_id: result.retailer_product_id,
+                ...(result.retailer === "Amazon"
+                  ? { amazon_asin: result.retailer_product_id }
+                  : {}),
+              }
+            : {}),
         })
         .eq("id", r.id);
 
@@ -255,6 +279,16 @@ function Products() {
                   price: result.price,
                   currency: result.currency || "INR",
                   price_updated_at: nowIso,
+                  updated_at: nowIso,
+                  ...(result.retailer ? { retailer: result.retailer } : {}),
+                  ...(result.retailer_product_id
+                    ? {
+                        retailer_product_id: result.retailer_product_id,
+                        ...(result.retailer === "Amazon"
+                          ? { amazon_asin: result.retailer_product_id }
+                          : {}),
+                      }
+                    : {}),
                 })
                 .eq("id", p.id);
 
@@ -475,9 +509,13 @@ function Products() {
                           variant="ghost"
                           size="icon"
                           className="size-7 text-muted-foreground hover:text-foreground"
-                          disabled={updatingId === r.id || isBatchUpdating || !r.affiliate_url}
+                          disabled={
+                            updatingId === r.id ||
+                            isBatchUpdating ||
+                            (!r.affiliate_url && !r.amazon_url)
+                          }
                           title={
-                            r.affiliate_url
+                            r.affiliate_url || r.amazon_url
                               ? "Check and update latest price from retailer link"
                               : "No affiliate link set"
                           }

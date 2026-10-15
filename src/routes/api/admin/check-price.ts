@@ -19,6 +19,55 @@ const BROWSER_HEADERS: Record<string, string> = {
   "Cache-Control": "max-age=0",
 };
 
+const MOBILE_HEADERS: Record<string, string> = {
+  "User-Agent":
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+  Accept:
+    "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+  "Accept-Language": "en-IN,en;q=0.9,en-US;q=0.8",
+  "Sec-Fetch-Dest": "document",
+  "Sec-Fetch-Mode": "navigate",
+  "Sec-Fetch-Site": "none",
+  "Sec-Fetch-User": "?1",
+  "Upgrade-Insecure-Requests": "1",
+  "Cache-Control": "max-age=0",
+};
+
+async function fetchAmazonMobile(
+  hostname: string,
+  asin: string,
+): Promise<{ html: string; status: number; domain: string } | null> {
+  const domains = [
+    hostname.includes("amazon.") ? hostname : "www.amazon.in",
+    "www.amazon.in",
+    "www.amazon.com",
+  ];
+  const uniqueDomains = Array.from(new Set(domains));
+
+  for (const domain of uniqueDomains) {
+    try {
+      const url = `https://${domain}/gp/aw/d/${asin}`;
+      const res = await fetch(url, {
+        headers: MOBILE_HEADERS,
+        redirect: "follow",
+      });
+      if (res.ok) {
+        const text = await res.text();
+        if (
+          text.length > 2000 &&
+          !text.includes("503 - Service Unavailable") &&
+          !text.includes("Robot Check")
+        ) {
+          return { html: text, status: res.status, domain };
+        }
+      }
+    } catch {
+      // try next candidate domain
+    }
+  }
+  return null;
+}
+
 function parsePriceNumber(raw: string): number | null {
   if (!raw) return null;
   // Match first valid numeric pattern like 4,018.00 or 1499.50 or 1499
@@ -69,6 +118,11 @@ export const Route = createFileRoute("/api/admin/check-price")({
             );
           }
 
+          // Normalize targetUrl
+          if (!targetUrl.startsWith("http://") && !targetUrl.startsWith("https://")) {
+            targetUrl = "https://" + targetUrl;
+          }
+
           let parsedUrl: URL;
           try {
             parsedUrl = new URL(targetUrl);
@@ -110,13 +164,24 @@ export const Route = createFileRoute("/api/admin/check-price")({
           const hostname = finalUrl.hostname.toLowerCase();
 
           let retailer = "Other";
-          if (hostname.includes("amazon.")) retailer = "Amazon";
-          else if (hostname.includes("flipkart.")) retailer = "Flipkart";
-          else if (hostname.includes("ubuy.")) retailer = "Ubuy";
+          if (
+            hostname.includes("amazon.") ||
+            targetUrl.includes("amazon.") ||
+            targetUrl.includes("link.amazon") ||
+            targetUrl.includes("amzn.to")
+          ) {
+            retailer = "Amazon";
+          } else if (hostname.includes("flipkart.")) {
+            retailer = "Flipkart";
+          } else if (hostname.includes("ubuy.")) {
+            retailer = "Ubuy";
+          }
 
           let retailerProductId = "";
           if (retailer === "Amazon") {
-            const asinMatch = finalUrlStr.match(/(?:dp|gp\/product)\/([A-Z0-9]{10})/i);
+            const asinMatch =
+              finalUrlStr.match(/(?:dp|gp\/product|gp\/aw\/d)\/([A-Z0-9]{10})/i) ||
+              targetUrl.match(/(?:dp|gp\/product|gp\/aw\/d)\/([A-Z0-9]{10})/i);
             if (asinMatch) retailerProductId = asinMatch[1].toUpperCase();
           } else if (retailer === "Flipkart") {
             retailerProductId = finalUrl.searchParams.get("pid") || "";
@@ -129,7 +194,7 @@ export const Route = createFileRoute("/api/admin/check-price")({
 
           let html = await res.text();
 
-          // Check for Cloudflare Turnstile / Bot Management challenges
+          // Check for Cloudflare Turnstile / Bot Management challenges or 503 / Robot Check
           const isCloudflareChallenge =
             res.status === 403 ||
             res.headers.get("cf-mitigated") === "challenge" ||
@@ -137,15 +202,44 @@ export const Route = createFileRoute("/api/admin/check-price")({
             html.includes("cf-browser-verification") ||
             html.toLowerCase().includes("just a moment...");
 
-          if (isCloudflareChallenge) {
-            let errorMsg = `Retailer (${hostname}) blocked the request with Cloudflare Bot Management (HTTP 403 Forbidden). Price cannot be checked automatically from this URL.`;
-            if (retailer === "Ubuy" && retailerProductId) {
-              errorMsg = `Ubuy (${hostname}) is protected by Cloudflare Bot Management (HTTP 403 Forbidden). Automated price checking cannot bypass Cloudflare's bot challenge for ASIN "${retailerProductId}".`;
+          const isBlockedOrEmpty =
+            res.status !== 200 ||
+            html.length < 2000 ||
+            html.includes("503 - Service Unavailable") ||
+            html.includes("Robot Check") ||
+            isCloudflareChallenge;
+
+          // For Amazon (or Ubuy affiliate links with Amazon ASINs):
+          // High-reliability mobile endpoint bypasses data center 503 blocks
+          if (
+            (retailer === "Amazon" || retailer === "Ubuy") &&
+            retailerProductId &&
+            isBlockedOrEmpty
+          ) {
+            const mobResult = await fetchAmazonMobile(hostname, retailerProductId);
+            if (mobResult) {
+              html = mobResult.html;
+              if (retailer === "Ubuy") retailer = "Amazon";
+            } else if (isCloudflareChallenge) {
+              let errorMsg = `Retailer (${hostname}) blocked the request with Cloudflare Bot Management (HTTP 403 Forbidden). Price cannot be checked automatically from this URL.`;
+              if (retailer === "Ubuy" && retailerProductId) {
+                errorMsg = `Ubuy (${hostname}) is protected by Cloudflare Bot Management (HTTP 403 Forbidden). Automated price checking cannot bypass Cloudflare's bot challenge for ASIN "${retailerProductId}".`;
+              }
+              return new Response(
+                JSON.stringify({
+                  success: false,
+                  error: errorMsg,
+                  retailer,
+                  retailer_product_id: retailerProductId,
+                }),
+                { status: 200, headers: { "content-type": "application/json" } },
+              );
             }
+          } else if (isCloudflareChallenge) {
             return new Response(
               JSON.stringify({
                 success: false,
-                error: errorMsg,
+                error: `Retailer (${hostname}) blocked the request with Cloudflare Bot Management (HTTP 403 Forbidden).`,
                 retailer,
                 retailer_product_id: retailerProductId,
               }),
@@ -153,8 +247,8 @@ export const Route = createFileRoute("/api/admin/check-price")({
             );
           }
 
-          // Retry with final URL if redirected or non-200
-          if (res.status !== 200 || html.length < 500) {
+          // Retry with final URL if redirected or non-200 and not already retrieved
+          if (res.status !== 200 && html.length < 500) {
             try {
               const retryRes = await fetch(finalUrlStr, {
                 headers: BROWSER_HEADERS,
@@ -282,7 +376,7 @@ export const Route = createFileRoute("/api/admin/check-price")({
             return { inStock: true };
           }
 
-          const $ = cheerio.load(html);
+          let $ = cheerio.load(html);
 
           let detectedPriceNum: number | null = null;
           let detectedCurrency = retailer === "Amazon" && hostname.endsWith(".com") ? "USD" : "INR";
@@ -408,6 +502,61 @@ export const Route = createFileRoute("/api/admin/check-price")({
             }
           }
 
+          // 6. Secondary fallback for Amazon/Ubuy: If price wasn't found yet and we have an ASIN, query mobile endpoint
+          if (
+            detectedPriceNum == null &&
+            (retailer === "Amazon" || retailer === "Ubuy") &&
+            retailerProductId
+          ) {
+            const mobResult = await fetchAmazonMobile(hostname, retailerProductId);
+            if (mobResult) {
+              const $mob = cheerio.load(mobResult.html);
+              const mobCandidates = [
+                $mob(".priceToPay span.a-price-whole").first().text().trim(),
+                $mob(".a-price .a-offscreen").first().text().trim(),
+                $mob("#corePriceDisplay_mobile_feature_div .a-price .a-offscreen")
+                  .first()
+                  .text()
+                  .trim(),
+                $mob("#apex_mobile .a-price .a-offscreen").first().text().trim(),
+                $mob("#priceblock_ourprice").text().trim(),
+                $mob("#priceblock_dealprice").text().trim(),
+                $mob("#corePrice_desktop .a-price .a-offscreen").first().text().trim(),
+              ].filter(Boolean);
+
+              for (const candidate of mobCandidates) {
+                const parsedNum = parsePriceNumber(candidate);
+                if (parsedNum) {
+                  detectedPriceNum = parsedNum;
+                  rawPriceText = candidate;
+                  detectedCurrency = detectCurrency(
+                    candidate,
+                    mobResult.domain.endsWith(".com") ? "USD" : "INR",
+                  );
+                  $ = $mob;
+                  if (retailer === "Ubuy") retailer = "Amazon";
+                  break;
+                }
+              }
+            }
+          }
+
+          const rawTitle =
+            $("#title").text().trim() ||
+            $("#productTitle").text().trim() ||
+            $('meta[property="og:title"]').attr("content") ||
+            $("h1").first().text().trim() ||
+            "";
+
+          const cleanTitle = rawTitle
+            .replace(/\s*:\s*Amazon\.[a-z.]+.*$/i, "")
+            .replace(/\s*\|\s*Amazon\.[a-z.]+.*$/i, "")
+            .replace(/^Amazon\.[a-z.]+:\s*Buy\s*/i, "")
+            .replace(/\s*:\s*Buy\s+.*Online at Low Prices.*/i, "")
+            .replace(/\s*\|\s*Flipkart\.com.*$/i, "")
+            .replace(/\s*-\s*Flipkart$/i, "")
+            .trim();
+
           const stockResult = detectStockStatus($, retailer, jsonLdAvailability);
 
           if (detectedPriceNum == null) {
@@ -419,8 +568,11 @@ export const Route = createFileRoute("/api/admin/check-price")({
                   currency: detectedCurrency,
                   inStock: false,
                   retailer,
+                  retailer_product_id: retailerProductId,
+                  title: cleanTitle || undefined,
                   url: finalUrlStr,
                   stockMessage: stockResult.reason || "Product is out of stock on retailer site",
+                  price_updated_at: new Date().toISOString(),
                 }),
                 { status: 200, headers: { "content-type": "application/json" } },
               );
@@ -432,6 +584,8 @@ export const Route = createFileRoute("/api/admin/check-price")({
                 error: "Could not detect active price from retailer link",
                 inStock: true,
                 retailer,
+                retailer_product_id: retailerProductId,
+                title: cleanTitle || undefined,
                 url: finalUrlStr,
               }),
               { status: 200, headers: { "content-type": "application/json" } },
@@ -446,8 +600,11 @@ export const Route = createFileRoute("/api/admin/check-price")({
               rawPriceText,
               inStock: stockResult.inStock,
               retailer,
+              retailer_product_id: retailerProductId,
+              title: cleanTitle || undefined,
               url: finalUrlStr,
               stockMessage: stockResult.reason,
+              price_updated_at: new Date().toISOString(),
             }),
             { status: 200, headers: { "content-type": "application/json" } },
           );

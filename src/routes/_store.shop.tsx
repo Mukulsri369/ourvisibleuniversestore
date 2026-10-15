@@ -32,9 +32,9 @@ function Shop() {
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
         <PageHeader
-          eyebrow="The full catalogue"
+          eyebrow="Catalogue"
           title="All products"
-          text="Every discovery in the Our Visible Universe collection."
+          text="Explore the complete collection."
         />
         <SpaceLaserLine
           label="GALACTIC INVENTORY"

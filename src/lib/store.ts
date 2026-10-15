@@ -51,6 +51,7 @@ export type ProductCardData = {
   name: string;
   slug: string;
   short_description: string | null;
+  description?: string | null;
   price: number | null;
   currency: string | null;
   featured: boolean;
@@ -79,9 +80,9 @@ export type ProductFull = ProductCardData & {
 };
 
 export const CARD_SELECT =
-  "id,name,slug,short_description,price,currency,featured,affiliate_url,amazon_url,created_at,category_id,category_ids,categories(name,slug),product_images(image_url,alt_text,sort_order)";
+  "id,name,slug,short_description,description,price,currency,featured,affiliate_url,amazon_url,created_at,category_id,category_ids,categories(name,slug),product_images(image_url,alt_text,sort_order)";
 
-export const SEARCH_SELECT = `${CARD_SELECT},description,brand`;
+export const SEARCH_SELECT = `${CARD_SELECT},brand`;
 
 type RawCard = {
   id: string;
@@ -114,6 +115,7 @@ export function toCard(r: RawCard): ProductCardData {
     name: r.name,
     slug: r.slug,
     short_description: r.short_description,
+    description: r.description ?? null,
     price: r.price,
     currency: r.currency,
     featured: r.featured,
@@ -170,6 +172,20 @@ export function absoluteUrl(path: string | null | undefined) {
   return `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
 }
 
+/**
+ * Pure unbiased Fisher-Yates shuffle returning a newly randomized array copy.
+ */
+export function shuffleArray<T>(items: readonly T[]): T[] {
+  const result = [...items];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = result[i];
+    result[i] = result[j];
+    result[j] = temp;
+  }
+  return result;
+}
+
 function liveProducts() {
   return publicDb()
     .from("products")
@@ -193,6 +209,26 @@ export const settingsQuery = queryOptions({
   },
   staleTime: 60_000,
 });
+
+export const LEGACY_CATEGORY_SLUG_MAP: Record<string, string> = {
+  lights: "cosmic-lighting",
+  lamp: "cosmic-lighting",
+  projectors: "cosmic-lighting",
+  lighting: "cosmic-lighting",
+  spaceart: "space-wall-art",
+  posters: "space-wall-art",
+  "space-art": "space-wall-art",
+  "space-b-day-party": "space-party-supplies",
+  "bday-party": "space-party-supplies",
+  clock: "clocks-timepieces",
+  clocks: "clocks-timepieces",
+  books: "books-guides",
+  "mobile-accessories": "tech-accessories",
+  "space-gadgets": "tech-accessories",
+  gadgets: "tech-accessories",
+  showpieces: "space-decor",
+  "astronomy-apparel": "space-decor",
+};
 
 export const categoriesQuery = queryOptions({
   queryKey: ["categories", "public"],
@@ -383,10 +419,10 @@ export const homeQuery = queryOptions({
   queryFn: async () => {
     try {
       const [featured, newest, festival, all] = await Promise.all([
-        liveProducts().eq("featured", true).order("updated_at", { ascending: false }).limit(16),
-        liveProducts().order("created_at", { ascending: false }).limit(16),
+        liveProducts().eq("featured", true).order("updated_at", { ascending: false }).limit(24),
+        liveProducts().order("created_at", { ascending: false }).limit(24),
         fetchFestivalProducts(),
-        liveProducts().order("created_at", { ascending: false }).limit(120),
+        liveProducts().order("created_at", { ascending: false }).limit(500),
       ]);
       if (featured.error) throw featured.error;
       if (newest.error) throw newest.error;
@@ -610,14 +646,27 @@ export async function listProducts(p: ListParams) {
       .is("deleted_at", null);
 
     if (p.category) {
-      const { data: cat } = await db
+      const candidateSlugs = Array.from(
+        new Set(
+          [
+            p.category,
+            LEGACY_CATEGORY_SLUG_MAP[p.category],
+            ...Object.entries(LEGACY_CATEGORY_SLUG_MAP)
+              .filter(([, target]) => target === p.category)
+              .map(([legacy]) => legacy),
+          ].filter(Boolean) as string[],
+        ),
+      );
+
+      const { data: matchedCats } = await db
         .from("categories")
         .select("id")
-        .eq("slug", p.category)
-        .eq("active", true)
-        .maybeSingle();
-      if (!cat) return { items: [] as ProductCardData[], total: 0, page, pageSize };
-      searchQuery = searchQuery.contains("category_ids", [cat.id]);
+        .in("slug", candidateSlugs)
+        .eq("active", true);
+
+      const catIds = (matchedCats ?? []).map((c) => c.id);
+      if (catIds.length === 0) return { items: [] as ProductCardData[], total: 0, page, pageSize };
+      searchQuery = searchQuery.overlaps("category_ids", catIds);
     }
 
     if (ors.length > 0) {
@@ -672,14 +721,27 @@ export async function listProducts(p: ListParams) {
   let query = liveProducts();
 
   if (p.category) {
-    const { data: cat } = await db
+    const candidateSlugs = Array.from(
+      new Set(
+        [
+          p.category,
+          LEGACY_CATEGORY_SLUG_MAP[p.category],
+          ...Object.entries(LEGACY_CATEGORY_SLUG_MAP)
+            .filter(([, target]) => target === p.category)
+            .map(([legacy]) => legacy),
+        ].filter(Boolean) as string[],
+      ),
+    );
+
+    const { data: matchedCats } = await db
       .from("categories")
       .select("id")
-      .eq("slug", p.category)
-      .eq("active", true)
-      .maybeSingle();
-    if (!cat) return { items: [] as ProductCardData[], total: 0, page, pageSize };
-    query = query.contains("category_ids", [cat.id]);
+      .in("slug", candidateSlugs)
+      .eq("active", true);
+
+    const catIds = (matchedCats ?? []).map((c) => c.id);
+    if (catIds.length === 0) return { items: [] as ProductCardData[], total: 0, page, pageSize };
+    query = query.overlaps("category_ids", catIds);
   }
 
   if (p.featured) query = query.eq("featured", true);
@@ -715,14 +777,43 @@ export const categoryQuery = (slug: string) =>
   queryOptions({
     queryKey: ["category", slug],
     queryFn: async () => {
-      const { data, error } = await publicDb()
+      const db = publicDb();
+      // 1. Try exact slug first
+      const { data, error } = await db
         .from("categories")
         .select("*")
         .eq("slug", slug)
         .eq("active", true)
         .maybeSingle();
       if (error) throw error;
-      return data;
+      if (data) return data;
+
+      // 2. Try forward legacy mapped slug (e.g. lights -> cosmic-lighting)
+      const mapped = LEGACY_CATEGORY_SLUG_MAP[slug];
+      if (mapped && mapped !== slug) {
+        const { data: mData } = await db
+          .from("categories")
+          .select("*")
+          .eq("slug", mapped)
+          .eq("active", true)
+          .maybeSingle();
+        if (mData) return mData;
+      }
+
+      // 3. Try reverse mapped slugs (e.g. before migration is executed, cosmic-lighting -> lights)
+      for (const [legacy, target] of Object.entries(LEGACY_CATEGORY_SLUG_MAP)) {
+        if (target === slug) {
+          const { data: lData } = await db
+            .from("categories")
+            .select("*")
+            .eq("slug", legacy)
+            .eq("active", true)
+            .maybeSingle();
+          if (lData) return lData;
+        }
+      }
+
+      return null;
     },
   });
 

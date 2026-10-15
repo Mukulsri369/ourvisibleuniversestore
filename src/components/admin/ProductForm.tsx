@@ -13,6 +13,8 @@ import {
   Star,
   Trash2,
   X,
+  AlertTriangle,
+  Eye,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -22,9 +24,11 @@ import { Switch } from "@/components/ui/switch";
 import { ProductDetailView } from "@/components/store/ProductDetailView";
 import { supabase } from "@/integrations/supabase/client";
 import { removeStoragePaths, uploadImage } from "@/lib/admin";
-import { adminCategoriesQuery } from "@/lib/admin-queries";
+import { adminCategoriesQuery, adminDuplicateCatalogQuery } from "@/lib/admin-queries";
 import { formatPrice, isValidAffiliateUrl, slugify, type ProductFull } from "@/lib/store";
 import { isDuplicateAffiliateError, productSaveErrorMessage } from "@/lib/product-errors";
+import { checkDuplicateAgainstCatalog, type DuplicateMatch } from "@/lib/duplicate-detector";
+import { DuplicateWarningDialog } from "./DuplicateWarningDialog";
 import { Field, inputCls, Section, textareaCls } from "./ui";
 import { CategorySelect } from "./CategorySelect";
 import { productCategoryIds } from "@/lib/product-categories";
@@ -41,6 +45,7 @@ export function ProductForm({ productId }: { productId?: string }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { data: cats = [] } = useQuery(adminCategoriesQuery);
+  const { data: duplicateCatalog = [] } = useQuery(adminDuplicateCatalogQuery);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState(!!productId);
@@ -53,6 +58,12 @@ export function ProductForm({ productId }: { productId?: string }) {
     null,
   );
   const [removed, setRemoved] = useState<string[]>([]);
+
+  // Duplicate detection state
+  const [duplicateMatches, setDuplicateMatches] = useState<DuplicateMatch[]>([]);
+  const [showDuplicateModal, setShowDuplicateModal] = useState(false);
+  const [pendingSaveMode, setPendingSaveMode] = useState<"draft" | "publish" | "save" | null>(null);
+  const [checkingDuplicates, setCheckingDuplicates] = useState(false);
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -277,15 +288,30 @@ export function ProductForm({ productId }: { productId?: string }) {
       setPrice(String(newPriceNum));
       setCurrency(newCurrency);
       setPriceDate(todayIso);
+      if (data.retailer && !retailer) {
+        setRetailer(data.retailer);
+      }
+      if (data.retailer_product_id && !retailerProductId) {
+        setRetailerProductId(data.retailer_product_id);
+      }
 
       // If editing an existing product, save immediately to database as requested
       if (productId) {
+        const nowIso = new Date().toISOString();
         const { error } = await supabase
           .from("products")
           .update({
             price: newPriceNum,
             currency: newCurrency,
-            price_updated_at: new Date().toISOString(),
+            price_updated_at: nowIso,
+            updated_at: nowIso,
+            ...(data.retailer ? { retailer: data.retailer } : {}),
+            ...(data.retailer_product_id
+              ? {
+                  retailer_product_id: data.retailer_product_id,
+                  ...(data.retailer === "Amazon" ? { amazon_asin: data.retailer_product_id } : {}),
+                }
+              : {}),
           })
           .eq("id", productId);
 
@@ -298,17 +324,18 @@ export function ProductForm({ productId }: { productId?: string }) {
 
         qc.invalidateQueries({ queryKey: ["admin"] });
 
+        const sourceLabel = data.retailer ? ` from ${data.retailer}` : "";
         if (oldPriceNum != null && oldPriceNum !== newPriceNum) {
           toast.success(
-            `✨ Price updated from ${formatPrice(oldPriceNum, currency)} to ${formatPrice(newPriceNum, newCurrency)} and saved to database!`,
+            `✨ Price updated from ${formatPrice(oldPriceNum, currency)} to ${formatPrice(newPriceNum, newCurrency)}${sourceLabel} and saved to database!`,
           );
         } else if (oldPriceNum === newPriceNum) {
           toast.info(
-            `Price verified at ${formatPrice(newPriceNum, newCurrency)} and saved to database.`,
+            `Price verified at ${formatPrice(newPriceNum, newCurrency)}${sourceLabel} and saved to database.`,
           );
         } else {
           toast.success(
-            `✨ Price set to ${formatPrice(newPriceNum, newCurrency)} and saved to database!`,
+            `✨ Price set to ${formatPrice(newPriceNum, newCurrency)}${sourceLabel} and saved to database!`,
           );
         }
       } else {
@@ -373,6 +400,39 @@ export function ProductForm({ productId }: { productId?: string }) {
   useEffect(() => {
     if (!slugTouched) setSlug(slugify(name));
   }, [name, slugTouched]);
+
+  // Debounced background duplicate check for live helper feedback
+  useEffect(() => {
+    const s = short.trim();
+    const d = desc.trim();
+    if (!s && !d) {
+      setDuplicateMatches([]);
+      setCheckingDuplicates(false);
+      return;
+    }
+    if (s.length < 10 && d.length < 20) {
+      setDuplicateMatches([]);
+      setCheckingDuplicates(false);
+      return;
+    }
+    setCheckingDuplicates(true);
+    const timer = setTimeout(() => {
+      const matches = checkDuplicateAgainstCatalog(
+        {
+          id: productId,
+          name,
+          short_description: s,
+          description: d,
+        },
+        duplicateCatalog,
+        65,
+      );
+      setDuplicateMatches(matches);
+      setCheckingDuplicates(false);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [short, desc, productId, duplicateCatalog, name]);
 
   async function onFiles(files: FileList | null) {
     if (!files?.length) return;
@@ -457,13 +517,42 @@ export function ProductForm({ productId }: { productId?: string }) {
     return `${b}-${Date.now()}`;
   }
 
-  async function save(mode: "draft" | "publish" | "save") {
+  async function save(mode: "draft" | "publish" | "save", bypassDuplicateCheck = false) {
     const nextActive = mode === "publish" ? true : mode === "draft" ? false : active;
     const e = validate(nextActive);
     setErrors(e);
     if (Object.keys(e).length) {
       toast.error("Please fix the highlighted fields.");
       return;
+    }
+
+    // Publish guard: check duplicate descriptions before making active
+    const isPublishing = mode === "publish" || (mode === "save" && nextActive);
+    if (isPublishing && !bypassDuplicateCheck) {
+      const matches = checkDuplicateAgainstCatalog(
+        {
+          id: productId,
+          name,
+          short_description: short,
+          description: desc,
+        },
+        duplicateCatalog,
+        75,
+      );
+
+      const highMatches = matches.filter(
+        (m) => m.overallScore >= 80 || m.exactShortMatch || m.exactDescMatch,
+      );
+
+      if (highMatches.length > 0) {
+        setDuplicateMatches(highMatches);
+        setPendingSaveMode(mode);
+        setShowDuplicateModal(true);
+        toast.warning(
+          `Duplicate warning: Description matches existing product "${highMatches[0].product.name}" (${highMatches[0].overallScore}% similarity). Review required before publishing.`,
+        );
+        return;
+      }
     }
     setSaving(mode);
     try {
@@ -708,6 +797,47 @@ export function ProductForm({ productId }: { productId?: string }) {
             onChange={(e) => setDesc(e.target.value)}
           />
         </Field>
+
+        {/* Real-time duplicate verification helper */}
+        <div className="rounded-lg border border-border/60 bg-secondary/20 p-2.5 transition">
+          {checkingDuplicates ? (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Loader2 className="size-3.5 animate-spin text-primary" />
+              <span>Scanning catalog for duplicate or similar descriptions...</span>
+            </div>
+          ) : duplicateMatches.length > 0 ? (
+            <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div className="flex items-center gap-2 text-amber-300">
+                <AlertTriangle className="size-4 shrink-0 text-amber-400" />
+                <span>
+                  <strong>Duplicate Detected:</strong> Matches &ldquo;
+                  {duplicateMatches[0].product.name}&rdquo; ({duplicateMatches[0].overallScore}%
+                  similarity)
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowDuplicateModal(true)}
+                className="inline-flex items-center gap-1 font-semibold text-amber-300 underline hover:text-white"
+              >
+                <Eye className="size-3.5" /> Compare side-by-side
+              </button>
+            </div>
+          ) : short.trim().length >= 10 || desc.trim().length >= 20 ? (
+            <div className="flex items-center gap-2 text-xs text-emerald-400">
+              <CheckCircle2 className="size-3.5 shrink-0 text-emerald-400" />
+              <span>
+                Unique content: No duplicate descriptions detected across {duplicateCatalog.length}{" "}
+                catalog products.
+              </span>
+            </div>
+          ) : (
+            <p className="text-[11px] text-muted-foreground">
+              Duplicate check: Enter product descriptions above to verify uniqueness against the
+              catalog.
+            </p>
+          )}
+        </div>
         <div className="grid gap-4 sm:grid-cols-3">
           <CategorySelect
             categories={cats}
@@ -1077,6 +1207,32 @@ export function ProductForm({ productId }: { productId?: string }) {
           </div>
         </DialogContent>
       </Dialog>
+
+      <DuplicateWarningDialog
+        open={showDuplicateModal}
+        onOpenChange={(open) => {
+          setShowDuplicateModal(open);
+          if (!open) setPendingSaveMode(null);
+        }}
+        matches={duplicateMatches}
+        candidate={{
+          name,
+          short_description: short,
+          description: desc,
+          imageUrl: images[0]?.url,
+        }}
+        onProceedAnyway={() => {
+          const mode = pendingSaveMode || (productId ? "save" : "publish");
+          setShowDuplicateModal(false);
+          setPendingSaveMode(null);
+          save(mode, true);
+        }}
+        onCancelAndEdit={() => {
+          setShowDuplicateModal(false);
+          setPendingSaveMode(null);
+        }}
+        isPublishing={saving === "publish" || saving === "save"}
+      />
     </div>
   );
 }

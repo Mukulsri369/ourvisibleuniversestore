@@ -1,6 +1,7 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import {
+  CopyCheck,
   ExternalLink,
   Flame,
   FolderTree,
@@ -53,6 +54,7 @@ function AdminShell() {
       {[
         { to: "/admin" as const, label: "Dashboard", icon: LayoutDashboard, exact: true },
         { to: "/admin/products" as const, label: "Products", icon: Package, exact: false },
+        { to: "/admin/duplicates" as const, label: "Duplicates", icon: CopyCheck, exact: false },
         { to: "/admin/festival" as const, label: "Festival Special", icon: Flame, exact: false },
         { to: "/admin/categories" as const, label: "Categories", icon: FolderTree, exact: false },
         { to: "/admin/settings" as const, label: "Settings", icon: Settings, exact: false },

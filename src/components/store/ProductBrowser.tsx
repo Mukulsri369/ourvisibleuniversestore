@@ -64,10 +64,10 @@ export function ProductBrowser({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground" aria-live="polite">
           {isLoading
-            ? "Scanning titles and descriptions…"
+            ? "Loading products…"
             : search.q
-              ? `${data?.total ?? 0} best-matching product${data?.total === 1 ? "" : "s"} for “${search.q}”`
-              : `${data?.total ?? 0} product${data?.total === 1 ? "" : "s"} found`}
+              ? `${data?.total ?? 0} result${data?.total === 1 ? "" : "s"} for “${search.q}”`
+              : `${data?.total ?? 0} product${data?.total === 1 ? "" : "s"}`}
         </p>
         <div className="flex items-center gap-2">
           <button
@@ -82,7 +82,7 @@ export function ProductBrowser({
             onChange={(e) => set({ sort: e.target.value as BrowseSearch["sort"] })}
             className={field}
           >
-            <option value="featured">{search.q ? "Best match (Relevance)" : "Featured"}</option>
+            <option value="featured">{search.q ? "Best match" : "Featured"}</option>
             <option value="newest">Newest</option>
             <option value="price_asc">Price: low to high</option>
             <option value="price_desc">Price: high to low</option>
@@ -144,8 +144,8 @@ export function ProductBrowser({
           </div>
         ) : isError ? (
           <EmptyState
-            title="Signal lost."
-            text="We couldn't reach the product catalogue. Check your connection and try again."
+            title="Unable to load products"
+            text="Please check your connection and try again."
           >
             <button
               onClick={() => refetch()}
@@ -167,12 +167,8 @@ export function ProductBrowser({
           </>
         ) : (
           <EmptyState
-            title={search.q ? `No products matched “${search.q}”` : "No products in this orbit."}
-            text={
-              search.q
-                ? "Try searching with broader cosmic terms, checking spelling, or browsing our categories below."
-                : "Try a different search or browse all categories."
-            }
+            title={search.q ? `No products found for “${search.q}”` : "No products found"}
+            text="Try a different search term or browse all categories."
           />
         )}
       </div>

@@ -22,7 +22,7 @@ export const Route = createFileRoute("/_store/category/$slug")({
         ],
       };
     const c = loaderData.cat;
-    const celestialSystem = getCelestialSystemForCategory(params.slug);
+    const celestialSystem = getCelestialSystemForCategory(c.slug || params.slug);
     const t = `${c.name} | Our Visible Universe Store`;
     const d = `“${celestialSystem.quote.text}” — ${c.name} collection at Our Visible Universe.`;
     const img = absoluteUrl(c.image_url);
@@ -41,29 +41,35 @@ export const Route = createFileRoute("/_store/category/$slug")({
             ]
           : []),
       ],
-      links: [{ rel: "canonical", href: `${SITE_URL}/category/${params.slug}` }],
+      links: [{ rel: "canonical", href: `${SITE_URL}/category/${c.slug}` }],
     };
   },
   notFoundComponent: () => (
     <div className="mx-auto max-w-lg px-4 py-24 text-center">
-      <h1 className="text-4xl">Cosmic coordinates not found.</h1>
-      <p className="mt-2 text-muted-foreground">
-        This category doesn't exist or is no longer available.
+      <h1 className="text-3xl font-semibold">Category not found</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        This category does not exist or has been removed.
       </p>
       <Link
         to="/shop"
-        className="mt-6 inline-flex h-12 items-center rounded-full bg-primary px-7 text-sm font-semibold text-primary-foreground"
+        className="mt-6 inline-flex h-10 items-center rounded-full bg-primary px-6 text-xs sm:text-sm font-semibold text-primary-foreground"
       >
-        Return to Store
+        Back to store
       </Link>
     </div>
   ),
   errorComponent: () => (
     <div className="mx-auto max-w-lg px-4 py-24 text-center">
-      <h1 className="text-4xl">Signal lost.</h1>
-      <p className="mt-2 text-muted-foreground">
-        We couldn't load this category. Please try again.
+      <h1 className="text-3xl font-semibold">Unable to load category</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Please check your connection and try again.
       </p>
+      <Link
+        to="/shop"
+        className="mt-6 inline-flex h-10 items-center rounded-full bg-primary px-6 text-xs sm:text-sm font-semibold text-primary-foreground"
+      >
+        Back to store
+      </Link>
     </div>
   ),
   component: CategoryPage,
@@ -73,7 +79,7 @@ function CategoryPage() {
   const { slug } = Route.useParams();
   const search = Route.useSearch();
   const { data: cat } = useSuspenseQuery(categoryQuery(slug));
-  const celestialSystem = getCelestialSystemForCategory(slug);
+  const celestialSystem = getCelestialSystemForCategory(cat?.slug || slug);
 
   return (
     <div className="relative min-h-screen overflow-hidden">
