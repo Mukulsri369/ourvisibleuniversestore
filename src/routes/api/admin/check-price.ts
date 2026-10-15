@@ -494,7 +494,7 @@ export const Route = createFileRoute("/api/admin/check-price")({
               $(".current-price").first().text().trim(),
               $(".sale-price").first().text().trim(),
               $(".price").first().text().trim(),
-            ].filter(Boolean);
+            ].filter((v): v is string => Boolean(v));
 
             for (const candidate of genericCandidates) {
               const parsedNum = parsePriceNumber(candidate);

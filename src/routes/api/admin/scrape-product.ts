@@ -330,7 +330,7 @@ export const Route = createFileRoute("/api/admin/scrape-product")({
           const $ = cheerio.load(html);
 
           // 1. Check Schema.org JSON-LD
-          let schemaProduct: Record<string, unknown> | null = null;
+          let schemaProduct = null as Record<string, any> | null;
           $('script[type="application/ld+json"]').each((_, el) => {
             try {
               const content = $(el).html();
