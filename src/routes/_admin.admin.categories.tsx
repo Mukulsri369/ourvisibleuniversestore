@@ -444,6 +444,7 @@ function Categories() {
           <ul className="divide-y divide-border">
             {categoriesList.map((c, idx) => {
               const isBeingDragged = draggedIndex === idx;
+              const isHoverTarget = dragOverIndex === idx && draggedIndex !== idx;
               const pinnedProductId = currentSpotlights[c.id];
               const pinnedProduct = pinnedProductId
                 ? allCatalogProducts.find((p) => p.id === pinnedProductId)
@@ -952,7 +953,7 @@ function Categories() {
                 const isSelected =
                   spotlightCategory && currentSpotlights[spotlightCategory.id] === p.id;
                 const img = p.product_images?.[0]?.image_url;
-                const formattedPrice = formatPrice(p.price, p.currency);
+                const formattedPrice = formatPrice(p.price ?? null, p.currency ?? null);
 
                 return (
                   <div
@@ -1026,7 +1027,7 @@ function Categories() {
                           variant="affiliate"
                           size="sm"
                           disabled={savingSpotlight}
-                          onClick={() => handleAssignSpotlight(spotlightCategory.id, p.id)}
+                          onClick={() => spotlightCategory && handleAssignSpotlight(spotlightCategory.id, p.id)}
                           className="h-8 text-xs gap-1"
                         >
                           <Star className="size-3 fill-current" />

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import * as cheerio from "cheerio/slim";
 import { supabase } from "@/integrations/supabase/client";
+import { currencyForUrl } from "@/lib/retailer-currency";
 
 const BROWSER_HEADERS: Record<string, string> = {
   "User-Agent":
@@ -81,11 +82,14 @@ function parsePriceNumber(raw: string): number | null {
 
 function detectCurrency(text: string, fallback: string = "INR"): string {
   if (text.includes("₹") || text.includes("Rs") || text.includes("INR")) return "INR";
-  if (text.includes("$") || text.includes("USD")) return "USD";
-  if (text.includes("£") || text.includes("GBP")) return "GBP";
-  if (text.includes("€") || text.includes("EUR")) return "EUR";
   if (text.includes("CAD") || text.includes("C$")) return "CAD";
   if (text.includes("AUD") || text.includes("A$")) return "AUD";
+  if (text.includes("AED")) return "AED";
+  if (text.includes("£") || text.includes("GBP")) return "GBP";
+  if (text.includes("€") || text.includes("EUR")) return "EUR";
+  // A bare "$" on Canadian/Australian stores means their local dollar
+  if (text.includes("$") || text.includes("USD"))
+    return fallback === "CAD" || fallback === "AUD" ? fallback : "USD";
   return fallback;
 }
 
@@ -379,7 +383,8 @@ export const Route = createFileRoute("/api/admin/check-price")({
           let $ = cheerio.load(html);
 
           let detectedPriceNum: number | null = null;
-          let detectedCurrency = retailer === "Amazon" && hostname.endsWith(".com") ? "USD" : "INR";
+          let detectedCurrency =
+            currencyForUrl(`https://${hostname}/`) ?? currencyForUrl(targetUrl) ?? "INR";
           let rawPriceText = "";
           let jsonLdAvailability: string | undefined;
 
@@ -489,7 +494,7 @@ export const Route = createFileRoute("/api/admin/check-price")({
               $(".current-price").first().text().trim(),
               $(".sale-price").first().text().trim(),
               $(".price").first().text().trim(),
-            ].filter(Boolean);
+            ].filter((v): v is string => Boolean(v));
 
             for (const candidate of genericCandidates) {
               const parsedNum = parsePriceNumber(candidate);
@@ -531,7 +536,7 @@ export const Route = createFileRoute("/api/admin/check-price")({
                   rawPriceText = candidate;
                   detectedCurrency = detectCurrency(
                     candidate,
-                    mobResult.domain.endsWith(".com") ? "USD" : "INR",
+                    currencyForUrl(`https://${mobResult.domain}/`) ?? "INR",
                   );
                   $ = $mob;
                   if (retailer === "Ubuy") retailer = "Amazon";

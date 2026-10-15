@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import * as cheerio from "cheerio/slim";
 import { slugify } from "@/lib/store";
+import { currencyForUrl } from "@/lib/retailer-currency";
 
 const BROWSER_HEADERS: Record<string, string> = {
   "User-Agent":
@@ -329,7 +330,7 @@ export const Route = createFileRoute("/api/admin/scrape-product")({
           const $ = cheerio.load(html);
 
           // 1. Check Schema.org JSON-LD
-          let schemaProduct: Record<string, unknown> | null = null;
+          let schemaProduct = null as Record<string, any> | null;
           $('script[type="application/ld+json"]').each((_, el) => {
             try {
               const content = $(el).html();
@@ -389,7 +390,7 @@ export const Route = createFileRoute("/api/admin/scrape-product")({
 
           // 4. Extract Price and Currency
           let price = "";
-          let currency = "INR";
+          let currency = currencyForUrl(finalUrlStr) ?? currencyForUrl(rawUrl) ?? "INR";
 
           if (schemaProduct?.offers) {
             const offers = Array.isArray(schemaProduct.offers)
