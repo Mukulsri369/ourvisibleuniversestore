@@ -536,7 +536,7 @@ export const Route = createFileRoute("/api/admin/check-price")({
                   rawPriceText = candidate;
                   detectedCurrency = detectCurrency(
                     candidate,
-                    mobResult.domain.endsWith(".com") ? "USD" : "INR",
+                    currencyForUrl(`https://${mobResult.domain}/`) ?? "INR",
                   );
                   $ = $mob;
                   if (retailer === "Ubuy") retailer = "Amazon";
