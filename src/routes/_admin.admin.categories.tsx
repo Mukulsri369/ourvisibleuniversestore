@@ -953,7 +953,7 @@ function Categories() {
                 const isSelected =
                   spotlightCategory && currentSpotlights[spotlightCategory.id] === p.id;
                 const img = p.product_images?.[0]?.image_url;
-                const formattedPrice = formatPrice(p.price, p.currency);
+                const formattedPrice = formatPrice(p.price ?? null, p.currency ?? null);
 
                 return (
                   <div
