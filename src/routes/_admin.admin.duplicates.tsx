@@ -187,7 +187,7 @@ function AdminDuplicatesPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <AdminTitle>Duplicate Detection & Hygiene</AdminTitle>
+          <AdminTitle title="Duplicate Detection & Hygiene" />
           <p className="mt-1 text-sm text-muted-foreground">
             Analyze descriptions across the catalog to detect duplicate listings, copy-paste errors,
             and near-clones.

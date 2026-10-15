@@ -244,6 +244,8 @@ function Products() {
             price?: number;
             currency?: string;
             inStock?: boolean;
+            retailer?: string;
+            retailer_product_id?: string;
             error?: string;
           } | null = null;
           try {

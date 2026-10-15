@@ -96,7 +96,7 @@ function CategoryPage() {
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-foreground">
-              {cat.name}
+              {cat?.name}
             </h1>
 
             {/* POETIC SPACE QUOTE — NO EXTRA EXPLANATORY WORDING */}

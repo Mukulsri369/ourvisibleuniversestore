@@ -176,7 +176,7 @@ export function ProductForm({ productId }: { productId?: string }) {
 
       // Merge suggested tags without duplicates
       if (Array.isArray(d.tags) && d.tags.length) {
-        setTags((prev) => [...new Set([...prev, ...d.tags])]);
+        setTags((prev) => [...new Set([...prev, ...(d.tags ?? [])])]);
       }
 
       // Add extracted high-res gallery images
@@ -231,6 +231,8 @@ export function ProductForm({ productId }: { productId?: string }) {
         currency?: string;
         inStock?: boolean;
         stockMessage?: string;
+        retailer?: string;
+        retailer_product_id?: string;
         error?: string;
       } | null = null;
       try {
