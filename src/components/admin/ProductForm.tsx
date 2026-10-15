@@ -32,6 +32,7 @@ import { DuplicateWarningDialog } from "./DuplicateWarningDialog";
 import { Field, inputCls, Section, textareaCls } from "./ui";
 import { CategorySelect } from "./CategorySelect";
 import { productCategoryIds } from "@/lib/product-categories";
+import { currencyForUrl } from "@/lib/retailer-currency";
 
 type Img = { key: string; url: string; path: string | null; alt: string };
 type Errors = Partial<
@@ -720,7 +721,11 @@ export function ProductForm({ productId }: { productId?: string }) {
             <input
               type="url"
               value={fetchUrl}
-              onChange={(e) => setFetchUrl(e.target.value)}
+              onChange={(e) => {
+                setFetchUrl(e.target.value);
+                const detected = currencyForUrl(e.target.value);
+                if (detected) setCurrency(detected);
+              }}
               placeholder="Paste affiliate or product link (e.g. https://www.amazon.in/dp/... or https://amzn.to/...)"
               className="h-10 w-full rounded-xl border border-border/80 bg-background/90 pl-10 pr-3 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
               disabled={fetching}
@@ -1027,6 +1032,8 @@ export function ProductForm({ productId }: { productId?: string }) {
             value={affiliateUrl}
             onChange={(e) => {
               setAffiliateUrl(e.target.value);
+              const detected = currencyForUrl(e.target.value);
+              if (detected) setCurrency(detected);
               setErrors((current) => {
                 const { affiliate: _affiliate, ...rest } = current;
                 return rest;
