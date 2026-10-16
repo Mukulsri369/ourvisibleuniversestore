@@ -1,7 +1,7 @@
 # Tasks
 
-- [ ] Correct US and regional Amazon price amounts without cross-market fallbacks or lost decimal cents.
-- [ ] Verify price parsing and the authenticated product form while preserving store workflows.
+- [x] Correct US and regional Amazon price amounts without cross-market fallbacks or lost decimal cents.
+- [x] Verify price parsing and the authenticated product form; 32 targeted checks pass, while the full suite has three unrelated category/routing failures.
 
 - [x] Create the supplied planet-switching opening with Motion while preserving the storefront.
 - [x] Verify planet rotation, video fallback, reduced motion, and narrow-screen layout.
