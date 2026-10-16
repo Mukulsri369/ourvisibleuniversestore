@@ -22,3 +22,4 @@
 - Public product queries include the legacy Amazon URL and use it only when the retailer-neutral affiliate URL is missing, so older records retain working purchase links.
 - A database trigger blocks publishing, activating, restoring live products, or changing live affiliate links when another record uses the same effective URL; drafts and trash count, self-edits do not, and URL comparison never rewrites stored links.
 - Server routes that parse HTML import cheerio/slim, never the full cheerio entry; the full entry pulls Node-only code that crashes the live server.
+- Retailer price parsing is shared by admin import and price checks; Amazon reads use complete buy-box amounts and retry only the resolved marketplace to avoid truncated cents or another country's offers.

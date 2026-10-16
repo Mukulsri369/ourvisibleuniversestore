@@ -165,7 +165,9 @@ export function ProductForm({ productId }: { productId?: string }) {
       if (d.short_description) setShort(d.short_description);
       if (d.description) setDesc(d.description);
       if (d.brand) setBrand(d.brand);
-      if (d.price) setPrice(String(d.price));
+      // An unavailable price must not leave another product's old amount behind.
+      setPrice(d.price != null ? String(d.price) : "");
+      setPriceDate(d.price != null && d.price !== "" ? new Date().toISOString().slice(0, 10) : "");
       if (d.currency) setCurrency(d.currency);
       if (d.retailer) setRetailer(d.retailer);
       if (d.retailer_product_id) setRetailerProductId(d.retailer_product_id);
@@ -284,7 +286,7 @@ export function ProductForm({ productId }: { productId?: string }) {
       }
 
       const newPriceNum = data.price;
-      const newCurrency = data.currency || "INR";
+      const newCurrency = data.currency || currencyForUrl(urlToCheck) || currency;
       const todayIso = new Date().toISOString().slice(0, 10);
       const oldPriceNum = price ? parseFloat(price) : null;
 
@@ -726,7 +728,11 @@ export function ProductForm({ productId }: { productId?: string }) {
               onChange={(e) => {
                 setFetchUrl(e.target.value);
                 const detected = currencyForUrl(e.target.value);
-                if (detected) setCurrency(detected);
+                if (detected && detected !== currency) {
+                  setCurrency(detected);
+                  setPrice("");
+                  setPriceDate("");
+                }
               }}
               placeholder="Paste affiliate or product link (e.g. https://www.amazon.in/dp/... or https://amzn.to/...)"
               className="h-10 w-full rounded-xl border border-border/80 bg-background/90 pl-10 pr-3 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
@@ -1035,7 +1041,11 @@ export function ProductForm({ productId }: { productId?: string }) {
             onChange={(e) => {
               setAffiliateUrl(e.target.value);
               const detected = currencyForUrl(e.target.value);
-              if (detected) setCurrency(detected);
+              if (detected && detected !== currency) {
+                setCurrency(detected);
+                setPrice("");
+                setPriceDate("");
+              }
               setErrors((current) => {
                 const { affiliate: _affiliate, ...rest } = current;
                 return rest;

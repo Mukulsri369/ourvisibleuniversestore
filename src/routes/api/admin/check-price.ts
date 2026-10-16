@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import * as cheerio from "cheerio/slim";
 import { supabase } from "@/integrations/supabase/client";
 import { currencyForUrl } from "@/lib/retailer-currency";
+import { amazonPriceCandidates, amazonPriceDomains, detectPriceCurrency as detectCurrency, parseRetailerPrice as parsePriceNumber } from "@/lib/retailer-price";
 
 const BROWSER_HEADERS: Record<string, string> = {
   "User-Agent":
@@ -38,11 +39,7 @@ async function fetchAmazonMobile(
   hostname: string,
   asin: string,
 ): Promise<{ html: string; status: number; domain: string } | null> {
-  const domains = [
-    hostname.includes("amazon.") ? hostname : "www.amazon.in",
-    "www.amazon.in",
-    "www.amazon.com",
-  ];
+  const domains = amazonPriceDomains(hostname);
   const uniqueDomains = Array.from(new Set(domains));
 
   for (const domain of uniqueDomains) {
@@ -67,30 +64,6 @@ async function fetchAmazonMobile(
     }
   }
   return null;
-}
-
-function parsePriceNumber(raw: string): number | null {
-  if (!raw) return null;
-  // Match first valid numeric pattern like 4,018.00 or 1499.50 or 1499
-  // Remove commas used as thousands separators
-  const cleaned = raw.replace(/,/g, "").trim();
-  const match = cleaned.match(/(\d+(?:\.\d+)?)/);
-  if (!match) return null;
-  const num = parseFloat(match[1]);
-  return isNaN(num) || num <= 0 ? null : Math.round(num * 100) / 100;
-}
-
-function detectCurrency(text: string, fallback: string = "INR"): string {
-  if (text.includes("₹") || text.includes("Rs") || text.includes("INR")) return "INR";
-  if (text.includes("CAD") || text.includes("C$")) return "CAD";
-  if (text.includes("AUD") || text.includes("A$")) return "AUD";
-  if (text.includes("AED")) return "AED";
-  if (text.includes("£") || text.includes("GBP")) return "GBP";
-  if (text.includes("€") || text.includes("EUR")) return "EUR";
-  // A bare "$" on Canadian/Australian stores means their local dollar
-  if (text.includes("$") || text.includes("USD"))
-    return fallback === "CAD" || fallback === "AUD" ? fallback : "USD";
-  return fallback;
 }
 
 export const Route = createFileRoute("/api/admin/check-price")({
@@ -410,7 +383,7 @@ export const Route = createFileRoute("/api/admin/check-price")({
                     jsonLdAvailability = String(item.availability);
                   }
                   if (detectedPriceNum == null && offer?.price) {
-                    const parsedNum = parsePriceNumber(String(offer.price));
+                    const parsedNum = parsePriceNumber(String(offer.price), String(offer.priceCurrency || detectedCurrency));
                     if (parsedNum) {
                       detectedPriceNum = parsedNum;
                       rawPriceText = String(offer.price);
@@ -428,7 +401,7 @@ export const Route = createFileRoute("/api/admin/check-price")({
           if (detectedPriceNum == null) {
             const ogPrice = $('meta[property="product:price:amount"]').attr("content");
             if (ogPrice) {
-              const parsedNum = parsePriceNumber(ogPrice);
+              const parsedNum = parsePriceNumber(ogPrice, $('meta[property="product:price:currency"]').attr("content") || detectedCurrency);
               if (parsedNum) {
                 detectedPriceNum = parsedNum;
                 rawPriceText = ogPrice;
@@ -440,22 +413,10 @@ export const Route = createFileRoute("/api/admin/check-price")({
 
           // 3. Amazon specific selectors
           if (detectedPriceNum == null && retailer === "Amazon") {
-            const amazonCandidates = [
-              $(".priceToPay span.a-price-whole").first().text().trim(),
-              $(".a-price .a-offscreen").first().text().trim(),
-              $("#priceblock_ourprice").text().trim(),
-              $("#priceblock_dealprice").text().trim(),
-              $("#priceblock_saleprice").text().trim(),
-              $("#corePriceDisplay_desktop_feature_div .a-price .a-offscreen")
-                .first()
-                .text()
-                .trim(),
-              $("#corePrice_desktop .a-price .a-offscreen").first().text().trim(),
-              $("#apex_desktop .a-price .a-offscreen").first().text().trim(),
-            ].filter(Boolean);
+            const amazonCandidates = amazonPriceCandidates($);
 
             for (const candidate of amazonCandidates) {
-              const parsedNum = parsePriceNumber(candidate);
+              const parsedNum = parsePriceNumber(candidate, detectCurrency(candidate, detectedCurrency));
               if (parsedNum) {
                 detectedPriceNum = parsedNum;
                 rawPriceText = candidate;
@@ -486,7 +447,7 @@ export const Route = createFileRoute("/api/admin/check-price")({
           }
 
           // 5. Generic e-commerce price selectors
-          if (detectedPriceNum == null) {
+          if (detectedPriceNum == null && retailer !== "Amazon") {
             const genericCandidates = [
               $('[itemprop="price"]').attr("content") || $('[itemprop="price"]').text().trim(),
               $("[data-price]").attr("data-price"),
@@ -497,7 +458,7 @@ export const Route = createFileRoute("/api/admin/check-price")({
             ].filter((v): v is string => Boolean(v));
 
             for (const candidate of genericCandidates) {
-              const parsedNum = parsePriceNumber(candidate);
+              const parsedNum = parsePriceNumber(candidate, detectCurrency(candidate, detectedCurrency));
               if (parsedNum) {
                 detectedPriceNum = parsedNum;
                 rawPriceText = candidate;
@@ -516,21 +477,10 @@ export const Route = createFileRoute("/api/admin/check-price")({
             const mobResult = await fetchAmazonMobile(hostname, retailerProductId);
             if (mobResult) {
               const $mob = cheerio.load(mobResult.html);
-              const mobCandidates = [
-                $mob(".priceToPay span.a-price-whole").first().text().trim(),
-                $mob(".a-price .a-offscreen").first().text().trim(),
-                $mob("#corePriceDisplay_mobile_feature_div .a-price .a-offscreen")
-                  .first()
-                  .text()
-                  .trim(),
-                $mob("#apex_mobile .a-price .a-offscreen").first().text().trim(),
-                $mob("#priceblock_ourprice").text().trim(),
-                $mob("#priceblock_dealprice").text().trim(),
-                $mob("#corePrice_desktop .a-price .a-offscreen").first().text().trim(),
-              ].filter(Boolean);
+              const mobCandidates = amazonPriceCandidates($mob);
 
               for (const candidate of mobCandidates) {
-                const parsedNum = parsePriceNumber(candidate);
+                const parsedNum = parsePriceNumber(candidate, detectCurrency(candidate, detectedCurrency));
                 if (parsedNum) {
                   detectedPriceNum = parsedNum;
                   rawPriceText = candidate;

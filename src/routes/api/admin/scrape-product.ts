@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import * as cheerio from "cheerio/slim";
 import { slugify } from "@/lib/store";
 import { currencyForUrl } from "@/lib/retailer-currency";
+import { amazonPriceCandidates, amazonPriceDomains, detectPriceCurrency, parseRetailerPrice } from "@/lib/retailer-price";
 
 const BROWSER_HEADERS: Record<string, string> = {
   "User-Agent":
@@ -38,11 +39,7 @@ async function fetchAmazonMobile(
   hostname: string,
   asin: string,
 ): Promise<{ html: string; status: number; domain: string } | null> {
-  const domains = [
-    hostname.includes("amazon.") ? hostname : "www.amazon.in",
-    "www.amazon.in",
-    "www.amazon.com",
-  ];
+  const domains = amazonPriceDomains(hostname);
   const uniqueDomains = Array.from(new Set(domains));
 
   for (const domain of uniqueDomains) {
@@ -397,34 +394,30 @@ export const Route = createFileRoute("/api/admin/scrape-product")({
               ? schemaProduct.offers[0]
               : (schemaProduct.offers as Record<string, unknown>);
             if (offers) {
-              if (offers.price) price = String(offers.price);
               if (typeof offers.priceCurrency === "string") currency = offers.priceCurrency;
+              const amount = parseRetailerPrice(String(offers.price ?? ""), currency);
+              if (amount != null) price = String(amount);
             }
           }
 
           if (!price) {
             const ogPrice = $('meta[property="product:price:amount"]').attr("content");
             if (ogPrice) {
-              price = ogPrice;
               currency = $('meta[property="product:price:currency"]').attr("content") || currency;
+              const amount = parseRetailerPrice(ogPrice, currency);
+              if (amount != null) price = String(amount);
             }
           }
 
-          if (!price) {
-            const amazonPriceText =
-              $(".a-price .a-offscreen").first().text().trim() ||
-              $("#priceblock_ourprice").text().trim() ||
-              $("#priceblock_dealprice").text().trim() ||
-              $(".priceToPay span.a-price-whole").first().text().trim();
-
-            if (amazonPriceText) {
-              if (amazonPriceText.includes("$")) currency = "USD";
-              else if (amazonPriceText.includes("£")) currency = "GBP";
-              else if (amazonPriceText.includes("€")) currency = "EUR";
-              else if (amazonPriceText.includes("₹")) currency = "INR";
-
-              const num = amazonPriceText.replace(/[^0-9.]/g, "");
-              if (num) price = num;
+          if (!price && retailer === "Amazon") {
+            for (const candidate of amazonPriceCandidates($)) {
+              const candidateCurrency = detectPriceCurrency(candidate, currency);
+              const amount = parseRetailerPrice(candidate, candidateCurrency);
+              if (amount != null) {
+                price = String(amount);
+                currency = candidateCurrency;
+                break;
+              }
             }
           }
 
@@ -433,9 +426,9 @@ export const Route = createFileRoute("/api/admin/scrape-product")({
               $('div[class*="price"]').first().text().trim() ||
               $("div._30jeq3").first().text().trim();
             if (fkPrice) {
-              const num = fkPrice.replace(/[^0-9.]/g, "");
-              if (num) {
-                price = num;
+              const num = parseRetailerPrice(fkPrice, "INR");
+              if (num != null) {
+                price = String(num);
                 currency = "INR";
               }
             }
