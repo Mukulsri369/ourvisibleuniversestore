@@ -1,0 +1,1789 @@
+# PROMPT 6 OF 48 — COMPONENT REGISTRY, REAL STOREFRONT ADAPTERS, SHARED PAGE RENDERER, GITHUB CONTINUITY & PERFORMANCE VALIDATION
+
+## ROLE
+
+Act as a Principal Full-Stack Architect, Senior React 19 Engineer, TanStack Start Specialist, Visual Editor Framework Engineer, TypeScript Systems Architect, GitHub DevOps Engineer, and Production Performance Specialist.
+
+You are developing a premium, Shopify-style Visual Storefront Editor for my existing SaaS affiliate-store application.
+
+**GitHub Repository:**
+https://github.com/Mukulsri369/ourvisibleuniversestore
+
+**Development Environment:** Google AI Studio — Argon 4
+
+**Development Roadmap:** 48 prompts across 10 phases.
+
+**Current Stage:** Phase 2 — Core Page Rendering Architecture.
+
+**Current Task:** Prompt 6 of 48.
+
+This prompt follows:
+
+- Prompt 1 — Repository architecture audit.
+- Prompt 2 — Compatibility and zero-regression contracts.
+- Prompt 3 — Technology evaluation and interaction engine architecture.
+- Prompt 4 — Landing-page baseline and visual regression analysis.
+- Prompt 5 — Page schema engine, typed configuration, GitHub continuity, and performance audit.
+
+### Primary objective
+
+Implement a production-grade **Visual Component Registry, Existing Storefront Adapter Layer, and Shared Page Renderer Foundation**.
+
+The new architecture must allow the existing storefront components to be instantiated through the validated PageDocument schema developed in Prompt 5.
+
+This is a foundational step toward making the landing page directly editable through drag-and-drop, resizing, shape manipulation, and live previews.
+
+**The editor and public storefront must eventually render the same React component implementations, not independently recreated approximations.**
+
+Do not build a fake storefront preview.
+
+Do not rewrite the existing website.
+
+Do not begin Prompt 7 automatically.
+
+---
+
+# PART 1 — GITHUB SYNCHRONIZATION AND CONTINUITY
+
+## 1. Verify the repository before implementing anything
+
+Connect to:
+
+https://github.com/Mukulsri369/ourvisibleuniversestore
+
+Fetch the latest remote repository state.
+
+Verify:
+
+1. Repository identity.
+2. Default branch.
+3. Active local branch.
+4. Remote tracking branch.
+5. Current HEAD commit SHA.
+6. Working tree status.
+7. Uncommitted changes.
+8. Remote synchronization status.
+9. Latest visual-editor development commit.
+10. Whether Prompt 5 implementation exists.
+
+Do not assume that any previously referenced commit SHA is still current.
+
+A previously observed main-branch commit was:
+
+`b4ed3e121f3df51bae6dfc27f6c274a922ed030d`
+
+Treat that as a historical reference only.
+
+Always use the latest verified remote state.
+
+## 2. Recover the previous implementation
+
+Before starting Prompt 6, inspect the repository for:
+
+- `IMPLEMENTATION_PROGRESS.md`
+- `ARCHITECTURE_AUDIT.md`
+- `PERFORMANCE_BASELINE.md`
+- `AI_STUDIO_HANDOFF.md`
+
+Also locate the schema implementation created in Prompt 5.
+
+The prior implementation may use a structure similar to:
+
+`src/lib/visual-editor/`
+
+However, do not assume this exact directory exists.
+
+Locate the actual modules.
+
+Verify that the previous implementation includes:
+
+- Typed page document.
+- Versioned schema.
+- Node hierarchy.
+- Geometry types.
+- Shape configuration.
+- Responsive overrides.
+- Layout models.
+- Data-binding contracts.
+- Animation configuration.
+- Runtime validation.
+- Tree utilities.
+- Automated tests.
+
+Inspect the actual implementation and test results.
+
+Do not consider Prompt 5 complete merely because a document says it is complete.
+
+### Critical dependency rule
+
+If Prompt 5 has not been implemented or cannot be recovered from local or remote Git state:
+
+1. Search the available branches and working tree.
+2. Check whether the work exists locally but has not been pushed.
+3. Avoid overwriting existing changes.
+4. Document exactly what is missing.
+5. Report that Prompt 6 is blocked by the missing prerequisite.
+6. Do not silently recreate an incompatible schema.
+
+If the schema is implemented but only Git synchronization is incomplete, preserve the work and complete the safe synchronization process before building further, where permitted.
+
+**Prompt 6 must extend the real Prompt 5 implementation—not replace it with a second schema.**
+
+## 3. Use the correct development branch
+
+Continue on the visual-editor development branch recorded in the handoff documentation.
+
+If no such branch exists and Prompt 5 has been safely recovered, use:
+
+`feature/visual-storefront-editor`
+
+Do not push directly to `main`.
+
+Do not force-push.
+
+Do not merge into `main` automatically.
+
+If branch management is unavailable, report the specific limitation.
+
+## 4. Preserve cross-account AI Studio continuity
+
+All development state must remain recoverable from GitHub.
+
+At the end of Prompt 6:
+
+- Update all four persistent project documents.
+- Record actual implementation details.
+- Preserve completed-work history.
+- Record the latest verified GitHub checkpoint.
+- Document unresolved issues.
+- Specify the exact next development task.
+- Commit and push only verified changes.
+- Confirm the remote commit exists.
+
+Another Google AI Studio account should be able to continue Prompt 7 using the GitHub repository and these documents without relying on the current conversation.
+
+---
+
+# PART 2 — PRE-IMPLEMENTATION ARCHITECTURE AUDIT
+
+## 5. Reinspect the existing storefront
+
+Before modifying code, inspect the current implementation of:
+
+- `src/routes/_store.index.tsx`
+- `src/routes/_store.tsx`
+- `src/components/store/PlanetHero.tsx`
+- `src/components/store/CelestialScrollWorld.tsx`
+- `src/components/store/ProductScrollRail.tsx`
+- `src/components/store/ProductCard.tsx`
+- `src/components/store/CategorySpotlightHero.tsx`
+- `src/components/store/CategoryCard.tsx`
+- `src/components/store/StoreChrome.tsx`
+- `src/components/store/BuyButton.tsx`
+- `src/components/store/ProductQuickPreviewModal.tsx`
+- `src/lib/store.ts`
+- `src/lib/planets.ts`
+- `src/lib/celestial-catalog.ts`
+- `src/styles.css`
+
+Inspect relevant imported files as needed.
+
+### Identify for each component
+
+1. Current props.
+2. Existing visual structure.
+3. Data dependencies.
+4. React Query usage.
+5. Routing dependencies.
+6. Animation dependencies.
+7. CSS classes.
+8. Responsive rules.
+9. Interactive behavior.
+10. Browser-only APIs.
+11. Existing protected business logic.
+12. Configuration properties that could safely be exposed.
+13. Properties requiring specialized adapters.
+14. Performance risks.
+
+Create a component integration matrix before implementation.
+
+Do not redesign components during this audit.
+
+---
+
+# PART 3 — CORE RENDERING ARCHITECTURE
+
+## 6. Establish the single-renderer principle
+
+The long-term architecture must follow:
+
+**Validated PageDocument**
+→ **Visual Component Registry**
+→ **Component Adapter**
+→ **Existing React Storefront Component**
+→ **Actual Rendered Page**
+
+The same rendering pipeline must support public and editor contexts.
+
+### Public context
+
+- Real storefront components.
+- Real product/category data.
+- Existing navigation.
+- Existing affiliate links.
+- Existing animations.
+- No selection overlays.
+- No editor controls.
+
+### Editor context
+
+- Same registered components.
+- Draft configuration.
+- Future selection and resizing overlays.
+- Protected navigation.
+- Editable properties.
+- Editor-specific state supplied separately.
+
+### Preview context
+
+- Same components.
+- Draft or selected configuration.
+- Customer-like visual presentation.
+- Controlled interactions.
+- No accidental mutation of business data.
+
+Prompt 6 should define these rendering contexts and implement the required foundational contracts.
+
+It should not build the actual drag-and-drop editor interface.
+
+## 7. Keep the architecture library-independent
+
+The component registry must not depend on a particular drag-and-drop library.
+
+Whether the project later uses Puck, Moveable, dnd-kit, custom interaction controllers, or a hybrid architecture, those libraries must operate through stable configuration and adapter interfaces.
+
+Do not couple the stored PageDocument format to Puck-specific or Moveable-specific runtime objects.
+
+Separate:
+
+- Stored component configuration.
+- Trusted component capabilities.
+- React rendering.
+- Business data resolution.
+- Editor interaction behavior.
+
+These concerns must have clear boundaries.
+
+---
+
+# PART 4 — IMPLEMENT THE VISUAL COMPONENT REGISTRY
+
+## 8. Create the central registry
+
+Implement a strongly typed component registry compatible with the PageDocument schema from Prompt 5.
+
+Each registered component should define appropriate metadata, such as:
+
+- Stable component type.
+- Display name.
+- Category.
+- Description.
+- Component implementation.
+- Configuration validator.
+- Default properties.
+- Supported layout properties.
+- Supported visual properties.
+- Supported child slots.
+- Allowed parent/child relationships.
+- Responsive capabilities.
+- Animation capabilities.
+- Trusted editability rules.
+- Editor inspector metadata.
+- Optional preview metadata.
+- Rendering requirements.
+
+The exact fields should follow the existing schema design.
+
+Do not duplicate incompatible definitions.
+
+### Registry categories
+
+The registry should support logical groups such as:
+
+**Basic elements**
+- Text.
+- Heading.
+- Image.
+- Video.
+- Button.
+- Icon.
+- Divider.
+- Spacer.
+- Shape.
+
+**Layout elements**
+- Section.
+- Container.
+- Stack.
+- Grid.
+- Grid item.
+- Overlay.
+
+**Storefront elements**
+- PlanetHero.
+- CelestialScrollWorld.
+- ProductScrollRail.
+- ProductCard.
+- CategorySpotlightHero.
+- CategoryCard.
+- StoreHeader.
+- StoreFooter.
+
+**Future sections**
+- ProductGrid.
+- CategoryGrid.
+- FestivalSection.
+- FeaturedCollection.
+- InterestSection.
+- BenefitsSection.
+- PromotionalBanner.
+- InstagramSection.
+
+Register currently supported components correctly.
+
+For components not yet implemented, define their status clearly rather than pretending they are fully functional.
+
+Do not add decorative placeholders that could be mistaken for completed production features.
+
+## 9. Implement the registry API
+
+Provide type-safe operations for:
+
+1. Registering components.
+2. Finding components by type.
+3. Checking registration status.
+4. Validating component configuration.
+5. Accessing defaults.
+6. Reading trusted capabilities.
+7. Resolving component implementations.
+8. Reading supported slots.
+9. Checking parent/child compatibility.
+10. Enumerating components for a future component library.
+
+Prevent accidental duplicate registration.
+
+Unknown component types must fail safely.
+
+Registry metadata must not be user-controlled authority.
+
+A page document must not be able to grant itself permission to edit protected business behavior.
+
+---
+
+# PART 5 — BUILD REAL COMPONENT ADAPTERS
+
+## 10. Important adapter design rule
+
+An adapter should translate validated configuration into the existing component's supported props and presentation boundaries.
+
+It should not copy the component's JSX and rewrite its behavior.
+
+Where an existing component has hardcoded appearance, the adapter should initially preserve its defaults and document the controlled changes required in later prompts.
+
+Introduce optional presentation props only when necessary and safe.
+
+The first objective is exact compatibility, not immediate full customization.
+
+## 11. PlanetHero adapter
+
+Inspect:
+
+`src/components/store/PlanetHero.tsx`
+
+The adapter must reuse the existing PlanetHero implementation.
+
+Preserve:
+
+- Planet media.
+- Video playback behavior.
+- Planet selection.
+- Transition logic.
+- Existing text.
+- Existing layout.
+- Existing buttons.
+- Existing responsive behavior.
+
+Define typed extension points for future customization of:
+
+- Height.
+- Layout.
+- Text styles.
+- Heading.
+- Description.
+- CTA presentation.
+- Background media selection.
+- Image positioning.
+- Overlay.
+- Animation configuration.
+
+**Do not implement unsupported controls merely to satisfy the registry definition.**
+
+If an extension would require a larger refactor, document it for future implementation.
+
+The default adapter must render the original hero without intentional visual changes.
+
+## 12. CelestialScrollWorld adapter
+
+Inspect:
+
+`src/components/store/CelestialScrollWorld.tsx`
+
+Preserve:
+
+- Existing scroll animation.
+- Object positions.
+- Planet assets.
+- Opacity.
+- Rotation.
+- Scale.
+- Motion springs.
+- Reduced-motion behavior.
+- Existing rendering lifecycle.
+
+Create a registry adapter that references the existing component.
+
+Document possible future editing parameters, including:
+
+- Celestial object scale.
+- Object visibility.
+- Scroll activation.
+- Motion offsets.
+- Decorative glow.
+- Responsive placement.
+
+Pay special attention to the component's fixed positioning and scroll-dependent transforms.
+
+It may need a special global-background rendering layer rather than being treated as an ordinary flow-based section.
+
+**Do not accidentally place this component inside a clipping container that changes its current appearance.**
+
+## 13. ProductScrollRail adapter
+
+Inspect:
+
+`src/components/store/ProductScrollRail.tsx`
+
+The adapter must preserve the current carousel functionality.
+
+Preserve:
+
+- Existing product order passed into the component.
+- Product data.
+- Horizontal scrolling.
+- Carousel controls.
+- Snap behavior.
+- Edge effects.
+- Current card layout.
+- Responsive widths.
+- Quick-preview behavior.
+- Existing interactions.
+
+Define future configuration contracts for:
+
+- Card template.
+- Layout mode.
+- Card dimensions.
+- Spacing.
+- Section heading.
+- Column count.
+- Carousel behavior.
+- Responsive properties.
+
+Do not convert the existing rail to a grid during Prompt 6.
+
+That feature belongs to later grid-designer prompts.
+
+The default adapter must match the existing implementation.
+
+## 14. ProductCard adapter
+
+Inspect:
+
+`src/components/store/ProductCard.tsx`
+
+This is one of the most important components.
+
+The adapter must preserve:
+
+- Product identity.
+- Product name.
+- Images.
+- Price formatting.
+- Affiliate button.
+- Product navigation.
+- Quick preview.
+- Hover image transitions.
+- Existing compact and regular card variants.
+
+Define safe editable presentation areas:
+
+- Card width.
+- Card height.
+- Image aspect ratio.
+- Border radius.
+- Background.
+- Border.
+- Shadow.
+- Padding.
+- Typography.
+- Badge placement.
+- CTA appearance.
+- Hover effects.
+
+However, protect the data-bound properties.
+
+The adapter must not independently create or overwrite product prices, names, retailer destinations, or availability.
+
+### Important architecture requirement
+
+Future card templates should be reusable.
+
+For example, changing a registered ProductCard template's radius or image ratio should eventually update every card using that template without modifying the individual product records.
+
+Prepare the component interface for this architecture.
+
+Do not implement the full product-card template editor yet.
+
+## 15. CategorySpotlightHero adapter
+
+Inspect:
+
+`src/components/store/CategorySpotlightHero.tsx`
+
+Preserve:
+
+- Existing category/product bindings.
+- Image behavior.
+- Text content from existing data.
+- CTA behavior.
+- Quick-preview functionality.
+- Existing responsive layout.
+
+Prepare future configurable properties for:
+
+- Image/text proportions.
+- Image aspect ratio.
+- Layout direction.
+- Spacing.
+- Typography.
+- Background.
+- Card shape.
+- Button appearance.
+- Section animation.
+
+The default adapter must preserve the current design.
+
+## 16. CategoryCard adapter
+
+Inspect:
+
+`src/components/store/CategoryCard.tsx`
+
+Preserve the existing implementation.
+
+Prepare support for:
+
+- Shape presets.
+- Corner radius.
+- Image cropping.
+- Aspect ratio.
+- Card dimensions.
+- Backgrounds.
+- Text positioning.
+- Hover states.
+- Responsive presentation.
+
+Do not assume this component is currently displayed in a conventional homepage category grid.
+
+The future configurable CategoryGrid should reuse category data and a registered card template.
+
+That layout is scheduled for a later phase.
+
+## 17. Header and footer adapters
+
+Inspect:
+
+`src/components/store/StoreChrome.tsx`
+
+Prepare registration for:
+
+- StoreHeader.
+- StoreFooter.
+
+These components must maintain their existing shared layout and routing behavior.
+
+### Critical composition requirement
+
+The existing header and footer are shared across storefront routes.
+
+Do not accidentally render duplicate headers or footers by adding them both to a page document and to the existing route layout.
+
+Choose a clear architectural strategy, such as:
+
+- Global storefront slots handled by the layout renderer.
+- Page sections handled by the page renderer.
+
+Document the strategy.
+
+Do not change existing route composition prematurely.
+
+---
+
+# PART 6 — IMPLEMENT THE SHARED PAGE RENDERER
+
+## 18. Build a reusable renderer foundation
+
+Implement a component such as:
+
+`PageRenderer`
+
+or another clearly named equivalent.
+
+It should accept:
+
+- A validated PageDocument.
+- A rendering mode.
+- A safe data-resolution context.
+- Optional approved rendering options.
+
+It must render the document's supported node hierarchy through the registry.
+
+### Required capabilities
+
+- Root sections.
+- Nested elements.
+- Named slots.
+- Stable React keys.
+- Registered component lookup.
+- Validated props.
+- Controlled default values.
+- Responsive configuration.
+- Conditional visibility.
+- Safe data bindings.
+- Predictable rendering order.
+- Unknown component fallback.
+- Error boundaries where appropriate.
+
+Avoid a giant monolithic component with dozens of switch statements.
+
+Use the registry to dispatch rendering.
+
+Keep runtime behavior deterministic.
+
+## 19. Do not rebuild the current homepage yet
+
+Prompt 6 creates the reusable renderer and adapters.
+
+**It must not replace `src/routes/_store.index.tsx` with a document-driven homepage.**
+
+That migration is scheduled for Prompt 7.
+
+The renderer should initially be exercised through isolated fixtures and appropriate tests.
+
+This separation is critical.
+
+We must first prove the renderer works before making the actual customer-facing homepage depend on it.
+
+## 20. Preserve styling exactly by default
+
+Existing components use Tailwind classes, custom CSS, media queries, and Motion styles.
+
+The new adapters must not inject default overrides that alter their layout.
+
+Avoid:
+
+- Extra margins.
+- Extra padding.
+- Unexpected wrapper widths.
+- Unnecessary flex/grid containers.
+- New overflow clipping.
+- Changing positioning context.
+- Altered z-index.
+- Unnecessary CSS transforms.
+- Replacing current fonts or gradients.
+
+Where a wrapper is required, prove that it does not alter the rendered layout.
+
+If an adapter introduces a new wrapper, inspect its impact on CSS selectors, positioning, scroll behavior, hydration, and accessibility.
+
+The correct initial behavior is:
+
+**No explicit design override → existing component appearance.**
+
+---
+
+# PART 7 — DYNAMIC DATA RESOLUTION
+
+## 21. Implement a safe data adapter boundary
+
+The PageDocument schema from Prompt 5 defines product/category binding contracts.
+
+Prompt 6 must introduce the rendering-side abstraction that interprets those contracts.
+
+Distinguish:
+
+### Presentation configuration
+
+- Layout.
+- Dimensions.
+- Shape.
+- Styles.
+- Animation.
+
+### Data source configuration
+
+- Featured products.
+- New arrivals.
+- Festival products.
+- Category products.
+- Curated product IDs.
+- Selected categories.
+
+### Protected business data
+
+- Product identities.
+- Prices.
+- Affiliate URLs.
+- Availability.
+- Retailer information.
+- Outbound click tracking.
+
+The renderer should consume resolved, authorized data through typed adapters.
+
+Do not store privileged Supabase clients, raw SQL, credentials, or arbitrary query expressions in page documents.
+
+## 22. Reuse existing queries
+
+Inspect the actual APIs in:
+
+`src/lib/store.ts`
+
+Reuse existing query and formatting logic.
+
+Do not introduce duplicate product-fetching systems.
+
+Do not refetch identical data independently for each product card.
+
+Avoid N+1 requests.
+
+The rendered ProductCard should receive the same expected data shape as the existing component.
+
+The data-resolution layer must support deterministic fixture injection for testing without modifying production records.
+
+## 23. Preserve product ordering
+
+Inspect the existing featured, newest, festival, and category ordering logic.
+
+The current homepage has previously used client-side product shuffling.
+
+Document how this influences:
+
+- Component previews.
+- Default homepage parity.
+- Explicitly curated collections.
+- Visual regression tests.
+
+Do not silently change product ordering in Prompt 6.
+
+A later controlled prompt can resolve conflicts between random ordering and administrator-curated order.
+
+For the current prompt, preserve existing behavior and define a deterministic testing approach.
+
+---
+
+# PART 8 — RENDERING MODES AND SAFE INTERACTIONS
+
+## 24. Define rendering modes clearly
+
+The renderer must support typed rendering contexts suitable for:
+
+- Public.
+- Editor.
+- Preview.
+
+However, only implement the foundation required in this phase.
+
+The actual editor interaction engine is not part of Prompt 6.
+
+## 25. Protect navigation and affiliate actions
+
+The future editor must allow an administrator to click a ProductCard and select it rather than navigating to a product page.
+
+Design an interaction policy that distinguishes:
+
+- Customer interaction.
+- Editor selection.
+- Safe preview interaction.
+
+Do not modify the existing BuyButton or affiliate tracking logic unnecessarily.
+
+Do not create a fragile global `preventDefault` mechanism that changes public behavior.
+
+Prefer explicit context or trusted adapter-level interaction policies that can be tested.
+
+If an existing component cannot safely support inert editing behavior without a later refactor, document that limitation and provide a controlled integration plan.
+
+Do not claim the editing interaction is complete merely because the renderer accepts an `editor` mode.
+
+## 26. Prepare component identity for future selection
+
+Each rendered page node must retain its stable PageDocument ID.
+
+The future editor will use that identity for:
+
+- Selection.
+- Dragging.
+- Resizing.
+- Shape manipulation.
+- Reordering.
+- Inspector controls.
+- Undo/redo.
+- Mini-preview synchronization.
+
+Implement a safe identity mechanism.
+
+For example, trusted wrapper metadata or editor-only attributes may identify a node without changing the visual layout.
+
+The identity mechanism must not expose private data.
+
+Avoid introducing extra layout-affecting DOM elements.
+
+---
+
+# PART 9 — RESPONSIVE AND GEOMETRIC PROPERTY RENDERING
+
+## 27. Connect validated properties to rendering
+
+The Prompt 5 schema should already describe:
+
+- Dimensions.
+- Layout.
+- Shapes.
+- Typography.
+- Colors.
+- Media.
+- Responsive overrides.
+- Animation configuration.
+
+Prompt 6 must implement the rendering boundary for supported properties.
+
+However, it must not claim complete compatibility with every property if the existing component cannot yet accept it.
+
+### Required approach
+
+For each component:
+
+1. Identify supported properties.
+2. Map them to existing props or safe presentation overrides.
+3. Apply validated values.
+4. Preserve legacy defaults.
+5. Reject or explicitly report unsupported properties.
+6. Avoid silent no-op controls.
+7. Test responsive behavior.
+
+The future inspector must only expose properties that have real rendering support.
+
+## 28. Implement a safe styling adapter
+
+Consider a shared mechanism for converting validated schema properties into approved style values.
+
+This mechanism should:
+
+- Respect existing styles.
+- Support design-token references where defined.
+- Validate units.
+- Avoid unrestricted CSS execution.
+- Keep layout and visual effects separate.
+- Support responsive resolution.
+- Preserve existing component class behavior.
+
+Do not add broad global CSS overrides.
+
+Avoid leaking editor styles into the storefront.
+
+Do not use raw user-generated CSS as the main customization architecture.
+
+---
+
+# PART 10 — SPECIAL HANDLING FOR ANIMATED COMPONENTS
+
+## 29. Protect the existing Motion animation system
+
+The current storefront includes specialized animations.
+
+The shared renderer must not remount animated components unnecessarily.
+
+Investigate:
+
+- Stable React component identity.
+- Stable keys.
+- Scroll hooks.
+- Spring animations.
+- Video refs.
+- Dynamic imports.
+- IntersectionObserver behavior.
+- Reduced-motion settings.
+
+A change to a sibling component must not automatically destroy and recreate the entire celestial animation system.
+
+## 30. Celestial and hero rendering lifecycle
+
+Pay special attention to:
+
+- PlanetHero media lifecycle.
+- Video initialization.
+- Planet transitions.
+- CelestialScrollWorld fixed positioning.
+- Global scroll progress.
+- Background effects.
+- Responsive positioning.
+
+The renderer should eventually allow configurable animations, but default behavior must remain unchanged.
+
+Avoid duplicating heavy media or canvas instances inside nested previews.
+
+Define how expensive specialized components can later provide lightweight, explicitly labeled inspector previews while their full-size canvas continues to use the real renderer.
+
+---
+
+# PART 11 — MINI-PREVIEW ARCHITECTURE PREPARATION
+
+## 31. Prepare renderer reuse for miniature previews
+
+A critical future requirement is the small preview displayed inside the properties inspector.
+
+The miniature preview must use the same component registry as the main landing-page canvas.
+
+The system should eventually support:
+
+- ProductCard preview.
+- CategoryCard preview.
+- ProductGrid preview.
+- CategoryGrid preview.
+- Button preview.
+- Hero style preview.
+- Section template preview.
+
+In Prompt 6, establish the reusable rendering API and demonstrate it through tests or an isolated example.
+
+Do not build the full mini-preview UI yet.
+
+## 32. Avoid creating a second visual implementation
+
+Do not create separate components such as `FakeProductCardPreview` containing manually duplicated card markup.
+
+Instead, create an architecture where the same registered card implementation can be rendered with:
+
+- Actual data in public mode.
+- Controlled fixture data in tests.
+- Safe selected data in editor mode.
+- Representative data in mini-preview mode.
+
+The exact preview interaction and scaling behavior will be implemented in later prompts.
+
+---
+
+# PART 12 — SERVER RENDERING, ROUTING AND HYDRATION
+
+## 33. Maintain TanStack compatibility
+
+Inspect the application's TanStack Start and Router architecture.
+
+Ensure the registry and renderer are compatible with the actual environment.
+
+Evaluate:
+
+- SSR.
+- Hydration.
+- Client-only components.
+- Route context.
+- Query context.
+- Lazy imports.
+- Browser-only APIs.
+- Navigation components.
+- Error boundaries.
+
+Some existing components may depend on browser APIs or client-only behavior.
+
+Do not execute browser-dependent initialization during server rendering.
+
+Do not force the entire public storefront to become client-only merely to accommodate the editor.
+
+## 34. Define stable rendering contexts
+
+Test components requiring:
+
+- TanStack Router context.
+- React Query context.
+- Media resources.
+- Client-side effects.
+
+The renderer should not crash because a required provider was omitted in a test fixture.
+
+Use real providers in integration tests where necessary.
+
+Do not hide provider errors using unrealistic mocks that make tests meaningless.
+
+---
+
+# PART 13 — PERFORMANCE AUDIT BEFORE IMPLEMENTATION
+
+## 35. Read existing performance records
+
+Review:
+
+`PERFORMANCE_BASELINE.md`
+
+Use the previous baseline if it exists and is trustworthy.
+
+Identify the repository commit and environment in which the earlier measurements were collected.
+
+Before implementation, measure or inspect:
+
+- Production build size.
+- Public-route JavaScript.
+- Rendering dependencies.
+- Current homepage load behavior.
+- Major animation resource usage.
+- Existing hydration warnings.
+- Existing test failures.
+
+Do not invent missing values.
+
+If browser tooling is unavailable, perform a source-level and build-output assessment and explicitly label it as such.
+
+## 36. Identify specific Prompt 6 performance risks
+
+The component registry introduces potential risks:
+
+- Eager imports of every component.
+- Heavy Three.js dependencies in simple pages.
+- Duplicate product queries.
+- Dynamic component reconstruction.
+- Unstable React keys.
+- Repeated schema validation.
+- Excessive rerenders.
+- Deep recursive tree rendering.
+- Repeated style object allocation.
+- Expensive adapter transformations.
+
+Assess these risks before writing code.
+
+Establish suitable mitigations.
+
+---
+
+# PART 14 — PERFORMANCE-OPTIMIZED RENDERER IMPLEMENTATION
+
+## 37. Avoid unnecessary runtime overhead
+
+Design the shared renderer to support:
+
+- Efficient registry lookup.
+- Stable component references.
+- Stable React keys.
+- Localized rendering changes.
+- Predictable tree traversal.
+- Minimal repeated validation.
+- Lazy-loaded specialized components where appropriate.
+- Safe memoization.
+- No duplicate business queries.
+
+Do not add caching or optimization complexity without a clear benefit.
+
+## 38. Preserve heavy component isolation
+
+The normal public homepage should not import future editor-only libraries such as Moveable or dnd-kit through the registry.
+
+Define import boundaries separating:
+
+- Shared document types.
+- Public-safe component registry.
+- Public renderer.
+- Editor interaction engine.
+- Editor interface.
+- Inspector controls.
+
+This is essential for maintaining storefront performance.
+
+The editor may become a large application, but customers should not download the entire editor merely to browse products.
+
+---
+
+# PART 15 — AUTOMATED TESTING
+
+## 39. Build comprehensive registry tests
+
+Add tests verifying:
+
+- Registered components resolve correctly.
+- Unknown types fail safely.
+- Duplicate registration is prevented.
+- Default properties are available.
+- Invalid configuration is rejected.
+- Trusted capabilities cannot be overridden by page JSON.
+- Slot relationships are validated.
+- Component lookup remains deterministic.
+
+## 40. Build renderer unit tests
+
+Verify:
+
+- Valid document rendering.
+- Nested sections.
+- Stable node identity.
+- Correct default properties.
+- Responsive configuration.
+- Safe unknown-component fallback.
+- Conditional visibility.
+- Correct ordering.
+- Validated styles.
+- Error handling.
+
+## 41. Build real-component integration tests
+
+Include representative tests for:
+
+- ProductCard.
+- ProductScrollRail.
+- CategorySpotlightHero.
+- CategoryCard.
+- PlanetHero where technically feasible.
+- Shared header/footer composition.
+
+Use the real component implementations, not mocked visual replacements, for meaningful integration checks.
+
+Mock external services and business data where needed.
+
+Do not trigger real affiliate redirects or mutate production Supabase records.
+
+## 42. Verify data-binding safety
+
+Test that:
+
+- Product titles remain data-bound.
+- Prices remain data-bound.
+- Product IDs remain unchanged.
+- Category IDs remain unchanged.
+- Affiliate URLs are not overwritten by styling.
+- Layout updates do not mutate business objects.
+- Preview fixtures cannot write production data.
+
+## 43. Test rendering performance
+
+Use representative fixtures:
+
+- Small document.
+- Medium document.
+- Large document.
+- Deeply nested valid document.
+- Product-heavy page.
+- Grid-heavy page.
+
+Measure, where possible:
+
+- Registry lookup cost.
+- Document render cost.
+- Rerender behavior.
+- Memory consumption.
+- Impact of isolated style changes.
+
+Document actual measurements with test conditions.
+
+Do not invent benchmark results.
+
+---
+
+# PART 16 — VISUAL REGRESSION VERIFICATION
+
+## 44. Compare real component rendering
+
+Where browser tooling is available, compare existing components rendered directly with the same components rendered through the new adapters.
+
+Test at representative responsive widths:
+
+- 360px.
+- 390px.
+- 768px.
+- 1024px.
+- 1440px.
+- 1920px.
+
+Use consistent:
+
+- Fonts.
+- Data.
+- Assets.
+- Browser settings.
+- Animation states.
+- Viewport dimensions.
+
+### Important
+
+The default adapter output should match the existing component as closely as reasonably possible.
+
+Any difference must be investigated.
+
+Do not hide regressions by masking major areas.
+
+## 45. Validate complex components separately
+
+Perform specific checks for:
+
+- Planet hero rendering.
+- Celestial fixed-position effects.
+- Product rail geometry.
+- Product card compact/regular variants.
+- Category spotlight layout.
+- Header/footer placement.
+
+If the environment cannot perform real browser comparisons, document the limitation and do not claim pixel parity.
+
+---
+
+# PART 17 — RECOMMENDED SOURCE ORGANIZATION
+
+## 46. Create maintainable modules
+
+Extend the structure implemented in Prompt 5.
+
+A possible organization:
+
+src/
+  lib/
+    visual-editor/
+      schema/
+        ...
+
+      registry/
+        component-registry.ts
+        component-definitions.ts
+        component-capabilities.ts
+        component-defaults.ts
+
+      rendering/
+        PageRenderer.tsx
+        RenderNode.tsx
+        RenderContext.tsx
+        responsive-styles.ts
+        style-resolver.ts
+        data-resolver.ts
+
+      adapters/
+        PlanetHeroAdapter.tsx
+        CelestialScrollWorldAdapter.tsx
+        ProductScrollRailAdapter.tsx
+        ProductCardAdapter.tsx
+        CategorySpotlightAdapter.tsx
+        CategoryCardAdapter.tsx
+        StoreChromeAdapter.tsx
+
+      __tests__/
+        registry.test.ts
+        renderer.test.tsx
+        adapters.test.tsx
+        data-bindings.test.tsx
+        rendering-performance.test.ts
+
+This is illustrative.
+
+Adapt it to the actual schema, code conventions, and component structure.
+
+Do not create unnecessary placeholder files.
+
+Do not duplicate existing UI source code inside adapters.
+
+---
+
+# PART 18 — POST-IMPLEMENTATION PERFORMANCE AUDIT
+
+## 47. Measure the implementation impact
+
+After implementation, compare against the verified baseline.
+
+Assess:
+
+### Public storefront
+
+- Production build output.
+- Route bundle sizes.
+- Dependency graph.
+- Existing homepage runtime behavior.
+- Rendering behavior.
+- Hydration warnings.
+- External network requests.
+
+### Shared renderer
+
+- Initial rendering.
+- Nested node rendering.
+- Registry lookup.
+- Responsive property resolution.
+- Data binding resolution.
+- Rerender behavior.
+- Large-document handling.
+
+### Heavy components
+
+- PlanetHero initialization.
+- Celestial animation mounting.
+- Product collection rendering.
+- Media loading.
+- Cleanup after unmounting.
+
+Record measurable before/after results when possible.
+
+If runtime measurement is unavailable, report source-level conclusions separately.
+
+## 48. Investigate regressions
+
+Any new problem introduced by Prompt 6 must be addressed before approval.
+
+Examples:
+
+- Unexpected public bundle increase.
+- Missing animation.
+- Changed card dimensions.
+- Hydration mismatch.
+- Duplicate header.
+- Broken product link.
+- Additional network requests.
+- Repeated heavy component mounts.
+- Missing styles.
+- Browser console errors.
+
+Do not undertake unrelated performance rewrites.
+
+This prompt must preserve current storefront behavior.
+
+---
+
+# PART 19 — STRICT SCOPE BOUNDARIES
+
+## 49. Features allowed in Prompt 6
+
+Implement:
+
+- Component registry.
+- Component metadata.
+- Trusted capabilities.
+- Existing component adapters.
+- Shared renderer foundation.
+- Rendering contexts.
+- Safe data-resolution contracts.
+- Supported style mapping.
+- Integration fixtures.
+- Automated tests.
+- Performance verification.
+- GitHub checkpoints.
+- Progress documentation.
+
+## 50. Features NOT allowed in Prompt 6
+
+Do not implement:
+
+- Full visual editor interface.
+- Drag-and-drop handles.
+- Resize handles.
+- Shape manipulation UI.
+- Grid manipulation UI.
+- Inspector panels.
+- Layer navigator.
+- Full admin canvas.
+- Actual homepage migration.
+- Database publishing system.
+- Draft version persistence.
+- Undo/redo manager.
+- Animation timeline editor.
+- AI-generated theme builder.
+
+Do not redesign existing components simply to make them easier to edit.
+
+Do not change the public homepage to use the new renderer yet.
+
+**Prompt 7 will handle default homepage conversion and integration.**
+
+---
+
+# PART 20 — PRESERVE THE EXISTING WEBSITE
+
+## 51. Mandatory invariants
+
+The following must remain functional:
+
+- Storefront homepage.
+- Product pages.
+- Category pages.
+- Search.
+- Navigation.
+- Header/footer.
+- Product quick preview.
+- Product imagery.
+- Affiliate links.
+- Outbound click tracking.
+- Category spotlight functionality.
+- Featured collections.
+- Festival collections.
+- Existing animation behavior.
+- Existing responsive layouts.
+- Existing admin authentication.
+- Product/category management.
+- Existing site settings.
+- Supabase RLS protections.
+
+No production database data should be modified.
+
+No unnecessary migrations should be introduced.
+
+No live design change should be published.
+
+Where source modifications are essential to expose compatible optional props, preserve the previous behavior when those props are absent.
+
+---
+
+# PART 21 — GITHUB PROGRESS DOCUMENTATION
+
+## 52. Update IMPLEMENTATION_PROGRESS.md
+
+Record:
+
+- Prompt 6 status.
+- Completed implementation modules.
+- Components registered.
+- Adapters implemented.
+- Unsupported properties.
+- Test results.
+- Performance findings.
+- Known issues.
+- Next implementation dependencies.
+
+Do not mark Prompt 7 work as completed.
+
+## 53. Update ARCHITECTURE_AUDIT.md
+
+Document:
+
+- Registry architecture.
+- Renderer architecture.
+- Adapter pattern.
+- Rendering contexts.
+- Trusted capabilities.
+- Data binding boundary.
+- Responsive styling strategy.
+- SSR/hydration considerations.
+- Component lifecycle decisions.
+- Performance tradeoffs.
+
+Explain why the chosen architecture preserves the current storefront.
+
+## 54. Update PERFORMANCE_BASELINE.md
+
+Record:
+
+- Starting commit.
+- Test environment.
+- Baseline measurements.
+- New measurements.
+- Public bundle comparison.
+- Component rendering observations.
+- Performance regressions.
+- Unverified metrics.
+- Optimization opportunities.
+
+Do not replace real measurements with estimates.
+
+## 55. Update AI_STUDIO_HANDOFF.md
+
+Record:
+
+- Correct branch.
+- Last verified completed prompt.
+- Source modules created.
+- Test status.
+- Performance status.
+- GitHub synchronization status.
+- Unresolved technical concerns.
+- Exact next prompt.
+- Files Prompt 7 must inspect.
+- Constraints that must carry forward.
+
+The documentation must support continuation from another Google AI Studio account.
+
+---
+
+# PART 22 — GITHUB COMMIT AND PUSH
+
+## 56. Review changes before committing
+
+Inspect:
+
+- Active branch.
+- Working tree.
+- Changed files.
+- New files.
+- Diff summary.
+- Dependency changes.
+- Generated files.
+- Potential secrets.
+- Test results.
+- Performance results.
+
+Do not include unrelated modifications.
+
+Do not overwrite pre-existing user changes.
+
+## 57. Create the Prompt 6 checkpoint
+
+After successful verification, create a conventional commit.
+
+Recommended message:
+
+`feat(editor): add shared component registry and renderer foundation`
+
+Push to the designated development branch.
+
+Do not push directly to `main`.
+
+Do not force-push.
+
+Do not automatically merge.
+
+If essential functionality is incomplete, record that accurately rather than falsely claiming full completion.
+
+## 58. Verify remote synchronization
+
+After pushing:
+
+1. Fetch the remote branch HEAD.
+2. Confirm the new commit exists remotely.
+3. Confirm the correct branch was updated.
+4. Verify source files are present.
+5. Verify progress files are present.
+6. Report the final commit SHA.
+7. Report remaining uncommitted changes.
+
+Remember that a committed progress document cannot reliably reference the SHA of the commit that contains that same document.
+
+Record the previous checkpoint in the document, then report the final new SHA after pushing.
+
+The next prompt should independently read the actual remote SHA.
+
+If the push fails, clearly state that GitHub synchronization is incomplete.
+
+---
+
+# PART 23 — ACCEPTANCE CRITERIA
+
+Prompt 6 is complete only when the following are verified.
+
+## Registry
+
+- Component registry implemented.
+- Type-safe component definitions.
+- Trusted capability metadata.
+- Default properties.
+- Component lookup.
+- Validation.
+- Stable type identifiers.
+
+## Adapters
+
+- Existing component implementations reused.
+- PlanetHero adapter.
+- CelestialScrollWorld adapter.
+- ProductScrollRail adapter.
+- ProductCard adapter.
+- CategorySpotlightHero adapter.
+- CategoryCard adapter.
+- Shared chrome integration strategy.
+
+Where an adapter cannot safely support a property, document the limitation.
+
+## Renderer
+
+- Shared PageRenderer foundation.
+- Nested node rendering.
+- Stable identity.
+- Validated configuration.
+- Correct ordering.
+- Responsive property resolution.
+- Supported slot rendering.
+- Safe unknown-component handling.
+- Data-resolution integration.
+- Rendering-mode contracts.
+
+## Compatibility
+
+- Existing homepage remains unchanged.
+- Existing business functionality preserved.
+- No duplicate header/footer.
+- No live database changes.
+- No affiliate logic changes.
+- No broken animation lifecycle.
+- No unintended CSS overrides.
+- No public editor dependencies.
+
+## Performance
+
+- Baseline reviewed.
+- Post-implementation audit performed.
+- Bundle impact investigated.
+- Renderer performance tested where possible.
+- New regressions addressed.
+- Unverified metrics explicitly identified.
+
+## Testing
+
+- Registry unit tests.
+- Renderer tests.
+- Adapter integration tests.
+- Data-binding protection tests.
+- Responsive tests.
+- Build/lint checks.
+- Browser verification where available.
+
+## GitHub
+
+- Correct branch.
+- Prompt 5 dependency verified.
+- Progress documents updated.
+- Source changes reviewed.
+- Commit created.
+- Commit pushed.
+- Remote commit verified.
+- Handoff prepared.
+
+No incomplete or unverified item may be marked as passed.
+
+---
+
+# PART 24 — REQUIRED FINAL IMPLEMENTATION REPORT
+
+Produce a report titled:
+
+**"Visual Storefront Editor — Prompt 6 Component Registry, Shared Renderer, Performance Audit & GitHub Checkpoint"**
+
+The report must contain:
+
+### A. GitHub verification
+Repository, branch, starting SHA, Prompt 5 dependency status, final remote SHA.
+
+### B. Implementation summary
+Features actually completed.
+
+### C. Component registry
+Design, types, capabilities, and registration model.
+
+### D. Existing component adapters
+Each adapter created and its supported properties.
+
+### E. Shared renderer
+Architecture, rendering contexts, nesting, identity, and error handling.
+
+### F. Visual parity
+How the renderer preserves existing component appearance.
+
+### G. Data binding
+How real products/categories remain connected to existing business logic.
+
+### H. Responsive styling
+Property resolution and layout compatibility.
+
+### I. Animation compatibility
+Motion, video, celestial rendering, and lifecycle preservation.
+
+### J. Mini-preview readiness
+What has been prepared for later real-time component previews.
+
+### K. Performance before implementation
+Verified baseline results.
+
+### L. Performance after implementation
+Build impact, benchmark results, renderer behavior, and limitations.
+
+### M. Tests
+Commands executed, results, failures, and blocked checks.
+
+### N. File change inventory
+Every file created or modified.
+
+### O. GitHub checkpoint
+Commit, push result, remote verification.
+
+### P. Project documentation
+Status of the four persistent handoff files.
+
+### Q. Known issues
+Technical debt, unsupported properties, and remaining risks.
+
+### R. Prompt 7 readiness
+Dependencies and exact next actions.
+
+### S. Final recommendation
+
+Choose:
+
+**GO**
+The registry, adapters, renderer, tests, performance checks, and GitHub synchronization are sufficiently complete.
+
+**CONDITIONAL GO**
+The foundation is usable but explicitly identified issues remain.
+
+**NO-GO**
+Critical compatibility, schema, renderer, security, performance, or GitHub continuity requirements remain unresolved.
+
+Explain the recommendation with evidence.
+
+---
+
+# FINAL EXECUTION DIRECTIVE
+
+Perform the following in order:
+
+1. Connect to the correct GitHub repository.
+2. Fetch the latest branch state.
+3. Recover and verify Prompt 5.
+4. Read all persistent progress files.
+5. Audit current component architecture.
+6. Review baseline performance.
+7. Implement the typed component registry.
+8. Implement real storefront adapters.
+9. Implement the reusable shared renderer.
+10. Connect safe configuration and data-resolution contracts.
+11. Prepare support for future editor and mini-preview rendering.
+12. Run automated tests.
+13. Validate rendering compatibility.
+14. Perform post-implementation performance checks.
+15. Resolve regressions caused by this task.
+16. Update the four project documentation files.
+17. Review Git diffs and staged changes.
+18. Commit verified work to the development branch.
+19. Push to GitHub.
+20. Verify the remote commit.
+21. Produce the final technical report.
+
+**NEVER claim tests passed unless they ran.**
+
+**NEVER claim a GitHub push succeeded unless the remote commit was verified.**
+
+**NEVER silently reconstruct missing prior work.**
+
+**NEVER rebuild the homepage as a separate visual imitation.**
+
+**NEVER change production product data or affiliate logic merely to support visual editing.**
+
+**DO NOT START PROMPT 7 AUTOMATICALLY.**
+
+The ultimate objective is to create a production-quality, high-performance architecture where administrators can eventually customize the actual storefront through direct drag-and-drop, resizing, shaping, responsive grid manipulation, and real-time previews.
+
+The shared rendering foundation must be stable enough that future visual edits can modify design configuration without damaging the existing application's business logic.

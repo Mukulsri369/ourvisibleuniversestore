@@ -2,8 +2,8 @@
 
 - **Project:** Our Visible Universe Store (`Mukulsri369/ourvisibleuniversestore`)
 - **Active Branch:** `feature/visual-storefront-editor`
-- **Base Commit:** `b4ed3e121f3df51bae6dfc27f6c274a922ed030d`
-- **Last Updated:** 2026-10-20 (Prompt 5 of 48)
+- **Previous Remote Checkpoint (`origin/main`):** `f05569b41f74c3c89006f9fe7ef32ba6a48fde56`
+- **Last Updated:** 2026-10-20 (Prompt 6 of 48)
 
 ---
 
@@ -11,75 +11,57 @@
 
 | Layer | Technology | Implementation Details |
 | :--- | :--- | :--- |
-| **Framework & SSR** | React `19.2.0` + TanStack Start `1.132.0` + Nitro | File-based routing in `src/routes/`, SSR streaming entry in `src/server.ts`, client hydration in `src/router.tsx` |
-| **Data Fetching** | TanStack Query `5.66.0` + Supabase JS `2.103.0` | `homeQuery`, `categoriesQuery`, `settingsQuery`, and `productsQuery` in `src/lib/store.ts` |
-| **Styling System** | Tailwind CSS `4.0.6` (`@tailwindcss/vite`) | Dark-mode cosmic design tokens (`oklch`), utility classes, and responsive `@media` rules in `src/styles.css` |
-| **Animation & 3D** | Motion `12.38.0` (`motion/react`) + Three.js `0.183.2` | `PlanetHero.tsx` (video/poster switching & `AnimatePresence`), `CelestialScrollWorld.tsx` (`useScroll` + `useSpring` trajectories) |
-| **Database & Storage** | Supabase PostgreSQL + Drizzle ORM `0.45.2` | Tables: `products`, `categories`, `site_settings`, `click_events`; private storage served via `/api/public/images/$` |
+| **Framework & SSR** | React `19.2.0` + TanStack Start `1.168.60` + Nitro | File-based routing in `src/routes/`, SSR streaming entry in `src/server.ts`, client hydration in `src/router.tsx` |
+| **Data Fetching** | TanStack Query `5.101.1` + Supabase JS `2.117.2` | `homeQuery`, `categoriesQuery`, `settingsQuery`, and `productsQuery` in `src/lib/store.ts` |
+| **Styling System** | Tailwind CSS `4.2.1` (`@tailwindcss/vite`) | Dark-mode cosmic design tokens (`oklch`), utility classes, and responsive `@media` rules in `src/styles.css` |
+| **Animation & 3D** | Motion `14.1.0` (`motion/react`) + Three.js `0.186.1` | `PlanetHero.tsx` (video/poster switching & `AnimatePresence`), `CelestialScrollWorld.tsx` (`useScroll` + `useSpring` trajectories) |
+| **Database & Storage** | Supabase PostgreSQL + Drizzle ORM `0.45.3` | Tables: `products`, `categories`, `site_settings`, `outbound_clicks`; private storage served via `/api/public/img/$` |
 | **Admin Portal** | `/admin/*` routes (`src/routes/_admin.tsx`) | Email-allowlisted Supabase Auth session guard; manages Products, Categories, Duplicates, Festival, and Settings |
 
 ---
 
-## 2. Core Visual Editor Design Principles
+## 2. Core Visual Editor Rendering Pipeline (Implemented in Prompts 5–6)
 
-1. **Single Shared Renderer Principle:**
-   ```
-   ONE VALIDATED PAGE DOCUMENT
-     → ONE COMPONENT REGISTRY
-       → ONE SHARED STOREFRONT RENDERER
-         → PUBLIC MODE ("public") OR EDITOR MODE ("editor" | "preview")
-   ```
-   The visual editor must never render a separate mock or simplified approximation of the landing page. Both the public storefront and the admin editor canvas render the exact same React components (`PlanetHero`, `CelestialScrollWorld`, `ProductScrollRail`, `ProductCard`, `CategorySpotlightHero`, `CategoryCard`, `StoreHeader`, `StoreFooter`).
+```
+VALIDATED PAGEDOCUMENT (src/lib/visual-editor/schema/)
+  → VISUAL COMPONENT REGISTRY (src/lib/visual-editor/registry/)
+    → SHARED PAGE RENDERER & CONTEXT (src/lib/visual-editor/rendering/)
+      → REAL STOREFRONT ADAPTERS (src/lib/visual-editor/adapters/)
+        → EXISTING REACT STOREFRONT COMPONENTS (src/components/store/)
+```
 
-2. **Strict Separation of Presentation vs. Business Data:**
-   - **Presentation Data (Stored in `PageDocument`):** Section order, layout mode (`grid`, `bento`, `masonry`, `carousel`, `flex`), dimensions, padding/margin, shapes, corner radii, typography, colors, gradients, shadows, media asset references, and animation parameters.
-   - **Business Data (Authoritative in Supabase `products` & `categories` tables):** Product IDs, titles, descriptions, prices, currencies, stock status, category memberships (`category_ids`), and retailer affiliate URLs (`affiliate_url` / `amazon_url`).
-   - **Enforcement:** `FORBIDDEN_BUSINESS_DATA_KEYS` in `src/lib/visual-editor/schema/bindings.ts` and `validation.ts` actively reject any attempt to serialize `price`, `affiliate_url`, or `amazon_url` overrides inside presentation props.
+### 2.1 Component Integration Matrix (Pre-Implementation Audit)
 
-3. **Zero Public-Bundle Bloat During Foundation Phases:**
-   - All schema and tree modules live in `src/lib/visual-editor/` and depend only on `zod` (already installed in the repository).
-   - No heavy drag-and-drop or editor UI libraries are imported into public routes.
+| Storefront Component | Source File | Data Dependencies | Routing & Query Context | Animation / Browser APIs | Adapter Implementation |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `PlanetHero` | `src/components/store/PlanetHero.tsx` | `PLANETS` (`earth`, `venus`, `mars`) | TanStack `<Link to="/shop">` | `motion/react`, `<video>`, `IntersectionObserver`, `document.visibilitychange` | `PlanetHeroAdapter.tsx` |
+| `CelestialScrollWorld` | `src/components/store/CelestialScrollWorld.tsx` | `CELESTIAL_CONFIGS` (`earth`, `venus`, `mars`) | None (`fixed inset-0 z-0`) | `useScroll`, `useSpring`, `useTransform`, `useReducedMotion` | `CelestialScrollWorldAdapter.tsx` |
+| `ProductScrollRail` | `src/components/store/ProductScrollRail.tsx` | `items: ProductCardData[]` | TanStack `<Link>`, `QueryClient` (via quick preview modal) | `ResizeObserver`, horizontal scroll listener | `ProductScrollRailAdapter.tsx` |
+| `ProductCard` | `src/components/store/ProductCard.tsx` | `p: ProductCardData` (`price`, `currency`, `affiliate_url`, `images`) | TanStack `<Link to="/product/$slug">`, `BuyButton` | `AnimatePresence` multi-image crossfade | `ProductCardAdapter.tsx` |
+| `CategorySpotlightHero` | `src/components/store/CategorySpotlightHero.tsx` | `product: ProductCardData`, `categoryName`, `categorySlug`, `sectorLore` | TanStack `<Link>`, `ProductQuickPreviewModal` (`useQuery`) | Collapsible description state | `CategorySpotlightAdapter.tsx` |
+| `CategoryCard` | `src/components/store/CategoryCard.tsx` | `c: Category`, `index` | TanStack `<Link to="/category/$slug">` | CSS group-hover scale & elevation | `CategoryCardAdapter.tsx` |
+| `StoreHeader` / `StoreFooter` | `src/components/store/StoreChrome.tsx` | `settingsQuery`, `categoriesQuery` | `useSuspenseQuery`, `useNavigate`, `<Link>` | Mobile menu drawer state | `StoreChromeAdapter.tsx` |
 
----
+### 2.2 Rendering Contexts & Safe Interaction Policies (`RenderContext.tsx`)
 
-## 3. PageDocument Schema Architecture (Implemented in Prompt 5)
+| Rendering Mode | Navigation (`<Link>`) | Affiliate Redirect (`BuyButton`) | Outbound Click Logging (`logOutboundClick`) | Quick Preview Modal | Node Click Selection (`onSelectNode`) | Editor DOM Attributes (`data-editor-*`) | Heavy Video / Global Scroll |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **`"public"`** | Enabled | Enabled | Enabled | Enabled | Disabled | Disabled (`0` extra attributes) | Enabled |
+| **`"editor"`** | Blocked (Capture Phase) | Blocked (Capture Phase) | Blocked (Capture Phase) | Disabled | Enabled (Deepest Node) | Enabled | Enabled |
+| **`"preview"`** | Blocked (Capture Phase) | Blocked (Capture Phase) | Blocked (Capture Phase) | Enabled | Disabled | Disabled | Enabled |
+| **`"mini_preview"`** | Blocked (Capture Phase) | Blocked (Capture Phase) | Blocked (Capture Phase) | Disabled | Disabled | Disabled | Disabled (Static Poster / Summary) |
 
-### 3.1 Document Identity & Versioning (`src/lib/visual-editor/schema/page-document.ts`)
-- `schemaVersion`: `"1.0.0"` (`CURRENT_PAGE_SCHEMA_VERSION`)
-- `id`, `pageId`, `pageType` (`"home" | "category" | "collection" | "landing" | "custom"`), `slug`, `name`, `metadata`, `settings`, and ordered `root: EditorNode[]`.
-- Hard structural limits prevent DoS or pathological payloads:
-  - `MAX_DOCUMENT_DEPTH = 12`
-  - `MAX_DOCUMENT_NODES = 1500`
-  - `MAX_SERIALIZED_DOCUMENT_BYTES = 1,048,576` (1 MiB)
+### 2.3 Zero-Wrapper Public Parity (`AdapterBoundary.tsx`)
+- In `"public"` mode, when a node has no explicit design override (`resolveNodeCssProperties(mergedStyleBundle) === undefined`), `AdapterBoundary` returns `<>{children}</>` directly without introducing any extra `<div>` wrapper.
+- Verified in `src/lib/visual-editor/__tests__/adapters.test.tsx`: `renderedCompact.innerHTML === directCompact.innerHTML`, `renderedRail.innerHTML === directRail.innerHTML`, `renderedSpotlight.innerHTML === directSpotlight.innerHTML`, `renderedCategoryCard.innerHTML === directCategoryCard.innerHTML`, `renderedHero.innerHTML === directHero.innerHTML`, and `renderedCelestial.innerHTML === directCelestial.innerHTML`.
 
-### 3.2 Component Type Taxonomy (`src/lib/visual-editor/schema/nodes.ts`)
-- **Generic Building Blocks (15 types):** `Section`, `Container`, `Stack`, `Grid`, `GridItem`, `Text`, `Heading`, `Image`, `Video`, `Button`, `Icon`, `Divider`, `Spacer`, `Shape`, `Overlay`.
-- **Storefront Domain Components (16 types):** `PlanetHero`, `CelestialScrollWorld`, `ProductScrollRail`, `ProductGrid`, `ProductCard`, `CategorySpotlightHero`, `CategoryGrid`, `CategoryCard`, `FestivalSection`, `FeaturedCollection`, `PromotionalBanner`, `InterestSection`, `BenefitsSection`, `InstagramSection`, `StoreHeader`, `StoreFooter`.
-- **Parent-Child Nesting Safeguards:**
-  - `LEAF_COMPONENT_TYPES` (`ProductCard`, `CategoryCard`, `Text`, `Heading`, `Image`, `Video`, `Button`, `Icon`, `Divider`, `Spacer`, `CelestialScrollWorld`, `StoreHeader`, `StoreFooter`) cannot contain child node trees.
-  - `ROOT_ONLY_COMPONENT_TYPES` (`StoreHeader`, `StoreFooter`, `CelestialScrollWorld`, `PlanetHero`) can only appear at depth 1 (`document.root`).
+### 2.4 Global Chrome & Fixed Background Layer Separation (`PageRenderer.tsx`)
+1. **Preventing Duplicate `StoreHeader` / `StoreFooter`:**
+   - `src/routes/_store.tsx` renders `<StoreHeader />` and `<StoreFooter />` around `<Outlet />`.
+   - `PageRenderer` defaults `renderGlobalChromeInDocument = false`, so even if a `PageDocument` contains `StoreHeader` and `StoreFooter` nodes for standalone editor preview, they return `null` when mounted inside a storefront route layout.
+2. **Preventing `CelestialScrollWorld` Clipping:**
+   - `PageRenderer` separates `CelestialScrollWorld` root nodes from flow sections and renders `CelestialScrollWorldAdapter` without any positioned or overflow-clipping wrapper, preserving `fixed inset-0 pointer-events-none z-0`.
 
-### 3.3 Responsive Inheritance Engine (`src/lib/visual-editor/utils/responsive-resolution.ts`)
-- Base authoring canvas is `desktop` (`1440×900`).
-- Deterministic inheritance chains:
-  - `desktop` → `node.style`
-  - `desktop_xl` (`1920×1080`) → `node.style` + `node.responsive.desktop_xl`
-  - `tablet` (`768×1024`) → `node.style` + `node.responsive.tablet`
-  - `mobile` (`390×844`) → `node.style` + `node.responsive.tablet` + `node.responsive.mobile`
-  - `mobile_sm` (`360×800`) → `node.style` + `node.responsive.tablet` + `node.responsive.mobile` + `node.responsive.mobile_sm`
-- Modifying a desktop property never clobbers tablet/mobile overrides, and `clearResponsiveStyleOverride` cleanly restores the inherited cascade value.
-
-### 3.4 Festival vs. General Product Ordering Decision
-- In `src/lib/store.ts`, `featured`, `newArrivals`, and `categorySections` call `shuffleProducts()` (`Math.random()`), whereas `festivalProducts` (`lines 291-297`) preserves the exact administrator-selected sequence from `site_settings.social_links.__festival_product_ids`.
-- Our `ProductCollectionBinding` (`src/lib/visual-editor/schema/bindings.ts`) models this explicitly via `sortMode: "default_preserve_order" | "deterministic_shuffle" | "featured_first" | "newest" | "price_asc" | "price_desc" | "name_asc"`.
-
----
-
-## 4. Library Selection & Rejection Log
-
-| Candidate | Decision | Rationale |
-| :--- | :--- | :--- |
-| **Custom Pointer-Events + Structural Sharing Tree Engine + Zod** | **SELECTED** | 100% React 19.2.0 compatible, zero bundle bloat on public routes, sub-millisecond (`0.04ms–0.14ms`) immutable style updates, native support for CSS Grid/Bento/Carousel and custom corner-radius/shape handles |
-| `@measured/puck` | **REJECTED** | Renders its own opinionated block dropzones and iframe/sidebar DOM structure; cannot natively edit existing `PlanetHero` or `CelestialScrollWorld` in-place |
-| `react-moveable` | **DEFERRED / OPTIONAL** | Heavy runtime footprint (`~160KB+`) and imperative DOM overlays; our custom pointer-event + SVG/CSS overlay architecture handles 60fps transient drag/resize cleanly |
-| `react-grid-layout` | **REJECTED** | Relies on `react-draggable` / `react-resizable` with legacy React peer dependencies and absolute pixel positioning that breaks responsive Tailwind CSS Grids |
+### 2.5 Reusable Card Templates (`cardTemplates` in `PageRenderContext`)
+- `ProductCardAdapter` and `CategoryCardAdapter` merge `cardTemplates["ProductCard"]`, `cardTemplates["ProductCardCompact"]`, and `cardTemplates["CategoryCard"]` beneath node-specific responsive styles before computing CSS properties.
+- Updating a card template style updates every card using that template without mutating any product or category record.
