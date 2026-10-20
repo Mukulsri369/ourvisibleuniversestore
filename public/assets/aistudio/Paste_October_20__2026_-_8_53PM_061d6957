@@ -1,0 +1,1477 @@
+# PROMPT 5 OF 48 — PRODUCTION-GRADE PAGE SCHEMA ENGINE, GITHUB CONTINUITY, PERFORMANCE AUDIT & ZERO-REGRESSION IMPLEMENTATION
+
+## YOUR ROLE
+
+Act as a Principal Software Architect, Senior React 19 Engineer, TypeScript Systems Architect, Visual Editor Infrastructure Engineer, GitHub DevOps Specialist, and Production Performance Engineer.
+
+You are working on my existing SaaS affiliate-store application.
+
+**GitHub repository:**
+https://github.com/Mukulsri369/ourvisibleuniversestore
+
+**Development environment:** Google AI Studio — Argon 4
+
+**Roadmap:** 48 development prompts across 10 phases.
+
+**Current task:** Phase 2, Prompt 5 of 48.
+
+**Feature being developed:** An advanced Shopify-style Visual Storefront Editor with Figma-like geometric controls and Webflow-like responsive customization.
+
+This prompt begins the implementation foundation.
+
+Your primary objectives are:
+
+1. Establish reliable continuity through GitHub so development can resume from different Google AI Studio accounts.
+2. Perform a real performance and architecture audit before modifying code.
+3. Implement a production-grade, typed and versioned page-document schema.
+4. Prepare the data model for direct drag-and-drop, resizing, shape editing, product/category grid customization, and real-time previews.
+5. Maintain full backward compatibility with the existing landing page.
+6. Verify performance and functionality after implementation.
+7. Update persistent implementation documentation.
+8. Commit and push completed work to the correct GitHub development branch.
+
+**Do not begin Prompt 6 automatically.**
+
+---
+
+# PART 1 — MANDATORY GITHUB CONTINUITY PROTOCOL
+
+## 1. Verify the correct GitHub repository
+
+Before performing any implementation, connect to the repository:
+
+https://github.com/Mukulsri369/ourvisibleuniversestore
+
+The repository previously used:
+
+- Default branch: `main`
+- React 19
+- TypeScript
+- TanStack Start
+- Tailwind CSS 4
+- Supabase
+- Motion
+- Three.js
+- Vitest
+
+A previously observed main-branch commit was:
+
+`b4ed3e121f3df51bae6dfc27f6c274a922ed030d`
+
+This commit is a reference only, not a permanent source of truth.
+
+**Always fetch and verify the latest remote state before proceeding.**
+
+Do not assume the branch or repository state has remained unchanged.
+
+### Required Git verification
+
+Determine and report:
+
+- Repository URL.
+- Current local branch.
+- Remote default branch.
+- Current local HEAD SHA.
+- Remote HEAD SHA.
+- Whether the working tree is clean.
+- Whether local changes are uncommitted.
+- Whether the current branch is ahead or behind its remote.
+- Latest relevant implementation commits.
+- Whether an existing visual-editor development branch exists.
+- Whether the previous prompt's work has already been committed.
+
+Do not overwrite, reset, discard, or force-push existing changes.
+
+If there are unexpected uncommitted changes, inspect and preserve them. Do not silently mix unrelated modifications into this prompt's commit.
+
+## 2. Select the correct development branch
+
+Development must continue on the branch recorded in the project's implementation handoff documents, if one already exists.
+
+If no development branch or prior handoff exists, create a dedicated branch from the latest verified `main` branch:
+
+`feature/visual-storefront-editor`
+
+Use that as the working branch for subsequent visual-editor prompts.
+
+**Do not push experimental implementation directly to `main`.**
+
+Do not merge into `main` automatically.
+
+If the Git integration cannot create or switch branches, report the limitation and provide the exact recovery instructions instead of pretending that branch operations succeeded.
+
+## 3. Support switching between Google AI Studio accounts
+
+A critical requirement of this project is that I may switch Google AI Studio accounts or Google IDs.
+
+The new AI Studio session must be able to continue implementation from GitHub without losing progress or repeating completed work.
+
+For this reason, all future prompts must follow a persistent handoff workflow.
+
+At the beginning of every prompt:
+
+1. Connect to the correct GitHub repository.
+2. Identify the active development branch.
+3. Fetch the latest remote state.
+4. Read the repository's implementation progress files.
+5. Determine which prompts are completed.
+6. Determine which tasks remain incomplete.
+7. Read the architecture decisions already made.
+8. Examine previous performance measurements and unresolved issues.
+9. Check the previous commit and push status.
+10. Continue from the latest verified checkpoint.
+
+Do not depend on conversational memory from the previous Google AI Studio account.
+
+**GitHub repository state and committed project documentation must be authoritative for development continuity.**
+
+---
+
+# PART 2 — REQUIRED PERSISTENT PROJECT DOCUMENTATION
+
+## 4. Create or update four root-level documents
+
+The following files must exist in the repository:
+
+### A. IMPLEMENTATION_PROGRESS.md
+
+This is the master implementation tracker.
+
+It must contain:
+
+- Project name and repository.
+- Active development branch.
+- Full 48-prompt roadmap reference.
+- Current phase.
+- Current prompt.
+- Completed prompt numbers.
+- Partially completed work.
+- Pending prompts.
+- Actual features implemented.
+- Modified source modules.
+- Tests performed.
+- Known issues.
+- Architecture dependencies.
+- Performance changes.
+- Remaining blockers.
+- Next recommended implementation action.
+
+Never mark a feature complete simply because code was generated.
+
+Only mark it complete after appropriate validation.
+
+If the repository does not contain reliable evidence that Prompts 1–4 were executed, record their status accurately instead of assuming they passed.
+
+### B. ARCHITECTURE_AUDIT.md
+
+Maintain the technical architecture and major engineering decisions.
+
+Document:
+
+- Current application stack.
+- Storefront component structure.
+- Existing admin architecture.
+- Product/category data architecture.
+- Visual-editor design principles.
+- Single shared renderer strategy.
+- Page-document schema.
+- Component identity.
+- Responsive configuration.
+- Data binding boundaries.
+- Protected functionality.
+- Security constraints.
+- Selected libraries and rejected alternatives.
+- Architecture decisions and their rationale.
+- Future migration considerations.
+
+Update this document when a meaningful architecture decision is introduced.
+
+### C. PERFORMANCE_BASELINE.md
+
+This file is mandatory throughout implementation.
+
+Track:
+
+- Measurement date.
+- Repository commit under test.
+- Test environment.
+- Browser and device conditions.
+- Page-load performance.
+- JS/CSS bundle sizes.
+- Hydration behavior.
+- Scroll performance.
+- Animation smoothness.
+- Main-thread activity.
+- Memory usage where measurable.
+- Relevant mobile results.
+- Existing problems.
+- Before/after comparisons.
+- Performance regressions.
+- Optimization opportunities.
+
+Do not invent numerical measurements.
+
+Clearly label unavailable measurements as:
+
+`NOT YET VERIFIED`
+
+or
+
+`BLOCKED — <reason>`
+
+### D. AI_STUDIO_HANDOFF.md
+
+This file must allow a new Google AI Studio account to resume development immediately.
+
+Include:
+
+- GitHub repository URL.
+- Correct development branch.
+- Last verified completed prompt.
+- Current implementation status.
+- Summary of recent changes.
+- Relevant commit references.
+- Files created or modified.
+- Tests completed.
+- Known failures.
+- Unresolved questions.
+- Next prompt number.
+- Exact next development objective.
+- Important commands.
+- Environment setup prerequisites.
+- Required secrets identified by variable name only.
+- GitHub synchronization status.
+
+Never store API keys, passwords, access tokens, or other secrets in this file.
+
+### Important Git SHA detail
+
+A tracked file cannot reliably contain the SHA of the very commit that introduces that file, because updating the file would create a different commit.
+
+Record the starting/base commit and the latest previously verified checkpoint in the committed documents.
+
+After the new commit is created and pushed, report its final SHA in your completion response and verify it against the remote repository.
+
+The next prompt should independently retrieve that SHA.
+
+---
+
+# PART 3 — PERFORMANCE-FIRST REPOSITORY AUDIT
+
+## 5. Audit existing application performance before implementation
+
+**Performance is a first-class project requirement, not a task reserved for the final prompt.**
+
+Before introducing the page schema, inspect existing performance characteristics.
+
+Focus on the storefront at:
+
+`src/routes/_store.index.tsx`
+
+Also inspect:
+
+- `src/components/store/PlanetHero.tsx`
+- `src/components/store/CelestialScrollWorld.tsx`
+- `src/components/store/ProductScrollRail.tsx`
+- `src/components/store/ProductCard.tsx`
+- `src/components/store/CategorySpotlightHero.tsx`
+- `src/components/store/StoreChrome.tsx`
+- `src/lib/store.ts`
+- `src/styles.css`
+- Existing asset-loading utilities.
+- Existing application bundles.
+- Existing query and caching behavior.
+
+### Performance concerns to investigate
+
+**Page loading**
+- Initial document load.
+- JavaScript download and evaluation.
+- Fonts and images.
+- Hero videos and posters.
+- Route hydration.
+- Supabase requests.
+- Lazy-loaded sections.
+
+**Rendering**
+- Unnecessary component rerenders.
+- Layout shifts.
+- Heavy CSS effects.
+- Expensive gradients and blur.
+- DOM complexity.
+- Large product collections.
+- Repeated image rendering.
+
+**Animations**
+- Motion animation overhead.
+- Scroll-linked transform work.
+- Planetary/celestial animations.
+- Video lifecycle.
+- Background rendering.
+- GPU compositing.
+- Mobile animation smoothness.
+
+**Memory**
+- Event listeners.
+- Observers.
+- Video resources.
+- Three.js/WebGL resources where applicable.
+- Component mount/unmount cleanup.
+- Repeated route transitions.
+
+**Responsive performance**
+- Small mobile viewports.
+- Mid-range mobile devices.
+- Tablet.
+- Desktop.
+- Large screen.
+
+## 6. Capture actual measurable performance metrics
+
+Where executable browser tooling is available, measure:
+
+- Largest Contentful Paint (LCP).
+- Cumulative Layout Shift (CLS).
+- Interaction to Next Paint (INP), where valid real-user data exists.
+- Time to First Byte (TTFB), where relevant.
+- Total JS and CSS transferred.
+- Route-specific initial JavaScript.
+- Main-thread long tasks.
+- Frame times.
+- Approximate FPS during scrolling and animations.
+- Relevant memory consumption.
+- React rendering behavior.
+- Network request counts.
+- Image and video loading costs.
+
+If INP cannot be meaningfully established in a short automated run, report instrumented interaction latency separately instead of presenting it as field INP.
+
+If tools are unavailable, perform source-level inspection and clearly distinguish it from measured runtime performance.
+
+Never fabricate Lighthouse scores, FPS numbers, memory values, or load times.
+
+## 7. Test representative performance scenarios
+
+Assess these scenarios wherever possible:
+
+1. Initial homepage load.
+2. Hero video initialization.
+3. Planet switching.
+4. Scrolling from the hero into product sections.
+5. Celestial scroll transitions.
+6. Rendering featured products.
+7. Rendering a large category section.
+8. Horizontal product scrolling.
+9. Long-page scrolling.
+10. Mobile viewport interaction.
+11. Repeated page navigation.
+12. Repeated component mount/unmount behavior.
+
+Use stable test data and consistent device/browser conditions when comparing results.
+
+For this prompt, prioritize measuring the existing storefront and proving that introducing schema modules has no unintended effect.
+
+Do not undertake unrelated animation or rendering rewrites.
+
+Document newly discovered performance defects for later controlled remediation.
+
+---
+
+# PART 4 — PERFORMANCE BUDGET FOR PROMPT 5
+
+## 8. Establish explicit performance constraints
+
+The new schema should be lightweight.
+
+It must not increase the normal public storefront bundle merely because editor-only schema utilities were added to the repository.
+
+At the end of Prompt 5:
+
+- Public storefront behavior must remain unchanged.
+- Existing landing-page rendering must remain unchanged.
+- No editor interface library should be loaded by public routes.
+- No heavy drag-and-drop dependencies should be introduced.
+- No new unnecessary runtime observers should be mounted.
+- No additional network requests should be introduced by the schema.
+- No page-document parsing should be added to public routes yet.
+- No database reads or writes should be introduced by the isolated schema implementation.
+
+Compare before and after production build output where possible.
+
+Record any difference in bundle size and explain its cause.
+
+A public-route bundle increase without a clear need should be treated as a regression requiring investigation.
+
+## 9. Benchmark the schema implementation
+
+The page schema will eventually be updated frequently during dragging and resizing.
+
+Therefore, assess the cost of:
+
+- Document parsing.
+- Zod validation.
+- Tree traversal.
+- Node lookup.
+- Immutable node updates.
+- Responsive property resolution.
+- Serialization.
+- Deeply nested document validation.
+- Large collection-layout configurations.
+
+Use representative synthetic documents, for example:
+
+- Small document: approximately 25 nodes.
+- Medium document: approximately 150 nodes.
+- Large document: approximately 500 nodes.
+- Stress case: approximately 1,000 nodes.
+
+These are test fixtures, not mandatory limits on the final product.
+
+For each benchmark, record actual results when execution is possible.
+
+Use repeated runs under controlled conditions and report meaningful distribution statistics rather than a single arbitrary result.
+
+Investigate unexpectedly high validation or update costs.
+
+Do not introduce excessive memoization, caching, or indexing complexity without evidence.
+
+The final design should support efficient future editor interaction without sacrificing simplicity or correctness.
+
+---
+
+# PART 5 — IMPLEMENT THE PAGE DOCUMENT ENGINE
+
+## 10. Architectural principle
+
+The long-term architecture must support:
+
+**ONE VALIDATED PAGE DOCUMENT**
+
+→ **ONE COMPONENT REGISTRY**
+
+→ **ONE SHARED STOREFRONT RENDERER**
+
+→ **PUBLIC MODE OR EDITOR MODE**
+
+Prompt 5 implements the first part: the page-document schema and supporting utilities.
+
+The component registry will be introduced in Prompt 6.
+
+The existing homepage will be converted to the new document model in Prompt 7.
+
+The full theme system, admin visual editor, drag-and-drop interactions, previews, and publishing will follow later.
+
+**Do not implement those later features prematurely.**
+
+## 11. Create a versioned PageDocument schema
+
+Implement a strongly typed, JSON-serializable document model.
+
+The root document must support:
+
+### Identity
+- Document ID.
+- Page ID.
+- Page type.
+- Page slug.
+- Schema version.
+- Optional store reference.
+- Name and metadata.
+
+### Structure
+- Ordered root sections.
+- Nested components.
+- Stable node IDs.
+- Supported child relationships.
+- Named slots.
+- Component type identifiers.
+
+### Presentation
+- Dimensions.
+- Geometry.
+- Shape.
+- Typography.
+- Colors.
+- Backgrounds.
+- Borders.
+- Shadows.
+- Layout properties.
+- Responsive overrides.
+
+### Dynamic content
+- Product data bindings.
+- Category data bindings.
+- Collection configuration.
+- Repeated section definitions.
+- Conditional visibility.
+
+### Behavior
+- Animation configuration.
+- Safe interaction configuration.
+- Visibility rules.
+- Component-specific properties.
+
+### Versioning
+- Schema version.
+- Migration interface.
+- Validation rules.
+- Compatibility handling.
+
+Do not store React components, functions, browser objects, or executable JavaScript inside the page document.
+
+The schema must remain serializable, portable, secure, and editor-library independent.
+
+## 12. Implement the hierarchical node system
+
+Support structures conceptually similar to:
+
+Page
+→ Section
+→ Container
+→ Grid
+→ Grid Item
+→ Product Card
+
+And:
+
+Page
+→ Hero Section
+→ Media Layer
+→ Heading
+→ Description
+→ CTA
+
+Nodes should support stable identity and appropriate properties.
+
+Required safeguards:
+
+- Unique IDs.
+- Deterministic ordering.
+- Valid nesting.
+- Maximum reasonable depth.
+- Maximum reasonable document size.
+- No circular references.
+- Supported component type validation.
+- Immutable update semantics.
+- Safe serialization.
+
+Do not model complex functional components entirely as generic editable DOM nodes.
+
+The future component registry will expose safe configuration interfaces for existing storefront components.
+
+## 13. Define supported component identifiers
+
+Create typed component identifiers for generic blocks such as:
+
+- Section.
+- Container.
+- Stack.
+- Grid.
+- Grid item.
+- Text.
+- Heading.
+- Image.
+- Video.
+- Button.
+- Icon.
+- Divider.
+- Spacer.
+- Shape.
+- Overlay.
+
+Also define relevant storefront component types:
+
+- PlanetHero.
+- CelestialScrollWorld.
+- ProductScrollRail.
+- ProductGrid.
+- ProductCard.
+- CategorySpotlightHero.
+- CategoryGrid.
+- CategoryCard.
+- FestivalSection.
+- FeaturedCollection.
+- PromotionalBanner.
+- InterestSection.
+- BenefitsSection.
+- InstagramSection.
+- StoreHeader.
+- StoreFooter.
+
+Inspect the actual implementation before assigning component-specific configuration fields.
+
+These are schema identifiers and contracts.
+
+Do not yet create renderer adapters.
+
+---
+
+# PART 6 — GEOMETRY, RESIZING, AND SHAPE CONFIGURATION
+
+## 14. Implement dimensions and geometric properties
+
+The schema must support future drag-handle editing.
+
+Represent:
+
+- Width.
+- Height.
+- Minimum/maximum dimensions.
+- Aspect ratio.
+- Rotation.
+- Scale.
+- Positioning.
+- Offsets.
+- Layer order.
+- Alignment.
+- Overflow.
+
+Use validated units.
+
+Allow appropriate values such as:
+
+- px.
+- %.
+- rem.
+- vw.
+- vh.
+- auto.
+- min-content.
+- max-content.
+
+Avoid unrestricted CSS strings or executable expressions.
+
+Distinguish CSS dimensions from transform properties.
+
+Future resize handles should update real layout properties where appropriate.
+
+## 15. Implement shape configuration
+
+Support:
+
+- Square.
+- Rectangle.
+- Rounded rectangle.
+- Pill.
+- Circle.
+- Ellipse.
+- Safe supported polygons.
+- Approved clipping presets.
+
+Allow:
+
+- Global corner radius.
+- Independent corner radii.
+- Border styles.
+- Background styling.
+- Image cropping.
+- Overflow and clipping.
+- Shadow and glow.
+
+For example, dragging a corner-radius handle should eventually modify a validated radius property.
+
+The persistent schema must not depend on whether Moveable or another library owns the interaction.
+
+## 16. Implement grid and flex layout models
+
+Create typed contracts for:
+
+### CSS Grid
+- Column count.
+- Row definitions.
+- Gaps.
+- Track sizing.
+- Item spans.
+- Alignment.
+- Grid placement.
+- Auto-fit/auto-fill where supported.
+
+### Flexbox
+- Direction.
+- Wrapping.
+- Justification.
+- Alignment.
+- Basis.
+- Grow/shrink.
+- Ordering.
+- Gap.
+
+### Specialized layouts
+- Standard grid.
+- Bento.
+- Masonry.
+- Carousel.
+- Editorial.
+- Supported freeform layout.
+
+Do not assume a single rendering library can implement all layout modes.
+
+The schema should describe the intended layout. Future adapters will implement it.
+
+---
+
+# PART 7 — RESPONSIVE CONFIGURATION ENGINE
+
+## 17. Implement responsive property inheritance
+
+Support a clearly defined base configuration and responsive overrides.
+
+Determine breakpoints based on the actual application's CSS conventions.
+
+Allow independent overrides for:
+
+- Dimensions.
+- Layout modes.
+- Grid columns.
+- Grid spans.
+- Gaps.
+- Padding.
+- Margins.
+- Typography.
+- Shape.
+- Image presentation.
+- Visibility.
+- Positioning.
+- Animation.
+
+Define deterministic inheritance.
+
+Support removing an override to restore the inherited value.
+
+Changing a desktop card dimension must not accidentally replace its mobile settings.
+
+Provide pure, tested responsive-property resolution utilities.
+
+The future canvas and mini-preview should both use the same resolution rules.
+
+---
+
+# PART 8 — VISUAL STYLE CONFIGURATION
+
+## 18. Define typography and appearance contracts
+
+Support:
+
+- Font family.
+- Font size.
+- Font weight.
+- Line height.
+- Letter spacing.
+- Text alignment.
+- Text color.
+- Text decoration.
+- Background color.
+- Gradients.
+- Border.
+- Corner radius.
+- Shadow.
+- Glow.
+- Opacity.
+- Blur.
+- Supported visual filters.
+
+Use validated design values and optional future theme-token references.
+
+Do not replace the current global theme yet.
+
+Do not hardcode astronomy-specific colors as permanent schema rules.
+
+This SaaS architecture must eventually support clothing, shoes, décor, electronics, and other storefront industries.
+
+## 19. Define safe media properties
+
+Support references to:
+
+- Images.
+- Videos.
+- Poster frames.
+- Icons.
+- Background media.
+- Decorative assets.
+
+Include:
+
+- Asset identifier.
+- Approved URL/path reference.
+- Alternative text.
+- Aspect ratio.
+- Object-fit.
+- Focal point.
+- Cropping.
+- Loading priority.
+- Responsive variants.
+
+Never store binary media or credentials inside the page document.
+
+Do not change the existing Supabase Storage infrastructure.
+
+---
+
+# PART 9 — PRODUCT AND CATEGORY DATA PROTECTION
+
+## 20. Implement typed data-binding contracts
+
+Product cards must continue using real Supabase product data.
+
+Define safe bindings for:
+
+- Featured products.
+- New arrivals.
+- Festival products.
+- Selected categories.
+- Curated product collections.
+- Category-specific products.
+- Approved sorting modes.
+- Product visibility.
+- Collection presentation.
+
+Do not store independent authoritative copies of product names, prices, affiliate URLs, availability, or IDs.
+
+**Visual properties must remain separate from business data.**
+
+Changing a card's shape must never alter its product identity.
+
+Changing grid columns must never affect affiliate URLs.
+
+Changing typography must never modify product database records.
+
+Also support data-driven repeated sections so that new categories can appear without manually rewriting the stored page document.
+
+The existing category order and spotlight settings must remain respected.
+
+Investigate the current festival product shuffle behavior and document any ordering conflict. Do not change existing behavior during this prompt.
+
+---
+
+# PART 10 — ANIMATION AND SPECIALIZED COMPONENT CONFIGURATION
+
+## 21. Prepare declarative animation contracts
+
+The existing application already uses Motion and specialized planetary effects.
+
+Do not implement another general-purpose animation engine.
+
+Create safe configuration contracts for:
+
+- Entrance animation.
+- Hover animation.
+- Scroll-triggered effects.
+- Looping effects.
+- Duration.
+- Delay.
+- Easing.
+- Translation.
+- Rotation.
+- Scale.
+- Opacity.
+- Visibility.
+- Reduced-motion behavior.
+
+Prepare specialized extension points for:
+
+- PlanetHero.
+- CelestialScrollWorld.
+- Category celestial visuals.
+- Product hover transitions.
+- Carousel interactions.
+
+The schema must store values, not animation callbacks.
+
+Actual renderer integration occurs later.
+
+---
+
+# PART 11 — ZOD VALIDATION AND SECURITY
+
+## 22. Implement production-grade runtime validation
+
+Use the repository's installed compatible Zod version.
+
+Validate:
+
+- Root document structure.
+- Schema version.
+- Component type.
+- Unique IDs.
+- Valid parent-child relationships.
+- Maximum nesting.
+- Document size.
+- Dimension units.
+- Numeric limits.
+- Shape properties.
+- Grid configuration.
+- Responsive overrides.
+- Media references.
+- Dynamic bindings.
+- Animation settings.
+- Safe URL schemes.
+
+Reject unsafe or unrecognized executable properties.
+
+Do not permit untrusted JavaScript, event-handler source, arbitrary HTML, or unrestricted CSS to be serialized as executable configuration.
+
+Store protected editing capabilities in trusted application definitions, not in user-controlled JSON that could grant itself additional permissions.
+
+Provide typed APIs for:
+
+- Parsing unknown data.
+- Safe parsing.
+- Validation error reporting.
+- Schema-version checks.
+- Responsive resolution.
+- Safe document transformation.
+
+## 23. Implement future schema migration support
+
+Define the initial document version.
+
+Implement:
+
+- Version recognition.
+- Current-version validation.
+- Typed migration interfaces.
+- Explicit handling of unsupported versions.
+- Clear diagnostics.
+
+Do not create unnecessary fictional legacy versions.
+
+The migration framework should be extensible without adding unnecessary runtime complexity.
+
+---
+
+# PART 12 — TREE UTILITIES AND EFFICIENT UPDATES
+
+## 24. Implement core reusable utilities
+
+Create pure, tested functions for:
+
+- Node lookup.
+- Tree traversal.
+- Parent lookup.
+- Immutable property updates.
+- Responsive override resolution.
+- Safe node cloning.
+- ID generation.
+- Duplicate ID detection.
+- Valid structural reordering.
+- Schema version checking.
+- Serialization.
+- Validation.
+
+These utilities will eventually support drag-and-drop interactions.
+
+Pay particular attention to performance.
+
+Avoid reconstructing unrelated large objects when a single node's styling changes.
+
+Use stable node identity.
+
+Prefer efficient immutable update patterns and localized transformations.
+
+Do not introduce a large state-management framework during this task.
+
+---
+
+# PART 13 — TEST FIXTURES
+
+## 25. Create representative documents
+
+Create safe deterministic fixtures covering:
+
+### Basic landing-page section
+Heading, paragraph, image, button, and container.
+
+### Product collection
+Collection binding, card template reference, grid layout, and responsive columns.
+
+### Category grid
+Category bindings, card shapes, grid spans, and mobile overrides.
+
+### Hero configuration
+Text, background media, CTA, and supported animation properties.
+
+### Dynamic category section
+Repeated template driven by category data.
+
+### Invalid document
+Duplicate IDs, invalid units, malformed shape, bad binding, invalid nesting, and unsupported schema version.
+
+These are testing fixtures.
+
+Do not attempt to replace the real homepage with them.
+
+---
+
+# PART 14 — AUTOMATED TESTING
+
+## 26. Implement comprehensive Vitest coverage
+
+Add tests for:
+
+- Valid page documents.
+- Invalid documents.
+- Node uniqueness.
+- Safe nesting.
+- Shape configuration.
+- Dimension validation.
+- Grid configuration.
+- Responsive inheritance.
+- Node traversal.
+- Immutable updates.
+- Serialization.
+- Schema versioning.
+- Dynamic binding safety.
+- Invalid media references.
+- Malicious configuration rejection.
+- Large-document safeguards.
+
+Tests must verify actual behavior, not merely that functions exist.
+
+Use deterministic fixtures.
+
+Do not create tests that always pass regardless of implementation.
+
+## 27. Run the project validation commands
+
+Inspect `package.json` to determine supported commands.
+
+Execute applicable checks, such as:
+
+- Type checking.
+- Linting.
+- Vitest.
+- Production build.
+- Targeted benchmarks.
+
+Report actual command output and exit codes.
+
+If a command cannot execute, mark it `BLOCKED` or `NOT EXECUTED`.
+
+Do not claim success without evidence.
+
+---
+
+# PART 15 — POST-IMPLEMENTATION PERFORMANCE AUDIT
+
+## 28. Repeat performance checks after implementation
+
+Compare the new implementation with the baseline captured at the beginning.
+
+At minimum, assess:
+
+### Public application
+
+- Production build output.
+- Public route bundle changes.
+- New dependencies.
+- Added network requests.
+- Existing homepage runtime behavior.
+- Relevant startup and scroll performance.
+
+### Schema engine
+
+- Validation cost.
+- Parsing cost.
+- Tree traversal cost.
+- Immutable node-update cost.
+- Responsive-property resolution.
+- Serialization cost.
+- Large-document behavior.
+
+### Regression risks
+
+- Accidental public import of editor-only utilities.
+- Heavy libraries introduced unnecessarily.
+- Unexpected memory allocation.
+- Excessive object cloning.
+- Costly recursive validation.
+- Potential future main-thread blocking.
+
+If runtime browser measurements were captured before implementation, use comparable conditions for the after measurement.
+
+If they were not captured, do not invent a before/after comparison.
+
+Instead, document the limitations and prioritize repeatable measurements in later phases.
+
+## 29. Enforce performance-first acceptance
+
+Treat these as release concerns:
+
+- Public storefront rendering changes unexpectedly.
+- Homepage JS bundle becomes larger without a justified dependency.
+- Validation accepts unreasonably large or pathological documents.
+- Small property updates trigger unnecessary full-tree work.
+- Schema imports pull browser-only editor libraries into public code.
+- Existing build, lint, or tests regress.
+
+Document and address changes caused by this prompt before approval.
+
+Do not opportunistically rewrite unrelated performance-sensitive components.
+
+Existing performance defects should remain tracked separately from new regressions.
+
+---
+
+# PART 16 — SOURCE FILE ORGANIZATION
+
+## 30. Use a clean modular structure
+
+A possible implementation structure is:
+
+src/
+  lib/
+    visual-editor/
+      schema/
+        page-document.ts
+        nodes.ts
+        geometry.ts
+        shapes.ts
+        layout.ts
+        responsive.ts
+        appearance.ts
+        media.ts
+        bindings.ts
+        animation.ts
+        validation.ts
+        migrations.ts
+
+      utils/
+        node-tree.ts
+        ids.ts
+        responsive-resolution.ts
+
+      index.ts
+
+      __tests__/
+        schema.test.ts
+        responsive.test.ts
+        tree-utilities.test.ts
+        security.test.ts
+
+Adapt this structure to the actual project.
+
+Do not create unnecessary placeholder files.
+
+Keep related functionality cohesive.
+
+The new modules must be usable without importing editor UI libraries.
+
+---
+
+# PART 17 — STRICT PRESERVATION OF THE EXISTING STOREFRONT
+
+## 31. Do not change the live homepage in Prompt 5
+
+After implementation:
+
+- PlanetHero must remain unchanged.
+- CelestialScrollWorld must remain unchanged.
+- ProductScrollRail must remain unchanged.
+- ProductCard must remain unchanged.
+- CategorySpotlightHero must remain unchanged.
+- StoreChrome must remain unchanged.
+- Existing database queries must remain unchanged.
+- Admin operations must remain unchanged.
+- Affiliate destinations must remain unchanged.
+- Existing CSS must remain unchanged unless an essential, justified compatibility correction is required.
+
+The newly developed schema should remain independent of live page rendering.
+
+No production database migrations should be introduced.
+
+No public page should depend on unfinished visual-editor infrastructure.
+
+The future component registry and renderer will connect this foundation to the storefront in Prompts 6 and 7.
+
+**A successful Prompt 5 should introduce powerful new internal capabilities without visually changing the website.**
+
+---
+
+# PART 18 — GITHUB COMMIT AND PUSH REQUIREMENTS
+
+## 32. Update progress documents after implementation
+
+Once implementation and tests are completed, update:
+
+- `IMPLEMENTATION_PROGRESS.md`
+- `ARCHITECTURE_AUDIT.md`
+- `PERFORMANCE_BASELINE.md`
+- `AI_STUDIO_HANDOFF.md`
+
+The documents must reflect actual progress.
+
+At minimum, record:
+
+- Prompt 5 implementation status.
+- Schema modules created.
+- Architectural decisions.
+- Test results.
+- Performance measurements.
+- Bundle-size observations.
+- Remaining concerns.
+- Blockers.
+- Next prompt requirements.
+
+Do not replace previous history with a short new summary.
+
+Append or consolidate carefully, preserving useful prior details.
+
+## 33. Review Git changes
+
+Before committing:
+
+1. Check the active branch.
+2. Inspect the changed-file list.
+3. Review diffs.
+4. Ensure no unrelated code changes were introduced.
+5. Ensure no credentials or secrets are staged.
+6. Verify the required tests.
+7. Check generated files and lockfile changes.
+8. Confirm no production data was modified.
+
+Do not stage unrelated files automatically.
+
+If the working tree contained pre-existing user changes, keep them separate from the Prompt 5 commit.
+
+## 34. Create the GitHub checkpoint
+
+Once the implementation is sufficiently validated, create a conventional commit.
+
+Recommended commit message:
+
+`feat(editor-schema): add validated page document foundation`
+
+The commit should include the schema implementation, associated tests, and updated handoff documents.
+
+Push to the designated development branch.
+
+Do not push directly to `main`.
+
+Do not force-push.
+
+Do not merge without explicit authorization.
+
+## 35. Verify remote GitHub synchronization
+
+After pushing:
+
+- Retrieve the remote branch HEAD.
+- Confirm the expected commit exists remotely.
+- Verify the correct branch was updated.
+- Confirm the committed files are present.
+- Report the final commit SHA.
+- Report the push status.
+- Identify any remaining uncommitted changes.
+
+If GitHub push is unavailable or fails:
+
+- Do not claim successful synchronization.
+- Preserve local changes.
+- Report the exact blocker.
+- Provide the appropriate recovery instructions.
+- Mark the GitHub checkpoint as incomplete.
+
+**GitHub continuity is a mandatory deliverable for this project.**
+
+---
+
+# PART 19 — MULTI-ACCOUNT AI STUDIO HANDOFF
+
+## 36. Prepare the next session to continue immediately
+
+Before finishing, ensure that the new AI Studio account could resume by reading GitHub alone.
+
+`AI_STUDIO_HANDOFF.md` must clearly explain:
+
+- What Prompt 5 accomplished.
+- Which commit contains the implementation or which work remains unpushed.
+- Which branch to use.
+- Which schema files exist.
+- Which tests passed.
+- Which checks were blocked.
+- What performance baseline is available.
+- What must not be changed.
+- Which files Prompt 6 should examine first.
+- What the next implementation milestone requires.
+
+### Next planned task
+
+**Prompt 6 of 48 — Component Registry, Existing Storefront Adapters & Shared Renderer Foundation.**
+
+Prompt 6 will connect the schema to registered versions of the existing storefront components.
+
+Do not implement Prompt 6 during the current task.
+
+---
+
+# PART 20 — FINAL ACCEPTANCE CRITERIA
+
+Prompt 5 must satisfy the following requirements.
+
+## Architecture
+
+- Typed PageDocument schema implemented.
+- Stable node identity supported.
+- Hierarchical component configuration implemented.
+- Versioned document model implemented.
+- Runtime validation implemented.
+- Responsive overrides defined.
+- Geometry and shape configurations defined.
+- Grid/flex contracts implemented.
+- Media and animation contracts defined.
+- Product/category bindings separated from styling.
+- Safe tree utilities implemented.
+
+## Performance
+
+- Pre-implementation performance audit documented.
+- Post-implementation audit documented.
+- Production bundle impact investigated.
+- Validation and tree utilities benchmarked where executable.
+- No unexplained public-route performance regression.
+- Unverified measurements explicitly identified.
+- No unnecessary heavyweight editor dependency introduced.
+
+## Testing
+
+- Representative fixtures created.
+- Valid documents tested.
+- Invalid documents tested.
+- Responsive inheritance tested.
+- Node utilities tested.
+- Business data boundaries tested.
+- Build/lint/tests executed where available.
+- Failures reported accurately.
+
+## Compatibility
+
+- Existing landing page remains unchanged.
+- Existing admin features remain unchanged.
+- Existing Supabase data remains unchanged.
+- Existing affiliate logic remains unchanged.
+- Existing animations remain unchanged.
+- No new production database migration.
+- No unfinished editor UI integrated into the public store.
+
+## GitHub
+
+- Correct repository verified.
+- Development branch identified.
+- Progress documentation updated.
+- Files reviewed before committing.
+- Implementation checkpoint committed.
+- Commit pushed to the development branch.
+- Remote push verified.
+- Final commit SHA reported.
+- Handoff documentation prepared for another Google AI Studio account.
+
+Any incomplete requirement must be explicitly listed.
+
+Do not mark an unverified requirement as passed.
+
+---
+
+# PART 21 — REQUIRED FINAL REPORT
+
+Produce a structured report titled:
+
+**"Visual Storefront Editor — Prompt 5 Implementation, GitHub Checkpoint & Performance Audit"**
+
+Include the following sections.
+
+### A. GitHub repository verification
+Repository, branch, starting commit, final commit, remote synchronization status.
+
+### B. Implementation summary
+What was actually implemented.
+
+### C. Source changes
+Every created or modified source file, with its purpose.
+
+### D. Page schema architecture
+Document structure, hierarchy, types, and configuration model.
+
+### E. Geometry and shape support
+How future drag handles will translate into validated properties.
+
+### F. Responsive and grid architecture
+Breakpoint behavior, inheritance, layout configuration.
+
+### G. Dynamic data-binding protection
+How product/category presentation is separated from business data.
+
+### H. Runtime validation and security
+Zod validation, safe content handling, versioning, and error management.
+
+### I. Performance before implementation
+Actual measurements and source-level findings.
+
+### J. Performance after implementation
+Actual measurements, benchmarks, bundle comparison, and limitations.
+
+### K. Automated testing
+Executed commands, results, pass/fail counts, and blocked checks.
+
+### L. Backward compatibility
+Existing behaviors verified and anything not yet tested.
+
+### M. GitHub progress documentation
+Status of all four required files.
+
+### N. Git commit and push
+Branch name, final commit SHA, and remote verification result.
+
+### O. Remaining issues
+Incomplete tasks, technical debt, blockers, and risks.
+
+### P. Handoff to Prompt 6
+Exactly what the next AI Studio session needs.
+
+### Q. Final readiness decision
+
+Choose one:
+
+**GO**
+All essential implementation, testing, and GitHub synchronization requirements are verified.
+
+**CONDITIONAL GO**
+The implementation is substantially complete, but specific documented issues require attention.
+
+**NO-GO**
+Critical schema, compatibility, performance, security, or repository synchronization issues remain unresolved.
+
+Explain the decision using evidence.
+
+---
+
+# FINAL EXECUTION INSTRUCTION
+
+Begin by verifying GitHub repository state and reading the existing progress documentation.
+
+Next, audit current architecture and performance.
+
+Then implement the validated, versioned visual page-document schema.
+
+Create the necessary tests and deterministic fixtures.
+
+Run the available verification commands.
+
+Repeat relevant performance checks and investigate any regressions.
+
+Update the four persistent progress files.
+
+Review all code changes.
+
+Commit and push the verified implementation to the correct development branch.
+
+Finally, confirm the remote commit and produce the complete implementation report.
+
+**Never claim code was committed, pushed, tested, or performance-validated unless it was actually verified.**
+
+**Never overwrite previous implementation progress.**
+
+**Never change the public storefront design merely to introduce the schema.**
+
+**Never start Prompt 6 automatically.**
+
+The final objective is a high-performance, production-ready foundation for a Shopify-style visual editor that can manipulate the actual storefront through drag-and-drop, resizing, shape editing, product/category grids, and live previews—while preserving the existing application's functionality and supporting seamless development across different Google AI Studio accounts.

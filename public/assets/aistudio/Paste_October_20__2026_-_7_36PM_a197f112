@@ -1,0 +1,856 @@
+# PROMPT 3 OF 48 — VISUAL EDITOR TECHNOLOGY EVALUATION, LIBRARY COMPATIBILITY & INTERACTION ENGINE PROOF OF CONCEPT
+
+## ROLE
+
+Act as a Principal Frontend Architect, React Rendering Engineer, Visual Editor Framework Specialist, Advanced Interaction Systems Engineer, and Senior UI/UX Infrastructure Architect.
+
+You are developing a premium visual storefront customization system for my existing application.
+
+**Repository:** https://github.com/Mukulsri369/ourvisibleuniversestore
+
+**Development environment:** Google AI Studio — Argon 4
+
+**Current stage:** Phase 1, Prompt 3 of 48.
+
+This task follows:
+
+- Prompt 1: Complete repository and architecture audit.
+- Prompt 2: Compatibility contracts and zero-regression requirements.
+
+Your objective is to select and validate the technology foundation for a highly advanced visual storefront editor.
+
+The final application must give administrators precise visual control over the actual storefront, with Shopify-style simplicity, Figma-like direct manipulation, and Webflow-like responsive layout editing.
+
+We want exceptional customization without sacrificing storefront performance, responsive behavior, or existing functionality.
+
+---
+
+# 1. CRITICAL INSTRUCTIONS
+
+Before beginning:
+
+1. Review the findings and architectural requirements produced by Prompts 1 and 2, if available.
+2. Inspect the current repository directly.
+3. Verify actual installed dependencies and versions.
+4. Evaluate the latest compatible releases of candidate editor libraries.
+5. Do not assume that any library is suitable until its integration risks are investigated.
+6. Do not assume that all candidate libraries must be installed.
+7. Do not replace existing storefront components.
+8. Do not redesign the landing page.
+9. Do not change Supabase tables or production data.
+10. Do not modify authentication, product, category, or affiliate functionality.
+
+**This phase permits a limited, isolated, reversible proof of concept only when the development environment supports it safely.**
+
+Do not integrate an experimental library into production storefront routes.
+
+Do not modify production dependencies merely to demonstrate a library without first validating the necessity.
+
+If safe isolated experimentation is unavailable, complete the evaluation through source inspection, documentation, API analysis, and a clearly documented proposed prototype design. Do not falsely claim a runtime proof was performed.
+
+---
+
+# 2. UNDERSTAND THE EXISTING TECHNOLOGY STACK
+
+Inspect the actual repository and verify the current application architecture.
+
+The repository has previously contained:
+
+- React 19.
+- TypeScript.
+- TanStack Start and TanStack Router.
+- TanStack Query.
+- Vite.
+- Tailwind CSS 4.
+- Supabase.
+- Motion.
+- Three.js.
+- Radix-based UI components.
+- React Resizable Panels.
+- Zod.
+- Vitest.
+
+Verify the installed versions and whether these dependencies remain present.
+
+Identify compatibility constraints involving:
+
+- React 19 and Strict Mode.
+- TanStack Start server-side rendering and hydration.
+- Client-only admin routes.
+- React component lifecycle.
+- Dynamic imports.
+- Tailwind's styling system.
+- CSS custom properties.
+- Motion transforms.
+- WebGL/canvas components.
+- Supabase client initialization.
+- Browser-only APIs.
+- Existing route generation.
+- Vite bundling.
+- TypeScript types.
+
+Pay special attention to the existing admin route's client-only configuration.
+
+Determine whether editor libraries should be loaded exclusively in an authenticated client-side editor boundary, while the public storefront continues using lightweight rendering components.
+
+---
+
+# 3. DEEPLY EVALUATE PUCK EDITOR
+
+Repository:
+
+https://github.com/puckeditor/puck
+
+Documentation:
+
+https://puckeditor.com/docs
+
+Evaluate Puck as a possible core component registry, section editor, nested content model, and visual composition foundation.
+
+Investigate the current Puck API rather than relying on outdated examples or package names.
+
+### Capabilities to evaluate
+
+1. Custom React component registration.
+2. Custom editing fields.
+3. Root configuration.
+4. Nested components and drop zones.
+5. Section and block ordering.
+6. Component selection.
+7. Layers and outline navigation.
+8. Custom inspector panels.
+9. Custom editor layouts.
+10. External data sources.
+11. Responsive viewport previews.
+12. Component visibility controls.
+13. Permissions and protected components.
+14. Data serialization.
+15. Rendering a stored page configuration.
+16. Component version migrations.
+17. Embedded editor operation inside an existing application.
+
+### Critical investigation
+
+Can Puck render our real storefront components without forcing us to recreate their visual structure?
+
+Could it support configurable versions of:
+
+- PlanetHero.
+- ProductScrollRail.
+- ProductCard.
+- CategorySpotlightHero.
+- CategoryCard.
+- StoreHeader.
+- StoreFooter.
+
+Determine whether custom component adapters or wrappers would be needed.
+
+### Important limitations to investigate
+
+Puck may handle component composition but may not inherently provide every required Figma-style geometric editing interaction.
+
+Determine whether it can be integrated cleanly with an external element manipulation engine.
+
+Investigate selection state, editor-owned drag behavior, nested editing, and the public Render component.
+
+Identify potential conflicts when both Puck and another library attempt to drag the same component.
+
+Do not assume Puck is necessarily the final choice.
+
+---
+
+# 4. DEEPLY EVALUATE REACT MOVEABLE
+
+Repository:
+
+https://github.com/daybrush/moveable
+
+React package documentation:
+
+https://github.com/daybrush/moveable/tree/master/packages/react-moveable
+
+Evaluate React Moveable as a candidate for direct geometric manipulation.
+
+Our administrator needs to select visual elements directly on the storefront and manipulate their geometry using handles.
+
+### Required interactions
+
+- Dragging.
+- Resizing.
+- Scaling.
+- Rotation where appropriate.
+- Group editing.
+- Alignment snapping.
+- Corner-radius editing.
+- Clipping or supported shape manipulation.
+- Element bounds.
+- Parent constraints.
+- Transform origin.
+- Aspect-ratio locking.
+
+### Essential questions
+
+Can Moveable support an element selection overlay without changing the underlying component's rendering?
+
+Can resize operations update meaningful component properties rather than permanently accumulating CSS transforms?
+
+Can the roundable controls be translated into validated border-radius values?
+
+Can a Moveable target change dynamically when the administrator selects another element?
+
+Can it work correctly with deeply nested components?
+
+Can it operate over images, product cards, text blocks, and video-backed hero sections?
+
+### Investigate difficult scenarios
+
+1. Element is inside a CSS grid.
+2. Element is inside a flex container.
+3. Element already has a Motion transform.
+4. Parent container uses a CSS transform.
+5. Element is inside an iframe-based preview.
+6. Element is inside a horizontally scrolling carousel.
+7. Parent has `overflow: hidden`.
+8. Element is partially outside the viewport.
+9. Page is zoomed or scrolled.
+10. Element dimensions change after an image loads.
+11. Component rerenders during a drag.
+12. Element is replaced by dynamic data.
+13. A portal or modal overlays the canvas.
+14. A canvas/WebGL element sits behind the selected element.
+
+Determine the safest approach for integrating Moveable into the editor's selection overlay.
+
+Critically distinguish:
+
+**Visual manipulation during an interaction**
+
+from
+
+**Persisting correct responsive layout properties after the interaction.**
+
+For example, a product card resized inside a grid should generally persist its width constraints, grid span, or card template properties—not an arbitrary transform that breaks mobile layout.
+
+---
+
+# 5. EVALUATE DND-KIT
+
+Repository:
+
+https://github.com/clauderic/dnd-kit
+
+Evaluate the appropriate currently maintained dnd-kit packages for:
+
+- Section sorting.
+- Layer reordering.
+- Nested block reordering.
+- Moving blocks between valid containers.
+- Product/category arrangement.
+- Keyboard-accessible drag operations.
+- Drag overlays.
+- Drop indicators.
+- Collision detection.
+- Auto-scrolling.
+- Touch interaction.
+
+### Required analysis
+
+Determine whether dnd-kit should exclusively handle structural reordering while Moveable handles geometry.
+
+Investigate how to prevent simultaneous drag listeners from competing.
+
+For example:
+
+- Dragging a section's dedicated handle should reorder the section.
+- Dragging a selected element's resize handle should resize the element.
+- Dragging a shape handle should reshape it.
+- Dragging a product within a curated product list should reorder the list.
+- Dragging an object in freeform mode should update its position.
+
+These are different interaction types.
+
+They must not inadvertently trigger one another.
+
+Evaluate a centralized pointer interaction state machine and explicit interaction modes.
+
+Define how keyboard users can perform equivalent operations where practical.
+
+---
+
+# 6. EVALUATE REACT GRID LAYOUT
+
+Repository:
+
+https://github.com/react-grid-layout/react-grid-layout
+
+Determine whether React Grid Layout is appropriate for the advanced product/category grid editor.
+
+Evaluate:
+
+1. Responsive breakpoint handling.
+2. Grid-column configuration.
+3. Draggable cards.
+4. Resizable grid items.
+5. Individual column spans.
+6. Row spans.
+7. Grid collision handling.
+8. Compaction.
+9. Serialization.
+10. Restoring saved layouts.
+11. Resize constraints.
+12. Measuring container width.
+13. React 19 compatibility.
+14. SSR/hydration safety.
+15. Performance with many product cards.
+
+### Critical distinction
+
+The final product needs:
+
+- Standard CSS grids.
+- Bento layouts.
+- Masonry layouts.
+- Carousels.
+- Editorial grids.
+- Supported freeform positioning.
+
+Determine which of these can genuinely be implemented through React Grid Layout.
+
+Do not assume React Grid Layout is an appropriate replacement for every layout type.
+
+Investigate whether standard CSS Grid with custom visual manipulation might be more suitable for certain layouts.
+
+Consider whether React Grid Layout's coordinate model and styling could cause a mismatch with our existing product rails.
+
+Evaluate whether it should be limited to a dedicated layout mode or avoided altogether.
+
+---
+
+# 7. EVALUATE MOTION AND EXISTING ANIMATION COMPONENTS
+
+The application already uses Motion and contains specialized scroll-based animation systems.
+
+Do not introduce a second general-purpose animation engine without a compelling technical reason.
+
+Investigate:
+
+- Existing Motion usage.
+- Animation transforms.
+- Framer-style layout transitions, where relevant.
+- Scroll animation updates.
+- Hover interactions.
+- React rerender behavior.
+- Animation pausing.
+- Reduced-motion handling.
+- Existing celestial animations.
+- Potential conflicts with direct manipulation.
+
+Define how Moveable-style dragging would interact with elements whose transforms are already controlled by Motion.
+
+Recommend a clear separation between:
+
+1. Stored base layout position.
+2. Editor interaction geometry.
+3. Runtime animation transform.
+4. Decorative animation state.
+
+Avoid a design where dragging an animated element permanently overwrites its animation transform.
+
+Explain how the editor might suspend or scrub an animation while maintaining an accurate representation of the component.
+
+---
+
+# 8. COMPARE THREE POSSIBLE ARCHITECTURES
+
+Evaluate at least these alternatives.
+
+## Architecture A — Puck-led editor
+
+- Puck handles component composition, nested sections, and content schema.
+- Moveable handles geometric manipulation where supported.
+- dnd-kit is introduced only for structural interactions not adequately supported by Puck.
+- CSS Grid or React Grid Layout handles suitable collection layouts.
+- Motion remains the animation engine.
+
+## Architecture B — Custom visual editor
+
+- A custom component registry and page schema.
+- Moveable for geometry.
+- dnd-kit for structural drag-and-drop.
+- Custom inspector and layers navigator.
+- CSS Grid and specialized collection layout engines.
+- Motion for animation.
+
+## Architecture C — Hybrid selective integration
+
+- Reuse selected editor framework capabilities.
+- Custom interaction overlays.
+- Custom protected storefront components.
+- Specialized grid manipulation.
+- Shared public/editor renderer.
+- Minimal editor-only dependencies.
+
+For each architecture, evaluate:
+
+- Compatibility with existing code.
+- Risk of changing the landing-page appearance.
+- Support for precise resizing and shape editing.
+- Nested component support.
+- Product/category grid flexibility.
+- Mini-preview integration.
+- Runtime performance.
+- Editor bundle size.
+- Production bundle isolation.
+- Maintainability.
+- Learning curve.
+- Future extensibility.
+- Licensing.
+- Security.
+- Development complexity.
+
+Do not select an architecture based on popularity alone.
+
+---
+
+# 9. DEFINE A WEIGHTED DECISION MATRIX
+
+Score all three architectures using a consistent 0–5 scale and these recommended weights:
+
+| Criterion | Weight |
+|---|---:|
+| Existing storefront compatibility | 20% |
+| Direct drag/resize/shape capabilities | 20% |
+| Responsive layout correctness | 15% |
+| Component customization flexibility | 15% |
+| Performance and isolation | 10% |
+| Maintainability | 10% |
+| Integration complexity | 5% |
+| Security and licensing | 5% |
+
+Explain every score.
+
+Distinguish documented capabilities from runtime-tested capabilities.
+
+If the evidence is insufficient, mark the score as provisional rather than inventing results.
+
+Recommend a primary architecture and an alternative fallback.
+
+---
+
+# 10. DESIGN A SAFE PROOF OF CONCEPT
+
+After completing the architectural evaluation, determine whether a limited experimental prototype is feasible.
+
+The proof of concept must demonstrate the hardest compatibility requirements without implementing the entire editor.
+
+## Prototype 1 — Real component rendering
+
+Demonstrate that a registered component can render through the proposed editor integration using the same React component implementation as the storefront.
+
+Prefer a real component such as a product card or category card.
+
+Do not duplicate its markup in the prototype.
+
+Use deterministic fixture data when necessary.
+
+Verify that the component retains its visual styling.
+
+## Prototype 2 — Element selection
+
+Select the actual rendered component.
+
+Display an editor-only bounding box around the element.
+
+Confirm that the selection overlay does not modify its layout.
+
+## Prototype 3 — Drag and resize
+
+Demonstrate:
+
+- Selecting the component.
+- Dragging a supported handle.
+- Changing its width or height.
+- Applying constraints.
+- Storing an updated design property.
+- Restoring the original value.
+
+Distinguish between transient drag state and committed design configuration.
+
+## Prototype 4 — Shape editing
+
+Demonstrate adjustment of a card's border radius using a visual control or direct shape handle.
+
+Validate the resulting values.
+
+## Prototype 5 — Structural reordering
+
+Demonstrate safely reordering two registered sections or blocks.
+
+Verify that resizing and reordering do not activate simultaneously.
+
+## Prototype 6 — Mini-preview renderer
+
+Render the same registered component in:
+
+- A main editing canvas.
+- A miniature inspector preview.
+
+Changing a property should update both views.
+
+They must use the same component code rather than separate approximations.
+
+## Prototype 7 — Responsive behavior
+
+Demonstrate a small desktop/mobile configuration where the card has valid responsive dimensions.
+
+Ensure resizing at one breakpoint does not unintentionally corrupt another.
+
+## Prototype 8 — Protected interaction
+
+In editing mode, selecting a product card must not initiate a navigation or affiliate redirect.
+
+In customer preview mode, its existing legitimate interactions should remain available.
+
+Use mocked or fixture behavior in the isolated prototype to avoid external side effects.
+
+---
+
+# 11. ISOLATION RULES FOR ANY EXPERIMENTAL CODE
+
+If implementing prototypes is supported, use an isolated workspace, temporary experiment branch, or other reversible environment that does not affect the live application.
+
+Requirements:
+
+- Do not modify production landing-page routes.
+- Do not expose the experiment through public navigation.
+- Do not modify live Supabase data.
+- Do not weaken authentication.
+- Do not touch existing affiliate destinations.
+- Do not push or deploy experiments automatically.
+- Do not introduce experimental packages into the production application unless specifically approved for integration later.
+- Document every experimental dependency.
+- Keep proof-of-concept code clearly separated from production features.
+
+If a temporary package installation would modify the current project's lockfile or dependencies, prefer an isolated test environment.
+
+If that is impossible, stop short of installing it and document the limitation.
+
+The prototype should be disposable.
+
+Do not convert it into production functionality in this prompt.
+
+---
+
+# 12. VERIFY REACT 19 AND TANSTACK COMPATIBILITY
+
+For every shortlisted library, verify:
+
+- Relevant peer dependencies.
+- React 19 support.
+- React DOM compatibility.
+- Current package release and API.
+- Required CSS imports.
+- TypeScript compatibility.
+- Vite compatibility.
+- Client-only rendering requirements.
+- Browser API assumptions.
+- Hydration concerns.
+- Known issues relevant to the planned integration.
+
+Pay special attention to third-party libraries that measure the DOM during mounting.
+
+The final design studio will likely be loaded as a client-only admin experience.
+
+The public storefront must not require heavy editor libraries to render ordinary customer pages.
+
+Define the recommended lazy-loading and code-splitting boundaries.
+
+Identify the consequences of mounting the editing interface inside a transformed canvas, an iframe, or a separate preview document.
+
+---
+
+# 13. DEFINE POINTER EVENT OWNERSHIP
+
+This is mandatory for stable drag-and-drop behavior.
+
+Create a formal interaction ownership table.
+
+For each interaction, specify its sole controller.
+
+Examples:
+
+- Section reordering.
+- Element selection.
+- Card resizing.
+- Corner-radius dragging.
+- Grid-item rearrangement.
+- Grid-track resizing.
+- Image cropping.
+- Decorative element movement.
+- Canvas panning.
+- Preview scrolling.
+- Text editing.
+- Multi-selection.
+- Keyboard movement.
+- Animation timeline scrubbing.
+
+Specify which events should stop propagation or be handled through explicit interaction modes.
+
+Establish a priority model to prevent:
+
+- A resize triggering section movement.
+- A card drag triggering navigation.
+- A text selection initiating a layout drag.
+- Carousel swipes conflicting with element selection.
+- Image crop gestures moving the parent section.
+- A scroll gesture moving the canvas.
+- Pointer capture being lost during rerenders.
+
+Recommend how these cases should be tested.
+
+---
+
+# 14. DEFINE THE GEOMETRY PERSISTENCE MODEL
+
+An element can be resized visually but the saved design must remain responsive.
+
+Analyze how to translate user interactions into persistent properties.
+
+Examples:
+
+### Text block
+- Width constraint.
+- Maximum width.
+- Typography.
+- Alignment.
+- Container placement.
+
+### Product card
+- Card width or grid span.
+- Card aspect ratio.
+- Image area ratio.
+- Border radius.
+- Internal spacing.
+
+### Category grid
+- Column count.
+- Track sizes.
+- Gaps.
+- Row/column spans.
+- Responsive configuration.
+
+### Hero image
+- Width and height.
+- Object-fit.
+- Focal point.
+- Cropping.
+- Container alignment.
+
+### Decorative celestial object
+- Position within its stage.
+- Size.
+- Rotation.
+- Animation-relative offset.
+
+Do not rely solely on CSS transforms for storing resized dimensions.
+
+Propose a normalized geometry schema supporting:
+
+- Fixed units where appropriate.
+- Percentages.
+- Automatic dimensions.
+- Minimum and maximum constraints.
+- Aspect ratios.
+- Grid spans.
+- Flex properties.
+- Responsive overrides.
+- Freeform coordinates where explicitly allowed.
+
+Define validation rules.
+
+---
+
+# 15. EVALUATE MINI-PREVIEW IMPLEMENTATION
+
+The admin inspector needs small previews for layouts, shapes, card templates, backgrounds, and animated components.
+
+Analyze whether the selected framework can render:
+
+1. A miniature card.
+2. A category grid.
+3. A product collection.
+4. A button style.
+5. A section preset.
+6. An animation preview.
+
+The miniature must reuse the actual component adapter and renderer.
+
+Its dimensions should not change the stored design properties.
+
+Consider:
+
+- Preview container queries.
+- Scaled previews.
+- Correct media cropping.
+- Text legibility.
+- Representative product fixtures.
+- Event isolation.
+- Animation pause states.
+- Performance with many previews.
+
+Define how the main canvas and the miniature inspector subscribe to the same draft configuration.
+
+Recommend how to avoid unnecessary rendering of invisible previews.
+
+---
+
+# 16. PERFORMANCE AND RESOURCE EVALUATION
+
+Assess runtime performance risks involving:
+
+- Dragging complex React components.
+- Frequent pointermove updates.
+- Layout thrashing.
+- Measuring bounding rectangles.
+- ResizeObserver behavior.
+- Selection overlay updates.
+- React rerenders during drag.
+- Product collections with many cards.
+- Video-backed hero sections.
+- Scroll animations.
+- Three.js scenes.
+- Editor panel updates.
+- Expensive style recalculation.
+- Long landing pages.
+- Repeated component mounting and unmounting.
+
+Recommend:
+
+- Rendering isolation.
+- Memoization where appropriate.
+- requestAnimationFrame-based visual updates.
+- Committing layout changes at suitable interaction boundaries.
+- Stable keys and component identity.
+- Lazy-loading editor infrastructure.
+- Avoiding unnecessary full-page rerenders.
+- Memory and listener cleanup.
+
+Do not invent benchmark numbers.
+
+Where runtime measurement is possible, report observed results and testing conditions.
+
+---
+
+# 17. SECURITY AND LICENSING EVALUATION
+
+Verify:
+
+- Library license type.
+- Commercial-use suitability.
+- Any attribution requirements.
+- Dependency maintenance status.
+- Relevant security concerns.
+- Package supply-chain risks.
+- Whether a library requires external hosted services.
+- Whether data remains under our control.
+
+Prioritize open-source, self-hosted solutions when they satisfy the requirements.
+
+Do not introduce unnecessary third-party hosted design infrastructure.
+
+The intended SaaS product should remain under our control.
+
+---
+
+# 18. REQUIRED FINAL REPORT
+
+Produce a detailed report titled:
+
+**"Visual Storefront Editor — Technology Selection & Interaction Engine Proof-of-Concept Report, Version 1.0"**
+
+Include the following.
+
+## A. Confirmed repository technology stack
+Actual dependency versions, routing architecture, and relevant compatibility constraints.
+
+## B. Candidate library evaluation
+Puck, Moveable, dnd-kit, React Grid Layout, and relevant existing tools.
+
+## C. Library compatibility matrix
+React 19, TypeScript, Vite, TanStack Start, SSR, styling, and integration considerations.
+
+## D. Architecture comparison
+Puck-led versus fully custom versus selective hybrid implementation.
+
+## E. Weighted decision matrix
+Scores, evidence, uncertainty, and explanation.
+
+## F. Recommended technology architecture
+Clearly identify which library, if any, should own each subsystem.
+
+## G. Interaction ownership architecture
+Pointer events, selection, dragging, resizing, reordering, shape editing, and grid manipulation.
+
+## H. Geometry persistence specification
+How direct-manipulation results should become validated responsive design properties.
+
+## I. Shared renderer integration strategy
+How the editor can manipulate existing storefront components without duplicating them.
+
+## J. Mini-preview strategy
+Component reuse, state sharing, efficient rendering, and isolation.
+
+## K. Proof-of-concept results
+For each prototype, provide:
+- Objective.
+- Implementation approach.
+- Actual files used or created, if any.
+- Tests or interactions performed.
+- Observed results.
+- Limitations.
+- Pass, fail, or not executed.
+
+## L. Risk register
+Integration risks, event conflicts, performance concerns, styling and hydration issues.
+
+## M. Future implementation recommendations
+Necessary technical foundations and exact component integration boundaries.
+
+## N. Experiment cleanup and change inventory
+List any experimental files and dependencies. Confirm whether they were isolated, retained, or removed.
+
+## O. GO / CONDITIONAL GO / NO-GO assessment
+Determine whether the technology foundation is sufficiently validated for Prompt 4.
+
+---
+
+# 19. DEFINITION OF DONE
+
+This prompt is complete only when:
+
+1. Actual repository dependencies have been checked.
+2. Candidate editor technologies have been evaluated.
+3. React/TanStack compatibility has been investigated.
+4. A primary architecture and fallback have been identified.
+5. Component ownership responsibilities are unambiguous.
+6. Pointer-event conflicts have been addressed.
+7. Shape and dimension editing have a feasible technical design.
+8. Grid editing has a defined approach.
+9. Mini-preview renderer reuse has been addressed.
+10. Responsive geometry persistence is specified.
+11. Editor-to-public visual parity is protected.
+12. Performance and bundle-isolation concerns are documented.
+13. Proof-of-concept results are reported accurately.
+14. Production routes, application data, and business logic remain unchanged.
+
+If a working proof of concept cannot be executed safely, state that explicitly and assign a CONDITIONAL GO or NO-GO as appropriate.
+
+**Do not claim a technology has been proven compatible based only on documentation.**
+
+**Do not automatically begin Prompt 4.**
+
+The next prompt will establish comprehensive visual regression baselines and protected storefront behavior tests before the shared rendering architecture is implemented.
+
+Our ultimate goal remains unchanged:
+
+Create an exceptional drag-and-drop visual storefront design system that allows administrators to customize the exact existing landing page, reshape and resize individual elements, build flexible product and category grids, use accurate miniature previews, and publish professional storefronts without coding or damaging existing functionality.

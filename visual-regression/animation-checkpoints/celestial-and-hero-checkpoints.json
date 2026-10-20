@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0.0",
+  "captured_from": "src/components/store/PlanetHero.tsx + src/components/store/CelestialScrollWorld.tsx",
+  "spring_physics": {
+    "stiffness": 70,
+    "damping": 24,
+    "restDelta": 0.001
+  },
+  "hero_states": [
+    {
+      "id": "state-1-initial-earth",
+      "featured_planet": "earth",
+      "side_left": "venus",
+      "side_right": "mars",
+      "title_text": "EARTH",
+      "backdrop_active": ".planet-backdrop[data-planet='earth'].is-active (opacity: 1)",
+      "video_preload": "earth=auto, venus=none, mars=none"
+    },
+    {
+      "id": "state-2-selected-venus",
+      "featured_planet": "venus",
+      "side_left": "earth",
+      "side_right": "mars",
+      "title_text": "VENUS",
+      "title_transition": "duration 0.45s cubic-bezier(0.16, 1, 0.3, 1), exit y: -60%"
+    },
+    {
+      "id": "state-3-selected-mars",
+      "featured_planet": "mars",
+      "side_left": "earth",
+      "side_right": "venus",
+      "title_text": "MARS",
+      "title_transition": "duration 0.45s cubic-bezier(0.16, 1, 0.3, 1), exit y: -60%"
+    },
+    {
+      "id": "state-10-reduced-motion",
+      "prefers_reduced_motion": true,
+      "video_display": "none (.planet-backdrop video { display: none })",
+      "earth_position": { "x": "78vw", "y": "25vh", "scale": 1, "opacity": 0.85 },
+      "venus_position": { "x": "10vw", "y": "45vh", "scale": 1, "opacity": 0.8 },
+      "mars_position": { "x": "65vw", "y": "68vh", "scale": 1, "opacity": 0.85 }
+    }
+  ],
+  "scroll_progress_checkpoints": [
+    {
+      "checkpoint": "0.00 (Top of Hero)",
+      "scrollYProgress": 0.0,
+      "earth": { "scale": 0.0, "opacity": 0.0, "x": "82vw", "y": "18vh", "rotate_deg": 0 },
+      "venus": { "scale": 0.0, "opacity": 0.0, "x": "4vw", "y": "26vh", "rotate_deg": -20 },
+      "mars": { "scale": 0.0, "opacity": 0.0, "x": "66vw", "y": "36vh", "rotate_deg": 15 }
+    },
+    {
+      "checkpoint": "0.04 (Hero Exit / Earth Pop-In Start)",
+      "scrollYProgress": 0.04,
+      "earth": { "scale": 0.2, "opacity": 0.15, "x": "82vw", "y": "18vh", "rotate_deg": 7.2 },
+      "venus": { "scale": 0.0, "opacity": 0.0, "x": "4vw", "y": "26vh", "rotate_deg": -13.6 },
+      "mars": { "scale": 0.0, "opacity": 0.0, "x": "66vw", "y": "36vh", "rotate_deg": 8.0 }
+    },
+    {
+      "checkpoint": "0.18 (Festival & Featured Section / Earth Peak & Venus Pop-In)",
+      "scrollYProgress": 0.18,
+      "earth": { "scale": 1.0, "opacity": 0.95, "x": "~77.4vw", "y": "~28.7vh", "rotate_deg": 32.4 },
+      "venus": { "scale": 1.15, "opacity": 0.92, "x": "~6.7vw", "y": "~29.5vh", "rotate_deg": 8.8 },
+      "mars": { "scale": 0.0, "opacity": 0.0, "x": "66vw", "y": "36vh", "rotate_deg": -16.5 }
+    },
+    {
+      "checkpoint": "0.34 (New Arrivals & Category 1 / Mars Pop-In Peak)",
+      "scrollYProgress": 0.34,
+      "earth": { "scale": 1.0, "opacity": 0.95, "x": "~81.2vw", "y": "~40.3vh", "rotate_deg": 61.2 },
+      "venus": { "scale": 1.0, "opacity": 0.92, "x": "~15.1vw", "y": "~43.2vh", "rotate_deg": 34.4 },
+      "mars": { "scale": 1.15, "opacity": 0.95, "x": "~61.8vw", "y": "~40.8vh", "rotate_deg": -44.5 }
+    },
+    {
+      "checkpoint": "0.70 (Category Spotlights & Explore by Interest)",
+      "scrollYProgress": 0.7,
+      "earth": { "scale": 1.0, "opacity": 0.95, "x": "74vw", "y": "64vh", "rotate_deg": 126.0 },
+      "venus": { "scale": 1.0, "opacity": 0.92, "x": "~15.0vw", "y": "~65.0vh", "rotate_deg": 92.0 },
+      "mars": { "scale": 1.0, "opacity": 0.95, "x": "~70.4vw", "y": "~67.4vh", "rotate_deg": -107.5 }
+    },
+    {
+      "checkpoint": "1.00 (Bottom / Instagram & Footer)",
+      "scrollYProgress": 1.0,
+      "earth": { "scale": 0.95, "opacity": 0.9, "x": "76vw", "y": "80vh", "rotate_deg": 180.0 },
+      "venus": { "scale": 0.92, "opacity": 0.85, "x": "14vw", "y": "82vh", "rotate_deg": 140.0 },
+      "mars": { "scale": 0.95, "opacity": 0.9, "x": "64vw", "y": "85vh", "rotate_deg": -160.0 }
+    }
+  ]
+}

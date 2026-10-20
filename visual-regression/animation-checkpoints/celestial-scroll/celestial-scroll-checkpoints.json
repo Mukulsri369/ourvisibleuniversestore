@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0.0",
+  "component": "CelestialScrollWorld",
+  "sourceFile": "src/components/store/CelestialScrollWorld.tsx",
+  "springParameters": {
+    "stiffness": 55,
+    "damping": 24,
+    "mass": 0.6,
+    "restDelta": 0.001
+  },
+  "scrollProgressCheckpoints": [
+    {
+      "scrollProgress": 0.0,
+      "description": "Top of page (PlanetHero visible)",
+      "earth": { "scale": 0.0, "opacity": 0.0, "x": "82vw", "y": "18vh", "rotateDeg": 0 },
+      "venus": { "scale": 0.0, "opacity": 0.0, "x": "4vw", "y": "26vh", "rotateDeg": -20 },
+      "mars": { "scale": 0.0, "opacity": 0.0, "x": "66vw", "y": "36vh", "rotateDeg": 15 }
+    },
+    {
+      "scrollProgress": 0.1,
+      "description": "Exiting hero into Festival / Featured rails (Earth pops out)",
+      "earth": { "scale": 1.18, "opacity": 0.95, "x": "80.24vw", "y": "22.12vh", "rotateDeg": 18 },
+      "venus": { "scale": 0.17, "opacity": 0.125, "x": "4vw", "y": "26vh", "rotateDeg": -4 },
+      "mars": { "scale": 0.077, "opacity": 0.058, "x": "66vw", "y": "36vh", "rotateDeg": -2.5 }
+    },
+    {
+      "scrollProgress": 0.22,
+      "description": "Featured & New Arrivals rails (Venus pops out on left)",
+      "earth": { "scale": 1.0, "opacity": 0.95, "x": "76vw", "y": "32vh", "rotateDeg": 39.6 },
+      "venus": { "scale": 1.09, "opacity": 0.92, "x": "9.33vw", "y": "33.11vh", "rotateDeg": 15.2 },
+      "mars": { "scale": 0.169, "opacity": 0.127, "x": "66vw", "y": "36vh", "rotateDeg": -23.5 }
+    },
+    {
+      "scrollProgress": 0.35,
+      "description": "First Category Spotlight sections (Mars pops out on right)",
+      "earth": { "scale": 1.0, "opacity": 0.95, "x": "81.65vw", "y": "41.04vh", "rotateDeg": 63.0 },
+      "venus": { "scale": 1.0, "opacity": 0.92, "x": "14.7vw", "y": "43.83vh", "rotateDeg": 36.0 },
+      "mars": { "scale": 1.136, "opacity": 0.95, "x": "61.1vw", "y": "41.6vh", "rotateDeg": -46.25 }
+    },
+    {
+      "scrollProgress": 0.55,
+      "description": "Mid-page Category Spotlights",
+      "earth": { "scale": 1.0, "opacity": 0.95, "x": "81.2vw", "y": "54.4vh", "rotateDeg": 99.0 },
+      "venus": { "scale": 1.0, "opacity": 0.92, "x": "6vw", "y": "56vh", "rotateDeg": 68.0 },
+      "mars": { "scale": 1.0, "opacity": 0.95, "x": "59.0vw", "y": "56.9vh", "rotateDeg": -81.25 }
+    },
+    {
+      "scrollProgress": 0.85,
+      "description": "Explore by Interest & Why Shop With Us",
+      "earth": { "scale": 1.0, "opacity": 0.95, "x": "78.5vw", "y": "72.25vh", "rotateDeg": 153.0 },
+      "venus": { "scale": 1.0, "opacity": 0.92, "x": "11.33vw", "y": "74.67vh", "rotateDeg": 116.0 },
+      "mars": { "scale": 1.0, "opacity": 0.95, "x": "58vw", "y": "78vh", "rotateDeg": -133.75 }
+    },
+    {
+      "scrollProgress": 1.0,
+      "description": "Bottom of page (Instagram CTA & StoreFooter)",
+      "earth": { "scale": 0.9, "opacity": 0.85, "x": "76vw", "y": "80vh", "rotateDeg": 180.0 },
+      "venus": { "scale": 0.92, "opacity": 0.85, "x": "14vw", "y": "82vh", "rotateDeg": 140.0 },
+      "mars": { "scale": 0.95, "opacity": 0.9, "x": "64vw", "y": "85vh", "rotateDeg": -160.0 }
+    }
+  ],
+  "reducedMotionState": {
+    "earth": { "scale": 1, "opacity": 0.85, "x": "78vw", "y": "25vh" },
+    "venus": { "scale": 1, "opacity": 0.8, "x": "10vw", "y": "45vh" },
+    "mars": { "scale": 1, "opacity": 0.85, "x": "65vw", "y": "68vh" }
+  }
+}

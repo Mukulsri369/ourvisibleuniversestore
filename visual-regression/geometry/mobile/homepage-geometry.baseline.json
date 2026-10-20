@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "1.0.0",
+  "viewportProfile": "mobile-common",
+  "viewport": { "width": 390, "height": 844, "deviceScaleFactor": 3 },
+  "elements": {
+    "header": {
+      "selector": "header.sticky.top-0.z-40",
+      "mainNavRowHeightPx": 64,
+      "horizontalPaddingPx": 16,
+      "desktopNavVisible": false,
+      "desktopSearchVisible": false,
+      "mobileSearchToggleButtonSizePx": 44,
+      "mobileMenuButtonSizePx": 44
+    },
+    "planetHero": {
+      "selector": "section.planet-hero",
+      "computedWidthPx": 390,
+      "computedHeightFormula": "max(620px, calc(100svh - 124px))",
+      "computedHeightAt844vhPx": 720,
+      "copyPadding": "40px 24px 0px",
+      "brandFontSizePx": 12,
+      "eyebrowFontSizePx": 18,
+      "titleFontSizePx": 72,
+      "titleMaskHeightPx": 92,
+      "ruleWidthPx": 64,
+      "ledeMaxWidthPx": 350,
+      "ledeMinHeightPx": 106,
+      "ledeFontSizePx": 15,
+      "ctaButtonHeightPx": 54,
+      "sidePlanetSlots": {
+        "topPx": 480,
+        "widthPx": 140,
+        "heightPx": 90,
+        "leftOffsetPx": -44,
+        "rightOffsetPx": -44,
+        "cutoutSizePx": 90,
+        "slotNameTopPx": 96,
+        "slotNameFontSizePx": 14
+      },
+      "scrollDownButton": {
+        "widthPx": 48,
+        "heightPx": 48,
+        "bottomPx": 18
+      },
+      "playbackButton": {
+        "topPx": 8,
+        "rightPx": 8
+      }
+    },
+    "mainStoreContentContainer": {
+      "selector": "div#store-content",
+      "computedWidthPx": 390,
+      "horizontalPaddingPx": 12,
+      "contentBoxWidthPx": 366
+    },
+    "productScrollRail": {
+      "trackGapPx": 8,
+      "trackPaddingHorizontalPx": 16,
+      "productCardCompactWidthPx": 128,
+      "visibleCardsIn390pxViewport": 2.68
+    },
+    "categorySpotlightHero": {
+      "layoutMode": "flex-col (vertical stack below 640px)",
+      "mediaWidth": "100% (366px)",
+      "mediaAspectRatio": "16 / 10 (aspect-[16/10])",
+      "contentPaddingPx": 14,
+      "titleFontSizePx": 16
+    },
+    "exploreByInterestGrid": {
+      "gridColumns": 2,
+      "gapPx": 10
+    },
+    "whyShopWithUsGrid": {
+      "gridColumns": 1,
+      "gapPx": 12
+    },
+    "footer": {
+      "gridTemplateColumns": "1fr (single column stack below 768px)",
+      "paddingVerticalPx": 56,
+      "paddingHorizontalPx": 16
+    }
+  }
+}

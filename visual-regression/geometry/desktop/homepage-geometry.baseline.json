@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "1.0.0",
+  "viewportProfile": "desktop-standard",
+  "viewport": { "width": 1440, "height": 900, "deviceScaleFactor": 2 },
+  "elements": {
+    "header": {
+      "selector": "header.sticky.top-0.z-40",
+      "sourceFile": "src/components/store/StoreChrome.tsx",
+      "positioningMode": "sticky (top: 0px, z-index: 40)",
+      "announcementBarHeightPx": 32,
+      "mainNavRowHeightPx": 64,
+      "containerMaxWidthPx": 1280,
+      "horizontalPaddingPx": 24,
+      "displayMode": "flex",
+      "gapPx": 24,
+      "background": "oklch(0.18 0.03 265 / 0.55) with backdrop-filter: blur(14px)"
+    },
+    "planetHero": {
+      "selector": "section.planet-hero",
+      "sourceFile": "src/components/store/PlanetHero.tsx",
+      "positioningMode": "relative (isolation: isolate, overflow: hidden)",
+      "computedWidthPx": 1440,
+      "computedHeightFormula": "clamp(620px, calc(100svh - 108px), 1080px)",
+      "computedHeightAt900vhPx": 792,
+      "copyPadding": "80px 24px 0px (via @media (min-height: 850px) and (min-width: 640px))",
+      "titleFont": {
+        "family": "\"Prata\", var(--font-display)",
+        "sizePx": 104,
+        "lineHeight": 1.2,
+        "maskHeightPx": 126
+      },
+      "lede": {
+        "maxWidthPx": 550,
+        "minHeightPx": 78,
+        "fontSizePx": 17,
+        "lineHeight": 1.65,
+        "marginTopPx": 24
+      },
+      "ctaButton": {
+        "heightPx": 60,
+        "marginTopPx": 46
+      },
+      "sidePlanetSlots": {
+        "topPx": 522,
+        "widthPx": 250,
+        "heightPx": 130,
+        "leftOffsetPx": -62,
+        "rightOffsetPx": -62,
+        "cutoutSizePx": 130
+      },
+      "scrollDownButton": {
+        "widthPx": 60,
+        "heightPx": 60,
+        "bottomPx": 26,
+        "leftFormula": "calc(50% - 30px)",
+        "borderRadius": "50%"
+      }
+    },
+    "celestialScrollWorld": {
+      "selector": "div.fixed.inset-0.pointer-events-none.z-0",
+      "sourceFile": "src/components/store/CelestialScrollWorld.tsx",
+      "positioningMode": "fixed (inset: 0, z-index: 0, pointer-events: none)",
+      "earthGlobeSizePx": 176,
+      "venusGlobeSizePx": 152,
+      "marsGlobeSizePx": 136,
+      "animationDependent": true
+    },
+    "mainStoreContentContainer": {
+      "selector": "div#store-content",
+      "sourceFile": "src/routes/_store.index.tsx",
+      "containerMaxWidthPx": 1440,
+      "horizontalPaddingPx": 32,
+      "contentBoxWidthPx": 1376
+    },
+    "productScrollRail": {
+      "selector": "section.relative.my-8.sm\\:my-12",
+      "sourceFile": "src/components/store/ProductScrollRail.tsx",
+      "marginVerticalPx": 48,
+      "trackDisplayMode": "flex (overflow-x: auto, snap-x snap-mandatory)",
+      "trackGapPx": 16,
+      "edgeFadeGradientWidthPx": 64,
+      "chevronButtonSizePx": 40
+    },
+    "productCardCompact": {
+      "selector": "article.snap-start.shrink-0",
+      "sourceFile": "src/components/store/ProductCard.tsx",
+      "widthPx": 182,
+      "borderRadiusPx": 12,
+      "imageAspectRatio": "1 / 1 (182px × 182px)",
+      "bodyPaddingPx": 10,
+      "titleFontSizePx": 11,
+      "priceFontSizePx": 11,
+      "buyButtonHeightPx": 24,
+      "visibleCardsIn1376pxRail": 7.02
+    },
+    "productCardStandard": {
+      "selector": "article.rounded-2xl",
+      "sourceFile": "src/components/store/ProductCard.tsx",
+      "gridColumnsAt1440px": 6,
+      "gridGapPx": 16,
+      "borderRadiusPx": 16,
+      "imageAspectRatio": "1 / 1",
+      "bodyPaddingPx": 12,
+      "titleFontSizePx": 13,
+      "actionButtonHeightPx": 32
+    },
+    "categorySpotlightHero": {
+      "selector": "div.mb-5.sm\\:mb-7",
+      "sourceFile": "src/components/store/CategorySpotlightHero.tsx",
+      "borderRadiusPx": 16,
+      "layoutMode": "flex-row (sm:flex-row, items-stretch)",
+      "mediaColumnWidthPx": 288,
+      "mediaAspectRatio": "aspect-square on sm:w-64 lg:w-72",
+      "contentPaddingPx": 28,
+      "titleFontSizePx": 24
+    },
+    "footer": {
+      "selector": "footer.relative.mt-24.border-t",
+      "sourceFile": "src/components/store/StoreChrome.tsx",
+      "marginTopPx": 96,
+      "containerMaxWidthPx": 1280,
+      "paddingVerticalPx": 56,
+      "paddingHorizontalPx": 24,
+      "gridTemplateColumns": "repeat(5, minmax(0, 1fr)) (brand spans 2 cols)"
+    }
+  }
+}

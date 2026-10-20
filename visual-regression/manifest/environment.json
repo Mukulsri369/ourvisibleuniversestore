@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0.0",
+  "capturedAt": "2026-10-20T15:05:00Z",
+  "executionEnvironment": {
+    "platform": "Google AI Studio — Argon 4 Sandbox",
+    "kernel": "Linux localhost 4.19.0-gvisor #1 SMP x86_64 GNU/Linux",
+    "nodeVersion": "v22.23.3",
+    "npmVersion": "10.9.9",
+    "devServerPort": 3000,
+    "devServerStatus": "HTTP 200 OK (Vite + TanStack Start SSR)",
+    "unitAndDomTestRunner": "Vitest 3.0.5 + JSDOM 27.0.0 + @testing-library/react 16.2.0",
+    "headlessBrowserBinaryInstalled": false,
+    "headlessBrowserNote": "No Chromium, Firefox, WebKit, or Playwright binaries are installed in the gVisor container image. Real browser screenshot capture is specified via executable Playwright specifications in visual-regression/tests/ for CI/local execution, while DOM structure, computed class geometry, animation keyframes, and functional zero-regression assertions are executed in Vitest + JSDOM."
+  },
+  "referenceViewportProfiles": [
+    {
+      "id": "mobile-small",
+      "width": 360,
+      "height": 800,
+      "deviceScaleFactor": 2,
+      "isMobile": true,
+      "hasTouch": true,
+      "cssMediaTriggers": ["(max-width: 639px)"]
+    },
+    {
+      "id": "mobile-common",
+      "width": 390,
+      "height": 844,
+      "deviceScaleFactor": 3,
+      "isMobile": true,
+      "hasTouch": true,
+      "cssMediaTriggers": ["(max-width: 639px)"]
+    },
+    {
+      "id": "tablet-portrait",
+      "width": 768,
+      "height": 1024,
+      "deviceScaleFactor": 2,
+      "isMobile": false,
+      "hasTouch": true,
+      "cssMediaTriggers": ["sm (>=640px)", "md (>=768px)", "(min-height: 850px) and (min-width: 640px)"]
+    },
+    {
+      "id": "tablet-landscape",
+      "width": 1024,
+      "height": 768,
+      "deviceScaleFactor": 2,
+      "isMobile": false,
+      "hasTouch": true,
+      "cssMediaTriggers": ["sm (>=640px)", "md (>=768px)", "lg (>=1024px)"]
+    },
+    {
+      "id": "desktop-standard",
+      "width": 1440,
+      "height": 900,
+      "deviceScaleFactor": 2,
+      "isMobile": false,
+      "hasTouch": false,
+      "cssMediaTriggers": ["sm (>=640px)", "md (>=768px)", "lg (>=1024px)", "xl (>=1280px)", "(min-height: 850px) and (min-width: 640px)"]
+    },
+    {
+      "id": "desktop-large",
+      "width": 1920,
+      "height": 1080,
+      "deviceScaleFactor": 1,
+      "isMobile": false,
+      "hasTouch": false,
+      "cssMediaTriggers": ["sm (>=640px)", "md (>=768px)", "lg (>=1024px)", "xl (>=1280px)", "2xl (>=1536px)", "(min-height: 850px) and (min-width: 640px)"]
+    }
+  ],
+  "colorScheme": "dark"
+}

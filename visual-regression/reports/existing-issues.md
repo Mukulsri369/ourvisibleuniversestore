@@ -1,0 +1,13 @@
+# Pre-Existing Defect Register — Prompt 4 of 48
+
+All issues documented below were verified prior to any visual editor implementation and have **not** been modified during this baseline phase.
+
+| ID | Severity | Summary | Location | Detection Method | Blocks Editor? |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **DEF-01** | **High** | Non-deterministic Fisher-Yates `Math.random()` product shuffling on every `homeQuery` execution causes Featured, New Arrivals, and Category rails to reorder on every page load | `src/lib/store.ts:55-62`, `src/lib/store.ts:276-285` | Source inspection & Vitest execution | No (Handled via seeded PRNG in tests and future `sortOrder` config) |
+| **DEF-02** | **Medium** | `CelestialScrollWorld` binds planet `x`, `y`, `scale`, `opacity`, and `rotate` to normalized full-page scroll progress `[0..1]`; adding, removing, or resizing sections shifts planetary positions at a given pixel scroll depth | `src/components/store/CelestialScrollWorld.tsx:86-172` | Source inspection & checkpoint math verification | No (Must be accounted for in section-aware scroll mapping in future prompts) |
+| **DEF-03** | **Medium** | Two pre-existing TypeScript compiler errors (`TS2769` on `clearTimeout(null)` and `TS2322` on TanStack Router `dehydrate` return type) | `src/integrations/supabase/previewAuthStorage.ts:58`, `src/router.tsx:19` | Executed `npx tsc --noEmit` | No (Vite build and runtime are unaffected) |
+| **DEF-04** | **Medium** | `PlanetHero` side slot buttons (`.planet-slot-left: -62px`, `.planet-slot-right: -62px`) rely on `.planet-hero { overflow: hidden }` to clip negative horizontal offsets; if an editor wrapper removes `overflow: hidden`, horizontal scrollbars appear | `src/styles.css:268, 376-382, 487-492` | Source & CSS geometry inspection | No (Editor overlay must render in a separate portal layer) |
+| **DEF-05** | **Low** | 8 ESLint `react-refresh/only-export-components` warnings across UI primitives and store components | `src/components/store/ProductBrowser.tsx`, `StaticPage.tsx`, `src/components/ui/*` | Executed `npm run lint` | No |
+| **DEF-06** | **Low** | JSDOM `Not implemented: HTMLMediaElement.prototype.play / pause` console errors during Vitest execution of `PlanetHero` | `src/components/store/PlanetHero.tsx:48, 59` | Executed `npm test -- --run` | No |
+| **DEF-07** | **Low** | Compact `ProductCard` mobile "Peek" and "Buy" buttons use `h-5.5` (`22px`) and dot indicators use `h-1` (`4px` + `p-0.5`), which are smaller than WCAG 2.5.5 44×44px minimum touch target guidelines | `src/components/store/ProductCard.tsx:138, 203, 215` | Source & accessibility audit | No |

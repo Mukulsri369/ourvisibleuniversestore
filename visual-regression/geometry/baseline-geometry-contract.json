@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0.0",
+  "captured_from": "src/styles.css + src/routes/_store.index.tsx + src/components/store/*",
+  "global_tokens": {
+    "font_display": "\"Instrument Serif\", ui-serif, Georgia, serif",
+    "font_hero_title": "\"Prata\", var(--font-display)",
+    "font_hero_body": "\"Hanken Grotesk\", var(--font-sans)",
+    "font_sans": "\"Manrope\", ui-sans-serif, system-ui, sans-serif",
+    "font_mono": "\"JetBrains Mono\", ui-monospace, monospace",
+    "radius_base": "0.875rem (14px)",
+    "space_void": "oklch(0.105 0.012 285)",
+    "background": "oklch(0.12 0.025 265)",
+    "foreground": "oklch(0.96 0.012 85)",
+    "card": "oklch(0.17 0.03 265)",
+    "primary": "oklch(0.83 0.14 78)",
+    "accent": "oklch(0.76 0.11 195)"
+  },
+  "sections": {
+    "store_header": {
+      "selector": "header.sticky.top-0.z-40",
+      "height": "64px (h-16)",
+      "max_width": "1280px (max-w-7xl)",
+      "padding_x": { "mobile": "16px (px-4)", "sm_up": "24px (sm:px-6)" },
+      "desktop_nav_visibility": "hidden below 1024px (hidden lg:flex)",
+      "desktop_search_visibility": "hidden below 768px (hidden md:block w-72)"
+    },
+    "planet_hero": {
+      "selector": "section.planet-hero",
+      "min_height": { "default": "620px", "short_desktop_max_h_660": "515px" },
+      "height": { "mobile_lt_640": "calc(100svh - 124px)", "sm_up": "calc(100svh - 108px)" },
+      "max_height": "1080px",
+      "title_font_size": { "mobile_lt_640": "72px", "sm_up": "104px" },
+      "title_mask_height": { "mobile_lt_640": "92px", "sm_up": "126px" },
+      "lede": {
+        "max_width": { "mobile_lt_640": "350px", "sm_up": "550px" },
+        "font_size": { "mobile_lt_640": "15px", "sm_up": "17px" },
+        "line_height": 1.65
+      },
+      "cta_button": {
+        "selector": ".planet-shop",
+        "height": { "mobile_lt_640": "54px", "sm_up": "60px" }
+      },
+      "side_planet_slots": {
+        "top": { "mobile_lt_640": "480px", "default_sm_up": "480px", "tall_desktop_min_h_850": "522px" },
+        "dimensions": { "mobile_lt_640": "140px x 90px", "sm_up": "250px x 130px" },
+        "cutout_size": { "mobile_lt_640": "90px x 90px", "sm_up": "130px x 130px" },
+        "horizontal_offset": { "mobile_lt_640": "-44px", "sm_up": "-62px" }
+      }
+    },
+    "festival_special": {
+      "selector": "section#festival-special",
+      "max_width": "1280px (max-w-7xl)",
+      "outer_padding": { "mobile": "pt-12 pb-4 px-4", "sm_up": "sm:pt-16 sm:pb-6 sm:px-6" },
+      "inner_card": "rounded-2xl sm:rounded-3xl border border-primary/25 p-4 sm:p-8 md:p-10 shadow-glow"
+    },
+    "product_scroll_rail": {
+      "selector": "div[role='region']",
+      "layout": "flex overflow-x-auto snap-x snap-mandatory",
+      "gap": { "mobile": "8px (gap-2)", "sm": "14px (sm:gap-3.5)", "lg": "16px (lg:gap-4)" }
+    },
+    "product_card_compact": {
+      "used_in": "All homepage ProductScrollRail carousels",
+      "border_radius": "rounded-xl sm:rounded-2xl",
+      "image_aspect_ratio": "1 / 1 (aspect-square)",
+      "widths_by_breakpoint": {
+        "mobile_360": "calc((100vw - 50px) / 3) = 103.33px (3 cards visible)",
+        "mobile_390": "calc((100vw - 50px) / 3) = 113.33px (3 cards visible)",
+        "sm_640_to_767": "130px fixed",
+        "md_768_to_1023": "155px fixed",
+        "lg_1024_to_1279": "calc((100% - 5 * 14px) / 6), min-width 160px (6 cards visible)",
+        "xl_1280_up": "calc((100% - 5 * 16px) / 6), min-width 172px (6 cards visible)"
+      }
+    },
+    "product_card_standard": {
+      "used_in": "ProductGrid on /shop, /search, /category/$slug",
+      "border_radius": "rounded-2xl",
+      "image_aspect_ratio": "1 / 1 (aspect-square)",
+      "grid_columns": {
+        "mobile": "2 columns (grid-cols-2 gap-2.5)",
+        "sm": "3 columns (sm:grid-cols-3 sm:gap-3.5)",
+        "md": "4 columns (md:grid-cols-4 md:gap-4)",
+        "lg": "5 columns (lg:grid-cols-5)",
+        "xl": "6 columns (xl:grid-cols-6)"
+      }
+    },
+    "category_spotlight_hero": {
+      "border_radius": "rounded-xl sm:rounded-2xl",
+      "padding": "p-3.5 sm:p-5 lg:p-6",
+      "grid_layout": "grid-cols-1 lg:grid-cols-12 (5 cols image / 7 cols details)",
+      "image_aspect_ratio": {
+        "mobile": "16 / 10 (aspect-[16/10] max-h-52)",
+        "sm": "4 / 3 (sm:aspect-[4/3])",
+        "lg": "1 / 1 (lg:aspect-square)"
+      }
+    },
+    "category_card": {
+      "min_height": "192px (min-h-48)",
+      "border_radius": "rounded-2xl",
+      "padding": "20px (p-5)"
+    },
+    "why_shop_with_us": {
+      "grid_layout": "grid gap-4 md:grid-cols-3",
+      "card_classes": "glass rounded-xl sm:rounded-2xl p-5 sm:p-6"
+    },
+    "store_footer": {
+      "margin_top": "96px (mt-24)",
+      "container": "mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-5"
+    }
+  }
+}

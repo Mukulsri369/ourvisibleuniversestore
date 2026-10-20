@@ -1,0 +1,1177 @@
+# PROMPT 4 OF 48 — LANDING PAGE BASELINE CAPTURE, PIXEL-ACCURATE VISUAL REGRESSION TESTING & ZERO-REGRESSION VERIFICATION
+
+## ROLE
+
+Act as a Principal Frontend Architect, Senior React Engineer, Visual Regression Testing Specialist, Browser Automation Engineer, Performance Engineer, and Production Quality Assurance Lead.
+
+You are developing an advanced, Shopify-style visual storefront editor for my existing application.
+
+**GitHub Repository:** https://github.com/Mukulsri369/ourvisibleuniversestore
+
+**Development Environment:** Google AI Studio — Argon 4
+
+**Current Task:** Phase 1, Prompt 4 of 48.
+
+This task follows:
+
+- **Prompt 1:** Complete repository and architectural analysis.
+- **Prompt 2:** Storefront compatibility contracts and zero-regression requirements.
+- **Prompt 3:** Visual editor technology evaluation and proof-of-concept architecture.
+
+Your job now is to establish a comprehensive, reliable reference baseline of the existing application before any major editor implementation begins.
+
+This baseline will be used throughout all subsequent phases to ensure that the new editor operates directly on the actual landing page without damaging its visuals, functionality, performance, responsiveness, or animations.
+
+---
+
+# 1. UNDERSTAND THE CORE OBJECTIVE
+
+We are building a visual editing system in which administrators can customize the actual storefront using direct manipulation.
+
+Administrators should eventually be able to:
+
+1. Select any supported visual element.
+2. Drag elements to rearrange or reposition them.
+3. Resize elements using corner and edge handles.
+4. Change shape, corner radius, clipping, and aspect ratios.
+5. Adjust product and category card dimensions.
+6. Switch between grid, bento, masonry, carousel, and other supported layouts.
+7. Drag grid boundaries to modify row and column sizes.
+8. Adjust typography, colors, backgrounds, images, and spacing.
+9. Customize existing hero animations and celestial visuals.
+10. View immediate changes in the main canvas and a miniature preview.
+11. Edit mobile, tablet, and desktop designs.
+12. Save drafts and safely publish completed designs.
+
+**MOST IMPORTANT REQUIREMENT:**
+
+The visual editor must render the same existing landing-page components used by the public storefront.
+
+We do not want an independently reconstructed page that merely resembles the original website.
+
+The editor and public storefront must ultimately share one rendering architecture.
+
+Therefore, before changing the existing rendering system, we need a dependable record of how the original website looks and behaves.
+
+The central objective of this prompt is to establish that reference.
+
+---
+
+# 2. STRICT EXECUTION SCOPE
+
+This is a baseline, testing, and verification phase.
+
+You MAY:
+
+- Inspect repository files.
+- Run existing read-only diagnostic commands.
+- Launch the application in a safe development environment.
+- Inspect rendered pages.
+- Capture browser screenshots.
+- Measure layout geometry.
+- Evaluate animations.
+- Run existing tests.
+- Create isolated test fixtures or baseline artifacts when safe.
+- Create isolated visual regression test infrastructure when justified.
+- Document existing failures and compatibility concerns.
+
+You MUST NOT:
+
+- Redesign the landing page.
+- Modify production component behavior.
+- Modify the live database.
+- Change product or category records.
+- Alter affiliate URLs.
+- Change administrator permissions.
+- Replace existing animations.
+- Implement the visual editor.
+- Introduce the new page schema.
+- Modify production routing.
+- Change published storefront design settings.
+- Commit or deploy experimental changes automatically.
+
+If baseline automation requires adding test tooling, prefer an isolated testing environment.
+
+Do not make uncontrolled changes to the production dependency graph or lockfile.
+
+If the environment does not support running a browser, distinguish between tests actually executed and tests planned for later execution.
+
+Never claim to have captured screenshots or completed visual validation unless the browser actually rendered the website.
+
+---
+
+# 3. VERIFY THE CURRENT REPOSITORY STATE
+
+Before capturing a baseline, inspect the current repository.
+
+Record:
+
+- Repository name.
+- Active branch.
+- Current commit SHA.
+- Dependency versions.
+- Existing build and test scripts.
+- Relevant environment configuration.
+- Existing test frameworks.
+- Any uncommitted changes, if accessible.
+- Current route structure.
+
+Confirm the application still uses the expected React, TanStack, Tailwind, Supabase, and Motion architecture.
+
+Review the actual files, including:
+
+- `src/routes/_store.index.tsx`
+- `src/routes/_store.tsx`
+- `src/components/store/PlanetHero.tsx`
+- `src/components/store/CelestialScrollWorld.tsx`
+- `src/components/store/ProductScrollRail.tsx`
+- `src/components/store/ProductCard.tsx`
+- `src/components/store/CategorySpotlightHero.tsx`
+- `src/components/store/CategoryCard.tsx`
+- `src/components/store/StoreChrome.tsx`
+- `src/styles.css`
+- `src/lib/store.ts`
+- `src/lib/planets.ts`
+- `src/lib/celestial-catalog.ts`
+- `src/routes/_admin.tsx`
+
+Inspect additional imported files when required.
+
+Do not assume that all files exist in exactly the expected form. Verify the current repository.
+
+Create a baseline manifest that records the precise repository version under test.
+
+This allows future screenshot comparisons to be traced back to a known implementation.
+
+---
+
+# 4. CREATE A COMPLETE HOMEPAGE VISUAL INVENTORY
+
+Analyze the complete landing page from top to bottom.
+
+Do not inspect only the first visible screen.
+
+For every section, document:
+
+1. Section name.
+2. Component implementation.
+3. Source file.
+4. Position in the page.
+5. Visibility conditions.
+6. Width and height behavior.
+7. Container constraints.
+8. Margin and padding.
+9. Grid or flex layout.
+10. Typography.
+11. Colors and gradients.
+12. Images and videos.
+13. Animations.
+14. Interactive behavior.
+15. Desktop and mobile differences.
+16. Dynamic data dependencies.
+17. Lazy-loading behavior.
+18. Potential visual-regression risks.
+
+At minimum, inspect these existing areas where present:
+
+### A. Global storefront chrome
+- Header.
+- Brand logo.
+- Store navigation.
+- Search.
+- Mobile navigation.
+- Footer.
+
+### B. Hero experience
+- PlanetHero.
+- Background videos.
+- Planet selection.
+- Heading and description.
+- CTA buttons.
+- Scroll indicators.
+- Image/video overlays.
+
+### C. Celestial background
+- Planet imagery.
+- Scrolling objects.
+- Orbit elements.
+- Parallax effects.
+- Gradients.
+- Fixed-position visuals.
+
+### D. Festival section
+- Section title.
+- Eyebrow.
+- Description.
+- Product rail.
+- Product ordering.
+
+### E. Featured products
+- Section heading.
+- Product cards.
+- Horizontal scrolling.
+- Navigation controls.
+
+### F. New arrivals
+- Product presentation.
+- Card dimensions.
+- Responsive behavior.
+
+### G. Dynamic category sections
+- Category spotlight hero.
+- Category-linked products.
+- Spotlight image layout.
+- Product rails.
+- Progressive section loading.
+
+### H. Explore by interest
+- Interest tiles.
+- Icons.
+- Text.
+- Navigation behavior.
+
+### I. Why shop with us
+- Benefits.
+- Grid layout.
+- Icons.
+- Responsive stacking.
+
+### J. Instagram and promotional content
+- CTA.
+- Branding.
+- Layout.
+- Decorative effects.
+
+### K. Footer
+- Links.
+- Legal information.
+- Branding.
+- Responsive layout.
+
+If the current homepage differs from this list, document the actual implementation instead of forcing the expected structure onto it.
+
+---
+
+# 5. ESTABLISH THE RESPONSIVE SCREENSHOT BASELINE
+
+Capture the actual homepage at representative viewport sizes.
+
+Use a controlled browser environment wherever possible.
+
+## Mandatory viewport widths
+
+- 360px — small mobile.
+- 390px — common mobile.
+- 768px — tablet portrait.
+- 1024px — tablet landscape / compact desktop.
+- 1440px — desktop.
+- 1920px — large desktop.
+
+Select and record appropriate viewport heights for each width.
+
+For example:
+
+- 360 × 800.
+- 390 × 844.
+- 768 × 1024.
+- 1024 × 768.
+- 1440 × 900.
+- 1920 × 1080.
+
+These are reference configurations; additional breakpoints may be required according to the actual CSS.
+
+Record the browser engine, browser version, device scale factor, operating environment, and color scheme used for capture.
+
+## Screenshot coverage
+
+For each viewport, capture:
+
+1. Initial page viewport.
+2. Full-page screenshot.
+3. Hero region.
+4. Festival section.
+5. Featured products.
+6. New arrivals.
+7. Category spotlight section.
+8. Product/category presentation.
+9. Promotional sections.
+10. Footer.
+
+When a section is conditionally absent because of unavailable data, document that condition.
+
+Do not fabricate missing product or category content.
+
+## Critical capture requirements
+
+Before capturing:
+
+- Wait for fonts to load.
+- Wait for required images to resolve.
+- Verify video poster or video readiness.
+- Confirm the intended responsive breakpoint.
+- Allow lazy-loaded sections to mount.
+- Establish a deterministic animation state.
+- Ensure the page is at the intended scroll position.
+- Record whether media has failed.
+- Ensure no editor/debug overlay is included.
+
+Do not capture screenshots before the page finishes the required initialization steps.
+
+---
+
+# 6. MAKE SCREENSHOTS DETERMINISTIC
+
+Our homepage includes dynamic content and animations.
+
+A successful baseline system must account for this.
+
+Investigate:
+
+- Product ordering.
+- Product shuffling.
+- Product availability.
+- Festival product selection.
+- Category ordering.
+- Lazy-loaded content.
+- Video playback.
+- Scroll-driven transitions.
+- Motion animation state.
+- Randomly generated visual effects, if present.
+- Date-dependent content.
+- Browser-dependent font rendering.
+
+The existing homepage has included product shuffling behavior.
+
+That may cause screenshots to differ between page loads even when no source code changed.
+
+Define how the test system should achieve repeatable results without modifying live business data or public product ordering.
+
+Possible approaches include:
+
+- Stable test fixtures.
+- Mocked query responses.
+- Deterministic random seeds in a test-specific environment.
+- Recording and replaying known data responses.
+- Fixed animation timeline positions.
+- Fixed system clock where necessary.
+- Consistent viewport and browser settings.
+
+Do not hide dynamic-content changes by masking entire product sections unless no better solution exists.
+
+If some areas cannot be made deterministic, document exactly why and define an appropriate alternative comparison strategy.
+
+---
+
+# 7. CAPTURE THE ORIGINAL HERO AND CELESTIAL ANIMATIONS
+
+Static screenshots alone are insufficient for this storefront.
+
+The current website includes visual motion that must survive the introduction of the editor.
+
+Inspect and document:
+
+- Planet hero transitions.
+- Video playback behavior.
+- Planet selection.
+- Scroll-triggered planet movement.
+- Celestial object positioning.
+- Scaling and rotation.
+- Opacity transitions.
+- Orbit elements.
+- Background parallax.
+- Hover effects.
+- Product image transitions.
+- Carousel scrolling.
+
+## Animation baseline states
+
+Capture or document at least:
+
+1. Initial load.
+2. Hero animation active.
+3. Hero after an available planet selection.
+4. Beginning of scrolling.
+5. Middle of the landing page.
+6. Transition between major sections.
+7. Category spotlight visible.
+8. Near the bottom of the page.
+9. Mobile viewport behavior.
+10. Reduced-motion behavior, where supported.
+
+For scroll-dependent animations, record normalized scroll progress and actual measured scroll positions.
+
+Document object positions and visual states at selected checkpoints.
+
+Explain the potential consequences of changing section heights or ordering.
+
+The future editor must eventually account for these changes without producing uncontrolled planetary movement or visual jumps.
+
+Do not modify existing animation logic during this phase.
+
+---
+
+# 8. RECORD DOM GEOMETRY BASELINES
+
+Alongside screenshots, establish measurable geometry references.
+
+For important page elements, record:
+
+- Bounding rectangle.
+- Computed width and height.
+- X/Y position relative to the viewport and document.
+- Padding.
+- Margin.
+- Gap.
+- Display mode.
+- Grid and flex properties.
+- Positioning mode.
+- Border radius.
+- Font family and size.
+- Line height.
+- Background.
+- Opacity.
+- Transform state where relevant.
+
+Focus especially on:
+
+- Header.
+- Hero section.
+- Hero text.
+- Hero CTA.
+- Product cards.
+- Product rails.
+- Category spotlight.
+- Featured images.
+- Footer.
+- Major containers.
+
+Create a documented geometry snapshot format suitable for later automated comparisons.
+
+Distinguish stable layout geometry from animation-dependent coordinates.
+
+This is important because the future editor may visually match the original screenshot while accidentally changing actual layout constraints.
+
+We want to detect both visual changes and structural geometry regressions.
+
+---
+
+# 9. BASELINE PRODUCT AND CATEGORY CARD APPEARANCE
+
+Product and category layout customization is a major requirement of the future editor.
+
+Therefore, create especially detailed reference measurements for current cards.
+
+## Product cards
+
+Inspect both compact and regular variants when present.
+
+Record:
+
+- Width.
+- Minimum and maximum width.
+- Height.
+- Image aspect ratio.
+- Image cropping.
+- Border radius.
+- Image transitions.
+- Card padding.
+- Product name.
+- Price.
+- Badge presentation.
+- Buy button.
+- Hover effects.
+- Navigation behavior.
+- Responsive differences.
+
+## Product rails
+
+Record:
+
+- Card count in the visible viewport.
+- Gap between cards.
+- Scroll behavior.
+- Arrow behavior.
+- Snap behavior.
+- Overflow clipping.
+- Edge gradients.
+- Breakpoint-specific card widths.
+
+## Category spotlight
+
+Record:
+
+- Image/text proportions.
+- Grid structure.
+- Image aspect ratio.
+- Description layout.
+- Button placement.
+- Responsive stacking.
+- Category/product data bindings.
+
+## Category cards
+
+Inspect the reusable category-card component even if it is not currently rendered as a conventional homepage grid.
+
+Do not assume that a configurable category grid already exists.
+
+Document what would need to be introduced in future prompts.
+
+This baseline will later help us ensure that newly editable product and category cards initially reproduce their current appearance.
+
+---
+
+# 10. ESTABLISH FUNCTIONAL REGRESSION BASELINES
+
+The visual editor must not damage existing business behavior.
+
+Identify and safely test the existing functionality.
+
+## Storefront navigation
+
+- Home.
+- Shop.
+- Categories.
+- Product detail pages.
+- Search.
+- Header links.
+- Footer links.
+- Mobile navigation.
+
+## Product experience
+
+- Product image loading.
+- Product detail navigation.
+- Product quick preview.
+- Image carousels.
+- Price formatting.
+- Product availability/visibility.
+- Category filtering.
+- Product sorting where supported.
+
+## Affiliate behavior
+
+- Buy buttons.
+- Validated retailer URLs.
+- External navigation behavior.
+- Outbound click tracking.
+- Affiliate disclosures.
+
+For automated checks, intercept external destinations and use test fixtures or mocks.
+
+Do not trigger real purchases, alter live click analytics, or repeatedly visit third-party retailer pages merely to validate the application.
+
+## Admin behavior
+
+- Login and authorization checks.
+- Dashboard access.
+- Product management.
+- Category management.
+- Festival management.
+- Settings.
+- Image upload configuration.
+
+Do not change production records for testing.
+
+Where authenticated browser testing is unavailable, inspect the source and mark the behavioral tests as not executed.
+
+Use authorized test credentials only when explicitly available in the development environment.
+
+Never print credentials or secrets in the report.
+
+---
+
+# 11. ESTABLISH BUILD, TYPE, LINT AND TEST BASELINES
+
+Inspect the existing `package.json`.
+
+Identify the available scripts and actual testing infrastructure.
+
+Run supported validation commands where safe.
+
+Potential checks include:
+
+- TypeScript checking, according to repository configuration.
+- Existing lint command.
+- Existing test suite.
+- Production build.
+- Route generation validation.
+- Import resolution.
+- Browser runtime checks.
+
+For every executed check, record:
+
+- Exact command.
+- Execution environment.
+- Exit status.
+- Relevant output.
+- Existing errors.
+- Existing warnings.
+- Whether the issue predates the new editor.
+
+Do not assume a successful build guarantees browser correctness.
+
+If a check cannot run, explain the specific blocker.
+
+Do not invent successful test results.
+
+If existing tests already fail, document those failures before implementation begins so future prompts do not incorrectly attribute them to the editor.
+
+---
+
+# 12. ESTABLISH PERFORMANCE BASELINES
+
+The future editor will add overlays, pointer listeners, selection controls, layout measurement, and inspector panels.
+
+We need to know the existing storefront's performance characteristics first.
+
+Where suitable tools are available, measure:
+
+- Initial page load behavior.
+- Browser console errors.
+- Hydration warnings.
+- Layout shifts.
+- Main-thread activity.
+- Rendering cost.
+- Scroll smoothness.
+- Product carousel interactions.
+- Video resource usage.
+- WebGL resource usage where applicable.
+- Memory behavior during navigation.
+- Mobile performance.
+- Resource cleanup.
+
+Pay special attention to the existing scroll-driven celestial animation.
+
+## Required performance scenarios
+
+1. Initial homepage load.
+2. Hero playback.
+3. Continuous page scroll.
+4. Transition between sections.
+5. Rapid scrolling.
+6. Product carousel interaction.
+7. Mobile viewport scrolling.
+8. Repeated page navigation.
+9. Image and video loading.
+
+Record the hardware/browser profile or emulation conditions.
+
+Report measured values only when instrumentation was actually executed.
+
+Do not manufacture performance numbers.
+
+If current performance is already problematic, classify it as a pre-existing baseline issue rather than silently changing the website.
+
+Recommend future fixes separately.
+
+---
+
+# 13. DESIGN THE VISUAL REGRESSION TEST HARNESS
+
+Evaluate the best approach for automated browser screenshot testing.
+
+Potential technologies include:
+
+- Playwright.
+- Existing Vitest infrastructure.
+- Browser screenshot comparison tools.
+- DOM geometry assertions.
+- Image-diff utilities.
+
+First check which tools are already available.
+
+Do not automatically install new packages.
+
+Recommend a testing architecture that can eventually:
+
+1. Launch the storefront.
+2. Use stable test data.
+3. Open a defined route.
+4. Set the viewport.
+5. Wait for fonts/assets.
+6. Set deterministic animation state.
+7. Scroll to a specific section.
+8. Capture a screenshot.
+9. Compare it with an approved baseline.
+10. Report differences.
+11. Save artifacts for investigation.
+12. Return a pass/fail status.
+
+The system should separately support:
+
+- Whole-page screenshot comparisons.
+- Component-level screenshots.
+- Responsive breakpoint tests.
+- DOM geometry tests.
+- Functional behavior tests.
+- Editor-versus-public rendering comparisons.
+
+The final category cannot be executed yet because the actual visual editor has not been implemented.
+
+Create the appropriate future test specification without falsely claiming those tests are currently possible.
+
+---
+
+# 14. DEFINE VISUAL DIFFERENCE TOLERANCES
+
+Visual regression testing should be strict enough to detect unintended changes without generating constant false positives.
+
+Define how to classify visual differences.
+
+### Critical failures
+
+Examples:
+
+- Missing sections.
+- Incorrect component order.
+- Broken hero.
+- Missing product images.
+- Incorrect container widths.
+- Unexpected text clipping.
+- Navigation overlap.
+- Major responsive changes.
+- Broken backgrounds.
+- Product cards disappearing.
+- Elements outside the viewport.
+
+### Major failures
+
+Examples:
+
+- Noticeably incorrect spacing.
+- Significant card-size differences.
+- Changed grid structure.
+- Incorrect fonts.
+- Wrong responsive stacking.
+- Incorrect image cropping.
+- Broken animation composition.
+
+### Minor differences
+
+Examples:
+
+- Small browser anti-aliasing differences.
+- Subpixel text rendering.
+- Slight image decoding variations.
+- Known nondeterministic media frames.
+
+Recommend measurable thresholds and document the rationale.
+
+Do not impose an arbitrary single global pixel-difference percentage as the only acceptance criterion.
+
+Where appropriate, combine pixel comparison with component-specific geometry assertions.
+
+Mask or ignore only justified nondeterministic regions, and record every such exclusion.
+
+The objective is to protect the design, not to hide regressions.
+
+---
+
+# 15. DEFINE THE FUTURE EDITOR-TO-PUBLIC PARITY TEST
+
+After the new shared rendering architecture is developed, the same test system must compare:
+
+**A. Public storefront**
+
+The customer-facing page displaying a specific published design version.
+
+**B. Editor canvas**
+
+The administrator's canvas displaying the same page version, using the same content and viewport.
+
+**C. Preview mode**
+
+The interactive customer-style preview before publishing.
+
+## Required parity checks
+
+- Same content.
+- Same component tree where expected.
+- Same computed layout.
+- Same typography.
+- Same assets.
+- Same responsive behavior.
+- Same product/category structures.
+- Same animation state.
+- Same visual presentation.
+
+Editor-only handles, selection borders, rulers, guides, and panels must be excluded from the comparison without changing the underlying content layout.
+
+Explain how to compare the central canvas at its actual content viewport size rather than comparing the whole admin dashboard with the public page.
+
+This is especially important because the editor sidebar and inspector reduce the available screen area.
+
+The comparison must account for the page's own viewport, not simply the browser window size.
+
+---
+
+# 16. TEST SCROLL AND LAZY-LOADING CONSISTENCY
+
+The storefront contains progressively rendered sections.
+
+Investigate how lazy loading and IntersectionObserver behavior affect visual testing.
+
+Define a deterministic section-discovery and screenshot process.
+
+Requirements:
+
+1. Identify all expected sections from the current page implementation and data.
+2. Scroll through the page using controlled steps.
+3. Wait for progressively mounted sections.
+4. Verify the sections actually appeared.
+5. Capture relevant checkpoints.
+6. Avoid capturing while layout is still unstable.
+7. Record missing or unavailable content.
+
+Do not assume that a single full-page screenshot automatically triggers every lazy-loaded section correctly.
+
+For future editor testing, ensure that selected offscreen elements can eventually be brought into view without altering the page configuration.
+
+---
+
+# 17. DEFINE RESPONSIVE OVERFLOW AND ACCESSIBILITY BASELINES
+
+At each required viewport, inspect:
+
+- Horizontal page overflow.
+- Clipped text.
+- Cut-off buttons.
+- Overlapping cards.
+- Hidden navigation.
+- Unexpected scrollbars.
+- Images outside containers.
+- Broken stacking.
+- Touch target sizes.
+- Keyboard navigation.
+- Focus visibility.
+- Semantic heading structure.
+- Image alternative text.
+- Accessibility of interactive controls.
+- Reduced-motion preferences.
+
+Record existing problems separately from desired future enhancements.
+
+The new editor must not make existing accessibility or responsive behavior worse.
+
+Where a serious existing issue is detected, document the issue, impact, and recommended remediation in a future controlled task.
+
+Do not silently fix unrelated code during this baseline phase.
+
+---
+
+# 18. CREATE A BASELINE ARTIFACT STRUCTURE
+
+If file creation is safe and supported, organize test assets in a dedicated testing area.
+
+Propose a structure similar to:
+
+visual-regression/
+  manifest/
+    repository-version.json
+    environment.json
+    data-fixtures.json
+
+  screenshots/
+    desktop/
+    tablet/
+    mobile/
+
+  components/
+    header/
+    hero/
+    product-card/
+    category-spotlight/
+    product-rail/
+    footer/
+
+  animation-checkpoints/
+    hero/
+    celestial-scroll/
+    carousel/
+
+  geometry/
+    desktop/
+    tablet/
+    mobile/
+
+  reports/
+    baseline-summary.md
+    existing-issues.md
+    performance-baseline.md
+
+  tests/
+    homepage-visual.spec.*
+    responsive-layout.spec.*
+    storefront-functional.spec.*
+
+This is an illustrative directory plan.
+
+Adapt it to the project's existing structure and tooling.
+
+Avoid committing large media files or sensitive information unnecessarily.
+
+Do not store authentication tokens, private user information, or production secrets in screenshot metadata or test fixtures.
+
+If actual files cannot be created, document the recommended structure without claiming it exists.
+
+---
+
+# 19. DEFINE THE BASELINE APPROVAL GATE
+
+Before the next development phase begins, determine whether the current storefront baseline is sufficiently complete and reliable.
+
+Define an approval checklist.
+
+At minimum:
+
+- Repository version recorded.
+- Relevant component tree documented.
+- Existing homepage sections inventoried.
+- Required viewport screenshots captured, or explicit capture blockers recorded.
+- Responsive layout behavior documented.
+- Key animation states documented.
+- Product/card geometry recorded where feasible.
+- Existing test results collected.
+- Build and lint status documented.
+- Performance observations recorded.
+- Existing issues clearly separated from new work.
+- Visual comparison strategy established.
+- Protected functionality identified.
+- Remaining uncertainties prioritized.
+
+If a critical baseline cannot be captured, explain why and determine whether implementation can safely proceed.
+
+Do not automatically approve the baseline.
+
+---
+
+# 20. DEFINE FUTURE REGRESSION GATES FOR PROMPTS 5–48
+
+The remaining development prompts will progressively change the architecture.
+
+Define what should be verified after each major category of change.
+
+### After shared renderer implementation
+
+The homepage should continue matching the approved baseline.
+
+### After visual editor shell implementation
+
+Opening the editor should not alter public storefront behavior or increase its bundle unnecessarily.
+
+### After drag-and-drop implementation
+
+Moving or resizing an element in a draft should not change the published page.
+
+### After shape editing
+
+Default card geometry must match the original until the admin explicitly changes it.
+
+### After product/category grid implementation
+
+Existing product rails and spotlights must continue functioning, and new layouts must work with real data.
+
+### After animation editing
+
+Default motion should remain consistent with the captured animation baseline.
+
+### After responsive editing
+
+Changes to one viewport must follow defined inheritance rules and avoid unintended regressions at other breakpoints.
+
+### After publishing implementation
+
+The published page must reflect the chosen validated version, and rollback must restore the prior configuration.
+
+### Before production release
+
+Re-run all available visual, functional, security, accessibility, and performance checks.
+
+Create a regression-gate matrix that can be reused in future prompts.
+
+---
+
+# 21. REPORT EXISTING DEFECTS WITHOUT MODIFYING THEM
+
+During the baseline analysis, you may discover existing issues.
+
+Examples:
+
+- Layout shifts.
+- Video-loading problems.
+- Product ordering inconsistencies.
+- Mobile overflow.
+- Hover effect glitches.
+- Scroll animation jumps.
+- Slow rendering.
+- Broken images.
+- Unnecessary rerenders.
+- Missing accessibility labels.
+
+Classify every verified issue as:
+
+- Critical.
+- High.
+- Medium.
+- Low.
+
+For each issue, identify:
+
+1. What is wrong.
+2. Where it occurs.
+3. How it was detected.
+4. Whether it is reproducible.
+5. Relevant source files.
+6. Effect on the future visual editor.
+7. Recommended remediation.
+8. Whether it blocks implementation.
+
+Do not present assumptions as verified defects.
+
+Do not automatically modify code to fix them.
+
+---
+
+# 22. REQUIRED FINAL REPORT
+
+At the end, generate a detailed report titled:
+
+**"Visual Storefront Editor — Original Landing Page Baseline & Zero-Regression Verification Report, Version 1.0"**
+
+The report must contain the following sections.
+
+## A. Repository baseline manifest
+
+Commit, branch, dependency versions, test environment, and verification date.
+
+## B. Current homepage visual inventory
+
+Every relevant visible section and its source component.
+
+## C. Responsive screenshot inventory
+
+Capture status and artifact references for each required viewport.
+
+## D. Geometry baseline
+
+Reference dimensions, spacing, fonts, and layout constraints.
+
+## E. Product/category visual baseline
+
+Card dimensions, images, rails, category spotlights, and responsive presentation.
+
+## F. Animation baseline
+
+Hero, celestial effects, transitions, carousels, and defined scroll checkpoints.
+
+## G. Functional baseline
+
+Existing navigation, products, categories, admin, and affiliate behavior.
+
+## H. Build/test baseline
+
+Actually executed commands, results, warnings, and failures.
+
+## I. Performance baseline
+
+Measured observations, relevant conditions, and known limitations.
+
+## J. Visual regression testing architecture
+
+Recommended framework, test setup, screenshot strategy, and comparison methodology.
+
+## K. Editor-to-public parity specification
+
+How later development will verify that the editor and public storefront render the same design.
+
+## L. Responsive and accessibility findings
+
+Existing issues, tested viewports, and expected protections.
+
+## M. Existing defect register
+
+Verified issues categorized by severity and relevance.
+
+## N. Baseline artifacts
+
+Files created, locations, contents, and any missing deliverables.
+
+## O. Phase 1 completion checklist
+
+Review whether Prompts 1–4 have established a sufficiently reliable foundation.
+
+## P. Final readiness recommendation
+
+Choose:
+
+- GO
+- CONDITIONAL GO
+- NO-GO
+
+Explain the decision using real evidence.
+
+---
+
+# 23. STRICT REPORTING RULES
+
+Do not invent:
+
+- Screenshots.
+- Browser test results.
+- Lighthouse scores.
+- FPS measurements.
+- Performance benchmarks.
+- Successful test counts.
+- Source files.
+- Existing application features.
+- Database behavior.
+- Browser compatibility claims.
+
+For every test or measurement, state whether it was:
+
+1. Actually executed.
+2. Verified through source inspection only.
+3. Not executed.
+4. Blocked by the environment.
+
+Where browser tooling is unavailable, produce the executable test plan and specify the missing prerequisites.
+
+A source-code audit is not equivalent to a completed browser visual baseline.
+
+Be precise and transparent.
+
+---
+
+# 24. PHASE COMPLETION CRITERIA
+
+Prompt 4 is complete only when:
+
+1. The repository version under analysis is identified.
+2. The complete relevant landing-page structure has been documented.
+3. Original visual states are captured wherever tooling permits.
+4. Responsive behavior has been investigated.
+5. Key product and category layouts have been measured.
+6. Existing animation behavior has been documented.
+7. Functional regression requirements have been established.
+8. Current build and test status have been verified where possible.
+9. Performance observations have been recorded when measurable.
+10. An executable visual regression strategy has been defined.
+11. Existing defects have been identified separately from future editor work.
+12. Future editor-to-public visual parity tests have clear acceptance criteria.
+13. No production functionality, design configuration, or database data has been changed.
+
+**DO NOT BEGIN PROMPT 5 AUTOMATICALLY.**
+
+Finish with:
+
+- The complete baseline report.
+- Actual artifact locations, if created.
+- Executed test results.
+- Remaining blockers.
+- A final GO / CONDITIONAL GO / NO-GO recommendation.
+
+The primary goal is to establish a reliable reference for the existing website before transforming it into a deeply customizable visual storefront.
+
+All subsequent development must preserve the original storefront by default, while enabling administrators to change its layout, geometry, shapes, grids, animations, and appearance through the new visual editor.
+
+**The visual editor must ultimately show and control the actual landing page—not a separate imitation.**

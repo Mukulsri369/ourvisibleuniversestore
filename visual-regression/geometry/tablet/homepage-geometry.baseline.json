@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0.0",
+  "viewportProfile": "tablet-portrait",
+  "viewport": { "width": 768, "height": 1024, "deviceScaleFactor": 2 },
+  "elements": {
+    "header": {
+      "selector": "header.sticky.top-0.z-40",
+      "mainNavRowHeightPx": 64,
+      "horizontalPaddingPx": 24,
+      "desktopNavVisible": false,
+      "desktopSearchVisible": true,
+      "mobileHamburgerVisible": true
+    },
+    "planetHero": {
+      "selector": "section.planet-hero",
+      "computedWidthPx": 768,
+      "computedHeightAt1024vhPx": 916,
+      "copyPadding": "80px 24px 0px",
+      "titleFontSizePx": 104,
+      "sidePlanetSlots": {
+        "topPx": 522,
+        "widthPx": 250,
+        "heightPx": 130,
+        "leftOffsetPx": -62,
+        "rightOffsetPx": -62
+      }
+    },
+    "mainStoreContentContainer": {
+      "selector": "div#store-content",
+      "computedWidthPx": 768,
+      "horizontalPaddingPx": 24,
+      "contentBoxWidthPx": 720
+    },
+    "productScrollRail": {
+      "trackGapPx": 14,
+      "productCardCompactWidthPx": 172,
+      "visibleCardsIn720pxRail": 3.89
+    },
+    "categorySpotlightHero": {
+      "layoutMode": "flex-row (sm:flex-row)",
+      "mediaColumnWidthPx": 256,
+      "contentPaddingPx": 20,
+      "titleFontSizePx": 20
+    },
+    "exploreByInterestGrid": {
+      "gridColumns": 4,
+      "gapPx": 12
+    },
+    "whyShopWithUsGrid": {
+      "gridColumns": 3,
+      "gapPx": 16
+    },
+    "footer": {
+      "gridTemplateColumns": "repeat(5, minmax(0, 1fr))",
+      "gapPx": 40
+    }
+  }
+}

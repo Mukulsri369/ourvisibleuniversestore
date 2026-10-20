@@ -1,0 +1,877 @@
+# PROMPT 2 OF 48 — STOREFRONT COMPATIBILITY CONTRACTS, ZERO-REGRESSION ARCHITECTURE & VISUAL EDITOR SAFETY RULES
+
+## ROLE AND OBJECTIVE
+
+Act as a Principal Software Architect, Senior React/TanStack Engineer, Visual Editor Systems Architect, Database Security Engineer, and Production Quality Assurance Lead.
+
+You are developing an advanced Shopify-style Visual Storefront Editor for my existing application.
+
+**Repository:** https://github.com/Mukulsri369/ourvisibleuniversestore
+
+**Development environment:** Google AI Studio — Argon 4
+
+**Current task:** Phase 1, Prompt 2 of 48.
+
+This prompt follows Prompt 1, which was intended to perform a comprehensive repository audit.
+
+Your responsibility is to establish a complete compatibility and protection framework before any new visual editor development begins.
+
+The final editor will give administrators extensive visual customization, including drag-and-drop positioning, resizing, shape editing, editable product/category grids, animations, and real-time previews.
+
+However, the editor must preserve the existing store's business logic, routing, authentication, product data, affiliate links, responsiveness, and user experience.
+
+**THIS PROMPT IS ANALYSIS AND SPECIFICATION ONLY. DO NOT MODIFY APPLICATION CODE OR DATABASE SCHEMAS.**
+
+---
+
+# 1. REVIEW AND VALIDATE PROMPT 1 FINDINGS
+
+First, inspect the results of the previous repository audit, if available in the current development context.
+
+Do not assume that Prompt 1 was completed successfully.
+
+Verify:
+
+1. The repository structure.
+2. The existing frontend framework.
+3. The homepage composition.
+4. Storefront components.
+5. Admin routing and authentication.
+6. Product/category data architecture.
+7. Site settings and configuration.
+8. Current animation systems.
+9. Existing CSS and responsive behavior.
+10. Existing affiliate-store functionality.
+
+Cross-check important findings against the source code.
+
+If the previous audit report is unavailable, perform the focused repository inspection necessary for this prompt rather than inventing its conclusions.
+
+For any relevant behavior, identify the source file, component, function, and data dependency.
+
+Create a short verification summary distinguishing confirmed facts from assumptions.
+
+---
+
+# 2. DEFINE THE FUNDAMENTAL COMPATIBILITY CONTRACT
+
+The new visual editing system must extend the current application without unnecessarily rebuilding it.
+
+Define a formal compatibility contract with the following core principles.
+
+### A. Existing design preservation
+
+Before any administrator edits a page, the new rendering architecture must reproduce the current storefront as closely as possible.
+
+Preserve:
+
+- Section order and conditional visibility.
+- Page dimensions and responsive container widths.
+- Existing fonts and typography.
+- Colors, gradients, and shadows.
+- Existing product/category presentation.
+- Images and background assets.
+- Planet hero videos.
+- Celestial scroll effects.
+- Animation timing and transitions.
+- Navigation structure.
+- Footer content and layout.
+- Button appearances and interactive states.
+
+Changes to the architecture must not silently redesign the website.
+
+### B. Existing functionality preservation
+
+All current business features must continue working.
+
+### C. Backward compatibility
+
+Existing store settings and database records must remain usable.
+
+### D. Data integrity
+
+Visual customization must not corrupt product, category, or admin data.
+
+### E. Safe editing
+
+Unpublished changes must not affect live customers.
+
+### F. Responsive consistency
+
+Desktop, tablet, and mobile behavior must remain correct.
+
+### G. Security preservation
+
+Visual editing must not weaken authentication, authorization, database permissions, or safe external-link handling.
+
+Define measurable acceptance criteria for each principle.
+
+---
+
+# 3. BUILD A COMPLETE FUNCTIONAL PROTECTION INVENTORY
+
+Inspect the existing storefront and admin functionality and establish what must never break during development.
+
+At minimum, examine these areas.
+
+## 3.1 Product functionality
+
+Verify and protect:
+
+- Product creation.
+- Product editing.
+- Product deletion.
+- Product images.
+- Product descriptions.
+- Product categories.
+- Product tags and features.
+- Featured products.
+- New arrivals.
+- Seasonal/festival products.
+- Product sorting where supported.
+- Product visibility and availability.
+- Product detail pages.
+- Product search and filtering.
+- Product quick-view functionality, where implemented.
+
+Determine which functions and queries each feature depends on.
+
+## 3.2 Affiliate functionality
+
+Verify and protect:
+
+- Affiliate product links.
+- Retailer redirection.
+- Existing URL validation.
+- Product buy buttons.
+- Outbound click tracking.
+- Retailer attribution.
+- Any existing affiliate disclosures.
+
+**CRITICAL:** The visual editor must allow button styling and permitted presentation changes without replacing or corrupting the real product's affiliate destination.
+
+Do not introduce traditional cart or payment-checkout behavior unless such a feature is separately requested.
+
+## 3.3 Category functionality
+
+Protect:
+
+- Category creation and editing.
+- Category deletion and ordering.
+- Category images.
+- Category routes.
+- Product-to-category relationships.
+- Dynamic category spotlights.
+- Spotlight product selections.
+- Category-specific product displays.
+
+## 3.4 Admin functionality
+
+Protect:
+
+- Existing Supabase authentication.
+- Administrator authorization.
+- Admin navigation.
+- Dashboard functionality.
+- Product management screens.
+- Category management screens.
+- Festival management screens.
+- Settings and branding forms.
+- Existing storage upload functionality.
+
+Do not weaken Row Level Security or expose private site settings through public data endpoints.
+
+## 3.5 Storefront browsing
+
+Protect:
+
+- Homepage.
+- Product pages.
+- Category pages.
+- Shop and search pages.
+- Header navigation.
+- Mobile navigation.
+- Footer navigation.
+- Existing informational and legal pages.
+- SEO metadata.
+- Existing loading, empty, and error states.
+
+Produce a comprehensive regression-protection matrix identifying each protected feature, its source files, its dependencies, the potential failure modes, and its future test coverage.
+
+---
+
+# 4. DEFINE THE SINGLE-SOURCE-OF-TRUTH RENDERING CONTRACT
+
+This is one of the most important requirements.
+
+**The editor must render the same actual storefront components that the published website uses.**
+
+We must not create one implementation for the public landing page and another visually similar implementation for the editor.
+
+Analyze and define a proposed architecture with three distinct layers.
+
+### Layer 1 — Storefront component renderer
+
+Responsible for rendering the real React components.
+
+Examples include:
+
+- Planet hero.
+- Celestial background.
+- Product cards.
+- Category spotlight.
+- Product collection rails and grids.
+- Promotional sections.
+- Header and footer.
+
+### Layer 2 — Validated page configuration
+
+Responsible for storing the supported design properties.
+
+Examples:
+
+- Dimensions.
+- Layout structure.
+- Grid configuration.
+- Typography.
+- Colors.
+- Images.
+- Borders and shapes.
+- Animations.
+- Responsive overrides.
+- Component data bindings.
+
+### Layer 3 — Editor interaction layer
+
+Responsible for administrator-only functionality.
+
+Examples:
+
+- Element selection.
+- Drag handles.
+- Resize handles.
+- Shape manipulation.
+- Alignment guides.
+- Layer navigator.
+- Inspector panels.
+- Undo and redo.
+
+The editor interaction layer must not change the intrinsic layout of the underlying component merely by being present.
+
+Investigate safe approaches to selection overlays and element measurement that do not interfere with normal customer-facing rendering.
+
+Provide an architectural diagram and describe how data flows between these three layers.
+
+Do not implement them yet.
+
+---
+
+# 5. ESTABLISH EXACT LANDING-PAGE PARITY REQUIREMENTS
+
+Create a formal specification for how we will compare the editor canvas and public storefront.
+
+The following must match when both are rendering the same published page configuration, viewport, content, and animation state:
+
+1. Section positions.
+2. Element widths and heights.
+3. Margins and padding.
+4. Grid columns and rows.
+5. Text wrapping.
+6. Font families and weights.
+7. Images and cropping.
+8. Background colors and gradients.
+9. Borders, corners, and shadows.
+10. Visibility rules.
+11. Responsive layouts.
+12. Animation states.
+13. Sticky and fixed positioning.
+14. Component interactions in preview mode.
+
+Explain how differences in browser rendering, device pixel ratio, scrollbar width, fonts, animation timing, and dynamic content can influence screenshot comparisons.
+
+Recommend appropriate visual regression thresholds instead of assuming literally zero difference across different browsers and hardware.
+
+## Required viewport test matrix
+
+Include at least:
+
+- 360px mobile.
+- 390px mobile.
+- 768px tablet.
+- 1024px tablet/small desktop.
+- 1440px desktop.
+- One additional wide-screen configuration.
+
+Identify which existing CSS breakpoints apply.
+
+The editor should also allow arbitrary supported viewport widths.
+
+Specify how to compare screenshots with identical data and deterministic animation states.
+
+Do not claim screenshot parity has been achieved unless the comparisons have actually been performed.
+
+---
+
+# 6. DEFINE SAFE DRAG-AND-DROP BEHAVIOR
+
+We want direct dragging, but arbitrary movement must not break responsive layouts.
+
+Define separate interaction contracts for:
+
+### Section dragging
+
+Move whole sections in the page hierarchy.
+
+### Grid item dragging
+
+Reorder products or categories within a collection.
+
+### Nested container dragging
+
+Move components between compatible containers.
+
+### Element resizing
+
+Change dimensions through corner and edge handles.
+
+### Shape editing
+
+Modify corner radius, supported masks, clipping, and visual geometry.
+
+### Freeform positioning
+
+Allow explicit X/Y positioning in dedicated freeform containers.
+
+### Layout-aware positioning
+
+Use grid placement, flex ordering, gaps, and alignment in normal sections.
+
+### Animation manipulation
+
+Allow supported repositioning of decorative objects without modifying protected animation internals.
+
+For each interaction, specify:
+
+- What the user can drag.
+- Which visual handles appear.
+- What configuration property changes.
+- Which elements can receive a drop.
+- How responsive constraints are preserved.
+- How conflicts are handled.
+- How undo/redo should restore the previous state.
+- Whether the operation affects only appearance or also collection ordering.
+
+**IMPORTANT:** Do not make every component absolutely positioned.
+
+Standard storefront sections should retain responsive grid and flex behavior. Absolute positioning should be explicitly enabled only when appropriate.
+
+---
+
+# 7. DEFINE PRODUCT AND CATEGORY GRID PROTECTION RULES
+
+The grid designer must provide extensive customization while preserving product and category integrity.
+
+The administrator should eventually be able to change:
+
+- Grid type.
+- Card size.
+- Card shape.
+- Column count.
+- Row structure.
+- Gaps.
+- Aspect ratios.
+- Image placement.
+- Backgrounds.
+- Borders.
+- Corner radii.
+- Hover effects.
+- Typography.
+- Individual card spans.
+- Collection layout presets.
+- Responsive configurations.
+
+However, distinguish carefully between:
+
+**A. Presentation data**
+
+Layout, styles, dimensions, animation, and image cropping.
+
+**B. Business data**
+
+Product identity, title, price, category, affiliate URL, stock information, and related database records.
+
+**C. Collection configuration**
+
+Selected category, product filters, curated products, sorting rules, and visibility.
+
+A card template edit should not modify underlying product records.
+
+A collection reorder should only modify the intended ordering configuration.
+
+A visual card resize should never change a product's database identity.
+
+Define these invariants formally.
+
+Also inspect the existing relationship between festival product curation and homepage shuffling.
+
+If conflicts exist, document them as explicit compatibility issues requiring separate, controlled remediation in a future phase.
+
+Do not silently fix them during this prompt.
+
+---
+
+# 8. DEFINE THE MINI-PREVIEW CONTRACT
+
+The future inspector should contain a small interactive preview for product cards, category cards, grids, banners, buttons, and similar components.
+
+This preview must be accurate.
+
+Define how to guarantee that:
+
+- Mini-previews use the same registered renderer as the landing page.
+- Previews use representative real data or clearly marked fixtures.
+- Changes update the mini-preview and main canvas consistently.
+- Responsive layouts can be previewed.
+- Preview dimensions do not accidentally alter stored design settings.
+- Component state is isolated where necessary.
+- Expensive animations do not overload the editor.
+- Preview interactions do not navigate away or trigger affiliate tracking.
+
+Do not create fake preview-specific component implementations with unrelated CSS.
+
+Document the strategy for efficient preview rendering.
+
+---
+
+# 9. CREATE AN EDITOR PROPERTY PERMISSION MATRIX
+
+Not every property should be editable in every context.
+
+Define four property classifications.
+
+### Fully editable
+
+Visual properties such as colors, dimensions, spacing, radii, fonts, and safe effects.
+
+### Conditionally editable
+
+Layout modes, grid structure, element positioning, and interactions subject to component constraints.
+
+### Data-bound
+
+Product names, prices, categories, images, destinations, and other fields supplied by existing data models.
+
+### Protected
+
+Authentication, authorization, database access, core affiliate tracking, required legal disclosures, and internal component state.
+
+For each major existing component, document which properties belong in which category.
+
+Examples:
+
+- ProductCard.
+- ProductScrollRail.
+- CategorySpotlightHero.
+- CategoryCard.
+- PlanetHero.
+- CelestialScrollWorld.
+- StoreHeader.
+- StoreFooter.
+
+Explain how the properties inspector should disable or hide unsupported operations.
+
+Avoid exposing controls that appear editable but have no real effect.
+
+---
+
+# 10. DEFINE CONFIGURATION VALIDATION REQUIREMENTS
+
+The visual editor will eventually save configuration documents.
+
+Define a proposed validation strategy for:
+
+- Unique component IDs.
+- Valid component types.
+- Supported nested children.
+- Numeric size constraints.
+- Allowed CSS units.
+- Grid column/span limits.
+- Shape configurations.
+- Asset references.
+- Safe URLs.
+- Responsive overrides.
+- Animation settings.
+- Circular references.
+- Missing components.
+- Unknown configuration versions.
+- Deprecated properties.
+
+Consider whether the system should use Zod, typed discriminated unions, or another compatible validation mechanism.
+
+Explain how invalid saved configurations should be handled gracefully.
+
+Define fallback behavior that preserves storefront availability.
+
+Custom HTML, scripts, and unrestricted CSS must not be trusted simply because they originated in the admin portal.
+
+If custom styling is later permitted, define the required sanitization and isolation boundaries.
+
+---
+
+# 11. DEFINE DRAFT AND PUBLISHED STATE ISOLATION
+
+The live website must not change while an administrator experiments with a draft.
+
+Specify the desired states:
+
+1. Current published design.
+2. Active draft.
+3. Preview snapshot.
+4. Candidate published version.
+5. Historical versions available for rollback.
+
+Define what should happen when:
+
+- The admin opens the design editor.
+- The admin changes a shape.
+- The admin drags a section.
+- The admin saves.
+- The admin refreshes the browser.
+- The admin opens a preview.
+- The admin abandons changes.
+- The admin publishes.
+- Publishing fails.
+- Two administrators edit the same page.
+- The admin restores an earlier version.
+
+Recommend safe transactional publishing or equivalent atomic version switching.
+
+Account for Supabase authorization and the existing single-store data model.
+
+The design must also permit future tenant isolation if this store architecture is reused in the SaaS generator.
+
+Do not introduce tenant-specific database changes during this phase.
+
+---
+
+# 12. DEFINE ANIMATION COMPATIBILITY CONTRACTS
+
+Inspect existing animation components and their dependencies.
+
+Pay particular attention to:
+
+- PlanetHero.
+- CelestialScrollWorld.
+- Product transitions.
+- Category spotlight effects.
+- Carousel behavior.
+- Any Three.js rendering.
+
+Document how to preserve:
+
+- Existing motion timing.
+- Existing animation controls.
+- Scroll progress behavior.
+- Video lifecycle.
+- Lazy loading.
+- Reduced-motion support.
+- GPU resource cleanup.
+- Responsive positioning.
+
+Define how future visual editing controls should modify animation configuration without replacing the animation implementation unnecessarily.
+
+Consider how changing section sizes and ordering impacts scroll-relative animation ranges.
+
+Include a proposed editor pause/play/scrub mechanism.
+
+Document which effects can be precisely previewed and which require special handling.
+
+---
+
+# 13. DEFINE A REGRESSION TESTING CONTRACT
+
+Prepare the testing strategy that all subsequent implementation prompts must follow.
+
+Categorize required testing.
+
+## Unit tests
+
+- Page configuration validation.
+- Style inheritance.
+- Responsive overrides.
+- Component permissions.
+- Grid calculations.
+- Drag-state transitions.
+- Undo/redo history.
+
+## Integration tests
+
+- Component registry.
+- Real product data binding.
+- Category data binding.
+- Admin authorization.
+- Draft storage.
+- Published version retrieval.
+
+## End-to-end tests
+
+- Open admin portal.
+- Navigate to visual editor.
+- Select an element.
+- Resize a product card.
+- Change a category grid.
+- Inspect the mini-preview.
+- Switch device previews.
+- Save a draft.
+- Publish.
+- Verify the live website.
+- Roll back.
+
+## Visual regression tests
+
+- Before/after homepage comparison.
+- Editor versus public storefront comparison.
+- Desktop/tablet/mobile layouts.
+- Complex hero backgrounds.
+- Product/category sections.
+- Header and footer.
+
+## Functional regression tests
+
+- Product links.
+- Affiliate redirects.
+- Click tracking.
+- Search.
+- Navigation.
+- Category pages.
+- Product management.
+- Admin settings.
+- Authentication.
+- RLS protections.
+
+## Performance tests
+
+- Drag responsiveness.
+- Resize responsiveness.
+- Long pages.
+- Large product collections.
+- Multiple animated components.
+- Video and WebGL activity.
+- Repeated editor opening/closing.
+- Memory and event-listener cleanup.
+
+Define specific test cases and measurable pass/fail criteria.
+
+Do not create fictional test results.
+
+---
+
+# 14. IDENTIFY REQUIRED FALLBACK AND RECOVERY STRATEGIES
+
+Analyze potential failure situations:
+
+- Missing page configuration.
+- Corrupted draft.
+- Unsupported component type.
+- Broken image reference.
+- Unavailable product/category.
+- Failed database request.
+- Invalid responsive settings.
+- Hydration failure.
+- Animation initialization error.
+- Failed media loading.
+- Publishing conflict.
+- Interrupted save.
+- Component migration incompatibility.
+
+Recommend safe fallback behavior.
+
+Where possible, the public storefront should continue rendering the last valid published design rather than becoming inaccessible because of an invalid editor document.
+
+Define how administrators should be warned about recoverable problems without losing their current draft unnecessarily.
+
+---
+
+# 15. PRODUCE A COMPONENT COMPATIBILITY CONTRACT MATRIX
+
+Create a table covering all relevant current storefront components.
+
+Use these columns:
+
+1. Component.
+2. Source file.
+3. Current purpose.
+4. Existing business/data dependencies.
+5. Protected internal behavior.
+6. Proposed editable properties.
+7. Allowed drag/resize operations.
+8. Responsive constraints.
+9. Animation constraints.
+10. Required regression tests.
+11. Compatibility risk.
+12. Implementation priority.
+
+Do not omit the shared header/footer, individual product card, collections, category spotlight, hero, or celestial background.
+
+Add additional components discovered during inspection.
+
+---
+
+# 16. PREPARE THE CHANGE CONTROL POLICY FOR FUTURE PROMPTS
+
+Define a development policy to be applied to Prompts 3–48.
+
+Each future implementation task must:
+
+1. Inspect affected existing files first.
+2. Identify all dependent components.
+3. State which protected behaviors could be affected.
+4. Make the smallest coherent changes.
+5. Preserve the existing design by default.
+6. Use the agreed shared renderer and configuration model.
+7. Avoid duplicating business logic.
+8. Validate TypeScript.
+9. Run relevant available tests.
+10. Verify public and admin routing.
+11. Check responsive behavior.
+12. Report newly introduced warnings and failures.
+13. List all modified files.
+14. Explain any required migration.
+15. Clearly mark incomplete work.
+16. Avoid declaring success without evidence.
+
+For each milestone, require a Git checkpoint or equivalent recoverable version before further large changes.
+
+Do not request broad uncontrolled refactoring.
+
+---
+
+# 17. REQUIRED FINAL DELIVERABLES
+
+At the end, return a detailed technical compatibility specification containing:
+
+### Deliverable A — Audit validation summary
+
+Verified architecture, previous findings confirmed, and any contradictions discovered.
+
+### Deliverable B — Storefront invariants
+
+A numbered list of functional and visual behaviors that must remain unchanged by default.
+
+### Deliverable C — Component compatibility matrix
+
+A file-specific breakdown of editable versus protected responsibilities.
+
+### Deliverable D — Single-renderer contract
+
+Architecture showing how the live page and editor share components.
+
+### Deliverable E — Interaction safety contracts
+
+Rules for dragging, resizing, reshaping, grid editing, and positioning.
+
+### Deliverable F — Product/category data protection specification
+
+Rules preventing visual edits from corrupting business data.
+
+### Deliverable G — Mini-preview requirements
+
+Renderer reuse, responsiveness, isolation, and performance requirements.
+
+### Deliverable H — Responsive parity requirements
+
+Breakpoints, inheritance, and viewport testing.
+
+### Deliverable I — Animation preservation specification
+
+Rules for maintaining existing planetary and scroll animations.
+
+### Deliverable J — Security and configuration validation
+
+Required boundaries, authorization and schema validation.
+
+### Deliverable K — Draft/publish compatibility model
+
+Safe editing, preview, publishing and rollback expectations.
+
+### Deliverable L — Regression test plan
+
+Specific tests and acceptance criteria for subsequent phases.
+
+### Deliverable M — Risk register
+
+High, medium, and low risks, with source references and mitigation strategies.
+
+### Deliverable N — Development guardrails
+
+A reusable set of strict implementation rules for future prompts.
+
+### Deliverable O — Phase completion assessment
+
+Completed analysis items, unresolved blockers, and readiness for the technology evaluation phase.
+
+For important findings, provide real repository file paths and relevant source locations.
+
+Distinguish between verified findings, proposed designs, and unverified assumptions.
+
+---
+
+# 18. STRICT EXECUTION CONSTRAINTS
+
+THIS IS AN ANALYSIS-ONLY PROMPT.
+
+Do not:
+
+- Modify source files.
+- Change database migrations.
+- Install packages.
+- Generate unrelated UI.
+- Replace the landing page.
+- Redesign the homepage.
+- Rewrite authentication.
+- Modify affiliate links.
+- Change product or category records.
+- Alter active site settings.
+- Implement a visual editor prematurely.
+- Commit or push changes.
+- Claim tests passed without executing them.
+
+Read-only inspection is allowed.
+
+If the current environment cannot validate a requirement, report the limitation clearly and explain how it should be checked in a later phase.
+
+---
+
+# 19. DEFINITION OF DONE
+
+Prompt 2 is complete only when:
+
+- Existing storefront behavior has been documented as enforceable compatibility requirements.
+- Every major homepage component has editable/protected boundaries.
+- The shared rendering contract is defined.
+- Drag-and-drop behavior is constrained safely.
+- Grid customization rules are established.
+- Product and category data remain protected.
+- Mini-preview architecture is specified.
+- Responsive parity criteria are defined.
+- Animation compatibility is addressed.
+- Database and publishing isolation rules are defined.
+- Regression tests and acceptance gates are specified.
+- Security and performance risks are recorded.
+- No application code or database data has been changed.
+
+Finish with a structured report titled:
+
+**“Visual Storefront Editor — Compatibility & Zero-Regression Contract, Version 1.0”**
+
+Then state one of:
+
+- **GO:** The compatibility specification is sufficiently complete for Prompt 3.
+- **CONDITIONAL GO:** Prompt 3 may proceed after explicitly identified uncertainties are resolved.
+- **NO-GO:** Critical repository or architecture information remains unavailable.
+
+Explain the decision with evidence.
+
+**DO NOT AUTOMATICALLY START PROMPT 3.**
+
+The ultimate goal is a fully customizable, drag-and-drop storefront editor that feels like Shopify and Figma, works directly on the real landing page, and protects every existing functional feature.

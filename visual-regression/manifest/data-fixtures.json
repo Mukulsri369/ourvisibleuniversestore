@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "1.0.0",
+  "purpose": "Deterministic storefront data fixtures for repeatable visual and DOM geometry regression testing without mutating live Supabase data or suffering from Math.random() Fisher-Yates shuffling.",
+  "deterministicSeed": 42,
+  "siteSettings": {
+    "id": "baseline-settings-001",
+    "hero_heading": "Curated Wonders of Our Visible Universe",
+    "hero_subheading": "Telescopes, meteorites, astrophotography gear, and celestial artifacts.",
+    "hero_cta_text": "Explore collection",
+    "announcement_text": "Free planetary sky guide with every optical instrument order",
+    "footer_text": "Explore the universe. Discover something extraordinary.",
+    "affiliate_disclosure": "Our Visible Universe participates in affiliate programs including the Amazon Services LLC Associates Program. When you purchase through links on our site, we may earn an affiliate commission at no extra cost to you.",
+    "instagram_url": "https://instagram.com/ourvisibleuniverse",
+    "logo_url": null,
+    "social_links": {
+      "__festival_title": "Solstice Stargazing Event",
+      "__festival_subtitle": "Limited-time celestial instruments & deep-sky accessories",
+      "__festival_eyebrow": "Celestial Festival",
+      "__festival_enabled": "true",
+      "__festival_product_ids": "[\"prod-apo-refractor-80\",\"prod-seestar-s50\",\"prod-campo-meteorite\"]"
+    }
+  },
+  "categories": [
+    {
+      "id": "cat-telescopes",
+      "name": "Telescopes & Smart Optics",
+      "slug": "telescopes",
+      "description": "Precision apochromatic refractors, Dobsonian light buckets, and smart astrophotography observatories.",
+      "image_url": "/api/public/images/cat-telescopes.webp",
+      "display_order": 1
+    },
+    {
+      "id": "cat-meteorites",
+      "name": "Authentic Meteorites",
+      "slug": "meteorites",
+      "description": "Verified iron-nickel octahedrites, chondrites, and planetary specimens from across the solar system.",
+      "image_url": "/api/public/images/cat-meteorites.webp",
+      "display_order": 2
+    },
+    {
+      "id": "cat-globes",
+      "name": "Celestial Globes & Maps",
+      "slug": "celestial-globes",
+      "description": "Cartographic planetary globes, relief moon lamps, and archival star charts.",
+      "image_url": "/api/public/images/cat-globes.webp",
+      "display_order": 3
+    },
+    {
+      "id": "cat-astrophoto",
+      "name": "Astrophotography Gear",
+      "slug": "astrophotography",
+      "description": "Equatorial star trackers, narrowband filters, and cooled CMOS planetary cameras.",
+      "image_url": "/api/public/images/cat-astrophoto.webp",
+      "display_order": 4
+    }
+  ],
+  "products": [
+    {
+      "id": "prod-apo-refractor-80",
+      "name": "80mm ED Triplet Apochromatic Refractor OTA",
+      "slug": "80mm-ed-triplet-apo-refractor",
+      "short_description": "FPL-53 extra-low dispersion glass triplet for pinpoint wide-field nebula imaging.",
+      "description": "Engineered with an air-spaced OHARA FPL-53 triplet objective and dual-speed 2.5-inch rack-and-pinion focuser.\nIncludes CNC tube rings, Vixen dovetail bar, and retractable dew shield.",
+      "price": 899,
+      "currency": "USD",
+      "affiliate_url": "https://www.amazon.com/dp/B001BASELINE01?tag=visibleuni-20",
+      "amazon_url": "https://www.amazon.com/dp/B001BASELINE01?tag=visibleuni-20",
+      "featured": true,
+      "active": true,
+      "status": "published",
+      "category_id": "cat-telescopes",
+      "category_ids": ["cat-telescopes", "cat-astrophoto"],
+      "image": "/api/public/images/prod-apo-80-1.webp",
+      "imageAlt": "80mm ED Triplet Apochromatic Refractor",
+      "images": [
+        { "url": "/api/public/images/prod-apo-80-1.webp", "alt": "80mm ED Triplet Front Angle" },
+        { "url": "/api/public/images/prod-apo-80-2.webp", "alt": "Dual-speed focuser detail" }
+      ],
+      "category": { "id": "cat-telescopes", "name": "Telescopes & Smart Optics", "slug": "telescopes" }
+    },
+    {
+      "id": "prod-seestar-s50",
+      "name": "ZWO Seestar S50 All-in-One Smart Telescope",
+      "slug": "zwo-seestar-s50-smart-telescope",
+      "short_description": "Automated GoTo, plate solving, and live deep-sky stacking in a 2.5 kg carbon housing.",
+      "description": "Apocromatic triplet optics paired with a Sony IMX462 sensor and built-in dual-band light pollution filter.",
+      "price": 499,
+      "currency": "USD",
+      "affiliate_url": "https://www.amazon.com/dp/B002BASELINE02?tag=visibleuni-20",
+      "amazon_url": "https://www.amazon.com/dp/B002BASELINE02?tag=visibleuni-20",
+      "featured": true,
+      "active": true,
+      "status": "published",
+      "category_id": "cat-telescopes",
+      "category_ids": ["cat-telescopes"],
+      "image": "/api/public/images/prod-seestar-1.webp",
+      "imageAlt": "ZWO Seestar S50 Smart Telescope",
+      "images": [
+        { "url": "/api/public/images/prod-seestar-1.webp", "alt": "ZWO Seestar S50 on carbon tripod" }
+      ],
+      "category": { "id": "cat-telescopes", "name": "Telescopes & Smart Optics", "slug": "telescopes" }
+    },
+    {
+      "id": "prod-campo-meteorite",
+      "name": "Campo del Cielo Iron-Nickel Meteorite Specimen (45g)",
+      "slug": "campo-del-cielo-meteorite-45g",
+      "short_description": "Authentic 4.5-billion-year-old coarse octahedrite recovered from Chaco, Argentina.",
+      "description": "Natural sculptural regmaglypts formed during atmospheric entry roughly 4,200–4,700 years ago. Includes certificate of authenticity.",
+      "price": 68,
+      "currency": "USD",
+      "affiliate_url": "https://www.amazon.com/dp/B003BASELINE03?tag=visibleuni-20",
+      "amazon_url": "https://www.amazon.com/dp/B003BASELINE03?tag=visibleuni-20",
+      "featured": false,
+      "active": true,
+      "status": "published",
+      "category_id": "cat-meteorites",
+      "category_ids": ["cat-meteorites"],
+      "image": "/api/public/images/prod-campo-1.webp",
+      "imageAlt": "Campo del Cielo Iron Meteorite",
+      "images": [
+        { "url": "/api/public/images/prod-campo-1.webp", "alt": "Campo del Cielo specimen" }
+      ],
+      "category": { "id": "cat-meteorites", "name": "Authentic Meteorites", "slug": "meteorites" }
+    }
+  ]
+}

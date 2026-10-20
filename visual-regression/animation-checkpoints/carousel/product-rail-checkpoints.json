@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0.0",
+  "component": "ProductScrollRail & ProductCard",
+  "sourceFiles": [
+    "src/components/store/ProductScrollRail.tsx",
+    "src/components/store/ProductCard.tsx"
+  ],
+  "railScrollPhysics": {
+    "scrollStepFormula": "Math.max(scrollRef.current.clientWidth * 0.78, 280)",
+    "scrollBehavior": "smooth",
+    "snapType": "x mandatory",
+    "leftArrowVisibility": "scrollLeft > 8",
+    "rightArrowVisibility": "scrollLeft + clientWidth < scrollWidth - 8"
+  },
+  "cardHoverSlideshow": {
+    "trigger": "mouseenter on ProductCard when imageList.length > 1",
+    "intervalMs": 1400,
+    "crossfadeTransition": {
+      "durationSec": 0.45,
+      "ease": "easeInOut"
+    },
+    "imageZoomClass": "transition-transform duration-500 group-hover:scale-105",
+    "resetBehavior": "mouseleave resets active index to 0 and clears interval"
+  }
+}

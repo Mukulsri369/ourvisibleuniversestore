@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0.0",
+  "component": "PlanetHero",
+  "sourceFile": "src/components/store/PlanetHero.tsx",
+  "planetsCatalog": ["earth", "venus", "mars"],
+  "checkpoints": [
+    {
+      "id": "hero-initial-load",
+      "featuredPlanet": "earth",
+      "sidePlanets": ["venus", "mars"],
+      "loadedVideos": ["earth"],
+      "backdropOpacity": { "earth": 1, "venus": 0, "mars": 0 },
+      "titleTransition": { "y": 0, "opacity": 1, "durationSec": 0.45 },
+      "ruleTransition": { "scaleX": 1, "durationSec": 0.65 },
+      "ledeTransition": { "opacity": 1, "y": 0, "durationSec": 0.55 }
+    },
+    {
+      "id": "hero-warm-hover-venus",
+      "trigger": "pointerenter or focus on .planet-slot-left (Venus)",
+      "featuredPlanet": "earth",
+      "loadedVideos": ["earth", "venus"],
+      "cutoutHoverTransform": "scale(1.045) over 0.45s cubic-bezier(0.22, 1, 0.36, 1)"
+    },
+    {
+      "id": "hero-select-venus",
+      "trigger": "click on .planet-slot-left (Venus)",
+      "featuredPlanet": "venus",
+      "sidePlanets": ["earth", "mars"],
+      "backdropOpacity": { "earth": 0, "venus": 1, "mars": 0 },
+      "titleAnimatePresence": {
+        "mode": "wait",
+        "exit": { "y": -56, "opacity": 0 },
+        "initial": { "y": 56, "opacity": 0 },
+        "animate": { "y": 0, "opacity": 1 }
+      }
+    },
+    {
+      "id": "hero-reduced-motion",
+      "mediaQuery": "(prefers-reduced-motion: reduce)",
+      "videoElementsMounted": false,
+      "posterImagesVisible": true,
+      "titleDurationSec": 0,
+      "ledeDurationSec": 0,
+      "playbackToggleRendered": false
+    }
+  ]
+}
