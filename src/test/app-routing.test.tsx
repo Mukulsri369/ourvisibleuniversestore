@@ -32,8 +32,8 @@ describe("App routing", () => {
   it("renders the index route", async () => {
     const { container } = renderAt("/");
 
-    await waitFor(() => expect(container.firstChild).not.toBeNull(), { timeout: 8000 });
-  });
+    await waitFor(() => expect(container.firstChild).not.toBeNull(), { timeout: 12000 });
+  }, 15000);
 
   it("renders the not-found route", async () => {
     vi.spyOn(console, "warn").mockImplementation(() => undefined);

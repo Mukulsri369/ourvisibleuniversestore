@@ -124,7 +124,7 @@ function Products() {
             ...(result.price != null
               ? {
                   price: result.price,
-                  currency: result.currency || "INR",
+                  currency: result.currency || r.currency || "INR",
                   price_updated_at: nowIso,
                 }
               : {}),
@@ -149,7 +149,7 @@ function Products() {
       }
 
       const newPrice = result.price;
-      const newCurrency = result.currency || "INR";
+      const newCurrency = result.currency || r.currency || "INR";
       const nowIso = new Date().toISOString();
 
       const { error } = await supabase
@@ -268,7 +268,7 @@ function Products() {
                   ...(result.price != null
                     ? {
                         price: result.price,
-                        currency: result.currency || "INR",
+                        currency: result.currency || p.currency || "INR",
                         price_updated_at: nowIso,
                       }
                     : {}),
@@ -279,7 +279,7 @@ function Products() {
                 .from("products")
                 .update({
                   price: result.price,
-                  currency: result.currency || "INR",
+                  currency: result.currency || p.currency || "INR",
                   price_updated_at: nowIso,
                   updated_at: nowIso,
                   ...(result.retailer ? { retailer: result.retailer } : {}),

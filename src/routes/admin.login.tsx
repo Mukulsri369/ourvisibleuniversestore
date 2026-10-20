@@ -81,7 +81,11 @@ function Login() {
         let isApproved = false;
         try {
           // 1. Check RPC function
-          const { data: rpcApproved } = await (supabase.rpc as any)("is_approved_admin_email", {
+          const { data: rpcApproved } = await (
+            supabase as unknown as {
+              rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: boolean | null }>;
+            }
+          ).rpc("is_approved_admin_email", {
             check_email: cleanEmail,
           });
           if (rpcApproved === true) isApproved = true;

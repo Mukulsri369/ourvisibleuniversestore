@@ -2,7 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import * as cheerio from "cheerio/slim";
 import { supabase } from "@/integrations/supabase/client";
 import { currencyForUrl } from "@/lib/retailer-currency";
-import { amazonPriceCandidates, amazonPriceDomains, detectPriceCurrency as detectCurrency, parseRetailerPrice as parsePriceNumber } from "@/lib/retailer-price";
+import {
+  amazonPriceCandidates,
+  amazonPriceDomains,
+  detectPriceCurrency as detectCurrency,
+  parseRetailerPrice as parsePriceNumber,
+} from "@/lib/retailer-price";
 
 const BROWSER_HEADERS: Record<string, string> = {
   "User-Agent":
@@ -143,9 +148,12 @@ export const Route = createFileRoute("/api/admin/check-price")({
           let retailer = "Other";
           if (
             hostname.includes("amazon.") ||
+            hostname === "a.co" ||
+            hostname.endsWith(".amazon") ||
             targetUrl.includes("amazon.") ||
             targetUrl.includes("link.amazon") ||
-            targetUrl.includes("amzn.to")
+            targetUrl.includes("amzn.to") ||
+            targetUrl.includes("a.co")
           ) {
             retailer = "Amazon";
           } else if (hostname.includes("flipkart.")) {
@@ -357,7 +365,14 @@ export const Route = createFileRoute("/api/admin/check-price")({
 
           let detectedPriceNum: number | null = null;
           let detectedCurrency =
-            currencyForUrl(`https://${hostname}/`) ?? currencyForUrl(targetUrl) ?? "INR";
+            currencyForUrl(finalUrlStr) ??
+            currencyForUrl(`https://${hostname}/`) ??
+            currencyForUrl(targetUrl) ??
+            (hostname.endsWith(".in") ||
+            targetUrl.includes(".in") ||
+            targetUrl.includes("amazon.in")
+              ? "INR"
+              : "USD");
           let rawPriceText = "";
           let jsonLdAvailability: string | undefined;
 
@@ -383,7 +398,10 @@ export const Route = createFileRoute("/api/admin/check-price")({
                     jsonLdAvailability = String(item.availability);
                   }
                   if (detectedPriceNum == null && offer?.price) {
-                    const parsedNum = parsePriceNumber(String(offer.price), String(offer.priceCurrency || detectedCurrency));
+                    const parsedNum = parsePriceNumber(
+                      String(offer.price),
+                      String(offer.priceCurrency || detectedCurrency),
+                    );
                     if (parsedNum) {
                       detectedPriceNum = parsedNum;
                       rawPriceText = String(offer.price);
@@ -401,7 +419,10 @@ export const Route = createFileRoute("/api/admin/check-price")({
           if (detectedPriceNum == null) {
             const ogPrice = $('meta[property="product:price:amount"]').attr("content");
             if (ogPrice) {
-              const parsedNum = parsePriceNumber(ogPrice, $('meta[property="product:price:currency"]').attr("content") || detectedCurrency);
+              const parsedNum = parsePriceNumber(
+                ogPrice,
+                $('meta[property="product:price:currency"]').attr("content") || detectedCurrency,
+              );
               if (parsedNum) {
                 detectedPriceNum = parsedNum;
                 rawPriceText = ogPrice;
@@ -416,7 +437,10 @@ export const Route = createFileRoute("/api/admin/check-price")({
             const amazonCandidates = amazonPriceCandidates($);
 
             for (const candidate of amazonCandidates) {
-              const parsedNum = parsePriceNumber(candidate, detectCurrency(candidate, detectedCurrency));
+              const parsedNum = parsePriceNumber(
+                candidate,
+                detectCurrency(candidate, detectedCurrency),
+              );
               if (parsedNum) {
                 detectedPriceNum = parsedNum;
                 rawPriceText = candidate;
@@ -458,7 +482,10 @@ export const Route = createFileRoute("/api/admin/check-price")({
             ].filter((v): v is string => Boolean(v));
 
             for (const candidate of genericCandidates) {
-              const parsedNum = parsePriceNumber(candidate, detectCurrency(candidate, detectedCurrency));
+              const parsedNum = parsePriceNumber(
+                candidate,
+                detectCurrency(candidate, detectedCurrency),
+              );
               if (parsedNum) {
                 detectedPriceNum = parsedNum;
                 rawPriceText = candidate;
@@ -480,7 +507,10 @@ export const Route = createFileRoute("/api/admin/check-price")({
               const mobCandidates = amazonPriceCandidates($mob);
 
               for (const candidate of mobCandidates) {
-                const parsedNum = parsePriceNumber(candidate, detectCurrency(candidate, detectedCurrency));
+                const parsedNum = parsePriceNumber(
+                  candidate,
+                  detectCurrency(candidate, detectedCurrency),
+                );
                 if (parsedNum) {
                   detectedPriceNum = parsedNum;
                   rawPriceText = candidate;

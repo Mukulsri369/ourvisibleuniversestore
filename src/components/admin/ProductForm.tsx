@@ -168,7 +168,12 @@ export function ProductForm({ productId }: { productId?: string }) {
       // An unavailable price must not leave another product's old amount behind.
       setPrice(d.price != null ? String(d.price) : "");
       setPriceDate(d.price != null && d.price !== "" ? new Date().toISOString().slice(0, 10) : "");
-      if (d.currency) setCurrency(d.currency);
+      if (d.currency) {
+        setCurrency(d.currency);
+      } else {
+        const detected = currencyForUrl(targetUrl);
+        if (detected) setCurrency(detected);
+      }
       if (d.retailer) setRetailer(d.retailer);
       if (d.retailer_product_id) setRetailerProductId(d.retailer_product_id);
       if (d.affiliate_url && !affiliateUrl) setAffiliateUrl(d.affiliate_url);

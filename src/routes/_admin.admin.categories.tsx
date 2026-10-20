@@ -1027,7 +1027,9 @@ function Categories() {
                           variant="affiliate"
                           size="sm"
                           disabled={savingSpotlight}
-                          onClick={() => spotlightCategory && handleAssignSpotlight(spotlightCategory.id, p.id)}
+                          onClick={() =>
+                            spotlightCategory && handleAssignSpotlight(spotlightCategory.id, p.id)
+                          }
                           className="h-8 text-xs gap-1"
                         >
                           <Star className="size-3 fill-current" />

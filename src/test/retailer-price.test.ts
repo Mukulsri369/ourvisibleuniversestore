@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { load } from "cheerio/slim";
-import { amazonPriceCandidates, amazonPriceDomains, detectPriceCurrency, parseRetailerPrice } from "@/lib/retailer-price";
+import {
+  amazonPriceCandidates,
+  amazonPriceDomains,
+  detectPriceCurrency,
+  parseRetailerPrice,
+} from "@/lib/retailer-price";
 
 describe("retailer price accuracy", () => {
   it.each([
@@ -27,17 +32,24 @@ describe("retailer price accuracy", () => {
     expect(amazonPriceDomains("amazon.com.attacker.example")).toEqual([]);
   });
   it("prefers the complete buy-box price over recommendations and list prices", () => {
-    const $ = load(`<div class="recommendation"><span class="a-price"><span class="a-offscreen">$9.99</span></span></div>
+    const $ =
+      load(`<div class="recommendation"><span class="a-price"><span class="a-offscreen">$9.99</span></span></div>
       <div id="corePriceDisplay_desktop_feature_div"><span class="a-price a-text-price"><span class="a-offscreen">$99.99</span></span>
       <span class="a-price priceToPay"><span class="a-offscreen">$49.95</span><span class="a-price-whole">49.</span><span class="a-price-fraction">95</span></span></div>`);
     expect(amazonPriceCandidates($)).toEqual(["$49.95"]);
   });
   it("combines separately rendered dollars and cents", () => {
-    const $ = load(`<span class="priceToPay"><span class="a-price-symbol">$</span><span class="a-price-whole">1,299.</span><span class="a-price-fraction">99</span></span>`);
+    const $ = load(
+      `<span class="priceToPay"><span class="a-price-symbol">$</span><span class="a-price-whole">1,299.</span><span class="a-price-fraction">99</span></span>`,
+    );
     expect(parseRetailerPrice(amazonPriceCandidates($)[0])).toBe(1299.99);
   });
   it("does not report a truncated whole-only price", () => {
-    expect(amazonPriceCandidates(load(`<span class="priceToPay"><span class="a-price-whole">49.</span></span>`))).toEqual([]);
+    expect(
+      amazonPriceCandidates(
+        load(`<span class="priceToPay"><span class="a-price-whole">49.</span></span>`),
+      ),
+    ).toEqual([]);
   });
   it("preserves regional dollar currencies", () => {
     expect(detectPriceCurrency("$49.95", "CAD")).toBe("CAD");

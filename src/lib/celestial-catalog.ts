@@ -122,7 +122,13 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
   // 2. Space Party Supplies -> Saturn & Titan System
   {
     id: "saturn-system",
-    categorySlugMatch: ["space-party-supplies", "space-b-day-party", "party", "space-party"],
+    categorySlugMatch: [
+      "space-party-supplies",
+      "space-b-day-party",
+      "party",
+      "space-party",
+      "space-gadgets",
+    ],
     systemName: "Cronian System",
     planetName: "SATURN",
     subtitle: "Crown Jewel of Cosmic Celebrations",
@@ -545,7 +551,6 @@ export const CELESTIAL_CATALOG: CelestialSystemConfig[] = [
       "mobile-accessories",
       "space-accessories",
       "accessories",
-      "space-gadgets",
       "gadgets",
     ],
     systemName: "Main Belt Protoplanet",

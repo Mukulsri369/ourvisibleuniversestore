@@ -2,7 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import * as cheerio from "cheerio/slim";
 import { slugify } from "@/lib/store";
 import { currencyForUrl } from "@/lib/retailer-currency";
-import { amazonPriceCandidates, amazonPriceDomains, detectPriceCurrency, parseRetailerPrice } from "@/lib/retailer-price";
+import {
+  amazonPriceCandidates,
+  amazonPriceDomains,
+  detectPriceCurrency,
+  parseRetailerPrice,
+} from "@/lib/retailer-price";
 
 const BROWSER_HEADERS: Record<string, string> = {
   "User-Agent":
@@ -215,14 +220,28 @@ export const Route = createFileRoute("/api/admin/scrape-product")({
 
           // Detect retailer
           let retailer = "Other";
-          if (hostname.includes("amazon.")) retailer = "Amazon";
-          else if (hostname.includes("flipkart.")) retailer = "Flipkart";
-          else if (hostname.includes("ubuy.")) retailer = "Ubuy";
+          if (
+            hostname.includes("amazon.") ||
+            hostname === "a.co" ||
+            hostname.endsWith(".amazon") ||
+            rawUrl.includes("amazon.") ||
+            rawUrl.includes("link.amazon") ||
+            rawUrl.includes("amzn.to") ||
+            rawUrl.includes("a.co")
+          ) {
+            retailer = "Amazon";
+          } else if (hostname.includes("flipkart.")) {
+            retailer = "Flipkart";
+          } else if (hostname.includes("ubuy.")) {
+            retailer = "Ubuy";
+          }
 
           // Detect product ID (e.g. Amazon ASIN, Flipkart PID, or Ubuy ASIN)
           let retailerProductId = "";
           if (retailer === "Amazon") {
-            const asinMatch = finalUrlStr.match(/(?:dp|gp\/product)\/([A-Z0-9]{10})/i);
+            const asinMatch =
+              finalUrlStr.match(/(?:dp|gp\/product|gp\/aw\/d)\/([A-Z0-9]{10})/i) ||
+              rawUrl.match(/(?:dp|gp\/product|gp\/aw\/d)\/([A-Z0-9]{10})/i);
             if (asinMatch) retailerProductId = asinMatch[1].toUpperCase();
           } else if (retailer === "Flipkart") {
             retailerProductId = finalUrl.searchParams.get("pid") || "";
@@ -327,7 +346,7 @@ export const Route = createFileRoute("/api/admin/scrape-product")({
           const $ = cheerio.load(html);
 
           // 1. Check Schema.org JSON-LD
-          let schemaProduct = null as Record<string, any> | null;
+          let schemaProduct = null as Record<string, unknown> | null;
           $('script[type="application/ld+json"]').each((_, el) => {
             try {
               const content = $(el).html();
@@ -387,7 +406,12 @@ export const Route = createFileRoute("/api/admin/scrape-product")({
 
           // 4. Extract Price and Currency
           let price = "";
-          let currency = currencyForUrl(finalUrlStr) ?? currencyForUrl(rawUrl) ?? "INR";
+          let currency =
+            currencyForUrl(finalUrlStr) ??
+            currencyForUrl(rawUrl) ??
+            (hostname.endsWith(".in") || rawUrl.includes(".in") || rawUrl.includes("amazon.in")
+              ? "INR"
+              : "USD");
 
           if (schemaProduct?.offers) {
             const offers = Array.isArray(schemaProduct.offers)
@@ -417,6 +441,32 @@ export const Route = createFileRoute("/api/admin/scrape-product")({
                 price = String(amount);
                 currency = candidateCurrency;
                 break;
+              }
+            }
+          }
+
+          // Secondary mobile fallback for Amazon: if price was not found in desktop HTML, query mobile endpoint
+          if (!price && (retailer === "Amazon" || retailer === "Ubuy") && retailerProductId) {
+            const mobResult = await fetchAmazonMobile(hostname, retailerProductId);
+            if (mobResult) {
+              const $mob = cheerio.load(mobResult.html);
+              for (const candidate of amazonPriceCandidates($mob)) {
+                const candidateCurrency = detectPriceCurrency(candidate, currency);
+                const amount = parseRetailerPrice(candidate, candidateCurrency);
+                if (amount != null) {
+                  price = String(amount);
+                  currency = candidateCurrency;
+                  break;
+                }
+              }
+              if (!rawName || isBlockedOrGenericTitle(rawName)) {
+                const mobTitle =
+                  $mob("#title").text().trim() ||
+                  $mob("#productTitle").text().trim() ||
+                  $mob("h1").first().text().trim();
+                if (mobTitle && !isBlockedOrGenericTitle(mobTitle)) {
+                  rawName = mobTitle;
+                }
               }
             }
           }

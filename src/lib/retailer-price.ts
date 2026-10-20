@@ -32,9 +32,10 @@ export function parseRetailerPrice(raw: string, currency = "USD"): number | null
     value = comma > dot ? value.replace(/\./g, "").replace(",", ".") : value.replace(/,/g, "");
   } else if (comma >= 0) {
     const decimals = value.length - comma - 1;
-    value = decimals === 2 || (currency === "EUR" && decimals === 1)
-      ? value.replace(",", ".")
-      : value.replace(/,/g, "");
+    value =
+      decimals === 2 || (currency === "EUR" && decimals === 1)
+        ? value.replace(",", ".")
+        : value.replace(/,/g, "");
   } else if (dot >= 0 && currency === "EUR" && value.length - dot - 1 === 3) {
     value = value.replace(/\./g, "");
   }
@@ -48,18 +49,27 @@ export function amazonPriceCandidates($: CheerioAPI): string[] {
   const selectors = [
     "#corePriceDisplay_desktop_feature_div .priceToPay",
     "#corePriceDisplay_mobile_feature_div .priceToPay",
+    "#corePrice_feature_div .priceToPay",
     "#corePrice_desktop .priceToPay",
     "#apex_desktop .priceToPay",
     "#apex_mobile .priceToPay",
+    ".apexPriceToPay",
     ".priceToPay",
+    "#corePrice_feature_div .a-price:not(.a-text-price)",
     "#corePriceDisplay_desktop_feature_div .a-price:not(.a-text-price)",
     "#corePriceDisplay_mobile_feature_div .a-price:not(.a-text-price)",
     "#corePrice_desktop .a-price:not(.a-text-price)",
     "#apex_desktop .a-price:not(.a-text-price)",
     "#apex_mobile .a-price:not(.a-text-price)",
+    "#desktop_buybox .priceToPay",
+    "#desktop_buybox .a-price:not(.a-text-price)",
+    "#buybox .priceToPay",
+    "#buybox .a-price:not(.a-text-price)",
+    "#pinned-deactivated-buybox .a-price:not(.a-text-price)",
   ];
   for (const selector of selectors) {
     const node = $(selector).first();
+    if (!node.length) continue;
     const full = node.find(".a-offscreen").first().text().trim();
     if (full) candidates.push(full);
     else {
@@ -69,9 +79,30 @@ export function amazonPriceCandidates($: CheerioAPI): string[] {
       if (whole && /^\d{2}$/.test(fraction)) candidates.push(`${symbol}${whole}.${fraction}`);
     }
   }
-  for (const selector of ["#priceblock_dealprice", "#priceblock_saleprice", "#priceblock_ourprice"]) {
-    const text = $(selector).first().text().trim();
+  for (const selector of [
+    "#price_inside_buybox",
+    "#newBuyBoxPrice",
+    "#priceblock_dealprice",
+    "#priceblock_saleprice",
+    "#priceblock_ourprice",
+    "#tp_price_block_total_price_ww .a-offscreen",
+    "#tp_price_block_total_price_ww",
+  ]) {
+    const el = $(selector).first();
+    if (!el.length) continue;
+    const text = el.find(".a-offscreen").first().text().trim() || el.text().trim();
     if (text) candidates.push(text);
   }
+  for (const inputSel of [
+    "input#twister-plus-price-data-price",
+    'input[name="displayedPrice"]',
+    "input#attach-base-product-price",
+  ]) {
+    const val = $(inputSel).first().attr("value")?.trim();
+    if (val && /^\d+(?:\.\d{1,2})?$/.test(val)) candidates.push(val);
+  }
+  const dataPrice = $("[data-asin-price]").first().attr("data-asin-price")?.trim();
+  if (dataPrice && /^\d+(?:\.\d{1,2})?$/.test(dataPrice)) candidates.push(dataPrice);
+
   return [...new Set(candidates)];
 }

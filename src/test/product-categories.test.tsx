@@ -59,6 +59,7 @@ describe("category browsing", () => {
       "overlaps",
       "contains",
       "or",
+      "in",
     ])
       query[method] = vi.fn(() => query);
     query["maybeSingle"] = vi.fn(async () => ({ data: { id: "second" }, error: null }));
@@ -70,7 +71,7 @@ describe("category browsing", () => {
       .mockReturnValue(query as unknown as ReturnType<ReturnType<typeof publicDb>["from"]>);
     try {
       await listProducts({ category: "lights", q: "Lights" });
-      expect(query["contains"]).toHaveBeenCalledWith("category_ids", ["second"]);
+      expect(query["overlaps"]).toHaveBeenCalledWith("category_ids", ["second"]);
       expect(query["or"]).toHaveBeenCalledWith(expect.stringContaining("category_ids.ov.{second}"));
       const related = relatedQuery({
         id: "product",
