@@ -2,10 +2,7 @@ import type { ComponentCapabilityProfile } from "../registry/component-capabilit
 import { DIMENSION_UNITS, type DimensionUnit } from "../schema/geometry";
 import type { EditorComponentType, EditorNode } from "../schema/nodes";
 import { CORNER_RADIUS_UNITS } from "../schema/shapes";
-import {
-  isInspectorStylePathSupported,
-  type InspectorStylePath,
-} from "./property-capabilities";
+import { isInspectorStylePathSupported, type InspectorStylePath } from "./property-capabilities";
 
 export type InspectorPropertyGroup =
   | "general"
@@ -182,7 +179,8 @@ export const INSPECTOR_PROPERTY_DEFINITIONS: readonly InspectorPropertyDefinitio
     group: "layout",
     controlType: "flex_container",
     responsiveSupported: true,
-    tooltip: "Configure flex direction, wrapping, main-axis justification, and cross-axis alignment.",
+    tooltip:
+      "Configure flex direction, wrapping, main-axis justification, and cross-axis alignment.",
     defaultBehaviorDescription: "Row / Start",
   },
   {
@@ -200,7 +198,8 @@ export const INSPECTOR_PROPERTY_DEFINITIONS: readonly InspectorPropertyDefinitio
     group: "layout",
     controlType: "flex_item",
     responsiveSupported: true,
-    tooltip: "Configure flex-grow, flex-shrink, flex-basis, and self-alignment inside a Flex parent.",
+    tooltip:
+      "Configure flex-grow, flex-shrink, flex-basis, and self-alignment inside a Flex parent.",
     defaultBehaviorDescription: "Auto",
   },
   {
@@ -278,7 +277,8 @@ export const INSPECTOR_PROPERTY_DEFINITIONS: readonly InspectorPropertyDefinitio
     group: "shape",
     controlType: "shape_preset",
     responsiveSupported: true,
-    tooltip: "Geometric silhouette preset (Square, Rounded, Pill, Circle, Hexagon, Octagon, Diamond, Arch).",
+    tooltip:
+      "Geometric silhouette preset (Square, Rounded, Pill, Circle, Hexagon, Octagon, Diamond, Arch).",
     defaultBehaviorDescription: "Rounded Rectangle (Default)",
   },
   {
@@ -288,7 +288,8 @@ export const INSPECTOR_PROPERTY_DEFINITIONS: readonly InspectorPropertyDefinitio
     controlType: "corner_radius",
     supportedUnits: CORNER_RADIUS_UNITS,
     responsiveSupported: true,
-    tooltip: "Uniform or independent per-corner rounding (Top-Left, Top-Right, Bottom-Right, Bottom-Left).",
+    tooltip:
+      "Uniform or independent per-corner rounding (Top-Left, Top-Right, Bottom-Right, Bottom-Left).",
     defaultBehaviorDescription: "Component Default Radius",
   },
 
@@ -299,7 +300,8 @@ export const INSPECTOR_PROPERTY_DEFINITIONS: readonly InspectorPropertyDefinitio
     group: "typography",
     controlType: "typography",
     responsiveSupported: true,
-    tooltip: "Font family, size, weight, line height, letter spacing, alignment, transform, and text color.",
+    tooltip:
+      "Font family, size, weight, line height, letter spacing, alignment, transform, and text color.",
     defaultBehaviorDescription: "Theme Typography",
   },
 

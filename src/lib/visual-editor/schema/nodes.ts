@@ -52,6 +52,7 @@ export type StorefrontComponentType = (typeof STOREFRONT_COMPONENT_TYPES)[number
 export const COMPONENT_TYPES = [...GENERIC_COMPONENT_TYPES, ...STOREFRONT_COMPONENT_TYPES] as const;
 
 export type ComponentType = (typeof COMPONENT_TYPES)[number];
+export type EditorComponentType = ComponentType;
 
 export const ComponentTypeSchema = z.enum(COMPONENT_TYPES);
 

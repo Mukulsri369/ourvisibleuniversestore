@@ -6,10 +6,7 @@ import { StudioShell } from "@/components/visual-editor/StudioShell";
 import type { Category, HomeData, ProductCardData, Settings } from "@/lib/store";
 import { CANONICAL_HOMEPAGE_NODE_IDS } from "../homepage/default-homepage-document";
 import { updateInspectorStyleProperty } from "../inspector/index";
-import {
-  getPublishedPage,
-  InMemoryTransactionalPersistenceAdapter,
-} from "../persistence/index";
+import { getPublishedPage, InMemoryTransactionalPersistenceAdapter } from "../persistence/index";
 import { loadStudioWorkspaceDraft, saveStudioWorkspaceDraft } from "../studio/index";
 import { findNodeById } from "../utils/node-tree";
 
@@ -165,18 +162,14 @@ describe("Prompt 12 — Inspector Real-Time Editing, Draft Persistence & Storefr
 
     // 5. Switch to Responsive tab and verify active breakpoint and override matrix
     fireEvent.click(screen.getByTestId("studio-inspector-tab-responsive"));
-    expect(screen.getByTestId("inspector-responsive-cascade-panel")).toHaveTextContent(
-      /mobile/i,
-    );
+    expect(screen.getByTestId("inspector-responsive-cascade-panel")).toHaveTextContent(/mobile/i);
     expect(screen.getByTestId("inspector-active-breakpoint-override-list")).toBeInTheDocument();
 
     // 6. Save Draft
     fireEvent.click(screen.getByTestId("studio-save-draft-btn"));
 
     await waitFor(() => {
-      expect(screen.getByTestId("studio-persistence-summary")).toHaveTextContent(
-        /Draft Saved/i,
-      );
+      expect(screen.getByTestId("studio-persistence-summary")).toHaveTextContent(/Draft Saved/i);
     });
 
     // 7. Verify published storefront remains completely unaffected

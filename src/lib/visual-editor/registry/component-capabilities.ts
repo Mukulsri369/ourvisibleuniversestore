@@ -82,6 +82,8 @@ export interface TrustedComponentCapabilities {
   readonly miniPreviewStrategy: MiniPreviewStrategy;
 }
 
+export type ComponentCapabilityProfile = TrustedComponentCapabilities;
+
 const PROTECTED_FIELDS = Object.freeze(Array.from(FORBIDDEN_BUSINESS_DATA_KEYS));
 
 const FULL_LAYOUT_SUPPORT: SupportedLayoutProperties = Object.freeze({

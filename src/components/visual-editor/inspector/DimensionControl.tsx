@@ -124,11 +124,7 @@ export function DimensionControl({
           inputMode="decimal"
           disabled={disabled || isKeyword}
           placeholder={
-            isKeyword
-              ? currentUnit
-              : renderedPx !== undefined
-                ? `Auto (${renderedPx}px)`
-                : "Auto"
+            isKeyword ? currentUnit : renderedPx !== undefined ? `Auto (${renderedPx}px)` : "Auto"
           }
           value={isKeyword ? "" : draftText}
           data-testid={`inspector-dimension-input-${shortKey}`}
@@ -156,7 +152,7 @@ export function DimensionControl({
                 currentVal?.value ??
                 (Number.isFinite(Number(draftText)) && draftText.trim() !== ""
                   ? Number(draftText)
-                  : renderedPx ?? 100);
+                  : (renderedPx ?? 100));
               const nextStr = String(fallbackVal);
               setDraftText(nextStr);
               commitNumericText(nextStr, nextUnit);

@@ -521,10 +521,7 @@ export function CategoryGridSectionAdapter({
             )}
           </div>
         )}
-        <div
-          style={gridStyle}
-          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
-        >
+        <div style={gridStyle} className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {categories.map((cat, idx) => {
             const span = cellSpans.find((s) => s.itemIndex === idx);
             const spanStyle: React.CSSProperties | undefined = span

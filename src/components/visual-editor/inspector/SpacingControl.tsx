@@ -41,10 +41,7 @@ export function SpacingControl({
   const minVal = field === "padding" ? 0 : -240;
   const maxVal = 400;
 
-  const handleSideChange = (
-    side: "top" | "right" | "bottom" | "left",
-    rawValue: string,
-  ) => {
+  const handleSideChange = (side: "top" | "right" | "bottom" | "left", rawValue: string) => {
     const parsed = Number(rawValue);
     if (!Number.isFinite(parsed)) {
       setErrorMsg("Must be a finite number");

@@ -40,9 +40,9 @@ describe("Prompt 12 — Shape Presets, Corner Radii, Clip-Path & Real Component 
     expect(validateShapeTypeInput("starburst").valid).toBe(false);
 
     // Uniform radius
-    expect(
-      validateCornerRadiusInput({ mode: "uniform", uniform: 20, unit: "px" }).valid,
-    ).toBe(true);
+    expect(validateCornerRadiusInput({ mode: "uniform", uniform: 20, unit: "px" }).valid).toBe(
+      true,
+    );
     expect(
       formatCornerRadiusCss({ mode: "uniform", uniform: 20, unit: "px" }, "rounded-rectangle"),
     ).toBe("20px");

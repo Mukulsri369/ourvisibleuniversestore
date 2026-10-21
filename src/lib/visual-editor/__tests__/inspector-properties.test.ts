@@ -86,12 +86,7 @@ describe("Prompt 12 — Inspector Properties & Capability Matrix", () => {
   });
 
   it("enforces allowed layout modes per component type", () => {
-    expect(getAllowedInspectorLayoutModes("Container")).toEqual([
-      "block",
-      "flex",
-      "stack",
-      "grid",
-    ]);
+    expect(getAllowedInspectorLayoutModes("Container")).toEqual(["block", "flex", "stack", "grid"]);
     expect(getAllowedInspectorLayoutModes("ProductGrid")).toEqual(["grid"]);
     expect(getAllowedInspectorLayoutModes("ProductScrollRail")).toEqual(["carousel"]);
     expect(getAllowedInspectorLayoutModes("StoreHeader")).toEqual([]);
@@ -138,9 +133,7 @@ describe("Prompt 12 — Inspector Properties & Capability Matrix", () => {
     ).toBe(false);
 
     // Border & Shadow & Filter
-    expect(
-      validateBorderInput({ widthPx: 2, style: "solid", color: "#3b82f6" }).valid,
-    ).toBe(true);
+    expect(validateBorderInput({ widthPx: 2, style: "solid", color: "#3b82f6" }).valid).toBe(true);
     expect(
       validateShadowInput({
         preset: "custom",
@@ -305,13 +298,7 @@ describe("Prompt 12 — Inspector Properties & Capability Matrix", () => {
   it("protects business fields and rejects unsafe XSS payloads", () => {
     const doc = DEFAULT_HOMEPAGE_PAGE_DOCUMENT;
 
-    const forbiddenPrice = updateInspectorStyleProperty(
-      doc,
-      featuredId,
-      "price",
-      0,
-      "desktop",
-    );
+    const forbiddenPrice = updateInspectorStyleProperty(doc, featuredId, "price", 0, "desktop");
     expect(forbiddenPrice.ok).toBe(false);
     expect(forbiddenPrice.code).toBe("FORBIDDEN_BUSINESS_PROPERTY");
 
@@ -326,12 +313,7 @@ describe("Prompt 12 — Inspector Properties & Capability Matrix", () => {
     expect(unsafeColor.code).toBe("UNSAFE_VALUE_REJECTED");
 
     // SafeComponentProps rejects any script injection in text props
-    const xssProp = updateStudioNodeProp(
-      doc,
-      featuredId,
-      "title",
-      "<script>alert(1)</script>",
-    );
+    const xssProp = updateStudioNodeProp(doc, featuredId, "title", "<script>alert(1)</script>");
     expect(xssProp.ok).toBe(false);
   });
 

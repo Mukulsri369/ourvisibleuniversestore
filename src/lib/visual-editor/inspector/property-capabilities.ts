@@ -98,7 +98,7 @@ export function getAllowedInspectorLayoutModes(
       return ["block", "flex", "stack", "grid"];
     case "ProductScrollRail":
     case "FestivalSection":
-    case "FeaturedCollectionSection":
+    case "FeaturedCollection":
       return ["carousel"];
     case "ProductGrid":
     case "CategoryGrid":

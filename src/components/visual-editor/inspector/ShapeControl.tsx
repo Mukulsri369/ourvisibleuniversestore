@@ -55,10 +55,7 @@ export function ShapeControl({
   const currentClip = clipPresetState.value ?? "none";
 
   const availableShapes = SHAPE_TYPES.filter((s) => {
-    if (
-      !supportsClipShape &&
-      (s === "hexagon" || s === "octagon" || s === "diamond")
-    ) {
+    if (!supportsClipShape && (s === "hexagon" || s === "octagon" || s === "diamond")) {
       return false;
     }
     return true;

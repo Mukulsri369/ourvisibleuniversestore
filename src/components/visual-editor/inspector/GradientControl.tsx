@@ -40,9 +40,7 @@ export function GradientControl({
 
   const handleStopChange = (index: number, patch: Partial<GradientStop>) => {
     const base = currentGradient ?? DEFAULT_GRADIENT;
-    const nextStops = base.stops.map((stop, idx) =>
-      idx === index ? { ...stop, ...patch } : stop,
-    );
+    const nextStops = base.stops.map((stop, idx) => (idx === index ? { ...stop, ...patch } : stop));
     commitGradient({
       ...base,
       stops: nextStops,

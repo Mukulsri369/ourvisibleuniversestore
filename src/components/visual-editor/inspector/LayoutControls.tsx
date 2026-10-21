@@ -112,152 +112,159 @@ export function LayoutControls({
       )}
 
       {/* Flexbox Controls */}
-      {supportsFlexAlignment && (effectiveMode === "flex" || effectiveMode === "stack" || !supportsGridColumns) && (
-        <div className="space-y-2 border-t border-border/60 pt-2.5" data-testid="inspector-flex-controls">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-medium text-foreground">Flexbox Alignment</span>
-            <div className="flex items-center gap-1">
-              <PropertyOriginBadge state={flexState} />
-              <PropertyResetButton
-                propertyPath="layout.flex"
-                canReset={flexState.canResetAtBreakpoint}
-                disabled={disabled}
-                onReset={() => onResetStylePath("layout.flex")}
-              />
+      {supportsFlexAlignment &&
+        (effectiveMode === "flex" || effectiveMode === "stack" || !supportsGridColumns) && (
+          <div
+            className="space-y-2 border-t border-border/60 pt-2.5"
+            data-testid="inspector-flex-controls"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-medium text-foreground">Flexbox Alignment</span>
+              <div className="flex items-center gap-1">
+                <PropertyOriginBadge state={flexState} />
+                <PropertyResetButton
+                  propertyPath="layout.flex"
+                  canReset={flexState.canResetAtBreakpoint}
+                  disabled={disabled}
+                  onReset={() => onResetStylePath("layout.flex")}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1">
+                <label
+                  htmlFor="inspector-flex-direction"
+                  className="block font-mono text-[10px] text-muted-foreground"
+                >
+                  Direction
+                </label>
+                <select
+                  id="inspector-flex-direction"
+                  disabled={disabled}
+                  value={flexVal.direction}
+                  data-testid="inspector-flex-direction"
+                  onChange={(e) => {
+                    if (!layoutModeState.value) {
+                      onUpdateStylePath("layout.mode", "flex");
+                    }
+                    onUpdateStylePath("layout.flex", {
+                      ...flexVal,
+                      direction: e.target.value as FlexLayoutConfig["direction"],
+                    });
+                  }}
+                  className="h-7 w-full rounded border border-border bg-background px-1.5 font-mono text-xs text-foreground"
+                >
+                  {FLEX_DIRECTIONS.map((dir) => (
+                    <option key={dir} value={dir}>
+                      {dir}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label
+                  htmlFor="inspector-flex-wrap"
+                  className="block font-mono text-[10px] text-muted-foreground"
+                >
+                  Wrap
+                </label>
+                <select
+                  id="inspector-flex-wrap"
+                  disabled={disabled}
+                  value={flexVal.wrap}
+                  data-testid="inspector-flex-wrap"
+                  onChange={(e) => {
+                    if (!layoutModeState.value) {
+                      onUpdateStylePath("layout.mode", "flex");
+                    }
+                    onUpdateStylePath("layout.flex", {
+                      ...flexVal,
+                      wrap: e.target.value as FlexLayoutConfig["wrap"],
+                    });
+                  }}
+                  className="h-7 w-full rounded border border-border bg-background px-1.5 font-mono text-xs text-foreground"
+                >
+                  {FLEX_WRAPS.map((w) => (
+                    <option key={w} value={w}>
+                      {w}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label
+                  htmlFor="inspector-flex-justify"
+                  className="block font-mono text-[10px] text-muted-foreground"
+                >
+                  Justify
+                </label>
+                <select
+                  id="inspector-flex-justify"
+                  disabled={disabled}
+                  value={flexVal.justifyContent}
+                  data-testid="inspector-flex-justify"
+                  onChange={(e) => {
+                    if (!layoutModeState.value) {
+                      onUpdateStylePath("layout.mode", "flex");
+                    }
+                    onUpdateStylePath("layout.flex", {
+                      ...flexVal,
+                      justifyContent: e.target.value as FlexLayoutConfig["justifyContent"],
+                    });
+                  }}
+                  className="h-7 w-full rounded border border-border bg-background px-1.5 font-mono text-xs text-foreground"
+                >
+                  {JUSTIFY_CONTENT_MODES.map((j) => (
+                    <option key={j} value={j}>
+                      {j}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label
+                  htmlFor="inspector-flex-align"
+                  className="block font-mono text-[10px] text-muted-foreground"
+                >
+                  Align Items
+                </label>
+                <select
+                  id="inspector-flex-align"
+                  disabled={disabled}
+                  value={flexVal.alignItems}
+                  data-testid="inspector-flex-align"
+                  onChange={(e) => {
+                    if (!layoutModeState.value) {
+                      onUpdateStylePath("layout.mode", "flex");
+                    }
+                    onUpdateStylePath("layout.flex", {
+                      ...flexVal,
+                      alignItems: e.target.value as AlignmentMode,
+                    });
+                  }}
+                  className="h-7 w-full rounded border border-border bg-background px-1.5 font-mono text-xs text-foreground"
+                >
+                  {ALIGNMENT_MODES.map((a) => (
+                    <option key={a} value={a}>
+                      {a}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            <div className="space-y-1">
-              <label
-                htmlFor="inspector-flex-direction"
-                className="block font-mono text-[10px] text-muted-foreground"
-              >
-                Direction
-              </label>
-              <select
-                id="inspector-flex-direction"
-                disabled={disabled}
-                value={flexVal.direction}
-                data-testid="inspector-flex-direction"
-                onChange={(e) => {
-                  if (!layoutModeState.value) {
-                    onUpdateStylePath("layout.mode", "flex");
-                  }
-                  onUpdateStylePath("layout.flex", {
-                    ...flexVal,
-                    direction: e.target.value as FlexLayoutConfig["direction"],
-                  });
-                }}
-                className="h-7 w-full rounded border border-border bg-background px-1.5 font-mono text-xs text-foreground"
-              >
-                {FLEX_DIRECTIONS.map((dir) => (
-                  <option key={dir} value={dir}>
-                    {dir}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-1">
-              <label
-                htmlFor="inspector-flex-wrap"
-                className="block font-mono text-[10px] text-muted-foreground"
-              >
-                Wrap
-              </label>
-              <select
-                id="inspector-flex-wrap"
-                disabled={disabled}
-                value={flexVal.wrap}
-                data-testid="inspector-flex-wrap"
-                onChange={(e) => {
-                  if (!layoutModeState.value) {
-                    onUpdateStylePath("layout.mode", "flex");
-                  }
-                  onUpdateStylePath("layout.flex", {
-                    ...flexVal,
-                    wrap: e.target.value as FlexLayoutConfig["wrap"],
-                  });
-                }}
-                className="h-7 w-full rounded border border-border bg-background px-1.5 font-mono text-xs text-foreground"
-              >
-                {FLEX_WRAPS.map((w) => (
-                  <option key={w} value={w}>
-                    {w}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-1">
-              <label
-                htmlFor="inspector-flex-justify"
-                className="block font-mono text-[10px] text-muted-foreground"
-              >
-                Justify
-              </label>
-              <select
-                id="inspector-flex-justify"
-                disabled={disabled}
-                value={flexVal.justifyContent}
-                data-testid="inspector-flex-justify"
-                onChange={(e) => {
-                  if (!layoutModeState.value) {
-                    onUpdateStylePath("layout.mode", "flex");
-                  }
-                  onUpdateStylePath("layout.flex", {
-                    ...flexVal,
-                    justifyContent: e.target.value as FlexLayoutConfig["justifyContent"],
-                  });
-                }}
-                className="h-7 w-full rounded border border-border bg-background px-1.5 font-mono text-xs text-foreground"
-              >
-                {JUSTIFY_CONTENT_MODES.map((j) => (
-                  <option key={j} value={j}>
-                    {j}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-1">
-              <label
-                htmlFor="inspector-flex-align"
-                className="block font-mono text-[10px] text-muted-foreground"
-              >
-                Align Items
-              </label>
-              <select
-                id="inspector-flex-align"
-                disabled={disabled}
-                value={flexVal.alignItems}
-                data-testid="inspector-flex-align"
-                onChange={(e) => {
-                  if (!layoutModeState.value) {
-                    onUpdateStylePath("layout.mode", "flex");
-                  }
-                  onUpdateStylePath("layout.flex", {
-                    ...flexVal,
-                    alignItems: e.target.value as AlignmentMode,
-                  });
-                }}
-                className="h-7 w-full rounded border border-border bg-background px-1.5 font-mono text-xs text-foreground"
-              >
-                {ALIGNMENT_MODES.map((a) => (
-                  <option key={a} value={a}>
-                    {a}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-      )}
+        )}
 
       {/* CSS Grid Controls */}
       {supportsGridColumns && (effectiveMode === "grid" || !supportsFlexAlignment) && (
-        <div className="space-y-2 border-t border-border/60 pt-2.5" data-testid="inspector-grid-controls">
+        <div
+          className="space-y-2 border-t border-border/60 pt-2.5"
+          data-testid="inspector-grid-controls"
+        >
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-medium text-foreground">CSS Grid Columns</span>
             <div className="flex items-center gap-1">
@@ -334,7 +341,10 @@ export function LayoutControls({
 
       {/* Grid Cell Span Controls (for GridItem, ProductCard, CategoryCard, Container) */}
       {supportsBentoSpan && (
-        <div className="space-y-2 border-t border-border/60 pt-2.5" data-testid="inspector-grid-item-controls">
+        <div
+          className="space-y-2 border-t border-border/60 pt-2.5"
+          data-testid="inspector-grid-item-controls"
+        >
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-medium text-foreground">Grid Item Span</span>
             <div className="flex items-center gap-1">

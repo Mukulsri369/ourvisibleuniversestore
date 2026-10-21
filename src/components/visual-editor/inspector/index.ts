@@ -11,3 +11,4 @@ export * from "./AppearanceEffectsControl";
 export * from "./TypographyControls";
 export * from "./MediaPresentationControls";
 export * from "./ResponsivePropertyControl";
+export * from "./PropertiesInspector";

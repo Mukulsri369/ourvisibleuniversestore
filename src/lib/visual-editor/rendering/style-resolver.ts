@@ -1,11 +1,6 @@
 import type { CSSProperties } from "react";
 import { formatDimensionValue, type AlignmentMode, type SpacingBox } from "../schema/geometry";
-import type {
-  ClipPreset,
-  CornerRadiusConfig,
-  ImageCropConfig,
-  ShapeType,
-} from "../schema/shapes";
+import type { ClipPreset, CornerRadiusConfig, ImageCropConfig, ShapeType } from "../schema/shapes";
 import type { JustifyContentMode } from "../schema/layout";
 import type { GradientConfig, ShadowConfig, TypographyConfig } from "../schema/appearance";
 import type { NodeStyleBundle } from "../schema/responsive";
@@ -208,7 +203,10 @@ export function resolveImageCropCssProperties(
     hasAny = true;
   }
   if (imageCrop.aspectRatio && imageCrop.aspectRatio !== "auto") {
-    style.aspectRatio = imageCrop.aspectRatio.replace(":", " / ");
+    style.aspectRatio =
+      typeof imageCrop.aspectRatio === "string"
+        ? imageCrop.aspectRatio.replace(":", " / ")
+        : `${imageCrop.aspectRatio.width} / ${imageCrop.aspectRatio.height}`;
     hasAny = true;
   }
   if (imageCrop.focalPoint) {
@@ -327,15 +325,12 @@ export function resolveNodeCssProperties(
   const layout = bundle.layout;
   if (layout) {
     const isFlexMode =
-      layout.mode === "flex" ||
-      layout.mode === "stack" ||
-      (!layout.mode && Boolean(layout.flex));
+      layout.mode === "flex" || layout.mode === "stack" || (!layout.mode && Boolean(layout.flex));
     const isGridMode = layout.mode === "grid" || (!layout.mode && Boolean(layout.grid));
 
     if (isFlexMode && (layout.flex || layout.mode === "flex" || layout.mode === "stack")) {
       setProp("display", "flex");
-      const dir =
-        layout.flex?.direction ?? (layout.mode === "stack" ? "column" : undefined);
+      const dir = layout.flex?.direction ?? (layout.mode === "stack" ? "column" : undefined);
       if (dir) setProp("flexDirection", dir);
       if (layout.flex?.wrap) setProp("flexWrap", layout.flex.wrap);
       if (layout.flex?.justifyContent) {

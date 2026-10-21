@@ -89,7 +89,10 @@ export function AppearanceEffectsControl({
     <div className="space-y-4">
       {/* BORDER CONTROLS */}
       {supportsBorder && (
-        <div className="space-y-2 border-t border-border/60 pt-3" data-testid="inspector-border-control">
+        <div
+          className="space-y-2 border-t border-border/60 pt-3"
+          data-testid="inspector-border-control"
+        >
           <div className="flex items-center justify-between gap-1">
             <span className="text-[11px] font-medium text-foreground">Border Stroke</span>
             <div className="flex items-center gap-1">
@@ -187,7 +190,10 @@ export function AppearanceEffectsControl({
 
       {/* SHADOW & GLOW CONTROLS */}
       {supportsShadow && (
-        <div className="space-y-2 border-t border-border/60 pt-3" data-testid="inspector-shadow-control">
+        <div
+          className="space-y-2 border-t border-border/60 pt-3"
+          data-testid="inspector-shadow-control"
+        >
           <div className="flex items-center justify-between gap-1">
             <label
               htmlFor="inspector-shadow-preset"
@@ -338,7 +344,10 @@ export function AppearanceEffectsControl({
 
       {/* VISUAL FILTERS & BACKDROP BLUR */}
       {supportsFilters && (
-        <div className="space-y-2 border-t border-border/60 pt-3" data-testid="inspector-filters-control">
+        <div
+          className="space-y-2 border-t border-border/60 pt-3"
+          data-testid="inspector-filters-control"
+        >
           <div className="flex items-center justify-between gap-1">
             <span className="text-[11px] font-medium text-foreground">
               Backdrop &amp; Optical Filters

@@ -17,10 +17,7 @@ import {
   getAllowedInspectorLayoutModes,
   type InspectorStylePath,
 } from "./property-capabilities";
-import {
-  createInspectorErrorResult,
-  type InspectorPropertyUpdateResult,
-} from "./property-errors";
+import { createInspectorErrorResult, type InspectorPropertyUpdateResult } from "./property-errors";
 import { containsUnsafeCssOrScript } from "./property-validation";
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -154,10 +151,7 @@ function verifyEditableNodeTarget(
     );
   }
 
-  if (
-    identity.kind === "virtual_product" ||
-    identity.kind === "virtual_category_card"
-  ) {
+  if (identity.kind === "virtual_product" || identity.kind === "virtual_category_card") {
     return createInspectorErrorResult(
       document,
       "RUNTIME_INSTANCE_READONLY",
@@ -166,6 +160,13 @@ function verifyEditableNodeTarget(
   }
 
   const targetNodeId = identity.documentNodeId;
+  if (!targetNodeId) {
+    return createInspectorErrorResult(
+      document,
+      "NODE_NOT_FOUND",
+      `Target "${selectedId}" does not reference a document node.`,
+    );
+  }
   const targetNode = findNodeById(document, targetNodeId);
   if (!targetNode) {
     return createInspectorErrorResult(
@@ -259,7 +260,7 @@ export function updateInspectorStyleProperty(
   }
 
   const verified = verifyEditableNodeTarget(document, selectedId);
-  if (!verified.ok) {
+  if (!("targetNodeId" in verified)) {
     return verified;
   }
 
@@ -283,9 +284,7 @@ export function updateInspectorStyleProperty(
   // Validate layout.mode against allowed modes for this component adapter
   if (path === "layout.mode" || (path === "layout" && isPlainObject(value) && "mode" in value)) {
     const requestedMode =
-      path === "layout.mode"
-        ? String(value)
-        : String((value as Record<string, unknown>).mode);
+      path === "layout.mode" ? String(value) : String((value as Record<string, unknown>).mode);
     const allowedModes = getAllowedInspectorLayoutModes(targetNode.type);
     if (!allowedModes.includes(requestedMode as never)) {
       return createInspectorErrorResult(
@@ -352,8 +351,12 @@ export function updateInspectorStyleProperty(
   // If value is a partial nested object (e.g., updating `appearance.typography` or `layout.flex` or `layout.grid`),
   // merge with existing object at that path unless it is an atomic value object (`DimensionValue`, `SpacingBox`, `CornerRadiusConfig`).
   let nextBundle: NodeStyleBundle;
-  const existingAtPath =
-    path.split(".").reduce<unknown>((acc, seg) => (isPlainObject(acc) ? acc[seg] : undefined), currentTargetBundle);
+  const existingAtPath = path
+    .split(".")
+    .reduce<unknown>(
+      (acc, seg) => (isPlainObject(acc) ? acc[seg] : undefined),
+      currentTargetBundle,
+    );
 
   if (
     isPlainObject(value) &&
@@ -418,11 +421,11 @@ export function resetInspectorStyleProperty(
   registry: VisualComponentRegistry = defaultComponentRegistry,
 ): InspectorPropertyUpdateResult {
   const verified = verifyEditableNodeTarget(document, selectedId);
-  if (!verified.ok) {
+  if (!("targetNodeId" in verified)) {
     return verified;
   }
 
-  const { targetNodeId, targetNode } = verified;
+  const { targetNodeId } = verified;
   void registry;
 
   if (path === "visible") {
@@ -496,7 +499,7 @@ export function resetInspectorBreakpointOverrides(
   breakpoint: EditorBreakpoint,
 ): InspectorPropertyUpdateResult {
   const verified = verifyEditableNodeTarget(document, selectedId);
-  if (!verified.ok) {
+  if (!("targetNodeId" in verified)) {
     return verified;
   }
 

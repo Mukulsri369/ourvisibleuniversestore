@@ -185,19 +185,13 @@ describe("Prompt 12 — Responsive Breakpoint Overrides & Inheritance Model", ()
     doc = resetSingle.document;
 
     const afterSingleReset = findNodeById(doc, featuredId)!;
-    expect(
-      afterSingleReset.responsive?.mobile?.appearance?.backgroundColor,
-    ).toBeUndefined();
+    expect(afterSingleReset.responsive?.mobile?.appearance?.backgroundColor).toBeUndefined();
     // Sibling overrides at mobile remain untouched!
     expect(afterSingleReset.responsive?.mobile?.appearance?.opacity).toBe(0.9);
     expect(afterSingleReset.responsive?.mobile?.geometry?.padding?.top).toBe(12);
 
     // Reset all mobile overrides while keeping desktop base intact
-    const resetAllMobile = resetInspectorBreakpointOverrides(
-      doc,
-      featuredId,
-      "mobile",
-    );
+    const resetAllMobile = resetInspectorBreakpointOverrides(doc, featuredId, "mobile");
     expect(resetAllMobile.ok).toBe(true);
     doc = resetAllMobile.document;
 

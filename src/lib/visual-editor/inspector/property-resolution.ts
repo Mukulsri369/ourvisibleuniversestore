@@ -1,9 +1,5 @@
 import type { EditorNode } from "../schema/nodes";
-import type {
-  EditorBreakpoint,
-  NodeStyleBundle,
-  OverrideBreakpoint,
-} from "../schema/responsive";
+import type { EditorBreakpoint, NodeStyleBundle, OverrideBreakpoint } from "../schema/responsive";
 import {
   BREAKPOINT_INHERITANCE_CHAIN,
   resolveResponsiveStyle,
@@ -172,15 +168,15 @@ export function resolveInspectorPropertyState<T = unknown>(
   const value = getNestedPropertyAtPath<T>(resolvedBundle, path);
   const baseDesktopValue = getNestedPropertyAtPath<T>(node.style, path);
 
-  const targetBundle =
-    breakpoint === "desktop" ? node.style : node.responsive?.[breakpoint];
+  const targetBundle = breakpoint === "desktop" ? node.style : node.responsive?.[breakpoint];
   const explicitValueAtBreakpoint = getNestedPropertyAtPath<T>(targetBundle, path);
   const hasExplicit = hasExplicitPropertyInBundle(targetBundle, path);
 
   // Compute the value inherited from earlier steps in the chain (before `breakpoint`)
   const chain = BREAKPOINT_INHERITANCE_CHAIN[breakpoint];
-  let sourceBreakpoint: EditorBreakpoint | null =
-    hasExplicitPropertyInBundle(node.style, path) ? "desktop" : null;
+  let sourceBreakpoint: EditorBreakpoint | null = hasExplicitPropertyInBundle(node.style, path)
+    ? "desktop"
+    : null;
 
   let inheritedBundle: NodeStyleBundle = node.style ? { ...node.style } : {};
   for (const step of chain) {
@@ -211,9 +207,7 @@ export function resolveInspectorPropertyState<T = unknown>(
   }
 
   const inheritedValue =
-    breakpoint === "desktop"
-      ? undefined
-      : getNestedPropertyAtPath<T>(inheritedBundle, path);
+    breakpoint === "desktop" ? undefined : getNestedPropertyAtPath<T>(inheritedBundle, path);
 
   const isThemeToken = typeof value === "string" && value.startsWith("token:");
 

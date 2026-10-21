@@ -538,12 +538,7 @@ export function StudioShell({
 
   const handleResetStyleProperty = useCallback(
     (selectedId: string, path: InspectorStylePath, bp?: EditorBreakpoint) => {
-      const res = resetInspectorStyleProperty(
-        documentState.workingDocument,
-        selectedId,
-        path,
-        bp,
-      );
+      const res = resetInspectorStyleProperty(documentState.workingDocument, selectedId, path, bp);
       commitDocumentResult(res);
     },
     [documentState.workingDocument, commitDocumentResult],
@@ -551,11 +546,7 @@ export function StudioShell({
 
   const handleResetBreakpointOverrides = useCallback(
     (selectedId: string, bp: EditorBreakpoint) => {
-      const res = resetInspectorBreakpointOverrides(
-        documentState.workingDocument,
-        selectedId,
-        bp,
-      );
+      const res = resetInspectorBreakpointOverrides(documentState.workingDocument, selectedId, bp);
       commitDocumentResult(res);
     },
     [documentState.workingDocument, commitDocumentResult],

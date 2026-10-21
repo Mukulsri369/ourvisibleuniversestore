@@ -236,18 +236,10 @@ export function StudioInspector({
         breakpoint,
       );
     } else if (path === "appearance.opacity") {
-      onUpdateNodeAppearance(
-        node.id,
-        { opacity: (value as number | null) ?? null },
-        breakpoint,
-      );
+      onUpdateNodeAppearance(node.id, { opacity: (value as number | null) ?? null }, breakpoint);
     } else if (path === "shape.cornerRadius") {
       const cr = value as CornerRadiusConfig | null;
-      onUpdateNodeAppearance(
-        node.id,
-        { cornerRadiusPx: cr?.uniform ?? null },
-        breakpoint,
-      );
+      onUpdateNodeAppearance(node.id, { cornerRadiusPx: cr?.uniform ?? null }, breakpoint);
     }
   };
 
@@ -330,16 +322,8 @@ export function StudioInspector({
     "layout.grid",
     breakpoint,
   );
-  const flexItemState = resolveInspectorPropertyState<FlexItemConfig>(
-    node,
-    "flexItem",
-    breakpoint,
-  );
-  const gridItemState = resolveInspectorPropertyState<GridItemConfig>(
-    node,
-    "gridItem",
-    breakpoint,
-  );
+  const flexItemState = resolveInspectorPropertyState<FlexItemConfig>(node, "flexItem", breakpoint);
+  const gridItemState = resolveInspectorPropertyState<GridItemConfig>(node, "gridItem", breakpoint);
 
   const bgColorState = resolveInspectorPropertyState<string>(
     node,
@@ -1170,11 +1154,7 @@ export function StudioInspector({
 
             {/* Typography */}
             {supportsTypography && (
-              <PropertySection
-                id="typography"
-                title={`Typography (${breakpoint})`}
-                defaultExpanded
-              >
+              <PropertySection id="typography" title={`Typography (${breakpoint})`} defaultExpanded>
                 <TypographyControls
                   typographyState={typographyState}
                   textColorState={textColorState}

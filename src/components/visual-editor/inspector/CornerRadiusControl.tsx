@@ -40,10 +40,7 @@ export function CornerRadiusControl({
   const handleModeSwitch = (nextMode: CornerRadiusMode) => {
     if (nextMode === "uniform") {
       const baseNum =
-        currentRadius?.uniform ??
-        currentRadius?.topLeft ??
-        currentRadius?.topRight ??
-        16;
+        currentRadius?.uniform ?? currentRadius?.topLeft ?? currentRadius?.topRight ?? 16;
       const candidate: CornerRadiusConfig = {
         mode: "uniform",
         uniform: baseNum,

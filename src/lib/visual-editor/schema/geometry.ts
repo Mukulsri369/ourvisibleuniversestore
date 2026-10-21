@@ -8,10 +8,7 @@ export const KEYWORD_DIMENSION_UNITS = [
   "fit-content",
 ] as const;
 
-export const DIMENSION_UNITS = [
-  ...NUMERIC_DIMENSION_UNITS,
-  ...KEYWORD_DIMENSION_UNITS,
-] as const;
+export const DIMENSION_UNITS = [...NUMERIC_DIMENSION_UNITS, ...KEYWORD_DIMENSION_UNITS] as const;
 
 export type NumericDimensionUnit = (typeof NUMERIC_DIMENSION_UNITS)[number];
 export type KeywordDimensionUnit = (typeof KEYWORD_DIMENSION_UNITS)[number];

@@ -20,6 +20,8 @@ import {
   type AspectRatioPreset,
   type DimensionUnit,
   type DimensionValue,
+  type KeywordDimensionUnit,
+  type NumericDimensionUnit,
   type SpacingBox,
 } from "../schema/geometry";
 import {
@@ -71,7 +73,7 @@ const KEYWORD_DIMENSION_UNITS: ReadonlySet<DimensionUnit> = new Set([
   "fit-content",
 ]);
 
-export function isKeywordDimensionUnit(unit: DimensionUnit): boolean {
+export function isKeywordDimensionUnit(unit: DimensionUnit): unit is KeywordDimensionUnit {
   return KEYWORD_DIMENSION_UNITS.has(unit);
 }
 
@@ -145,7 +147,9 @@ export function validateDimensionInput(
 /**
  * Validates an aspect ratio preset against `ASPECT_RATIO_PRESETS`.
  */
-export function validateAspectRatioInput(ratio: string): InspectorValidationOutcome<AspectRatioPreset> {
+export function validateAspectRatioInput(
+  ratio: string,
+): InspectorValidationOutcome<AspectRatioPreset> {
   if (!ASPECT_RATIO_PRESETS.includes(ratio as AspectRatioPreset)) {
     return {
       valid: false,
@@ -260,7 +264,9 @@ export function validateGradientInput(
   };
 }
 
-export function validateBorderInput(border: BorderConfig): InspectorValidationOutcome<BorderConfig> {
+export function validateBorderInput(
+  border: BorderConfig,
+): InspectorValidationOutcome<BorderConfig> {
   const parsed = BorderConfigSchema.safeParse(border);
   if (!parsed.success) {
     return {
@@ -275,7 +281,9 @@ export function validateBorderInput(border: BorderConfig): InspectorValidationOu
   };
 }
 
-export function validateShadowInput(shadow: ShadowConfig): InspectorValidationOutcome<ShadowConfig> {
+export function validateShadowInput(
+  shadow: ShadowConfig,
+): InspectorValidationOutcome<ShadowConfig> {
   const parsed = ShadowConfigSchema.safeParse(shadow);
   if (!parsed.success) {
     return {
@@ -290,7 +298,9 @@ export function validateShadowInput(shadow: ShadowConfig): InspectorValidationOu
   };
 }
 
-export function validateFiltersInput(filters: FilterConfig): InspectorValidationOutcome<FilterConfig> {
+export function validateFiltersInput(
+  filters: FilterConfig,
+): InspectorValidationOutcome<FilterConfig> {
   const parsed = FilterConfigSchema.safeParse(filters);
   if (!parsed.success) {
     return {

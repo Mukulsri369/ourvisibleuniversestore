@@ -32,7 +32,8 @@ export function MediaPresentationControls({
 }: MediaPresentationControlsProps) {
   const currentCrop = imageCropState.value;
   const objectFit = currentCrop?.objectFit ?? "cover";
-  const aspectRatio = currentCrop?.aspectRatio ?? "auto";
+  const aspectRatio =
+    typeof currentCrop?.aspectRatio === "string" ? currentCrop.aspectRatio : "auto";
   const focalX = currentCrop?.focalPoint?.xPercent ?? 50;
   const focalY = currentCrop?.focalPoint?.yPercent ?? 50;
   const zoom = currentCrop?.zoom ?? 1;
