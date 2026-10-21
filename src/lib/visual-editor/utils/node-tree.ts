@@ -151,8 +151,7 @@ export function updateNodeById(
       return nextNode;
     }
 
-    const nextChildren =
-      node.children.length > 0 ? updateList(node.children) : node.children;
+    const nextChildren = node.children.length > 0 ? updateList(node.children) : node.children;
 
     let nextSlots = node.slots;
     let slotsChanged = false;
@@ -199,9 +198,7 @@ export function updateNodeStyle(
   patch: NodeStyleBundle,
   breakpoint: EditorBreakpoint = "desktop",
 ): PageDocument {
-  return updateNodeById(doc, nodeId, (node) =>
-    setResponsiveStyleOverride(node, breakpoint, patch),
-  );
+  return updateNodeById(doc, nodeId, (node) => setResponsiveStyleOverride(node, breakpoint, patch));
 }
 
 export function reorderChildNodes(
@@ -209,6 +206,7 @@ export function reorderChildNodes(
   parentId: string | null,
   fromIndex: number,
   toIndex: number,
+  slotKey?: string,
 ): PageDocument {
   const reorderArray = (arr: readonly EditorNode[]): EditorNode[] => {
     if (
@@ -232,6 +230,19 @@ export function reorderChildNodes(
   }
 
   return updateNodeById(doc, parentId, (parent) => {
+    if (slotKey) {
+      const currentSlotList = parent.slots?.[slotKey];
+      if (!currentSlotList) return parent;
+      const nextSlotList = reorderArray(currentSlotList);
+      if (nextSlotList === currentSlotList) return parent;
+      return {
+        ...parent,
+        slots: {
+          ...parent.slots,
+          [slotKey]: nextSlotList,
+        },
+      };
+    }
     const nextChildren = reorderArray(parent.children);
     return nextChildren === parent.children ? parent : { ...parent, children: nextChildren };
   });
@@ -242,6 +253,7 @@ export function insertChildNode(
   parentId: string | null,
   newNode: EditorNode,
   index?: number,
+  slotKey?: string,
 ): PageDocument {
   const existingIds = new Set(collectAllNodeIds(doc.root));
   if (existingIds.has(newNode.id)) {
@@ -252,7 +264,10 @@ export function insertChildNode(
     const nextRoot = [...doc.root];
     const targetIdx =
       index === undefined ? nextRoot.length : Math.max(0, Math.min(index, nextRoot.length));
-    nextRoot.splice(targetIdx, 0, newNode);
+    const normalizedNode: EditorNode = newNode.slotName
+      ? { ...newNode, slotName: undefined }
+      : newNode;
+    nextRoot.splice(targetIdx, 0, normalizedNode);
     return { ...doc, root: nextRoot };
   }
 
@@ -261,12 +276,35 @@ export function insertChildNode(
       throw new Error(`Cannot insert child into leaf component "${parent.type}"`);
     }
     if (ROOT_ONLY_COMPONENT_TYPES.has(newNode.type)) {
-      throw new Error(`Root-only component "${newNode.type}" cannot be nested inside "${parent.type}"`);
+      throw new Error(
+        `Root-only component "${newNode.type}" cannot be nested inside "${parent.type}"`,
+      );
     }
+
+    if (slotKey) {
+      const currentSlotList = parent.slots?.[slotKey] ?? [];
+      const nextSlotList = [...currentSlotList];
+      const targetIdx =
+        index === undefined
+          ? nextSlotList.length
+          : Math.max(0, Math.min(index, nextSlotList.length));
+      const slotNode: EditorNode =
+        newNode.slotName === slotKey ? newNode : { ...newNode, slotName: slotKey };
+      nextSlotList.splice(targetIdx, 0, slotNode);
+      return {
+        ...parent,
+        slots: {
+          ...parent.slots,
+          [slotKey]: nextSlotList,
+        },
+      };
+    }
+
     const nextChildren = [...parent.children];
     const targetIdx =
       index === undefined ? nextChildren.length : Math.max(0, Math.min(index, nextChildren.length));
-    nextChildren.splice(targetIdx, 0, newNode);
+    const childNode: EditorNode = newNode.slotName ? { ...newNode, slotName: undefined } : newNode;
+    nextChildren.splice(targetIdx, 0, childNode);
     return { ...parent, children: nextChildren };
   });
 }
@@ -282,9 +320,30 @@ export function removeNodeById(doc: PageDocument, nodeId: string): PageDocument 
         continue;
       }
       const nextChildren = item.children.length > 0 ? filterList(item.children) : item.children;
-      if (nextChildren !== item.children) {
+
+      let nextSlots = item.slots;
+      let slotsChanged = false;
+      if (item.slots) {
+        const updatedSlots: Record<string, EditorNode[]> = {};
+        for (const [sKey, sList] of Object.entries(item.slots)) {
+          const filteredSlot = sList.length > 0 ? filterList(sList) : sList;
+          if (filteredSlot !== sList) {
+            slotsChanged = true;
+          }
+          updatedSlots[sKey] = filteredSlot;
+        }
+        if (slotsChanged) {
+          nextSlots = updatedSlots;
+        }
+      }
+
+      if (nextChildren !== item.children || slotsChanged) {
         changed = true;
-        filtered.push({ ...item, children: nextChildren });
+        filtered.push({
+          ...item,
+          children: nextChildren,
+          ...(nextSlots ? { slots: nextSlots } : {}),
+        });
       } else {
         filtered.push(item);
       }

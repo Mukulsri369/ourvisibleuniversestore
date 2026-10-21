@@ -25,6 +25,11 @@ import {
   resolveProductCollection,
   resolveRepeatedCategorySections,
 } from "../rendering/data-resolver";
+import {
+  resolveImageCropCssProperties,
+  resolveNodeCssProperties,
+  resolveTypographyCssProperties,
+} from "../rendering/style-resolver";
 import { AdapterBoundary } from "./AdapterBoundary";
 
 const DEFAULT_INTERESTS = [
@@ -55,13 +60,14 @@ const ICON_MAP: Record<string, typeof Sparkles> = {
 };
 
 export function TextAdapter({ node, resolvedStyle }: ComponentAdapterRenderProps) {
+  const typoStyle = resolveTypographyCssProperties(resolvedStyle.appearance?.typography);
   return (
     <AdapterBoundary
       node={node}
       resolvedStyle={resolvedStyle}
       disableWrapperWhenUnstyledInPublic={false}
     >
-      <p className="text-sm text-muted-foreground leading-relaxed">
+      <p style={typoStyle} className="text-sm text-muted-foreground leading-relaxed">
         {node.props.text ?? node.props.description ?? ""}
       </p>
     </AdapterBoundary>
@@ -71,6 +77,7 @@ export function TextAdapter({ node, resolvedStyle }: ComponentAdapterRenderProps
 export function HeadingAdapter({ node, resolvedStyle }: ComponentAdapterRenderProps) {
   const Tag = node.props.headingLevel ?? "h2";
   const content = node.props.text ?? node.props.title ?? "";
+  const typoStyle = resolveTypographyCssProperties(resolvedStyle.appearance?.typography);
   return (
     <AdapterBoundary
       node={node}
@@ -78,7 +85,9 @@ export function HeadingAdapter({ node, resolvedStyle }: ComponentAdapterRenderPr
       disableWrapperWhenUnstyledInPublic={false}
     >
       {node.props.eyebrow && <p className="eyebrow">{node.props.eyebrow}</p>}
-      <Tag className="font-semibold tracking-tight text-foreground">{content}</Tag>
+      <Tag style={typoStyle} className="font-semibold tracking-tight text-foreground">
+        {content}
+      </Tag>
     </AdapterBoundary>
   );
 }
@@ -89,8 +98,7 @@ export function ImageAdapter({ node, resolvedStyle }: ComponentAdapterRenderProp
   const alt = primaryMedia?.altText ?? node.props.title ?? "";
 
   const objectFit = resolvedStyle.shape?.imageCrop?.objectFit ?? primaryMedia?.objectFit ?? "cover";
-  const focalPoint = resolvedStyle.shape?.imageCrop?.focalPoint;
-  const objectPosition = focalPoint ? `${focalPoint.xPercent}% ${focalPoint.yPercent}%` : undefined;
+  const cropStyle = resolveImageCropCssProperties(resolvedStyle.shape?.imageCrop);
 
   return (
     <AdapterBoundary
@@ -107,7 +115,7 @@ export function ImageAdapter({ node, resolvedStyle }: ComponentAdapterRenderProp
             width: "100%",
             height: "100%",
             objectFit,
-            ...(objectPosition ? { objectPosition } : {}),
+            ...(cropStyle ?? {}),
           }}
         />
       ) : (
@@ -165,6 +173,7 @@ export function ButtonAdapter({ node, resolvedStyle }: ComponentAdapterRenderPro
               : "default";
 
   const isExternal = href.startsWith("https://");
+  const buttonSurfaceStyle = resolveNodeCssProperties(resolvedStyle);
 
   return (
     <AdapterBoundary
@@ -177,12 +186,13 @@ export function ButtonAdapter({ node, resolvedStyle }: ComponentAdapterRenderPro
           href={href}
           target={node.props.openInNewTab ? "_blank" : undefined}
           rel={node.props.openInNewTab ? "noopener noreferrer" : undefined}
+          style={buttonSurfaceStyle}
           className={buttonVariants({ variant })}
         >
           {label}
         </a>
       ) : (
-        <Link to={href} className={buttonVariants({ variant })}>
+        <Link to={href} style={buttonSurfaceStyle} className={buttonVariants({ variant })}>
           {label}
         </Link>
       )}
@@ -240,48 +250,149 @@ export function ShapeAdapter({ node, resolvedStyle, children }: ComponentAdapter
   );
 }
 
+function RepeatedCategorySectionsView({
+  node,
+  resolvedStyle,
+}: {
+  node: ComponentAdapterRenderProps["node"];
+  resolvedStyle: ComponentAdapterRenderProps["resolvedStyle"];
+}) {
+  const {
+    mode,
+    interactionPolicy,
+    dataCatalog,
+    selectedNodeId,
+    hoveredNodeId,
+    onSelectNode,
+    onHoverNode,
+  } = usePageRenderContext();
+  const binding = node.binding?.kind === "repeated_category_sections" ? node.binding : undefined;
+  const repeatedSections = resolveRepeatedCategorySections(binding, dataCatalog);
+
+  const initialCount =
+    mode !== "public"
+      ? repeatedSections.length
+      : binding && binding.eagerLoadCount > 0
+        ? binding.eagerLoadCount
+        : 2;
+  const [visibleCategoryCount, setVisibleCategoryCount] = React.useState(initialCount);
+  const sentinelRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (mode !== "public") {
+      setVisibleCategoryCount(repeatedSections.length);
+      return;
+    }
+
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    if (typeof IntersectionObserver === "undefined") {
+      setVisibleCategoryCount(repeatedSections.length);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (first?.isIntersecting) {
+          setVisibleCategoryCount((prev) => Math.min(prev + 2, repeatedSections.length));
+        }
+      },
+      { rootMargin: "350px 0px" },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [mode, repeatedSections.length]);
+
+  return (
+    <AdapterBoundary node={node} resolvedStyle={resolvedStyle}>
+      {repeatedSections
+        .slice(0, visibleCategoryCount)
+        .map(({ category, products, spotlightProduct, sectorLore }) => {
+          const virtualId = `${node.id}::category::${category.id}`;
+          const emitAttrs = interactionPolicy.emitEditorTelemetryAttributes;
+
+          const handleVirtualClickCapture = (e: React.MouseEvent<HTMLElement>) => {
+            if (!interactionPolicy.interceptNodeClickForSelection) return;
+            e.preventDefault();
+            e.stopPropagation();
+            onSelectNode?.(virtualId);
+          };
+
+          const virtualEditorProps: Record<string, unknown> = emitAttrs
+            ? {
+                "data-editor-node-id": virtualId,
+                "data-editor-node-type": "CategorySectionInstance",
+                "data-editor-parent-node-id": node.id,
+                "data-editor-virtual-category-id": category.id,
+                "data-editor-virtual-category-slug": category.slug,
+                "data-editor-selected": selectedNodeId === virtualId ? "true" : undefined,
+                "data-editor-hovered": hoveredNodeId === virtualId ? "true" : undefined,
+                onClickCapture: handleVirtualClickCapture,
+                onMouseEnter: (e: React.MouseEvent<HTMLElement>) => {
+                  e.stopPropagation();
+                  onHoverNode?.(virtualId);
+                },
+                onMouseLeave: (e: React.MouseEvent<HTMLElement>) => {
+                  e.stopPropagation();
+                  onHoverNode?.(null);
+                },
+              }
+            : {};
+
+          return (
+            <section
+              key={category.id}
+              className="relative z-10 mx-auto max-w-7xl px-4 py-5 sm:py-10 sm:px-6 transition-all duration-500 ease-out animate-in fade-in"
+              {...virtualEditorProps}
+            >
+              {spotlightProduct && (
+                <CategorySpotlightHero
+                  product={spotlightProduct}
+                  categoryName={category.name}
+                  categorySlug={category.slug}
+                  sectorLore={sectorLore}
+                />
+              )}
+              <ProductScrollRail
+                title={category.name}
+                count={products.length}
+                link={{
+                  to: "/category/$slug",
+                  params: { slug: category.slug },
+                  label: "View all",
+                }}
+                items={products}
+                className="my-0"
+                editorParentNodeId={emitAttrs ? virtualId : undefined}
+              />
+            </section>
+          );
+        })}
+
+      {visibleCategoryCount < repeatedSections.length && (
+        <div ref={sentinelRef} className="relative z-10 mx-auto max-w-7xl px-4 py-4 sm:px-6">
+          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground/70 py-2">
+            <Sparkles className="size-3.5 animate-spin text-primary/60" />
+            <span>Loading collections…</span>
+          </div>
+        </div>
+      )}
+    </AdapterBoundary>
+  );
+}
+
 export function SectionAdapter({
   node,
   resolvedStyle,
   children,
   slots,
 }: ComponentAdapterRenderProps) {
-  const { dataCatalog } = usePageRenderContext();
-
   // Support dynamic repeated category sections binding (CategorySpotlightHero + ProductScrollRail)
   if (node.binding?.kind === "repeated_category_sections") {
-    const repeatedSections = resolveRepeatedCategorySections(node.binding, dataCatalog);
-
-    return (
-      <AdapterBoundary node={node} resolvedStyle={resolvedStyle}>
-        {repeatedSections.map(({ category, products, spotlightProduct, sectorLore }) => (
-          <section
-            key={category.id}
-            className="relative z-10 mx-auto max-w-7xl px-4 py-5 sm:py-10 sm:px-6 transition-all duration-500 ease-out animate-in fade-in"
-          >
-            {spotlightProduct && (
-              <CategorySpotlightHero
-                product={spotlightProduct}
-                categoryName={category.name}
-                categorySlug={category.slug}
-                sectorLore={sectorLore}
-              />
-            )}
-            <ProductScrollRail
-              title={category.name}
-              count={products.length}
-              link={{
-                to: "/category/$slug",
-                params: { slug: category.slug },
-                label: "View all",
-              }}
-              items={products}
-              className="my-0"
-            />
-          </section>
-        ))}
-      </AdapterBoundary>
-    );
+    return <RepeatedCategorySectionsView node={node} resolvedStyle={resolvedStyle} />;
   }
 
   return (
@@ -316,9 +427,24 @@ export function ProductGridSectionAdapter({
   resolvedStyle,
   children,
 }: ComponentAdapterRenderProps) {
-  const { dataCatalog } = usePageRenderContext();
+  const { dataCatalog, interactionPolicy } = usePageRenderContext();
   const binding = node.binding?.kind === "product_collection" ? node.binding : undefined;
   const items = resolveProductCollection(binding, dataCatalog);
+
+  const gridCfg = resolvedStyle.layout?.grid;
+  const flexCfg = resolvedStyle.layout?.flex;
+  const colGap = gridCfg?.columnGapPx ?? flexCfg?.columnGapPx;
+  const rowGap = gridCfg?.rowGapPx ?? flexCfg?.rowGapPx;
+  const gridStyle: React.CSSProperties | undefined =
+    gridCfg?.columns !== undefined || colGap !== undefined || rowGap !== undefined
+      ? {
+          ...(gridCfg?.columns !== undefined
+            ? { gridTemplateColumns: `repeat(${gridCfg.columns}, minmax(0, 1fr))` }
+            : {}),
+          ...(colGap !== undefined ? { columnGap: `${colGap}px` } : {}),
+          ...(rowGap !== undefined ? { rowGap: `${rowGap}px` } : {}),
+        }
+      : undefined;
 
   return (
     <AdapterBoundary node={node} resolvedStyle={resolvedStyle}>
@@ -344,7 +470,11 @@ export function ProductGridSectionAdapter({
             )}
           </div>
         )}
-        <ProductGrid items={items} />
+        <ProductGrid
+          items={items}
+          style={gridStyle}
+          editorParentNodeId={interactionPolicy.emitEditorTelemetryAttributes ? node.id : undefined}
+        />
         {children}
       </section>
     </AdapterBoundary>
@@ -356,11 +486,27 @@ export function CategoryGridSectionAdapter({
   resolvedStyle,
   children,
 }: ComponentAdapterRenderProps) {
-  const { dataCatalog } = usePageRenderContext();
+  const { dataCatalog, interactionPolicy } = usePageRenderContext();
   const binding = node.binding?.kind === "category_collection" ? node.binding : undefined;
   const categories = resolveCategoryCollection(binding, dataCatalog);
 
   const cellSpans = resolvedStyle.layout?.bento?.cellSpans ?? [];
+  const emitAttrs = interactionPolicy.emitEditorTelemetryAttributes;
+
+  const gridCfg = resolvedStyle.layout?.grid;
+  const flexCfg = resolvedStyle.layout?.flex;
+  const colGap = gridCfg?.columnGapPx ?? flexCfg?.columnGapPx;
+  const rowGap = gridCfg?.rowGapPx ?? flexCfg?.rowGapPx;
+  const gridStyle: React.CSSProperties | undefined =
+    gridCfg?.columns !== undefined || colGap !== undefined || rowGap !== undefined
+      ? {
+          ...(gridCfg?.columns !== undefined
+            ? { gridTemplateColumns: `repeat(${gridCfg.columns}, minmax(0, 1fr))` }
+            : {}),
+          ...(colGap !== undefined ? { columnGap: `${colGap}px` } : {}),
+          ...(rowGap !== undefined ? { rowGap: `${rowGap}px` } : {}),
+        }
+      : undefined;
 
   return (
     <AdapterBoundary node={node} resolvedStyle={resolvedStyle}>
@@ -375,7 +521,10 @@ export function CategoryGridSectionAdapter({
             )}
           </div>
         )}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div
+          style={gridStyle}
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+        >
           {categories.map((cat, idx) => {
             const span = cellSpans.find((s) => s.itemIndex === idx);
             const spanStyle: React.CSSProperties | undefined = span
@@ -384,8 +533,14 @@ export function CategoryGridSectionAdapter({
                   gridRow: `span ${span.rowSpan} / span ${span.rowSpan}`,
                 }
               : undefined;
+            const instanceId = emitAttrs ? `${node.id}::category-card::${cat.id}` : undefined;
             return (
-              <div key={cat.id} style={spanStyle}>
+              <div
+                key={cat.id}
+                style={spanStyle}
+                data-editor-instance-id={instanceId}
+                data-editor-instance-type={instanceId ? "CategoryCard" : undefined}
+              >
                 <CategoryCard c={cat} index={idx} />
               </div>
             );
@@ -398,7 +553,17 @@ export function CategoryGridSectionAdapter({
 }
 
 export function FestivalSectionAdapter({ node, resolvedStyle }: ComponentAdapterRenderProps) {
-  const { dataCatalog } = usePageRenderContext();
+  const { dataCatalog, interactionPolicy } = usePageRenderContext();
+
+  const social =
+    (dataCatalog.settings?.social_links as Record<string, unknown> | null | undefined) || {};
+  const festSpecial = (social.festival_special as Record<string, unknown> | undefined) || {};
+  const showFestival = festSpecial.enabled !== false;
+
+  if (!showFestival) {
+    return null;
+  }
+
   const binding =
     node.binding?.kind === "product_collection"
       ? node.binding
@@ -406,16 +571,32 @@ export function FestivalSectionAdapter({ node, resolvedStyle }: ComponentAdapter
           kind: "product_collection",
           source: "festival",
           sortMode: "default_preserve_order",
-          limit: 24,
+          limit: 100,
         } as const);
 
   const items = resolveProductCollection(binding, dataCatalog);
-  const eyebrow = node.props.eyebrow ?? "Festival Special";
-  const title = node.props.title ?? "Festival Lights";
+
+  const settingsEyebrow =
+    typeof festSpecial.eyebrow === "string" && festSpecial.eyebrow
+      ? festSpecial.eyebrow
+      : undefined;
+  const settingsTitle =
+    typeof festSpecial.title === "string" && festSpecial.title ? festSpecial.title : undefined;
+  const settingsDesc =
+    typeof festSpecial.description === "string" && festSpecial.description
+      ? festSpecial.description
+      : undefined;
+
+  const eyebrow = node.props.eyebrow ?? settingsEyebrow ?? "Festival Special";
+  const title = node.props.title ?? settingsTitle ?? "Festival Lights";
   const desc =
     node.props.description ??
     node.props.subtitle ??
+    settingsDesc ??
     "Galaxy night lights, glowing globes, and starry lamps for festive spaces.";
+
+  const railGapPx =
+    resolvedStyle.layout?.flex?.columnGapPx ?? resolvedStyle.layout?.grid?.columnGapPx;
 
   return (
     <AdapterBoundary node={node} resolvedStyle={resolvedStyle}>
@@ -441,14 +622,22 @@ export function FestivalSectionAdapter({ node, resolvedStyle }: ComponentAdapter
                 search={{ q: "light" }}
                 className="hidden shrink-0 items-center gap-1 text-xs sm:text-sm font-medium text-accent hover:underline sm:inline-flex"
               >
-                {node.props.viewAllLabel ?? "Explore lights"}{" "}
+                {`${node.props.viewAllLabel ?? "Explore lights"} `}
                 <ArrowRight className="size-3.5 sm:size-4" />
               </Link>
             </div>
 
             <div className="mt-5 sm:mt-8">
               {items.length > 0 ? (
-                <ProductScrollRail variant="festive" items={items} className="my-0" />
+                <ProductScrollRail
+                  variant="festive"
+                  items={items}
+                  className="my-0"
+                  railGapPx={railGapPx}
+                  editorParentNodeId={
+                    interactionPolicy.emitEditorTelemetryAttributes ? node.id : undefined
+                  }
+                />
               ) : (
                 <EmptyState
                   title="Lighting collection arriving soon"
@@ -467,7 +656,7 @@ export function FeaturedCollectionSectionAdapter({
   node,
   resolvedStyle,
 }: ComponentAdapterRenderProps) {
-  const { dataCatalog } = usePageRenderContext();
+  const { dataCatalog, interactionPolicy } = usePageRenderContext();
   const binding =
     node.binding?.kind === "product_collection"
       ? node.binding
@@ -475,15 +664,21 @@ export function FeaturedCollectionSectionAdapter({
           kind: "product_collection",
           source: "featured",
           sortMode: "default_preserve_order",
-          limit: 24,
+          limit: 100,
         } as const);
 
   const items = resolveProductCollection(binding, dataCatalog);
   if (items.length === 0) return null;
 
+  const railGapPx =
+    resolvedStyle.layout?.flex?.columnGapPx ?? resolvedStyle.layout?.grid?.columnGapPx;
+
   return (
     <AdapterBoundary node={node} resolvedStyle={resolvedStyle}>
-      <section className="relative z-10 mx-auto max-w-7xl scroll-mt-20 px-4 py-6 sm:py-10 sm:px-6">
+      <section
+        id={node.props.scrollTargetId ?? "featured-products"}
+        className="relative z-10 mx-auto max-w-7xl scroll-mt-20 px-4 py-6 sm:py-10 sm:px-6"
+      >
         <ProductScrollRail
           title={node.props.title ?? "Featured"}
           eyebrow={node.props.eyebrow}
@@ -494,6 +689,8 @@ export function FeaturedCollectionSectionAdapter({
           }}
           items={items}
           className="my-0"
+          railGapPx={railGapPx}
+          editorParentNodeId={interactionPolicy.emitEditorTelemetryAttributes ? node.id : undefined}
         />
       </section>
     </AdapterBoundary>
@@ -625,7 +822,8 @@ export function InstagramSectionAdapter({ node, resolvedStyle }: ComponentAdapte
               rel="noopener noreferrer"
               className={`${buttonVariants({ variant: "affiliate", size: "default" })} mt-5 sm:mt-6 text-xs sm:text-sm`}
             >
-              <Instagram className="size-4" /> {node.props.label ?? "Follow on Instagram"}
+              <Instagram className="size-4" />
+              {` ${node.props.label ?? "Follow on Instagram"}`}
             </a>
           </div>
         </div>

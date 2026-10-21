@@ -14,16 +14,14 @@ import type {
  * - `mobile`: `node.style` -> `node.responsive.tablet` -> `node.responsive.mobile`
  * - `mobile_sm`: `node.style` -> `node.responsive.tablet` -> `node.responsive.mobile` -> `node.responsive.mobile_sm`
  */
-export const BREAKPOINT_INHERITANCE_CHAIN: Record<
-  EditorBreakpoint,
-  readonly OverrideBreakpoint[]
-> = {
-  desktop: [],
-  desktop_xl: ["desktop_xl"],
-  tablet: ["tablet"],
-  mobile: ["tablet", "mobile"],
-  mobile_sm: ["tablet", "mobile", "mobile_sm"],
-};
+export const BREAKPOINT_INHERITANCE_CHAIN: Record<EditorBreakpoint, readonly OverrideBreakpoint[]> =
+  {
+    desktop: [],
+    desktop_xl: ["desktop_xl"],
+    tablet: ["tablet"],
+    mobile: ["tablet", "mobile"],
+    mobile_sm: ["tablet", "mobile", "mobile_sm"],
+  };
 
 function mergePlainRecords<T extends object>(
   base: T | undefined,

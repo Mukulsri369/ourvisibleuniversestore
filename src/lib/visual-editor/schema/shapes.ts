@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { AspectRatioValueSchema, type AspectRatioValue } from "./geometry";
+import {
+  ASPECT_RATIO_PRESETS,
+  AspectRatioValueSchema,
+  type AspectRatioPreset,
+  type AspectRatioValue,
+} from "./geometry";
 
 export const SHAPE_TYPES = [
   "square",
@@ -27,11 +32,20 @@ export const CLIP_PRESETS = [
   "arch",
 ] as const;
 
+export const CLIP_SHAPE_PRESETS = CLIP_PRESETS;
+
 export type ClipPreset = (typeof CLIP_PRESETS)[number];
+export type ClipShapePreset = ClipPreset;
+
+export const CORNER_RADIUS_MODES = ["uniform", "independent"] as const;
+export type CornerRadiusMode = (typeof CORNER_RADIUS_MODES)[number];
+
+export const CORNER_RADIUS_UNITS = ["px", "%", "rem"] as const;
+export type CornerRadiusUnit = (typeof CORNER_RADIUS_UNITS)[number];
 
 export interface CornerRadiusConfig {
-  mode: "uniform" | "independent";
-  unit: "px" | "%" | "rem";
+  mode: CornerRadiusMode;
+  unit: CornerRadiusUnit;
   uniform?: number;
   topLeft?: number;
   topRight?: number;
@@ -41,8 +55,8 @@ export interface CornerRadiusConfig {
 
 export const CornerRadiusConfigSchema: z.ZodType<CornerRadiusConfig> = z
   .object({
-    mode: z.enum(["uniform", "independent"]),
-    unit: z.enum(["px", "%", "rem"]),
+    mode: z.enum(CORNER_RADIUS_MODES),
+    unit: z.enum(CORNER_RADIUS_UNITS),
     uniform: z.number().finite().min(0).max(9999).optional(),
     topLeft: z.number().finite().min(0).max(9999).optional(),
     topRight: z.number().finite().min(0).max(9999).optional(),
@@ -67,7 +81,7 @@ export const FocalPointSchema: z.ZodType<FocalPoint> = z
   .strict();
 
 export interface ImageCropConfig {
-  aspectRatio?: AspectRatioValue | "auto";
+  aspectRatio?: AspectRatioValue | AspectRatioPreset;
   objectFit?: ObjectFitMode;
   focalPoint?: FocalPoint;
   zoom?: number;
@@ -75,7 +89,7 @@ export interface ImageCropConfig {
 
 export const ImageCropConfigSchema: z.ZodType<ImageCropConfig> = z
   .object({
-    aspectRatio: z.union([AspectRatioValueSchema, z.literal("auto")]).optional(),
+    aspectRatio: z.union([AspectRatioValueSchema, z.enum(ASPECT_RATIO_PRESETS)]).optional(),
     objectFit: z.enum(OBJECT_FIT_MODES).optional(),
     focalPoint: FocalPointSchema.optional(),
     zoom: z.number().finite().min(0.5).max(4).optional(),

@@ -303,6 +303,225 @@ export type Database = {
         };
         Relationships: [];
       };
+      store_pages: {
+        Row: {
+          created_at: string;
+          id: string;
+          page_key: string;
+          page_type: string;
+          published_at: string | null;
+          published_revision: number;
+          published_version_id: string | null;
+          slug: string;
+          store_scope: string;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          page_key: string;
+          page_type?: string;
+          published_at?: string | null;
+          published_revision?: number;
+          published_version_id?: string | null;
+          slug: string;
+          store_scope?: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          page_key?: string;
+          page_type?: string;
+          published_at?: string | null;
+          published_revision?: number;
+          published_version_id?: string | null;
+          slug?: string;
+          store_scope?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "store_pages_published_version_same_page_fkey";
+            columns: ["published_version_id", "id"];
+            isOneToOne: false;
+            referencedRelation: "store_page_versions";
+            referencedColumns: ["id", "page_id"];
+          },
+        ];
+      };
+      store_page_drafts: {
+        Row: {
+          base_published_revision: number;
+          base_published_version_id: string | null;
+          checksum: string;
+          created_at: string;
+          created_by: string | null;
+          draft_document: Json;
+          draft_revision: number;
+          id: string;
+          last_edited_by: string | null;
+          page_id: string;
+          schema_version: string;
+          state: string;
+          store_scope: string;
+          updated_at: string;
+        };
+        Insert: {
+          base_published_revision?: number;
+          base_published_version_id?: string | null;
+          checksum: string;
+          created_at?: string;
+          created_by?: string | null;
+          draft_document: Json;
+          draft_revision?: number;
+          id?: string;
+          last_edited_by?: string | null;
+          page_id: string;
+          schema_version: string;
+          state?: string;
+          store_scope?: string;
+          updated_at?: string;
+        };
+        Update: {
+          base_published_revision?: number;
+          base_published_version_id?: string | null;
+          checksum?: string;
+          created_at?: string;
+          created_by?: string | null;
+          draft_document?: Json;
+          draft_revision?: number;
+          id?: string;
+          last_edited_by?: string | null;
+          page_id?: string;
+          schema_version?: string;
+          state?: string;
+          store_scope?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "store_page_drafts_page_id_fkey";
+            columns: ["page_id"];
+            isOneToOne: true;
+            referencedRelation: "store_pages";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "store_page_drafts_base_version_same_page_fkey";
+            columns: ["base_published_version_id", "page_id"];
+            isOneToOne: false;
+            referencedRelation: "store_page_versions";
+            referencedColumns: ["id", "page_id"];
+          },
+        ];
+      };
+      store_page_versions: {
+        Row: {
+          checksum: string;
+          created_at: string;
+          created_by: string | null;
+          document_snapshot: Json;
+          id: string;
+          page_id: string;
+          release_notes: string | null;
+          restored_from_version_id: string | null;
+          schema_version: string;
+          source_draft_revision: number | null;
+          store_scope: string;
+          version_number: number;
+        };
+        Insert: {
+          checksum: string;
+          created_at?: string;
+          created_by?: string | null;
+          document_snapshot: Json;
+          id?: string;
+          page_id: string;
+          release_notes?: string | null;
+          restored_from_version_id?: string | null;
+          schema_version: string;
+          source_draft_revision?: number | null;
+          store_scope?: string;
+          version_number: number;
+        };
+        Update: {
+          checksum?: string;
+          created_at?: string;
+          created_by?: string | null;
+          document_snapshot?: Json;
+          id?: string;
+          page_id?: string;
+          release_notes?: string | null;
+          restored_from_version_id?: string | null;
+          schema_version?: string;
+          source_draft_revision?: number | null;
+          store_scope?: string;
+          version_number?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "store_page_versions_page_id_fkey";
+            columns: ["page_id"];
+            isOneToOne: false;
+            referencedRelation: "store_pages";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      store_page_publishing_events: {
+        Row: {
+          action_type: string;
+          actor_id: string | null;
+          created_at: string;
+          draft_revision: number | null;
+          id: string;
+          notes: string | null;
+          page_id: string;
+          previous_version_id: string | null;
+          published_revision: number;
+          published_version_id: string;
+          store_scope: string;
+        };
+        Insert: {
+          action_type: string;
+          actor_id?: string | null;
+          created_at?: string;
+          draft_revision?: number | null;
+          id?: string;
+          notes?: string | null;
+          page_id: string;
+          previous_version_id?: string | null;
+          published_revision: number;
+          published_version_id: string;
+          store_scope?: string;
+        };
+        Update: {
+          action_type?: string;
+          actor_id?: string | null;
+          created_at?: string;
+          draft_revision?: number | null;
+          id?: string;
+          notes?: string | null;
+          page_id?: string;
+          previous_version_id?: string | null;
+          published_revision?: number;
+          published_version_id?: string;
+          store_scope?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "store_page_publishing_events_page_id_fkey";
+            columns: ["page_id"];
+            isOneToOne: false;
+            referencedRelation: "store_pages";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       public_site_settings: {
@@ -340,8 +559,90 @@ export type Database = {
       };
     };
     Functions: {
+      get_published_store_page: {
+        Args: { _slug: string; _store_scope?: string };
+        Returns: {
+          checksum: string;
+          document_snapshot: Json;
+          page_id: string;
+          page_key: string;
+          page_type: string;
+          published_at: string | null;
+          published_revision: number;
+          schema_version: string;
+          slug: string;
+          store_scope: string;
+          version_id: string;
+          version_number: number;
+        }[];
+      };
       is_admin: { Args: never; Returns: boolean };
+      is_approved_admin_email: { Args: { check_email: string }; Returns: boolean };
       product_is_live: { Args: { _pid: string }; Returns: boolean };
+      publish_store_page_draft: {
+        Args: {
+          _expected_draft_revision: number;
+          _expected_published_revision?: number | null;
+          _page_id: string;
+          _release_notes?: string | null;
+          _store_scope?: string;
+        };
+        Returns: {
+          checksum: string;
+          draft_revision: number;
+          page_id: string;
+          previous_version_id: string | null;
+          published_at: string;
+          published_revision: number;
+          published_version_id: string;
+          version_number: number;
+        }[];
+      };
+      restore_store_page_version: {
+        Args: {
+          _expected_published_revision?: number | null;
+          _page_id: string;
+          _release_notes?: string | null;
+          _store_scope?: string;
+          _sync_draft?: boolean;
+          _target_version_id: string;
+        };
+        Returns: {
+          checksum: string;
+          page_id: string;
+          previous_version_id: string | null;
+          published_at: string;
+          published_revision: number;
+          published_version_id: string;
+          restored_from_version_id: string;
+          version_number: number;
+        }[];
+      };
+      save_store_page_draft: {
+        Args: {
+          _checksum: string;
+          _draft_document: Json;
+          _expected_draft_revision?: number | null;
+          _page_key: string;
+          _page_type: string;
+          _schema_version: string;
+          _slug: string;
+          _store_scope?: string;
+          _title: string;
+        };
+        Returns: {
+          base_published_revision: number;
+          base_published_version_id: string | null;
+          checksum: string;
+          draft_id: string;
+          draft_revision: number;
+          page_id: string;
+          schema_version: string;
+          state: string;
+          store_scope: string;
+          updated_at: string;
+        }[];
+      };
     };
     Enums: {
       [_ in never]: never;

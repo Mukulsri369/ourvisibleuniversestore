@@ -8,13 +8,17 @@ export const KEYWORD_DIMENSION_UNITS = [
   "fit-content",
 ] as const;
 
+export const DIMENSION_UNITS = [
+  ...NUMERIC_DIMENSION_UNITS,
+  ...KEYWORD_DIMENSION_UNITS,
+] as const;
+
 export type NumericDimensionUnit = (typeof NUMERIC_DIMENSION_UNITS)[number];
 export type KeywordDimensionUnit = (typeof KEYWORD_DIMENSION_UNITS)[number];
 export type DimensionUnit = NumericDimensionUnit | KeywordDimensionUnit;
 
 export type DimensionValue =
-  | { unit: NumericDimensionUnit; value: number }
-  | { unit: KeywordDimensionUnit; value?: undefined };
+  { unit: NumericDimensionUnit; value: number } | { unit: KeywordDimensionUnit; value?: undefined };
 
 export const NumericDimensionSchema = z
   .object({
@@ -105,6 +109,22 @@ export const Transform2DSchema: z.ZodType<Transform2D> = z
   })
   .strict();
 
+export const ASPECT_RATIO_PRESETS = [
+  "auto",
+  "1:1",
+  "4:3",
+  "3:4",
+  "16:9",
+  "9:16",
+  "3:2",
+  "2:3",
+  "4:5",
+  "5:4",
+  "21:9",
+] as const;
+
+export type AspectRatioPreset = (typeof ASPECT_RATIO_PRESETS)[number];
+
 export interface AspectRatioValue {
   width: number;
   height: number;
@@ -124,7 +144,7 @@ export interface GeometryConfig {
   maxWidth?: DimensionValue;
   minHeight?: DimensionValue;
   maxHeight?: DimensionValue;
-  aspectRatio?: AspectRatioValue | "auto";
+  aspectRatio?: AspectRatioValue | AspectRatioPreset;
   padding?: SpacingBox;
   margin?: SpacingBox;
   position?: PositionMode;
@@ -145,7 +165,7 @@ export const GeometryConfigSchema: z.ZodType<GeometryConfig> = z
     maxWidth: NonNegativeDimensionSchema.optional(),
     minHeight: NonNegativeDimensionSchema.optional(),
     maxHeight: NonNegativeDimensionSchema.optional(),
-    aspectRatio: z.union([AspectRatioValueSchema, z.literal("auto")]).optional(),
+    aspectRatio: z.union([AspectRatioValueSchema, z.enum(ASPECT_RATIO_PRESETS)]).optional(),
     padding: SpacingBoxSchema.optional(),
     margin: SpacingBoxSchema.optional(),
     position: z.enum(POSITION_MODES).optional(),

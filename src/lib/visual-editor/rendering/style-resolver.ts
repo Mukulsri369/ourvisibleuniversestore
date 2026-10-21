@@ -1,8 +1,13 @@
 import type { CSSProperties } from "react";
 import { formatDimensionValue, type AlignmentMode, type SpacingBox } from "../schema/geometry";
-import type { ClipPreset, CornerRadiusConfig, ShapeType } from "../schema/shapes";
+import type {
+  ClipPreset,
+  CornerRadiusConfig,
+  ImageCropConfig,
+  ShapeType,
+} from "../schema/shapes";
 import type { JustifyContentMode } from "../schema/layout";
-import type { GradientConfig, ShadowConfig } from "../schema/appearance";
+import type { GradientConfig, ShadowConfig, TypographyConfig } from "../schema/appearance";
 import type { NodeStyleBundle } from "../schema/responsive";
 
 const DESIGN_TOKEN_COLOR_MAP: Readonly<Record<string, string>> = Object.freeze({
@@ -78,7 +83,9 @@ export function formatCornerRadiusCss(
   }
   if (shapeType === "pill") return "9999px";
   if (shapeType === "circle") return "50%";
-  if (shapeType === "square") return "0px";
+  if (shapeType === "ellipse") return "50%";
+  if (shapeType === "square" || shapeType === "rectangle") return "0px";
+  if (shapeType === "rounded-rectangle") return "16px";
   if (shapeType === "arch") return "999px 999px 16px 16px";
   return undefined;
 }
@@ -138,6 +145,84 @@ export function formatShadowCss(shadow: ShadowConfig | undefined): string | unde
   return `${insetPrefix}${x}px ${y}px ${blur}px ${spread}px ${color}`;
 }
 
+export function resolveTypographyCssProperties(
+  typo: TypographyConfig | undefined,
+): CSSProperties | undefined {
+  if (!typo) return undefined;
+  const style: CSSProperties = {};
+  let hasAny = false;
+
+  if (typo.fontFamily) {
+    style.fontFamily = typo.fontFamily;
+    hasAny = true;
+  }
+  if (typo.fontSize) {
+    style.fontSize = formatDimensionValue(typo.fontSize);
+    hasAny = true;
+  }
+  if (typo.fontWeight !== undefined) {
+    style.fontWeight = typo.fontWeight;
+    hasAny = true;
+  }
+  if (typo.lineHeight !== undefined) {
+    style.lineHeight = typo.lineHeight;
+    hasAny = true;
+  }
+  if (typo.letterSpacingEm !== undefined) {
+    style.letterSpacing = `${typo.letterSpacingEm}em`;
+    hasAny = true;
+  }
+  if (typo.textAlign) {
+    style.textAlign = typo.textAlign;
+    hasAny = true;
+  }
+  if (typo.color) {
+    style.color = resolveSafeColorToken(typo.color);
+    hasAny = true;
+  }
+  if (typo.textTransform) {
+    style.textTransform = typo.textTransform;
+    hasAny = true;
+  }
+  if (typo.textDecoration) {
+    style.textDecoration = typo.textDecoration;
+    hasAny = true;
+  }
+  if (typo.fontStyle) {
+    style.fontStyle = typo.fontStyle;
+    hasAny = true;
+  }
+
+  return hasAny ? style : undefined;
+}
+
+export function resolveImageCropCssProperties(
+  imageCrop: ImageCropConfig | undefined,
+): CSSProperties | undefined {
+  if (!imageCrop) return undefined;
+  const style: CSSProperties = {};
+  let hasAny = false;
+
+  if (imageCrop.objectFit) {
+    style.objectFit = imageCrop.objectFit;
+    hasAny = true;
+  }
+  if (imageCrop.aspectRatio && imageCrop.aspectRatio !== "auto") {
+    style.aspectRatio = imageCrop.aspectRatio.replace(":", " / ");
+    hasAny = true;
+  }
+  if (imageCrop.focalPoint) {
+    style.objectPosition = `${imageCrop.focalPoint.xPercent}% ${imageCrop.focalPoint.yPercent}%`;
+    hasAny = true;
+  }
+  if (imageCrop.zoom !== undefined && imageCrop.zoom !== 1) {
+    style.transform = `scale(${imageCrop.zoom})`;
+    hasAny = true;
+  }
+
+  return hasAny ? style : undefined;
+}
+
 /**
  * Converts a resolved `NodeStyleBundle` into safe React `CSSProperties`.
  * Returns `undefined` when no style properties are explicitly set, guaranteeing
@@ -168,12 +253,14 @@ export function resolveNodeCssProperties(
     if (geo.minHeight) setProp("minHeight", formatDimensionValue(geo.minHeight));
     if (geo.maxHeight) setProp("maxHeight", formatDimensionValue(geo.maxHeight));
     if (geo.aspectRatio) {
-      setProp(
-        "aspectRatio",
-        geo.aspectRatio === "auto"
-          ? "auto"
-          : `${geo.aspectRatio.width} / ${geo.aspectRatio.height}`,
-      );
+      if (typeof geo.aspectRatio === "string") {
+        setProp(
+          "aspectRatio",
+          geo.aspectRatio === "auto" ? "auto" : geo.aspectRatio.replace(":", " / "),
+        );
+      } else {
+        setProp("aspectRatio", `${geo.aspectRatio.width} / ${geo.aspectRatio.height}`);
+      }
     }
     if (geo.padding) setProp("padding", formatSpacingCss(geo.padding));
     if (geo.margin) setProp("margin", formatSpacingCss(geo.margin));
@@ -220,13 +307,18 @@ export function resolveNodeCssProperties(
   if (shape) {
     const borderRadius = formatCornerRadiusCss(shape.cornerRadius, shape.shapeType);
     if (borderRadius) setProp("borderRadius", borderRadius);
+    let hasClip = false;
     if (shape.clipPreset && shape.clipPreset !== "none") {
       setProp("clipPath", CLIP_PRESET_CSS_MAP[shape.clipPreset]);
+      hasClip = true;
     } else if (shape.shapeType && shape.shapeType in CLIP_PRESET_CSS_MAP) {
       const presetClip = CLIP_PRESET_CSS_MAP[shape.shapeType as ClipPreset];
-      if (presetClip) setProp("clipPath", presetClip);
+      if (presetClip) {
+        setProp("clipPath", presetClip);
+        hasClip = true;
+      }
     }
-    if (shape.clipOverflow) {
+    if (shape.clipOverflow || (borderRadius && shape.clipOverflow !== false) || hasClip) {
       setProp("overflow", "hidden");
     }
   }
@@ -234,37 +326,49 @@ export function resolveNodeCssProperties(
   // 3. Layout
   const layout = bundle.layout;
   if (layout) {
-    if (layout.mode === "flex" && layout.flex) {
+    const isFlexMode =
+      layout.mode === "flex" ||
+      layout.mode === "stack" ||
+      (!layout.mode && Boolean(layout.flex));
+    const isGridMode = layout.mode === "grid" || (!layout.mode && Boolean(layout.grid));
+
+    if (isFlexMode && (layout.flex || layout.mode === "flex" || layout.mode === "stack")) {
       setProp("display", "flex");
-      setProp("flexDirection", layout.flex.direction);
-      if (layout.flex.wrap) setProp("flexWrap", layout.flex.wrap);
-      if (layout.flex.justifyContent) {
+      const dir =
+        layout.flex?.direction ?? (layout.mode === "stack" ? "column" : undefined);
+      if (dir) setProp("flexDirection", dir);
+      if (layout.flex?.wrap) setProp("flexWrap", layout.flex.wrap);
+      if (layout.flex?.justifyContent) {
         setProp("justifyContent", mapJustifyContentToCss(layout.flex.justifyContent));
       }
-      if (layout.flex.alignItems) {
+      if (layout.flex?.alignItems) {
         setProp("alignItems", mapAlignmentToCss(layout.flex.alignItems));
       }
-      if (layout.flex.columnGapPx !== undefined) {
+      if (layout.flex?.columnGapPx !== undefined) {
         setProp("columnGap", `${layout.flex.columnGapPx}px`);
       }
-      if (layout.flex.rowGapPx !== undefined) {
+      if (layout.flex?.rowGapPx !== undefined) {
         setProp("rowGap", `${layout.flex.rowGapPx}px`);
       }
-    } else if (layout.mode === "grid" && layout.grid) {
+    } else if (isGridMode && layout.grid) {
       setProp("display", "grid");
       if (layout.grid.autoFit && layout.grid.minColumnWidthPx) {
         setProp(
           "gridTemplateColumns",
           `repeat(auto-fit, minmax(${layout.grid.minColumnWidthPx}px, 1fr))`,
         );
-      } else {
+      } else if (layout.grid.columns !== undefined) {
         setProp("gridTemplateColumns", `repeat(${layout.grid.columns}, minmax(0, 1fr))`);
       }
       if (layout.grid.rows) {
         setProp("gridTemplateRows", `repeat(${layout.grid.rows}, minmax(0, auto))`);
       }
-      setProp("columnGap", `${layout.grid.columnGapPx}px`);
-      setProp("rowGap", `${layout.grid.rowGapPx}px`);
+      if (layout.grid.columnGapPx !== undefined) {
+        setProp("columnGap", `${layout.grid.columnGapPx}px`);
+      }
+      if (layout.grid.rowGapPx !== undefined) {
+        setProp("rowGap", `${layout.grid.rowGapPx}px`);
+      }
       if (layout.grid.autoFlow) setProp("gridAutoFlow", layout.grid.autoFlow);
       if (layout.grid.alignItems) setProp("alignItems", mapAlignmentToCss(layout.grid.alignItems));
       if (layout.grid.justifyItems) setProp("justifyItems", layout.grid.justifyItems);
@@ -276,6 +380,8 @@ export function resolveNodeCssProperties(
     } else if (layout.mode === "masonry" && layout.masonry) {
       setProp("columnCount", layout.masonry.columns);
       setProp("columnGap", `${layout.masonry.gapPx}px`);
+    } else if (layout.mode === "block") {
+      setProp("display", "block");
     }
   }
 
@@ -334,17 +440,11 @@ export function resolveNodeCssProperties(
       setProp("opacity", app.opacity);
     }
     if (app.typography) {
-      const typo = app.typography;
-      if (typo.fontFamily) setProp("fontFamily", typo.fontFamily);
-      if (typo.fontSize) setProp("fontSize", formatDimensionValue(typo.fontSize));
-      if (typo.fontWeight !== undefined) setProp("fontWeight", typo.fontWeight);
-      if (typo.lineHeight !== undefined) setProp("lineHeight", typo.lineHeight);
-      if (typo.letterSpacingEm !== undefined) setProp("letterSpacing", `${typo.letterSpacingEm}em`);
-      if (typo.textAlign) setProp("textAlign", typo.textAlign);
-      if (typo.color) setProp("color", resolveSafeColorToken(typo.color));
-      if (typo.textTransform) setProp("textTransform", typo.textTransform);
-      if (typo.textDecoration) setProp("textDecoration", typo.textDecoration);
-      if (typo.fontStyle) setProp("fontStyle", typo.fontStyle);
+      const typoStyles = resolveTypographyCssProperties(app.typography);
+      if (typoStyles) {
+        Object.assign(style, typoStyles);
+        hasProperties = true;
+      }
     }
     if (app.filters) {
       const f = app.filters;

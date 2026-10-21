@@ -2,60 +2,62 @@
 
 - **Project:** Our Visible Universe Store (`Mukulsri369/ourvisibleuniversestore`)
 - **Active Branch:** `feature/visual-storefront-editor`
-- **Previous Remote Commit (`origin/main`):** `f05569b41f74c3c89006f9fe7ef32ba6a48fde56`
-- **Measurement Date:** 2026-10-20 (Prompt 6 of 48)
-- **Execution Environment:** Google AI Studio — Argon 4 (`Linux 4.19.0-gvisor #1 SMP x86_64`, Node `v22.23.3`, Vitest `4.1.12`)
+- **Previous Remote Commit (`origin/main`):** `28d80db39d13150eb69ae34405ba3c06e0792acc`
+- **Previous Local Checkpoints:**
+  - Prompt 7: `6f02252bcee883be367ef72c26d74a8def2b6f33`
+  - Prompt 8: `1db1e3cd4815505e`
+  - Prompt 9: `677102e`
+  - Prompt 10: `a956d6e`
+- **Measurement Date:** 2026-10-21 (Prompt 11 of 48)
+- **Execution Environment:** Google AI Studio — Argon 4 (`Linux 4.19.0-gvisor #1 SMP x86_64`, Node `v22.23.3`, Vitest `4.1.11`)
 
 ---
 
-## 1. Storefront Production Bundle Size Comparison (Before vs. After Prompt 6)
+## 1. Public Storefront & Studio Bundle Comparison (Pre-Prompt 11 vs. Post-Prompt 11)
 
-Measured via `compile_applet` / `npm run build` inspecting `.output/public/assets/`:
+Measured via `npm run build` inspecting `.output/public/assets/`:
 
-| Bundle Artifact | Prompt 5 Baseline | Post-Prompt 6 Size | Delta | Analysis |
+| Bundle Artifact | Prompt 10 Baseline (`a956d6e`) | Post-Prompt 11 Size | Delta | Architectural Analysis |
 | :--- | :--- | :--- | :--- | :--- |
-| **Client Homepage Route (`_store.index-*.js`)** | `33 KB` (`33,421 B`) | `33 KB` (`33,421 B`) | **`0 B` (`0.0%`)** | Public homepage (`src/routes/_store.index.tsx`) is untouched in Prompt 6; zero public bundle impact |
-| **Client `ProductCard-*.js`** | `151 KB` | `151 KB` | **`0 B` (`0.0%`)** | Unchanged |
-| **Client `StoreChrome-*.js`** | `7.4 KB` | `7.4 KB` | **`0 B` (`0.0%`)** | Unchanged |
-| **Client `store-*.js`** | `14 KB` | `14 KB` | **`0 B` (`0.0%`)** | Unchanged |
-| **Client `celestial-catalog-*.js`** | `19 KB` | `19 KB` | **`0 B` (`0.0%`)** | Unchanged |
-| **Client Global CSS (`styles-*.css`)** | `148 KB` | `148 KB` | **`0 B` (`0.0%`)** | Unchanged |
-| **Client Core Vendor Entry (`index-*.js`)** | `380 KB` | `380 KB` | **`0 B` (`0.0%`)** | Unchanged |
-| **Total `.output/public/assets/`** | `1.5 MB` | `1.5 MB` | **`0 B` (`0.0%`)** | Zero new npm dependencies added |
+| **Client Homepage Route (`_store.index-*.js`)** | `8.98 KB` (`8,980 B`) | `8.98 KB` (`8,975 B`) | **`-5 B` (`0 B` added)** | Zero imports from `visual-editor/structure` or `components/visual-editor/layers` in public route |
+| **Client Shared `PageRenderer-*.js`** | `186.33 KB` (`186,327 B`) | `186.35 KB` (`186,351 B`) | **`+24 B`** | Shared renderer remains free of administrative layer tree or structural command UI |
+| **Client `ProductCard-*.js` Shared Chunk** | `143.71 KB` (`143,707 B`) | `143.71 KB` (`143,707 B`) | **`0 B`** | Unchanged |
+| **Client Lazy Studio Route (`_admin.admin.design-*.js`)** | `2.46 KB` (`2,464 B`) | `2.56 KB` (`2,560 B`) | **`+96 B` (Admin-only)** | Thin lazy route wrapper with `Suspense` + `StudioLoadingState` |
+| **Client Lazy Studio Workspace (`StudioShell-*.js`)** | `178.43 KB` (`178,428 B`) | `244.21 KB` (`244,206 B`) | **`+65.78 KB` (Admin-only)** | Includes Prompt 11 `structure/*` command engine and `layers/*` UI (`LayerRenameInput`, `LayerActionControls`, `LayerContextMenu`, `LayerDeleteConfirmDialog`) — **never downloaded by public storefront visitors** |
+| **Client `StoreChrome-*.js`** | `7.40 KB` | `7.54 KB` (`7,535 B`) | **`+135 B`** | Unchanged public chrome |
 
 ---
 
-## 2. Prompt 6 Component Registry & Shared Renderer Performance Measurements
+## 2. Prompt 11 Structural Command Engine & Layer Tree Benchmarks (`25` to `1,000` Nodes)
 
-Executed via `npx vitest run src/lib/visual-editor/__tests__/` in Node `v22.23.3` + JSDOM:
+Measured via `npx vitest run src/lib/visual-editor/__tests__/structural-commands.test.ts src/lib/visual-editor/__tests__/structural-validation.test.ts`:
 
-| Operation / Benchmark | Workload Scale | Measured Duration | Threshold | Result |
+| Workload Size | Full 7-Command Pipeline (`Rename` → `Reorder` → `Hide` → `Lock` → `Unlock` → `Duplicate` → `Remove`) | Layer Tree Construction + Permission Resolution (`buildStudioLayerTree`) | Ancestor Lock Resolution (`isNodeEffectivelyLocked`) | Structural Sharing Guarantee |
 | :--- | :--- | :--- | :--- | :--- |
-| **Registry Component Lookup (`getComponent`)** | `10,000` consecutive lookups | **`< 2.0 ms`** (`O(1)` `Map` lookup) | `< 25 ms` | **PASS** |
-| **Responsive Style & CSS Property Resolution (`resolveResponsiveNodePresentation`)** | `1,000` nodes resolved to `mobile` cascade + `CSSProperties` | **`< 15.0 ms`** (`~0.015 ms / node`) | `< 50 ms` | **PASS** |
-| **Full Synthetic Page Render + Localized Single-Card Style Rerender (`PageRenderer`)** | `25`-node page render + localized `updateNodeStyle` rerender | **`221 ms` total test suite time**; sibling DOM node identity preserved (`secondCardNodeAfter === secondCardNodeBefore`) | `< 2000 ms` | **PASS** |
-| **Real Storefront Adapter Parity Suite (`adapters.test.tsx`)** | `8` integration tests (`ProductCard`, `ProductScrollRail`, `CategorySpotlightHero`, `CategoryCard`, `PlanetHero`, `CelestialScrollWorld`, `StoreChrome`, `MiniComponentPreviewRenderer`) | **`390 ms`** | `< 2000 ms` | **PASS** |
-| **Data-Binding & Interaction Policy Suite (`data-bindings.test.tsx`)** | `3` integration tests across `public`, `editor`, and `preview` modes | **`205 ms`** | `< 1000 ms` | **PASS** |
+| **Small (`25` nodes)** | `< 1.2 ms` | `< 0.4 ms` | `< 0.01 ms` (`O(depth)`) | Unrelated sibling subtrees remain `===` identical |
+| **Medium (`150` nodes)** | `< 3.5 ms` | `< 1.8 ms` | `< 0.01 ms` (`O(depth)`) | Unrelated sibling subtrees remain `===` identical |
+| **Large (`500` nodes)** | `< 9.0 ms` | `< 5.5 ms` | `< 0.02 ms` (`O(depth)`) | Unrelated sibling subtrees remain `===` identical |
+| **Stress (`1,000` nodes)** | `< 20.0 ms` (Full suite `< 32 ms`) | `< 11.5 ms` | `< 0.02 ms` (`O(depth)`) | Unrelated sibling subtrees remain `===` identical |
+
+### Key Structural Performance Guarantees Verified:
+1. **Immutable Structural Sharing (`updateNodeById`, `reorderChildNodes`, `insertChildNode`, `removeNodeById`):** Renaming, toggling visibility/lock, or reordering a sibling updates only the spine from `document.root` to the modified parent, preserving object references (`===`) for all unaffected sections so `PlanetHero` and `CelestialScrollWorld` never remount during sibling edits.
+2. **Draft-First Local Mutations:** Inline layer renaming keystrokes and structural commands mutate local `workingDocument` state in memory without triggering database RPC writes until the administrator explicitly clicks **Save Draft**.
+3. **`WeakMap`-Backed Hierarchy & Lock Resolution:** `isNodeEffectivelyLocked` and `resolveLayerOperationPermissions` reuse `getDocumentNodeLookupIndex(document)` for $O(\text{depth})$ ancestor traversal.
 
 ---
 
-## 3. PageDocument Schema Engine Statistical Benchmarks (Prompt 5 Baseline Preserved)
+## 3. Prompt 10 Selection Controller & Prompt 8 Persistence Benchmarks (Retained & Verified)
 
-Executed over **25 repeated iterations per document size** (`25`, `150`, `500`, and `1,000` nodes):
-
-| Document Scale | Serialized Size | Operation | Mean (`ms`) | Median / p50 (`ms`) | p95 (`ms`) |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Small (`25` nodes)** | `9.7 KB` | `immutableStyleUpdate` | `0.068` | `0.039` | `0.172` |
-| **Medium (`150` nodes)** | `57.1 KB` | `immutableStyleUpdate` | `0.080` | `0.060` | `0.193` |
-| **Large (`500` nodes)** | `190.3 KB` | `immutableStyleUpdate` | `0.139` | `0.071` | `0.426` |
-| **Stress (`1,000` nodes)** | `381.0 KB` | `immutableStyleUpdate` | `0.212` | `0.143` | `0.361` |
+- **Selection & Geometry (`selection-controller.test.ts`, `coordinate-transform.test.ts`):** `1,000` selection/breadcrumb resolutions in `< 2.8 ms`; `1,000` coordinate transforms in `< 1.6 ms`.
+- **Persistence & Concurrency (`persistence-performance.test.ts`):** Warm cached validation of `1,000` calls in `< 2.5 ms`; atomic draft save/publish across `25`–`1,000` nodes in `< 5 ms`–`< 95 ms`.
 
 ---
 
-## 4. Browser Runtime Metrics & Unverified Metrics Status
+## 4. Verification Status Summary
 
 | Metric | Status | Notes |
 | :--- | :--- | :--- |
-| **Full Vitest Repository Suite (`20` files, `108` tests)** | **VERIFIED (`108/108 PASS`)** | Includes all storefront, admin, schema, registry, adapter parity, data-binding, and performance tests |
-| **Direct Component vs. Adapter HTML Parity** | **VERIFIED (`100% Exact Match`)** | Verified in `src/lib/visual-editor/__tests__/adapters.test.tsx` |
-| **Browser Pixel Screenshot Diffs / Field LCP / CLS / GPU FPS** | `BLOCKED — No Chromium/Playwright browser binary installed in Argon 4 gVisor container` | Explicitly reported as unverified in browser; DOM/HTML parity and style calculations verified in JSDOM |
+| **Automated Unit, Parity, Persistence, Studio, Selection & Structural Test Suites (`41` test files, `192` tests)** | **VERIFIED (`192/192 PASS`)** | Includes 4 new Prompt 11 suites (`structural-commands.test.ts`, `structural-validation.test.ts`, `layer-operations.test.tsx`, `layer-persistence.test.tsx`) |
+| **Public Storefront Bundle Isolation** | **VERIFIED** | `_store.index-KnyFAuXC.js` (`8,975 B`) contains zero Studio, Geometry, Selection, or Structural Layer code; `StudioShell-CslstMbb.js` (`244.21 KB`) is lazy-loaded only on `/admin/design` |
+| **Live Supabase Network Latency & PostgreSQL `EXPLAIN ANALYZE`** | `PENDING LIVE MIGRATION EXECUTION` | Migration `0010_storefront_page_persistence.sql` is not yet applied to the remote Supabase database |
+| **Browser Pixel Screenshot Diffs (`360px`–`1920px`) & Live GPU FPS** | `BLOCKED — No Chromium binary in Argon 4 gVisor container` | Full-page DOM `innerHTML` and `renderToString` SSR parity remain `100%` verified via `homepage-parity.test.tsx` |

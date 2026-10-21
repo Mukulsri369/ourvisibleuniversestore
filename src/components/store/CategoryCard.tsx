@@ -48,12 +48,23 @@ const ICONS: Record<string, typeof Star> = {
   "educational-science": GraduationCap,
 };
 
-export function CategoryCard({ c, index = 0 }: { c: Category; index?: number }) {
+export function CategoryCard({
+  c,
+  index = 0,
+  style,
+  imageStyle,
+}: {
+  c: Category;
+  index?: number;
+  style?: React.CSSProperties;
+  imageStyle?: React.CSSProperties;
+}) {
   const Icon = ICONS[c.slug] ?? Star;
   return (
     <Link
       to="/category/$slug"
       params={{ slug: c.slug }}
+      style={style}
       className="group relative flex min-h-48 flex-col justify-end overflow-hidden rounded-2xl border border-border bg-card p-5 transition-all duration-300 hover:border-primary/40 hover:shadow-card"
     >
       {c.image_url ? (
@@ -62,6 +73,7 @@ export function CategoryCard({ c, index = 0 }: { c: Category; index?: number }) 
             src={c.image_url}
             alt=""
             loading="lazy"
+            style={imageStyle}
             className="absolute inset-0 h-full w-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
@@ -74,7 +86,10 @@ export function CategoryCard({ c, index = 0 }: { c: Category; index?: number }) 
       )}
       <div className="relative">
         <Icon className="mb-6 size-7 text-primary" strokeWidth={1.4} />
-        <h3 className="font-sans text-sm font-bold uppercase tracking-[0.14em] text-foreground">
+        <h3
+          style={style?.color ? { color: style.color } : undefined}
+          className="font-sans text-sm font-bold uppercase tracking-[0.14em] text-foreground"
+        >
           {c.name}
         </h3>
         {c.description && <p className="mt-1.5 text-sm text-muted-foreground">{c.description}</p>}

@@ -1,0 +1,1671 @@
+# PROMPT 8 OF 48 — SECURE SUPABASE PAGE PERSISTENCE, DRAFT MANAGEMENT, VERSION HISTORY, ATOMIC PUBLISHING FOUNDATION, GITHUB CONTINUITY & PERFORMANCE AUDIT
+
+## ROLE
+
+Act as a Principal Full-Stack Architect, Senior React 19 Engineer, Supabase/PostgreSQL Security Architect, Database Migration Specialist, TypeScript Systems Engineer, GitHub DevOps Engineer, and Production Performance Engineer.
+
+You are developing my existing affiliate-store application into a sophisticated Shopify-style Visual Storefront Builder.
+
+**GitHub Repository:** https://github.com/Mukulsri369/ourvisibleuniversestore
+
+**Development Environment:** Google AI Studio — Argon 4
+
+**Development Roadmap:** 48 prompts across 10 phases.
+
+**Current Stage:** Phase 2 — Core Page Rendering and Persistence Architecture.
+
+**Current Task:** Prompt 8 of 48.
+
+### Previous development phases
+
+- Prompt 1 — Repository Architecture Audit.
+- Prompt 2 — Compatibility and Zero-Regression Contracts.
+- Prompt 3 — Editor Technology Evaluation.
+- Prompt 4 — Original Landing-Page Baselines.
+- Prompt 5 — Versioned PageDocument Schema.
+- Prompt 6 — Component Registry and Shared Renderer.
+- Prompt 7 — Migration of the Real Homepage to the Shared Renderer.
+
+### Primary objective
+
+Implement a secure, versioned, performance-conscious persistence system for the visual storefront editor.
+
+The system must enable:
+
+1. Storing validated page documents in Supabase.
+2. Creating and updating private design drafts.
+3. Recovering drafts after browser refresh or switching devices.
+4. Maintaining immutable historical page versions.
+5. Reading the currently published design safely.
+6. Preparing atomic publishing and rollback operations.
+7. Preventing drafts from becoming visible to public customers.
+8. Preventing unauthorized access and cross-store data leakage.
+9. Supporting optimistic concurrency and version conflicts.
+10. Preserving the current landing page if stored configuration is unavailable.
+11. Maintaining full GitHub continuity across Google AI Studio accounts.
+12. Performing comprehensive before-and-after performance audits.
+
+**IMPORTANT: This prompt establishes the persistence and publishing foundation. Do not build the full Shopify-style visual editor interface, drag-and-drop canvas, or final publishing UI yet.**
+
+---
+
+# PART 1 — GITHUB RECOVERY AND DEVELOPMENT CONTINUITY
+
+## 1. Verify the correct repository
+
+Connect to:
+
+https://github.com/Mukulsri369/ourvisibleuniversestore
+
+Fetch the latest repository information.
+
+Identify:
+
+- Current branch.
+- Remote branches.
+- Local and remote HEAD commits.
+- Working-tree modifications.
+- Unpushed commits.
+- Existing development checkpoints.
+- Latest completed implementation prompt.
+- Current application architecture.
+- Latest relevant database migrations.
+
+A previously observed remote `main` commit was:
+
+`28d80db39d13150eb69ae34405ba3c06e0792acc`
+
+Treat this SHA as a reference only.
+
+Always retrieve the latest remote state before beginning work.
+
+## 2. Read the four permanent handoff documents
+
+Read:
+
+- `IMPLEMENTATION_PROGRESS.md`
+- `ARCHITECTURE_AUDIT.md`
+- `PERFORMANCE_BASELINE.md`
+- `AI_STUDIO_HANDOFF.md`
+
+These documents must be maintained throughout the project.
+
+Do not overwrite earlier implementation history.
+
+Use them to understand previous decisions, but verify their claims against actual code.
+
+## 3. Verify Prompt 7 completion
+
+This is a mandatory dependency gate.
+
+The previously visible remote repository documented Prompt 6 as completed but did not yet show verified Prompt 7 completion.
+
+Inspect local changes, development branches, remote commits, and workspace files.
+
+Verify that Prompt 7 actually introduced:
+
+- Canonical default homepage PageDocument.
+- Real homepage integration with PageRenderer.
+- Existing data-binding compatibility.
+- Dynamic category-section compatibility.
+- Existing hero and celestial rendering.
+- Header/footer composition without duplication.
+- Functional regression tests.
+- Relevant performance comparisons.
+- Documented rollback behavior.
+
+Do not simply rely on an assertion in the chat history.
+
+### If Prompt 7 is missing
+
+Search all legitimate available project locations.
+
+If work exists locally but is not pushed, preserve and safely synchronize it.
+
+If Prompt 7 was never implemented or is critically incomplete, stop implementation of Prompt 8 and report the dependency issue.
+
+Do not independently rebuild the homepage or create a second renderer.
+
+### If Prompt 7 is complete
+
+Continue with the actual existing implementation.
+
+Do not repeat previously finished work.
+
+## 4. Continue on the correct Git branch
+
+Use the development branch specified by the verified handoff documents.
+
+Preferred branch:
+
+`feature/visual-storefront-editor`
+
+If the actual development history is on another branch, inspect and reconcile it rather than blindly creating a conflicting branch.
+
+Do not force-push.
+
+Do not reset or discard existing work.
+
+Do not merge into `main` automatically.
+
+Do not change unrelated files.
+
+---
+
+# PART 2 — AUDIT THE CURRENT DATABASE AND AUTHORIZATION MODEL
+
+## 5. Inspect the existing Supabase integration
+
+Before writing migrations, inspect:
+
+- Existing Drizzle migrations.
+- Migration journal and snapshots.
+- Supabase client setup.
+- Database-generated TypeScript types.
+- Existing RLS policies.
+- Existing database permissions.
+- Admin authentication.
+- Existing `is_admin()` function.
+- Storefront public queries.
+- Existing site settings.
+- Product and category data models.
+- Storage architecture.
+- Existing server-side actions or API routes.
+
+Inspect the actual migration files instead of assuming the current migration sequence.
+
+The previously observed repository contained migrations through:
+
+`drizzle/migrations/0009_admin_approvals_and_management.sql`
+
+Verify the current latest migration.
+
+Choose the next valid migration identifier using the project's actual migration conventions.
+
+Do not overwrite old migrations.
+
+## 6. Preserve existing data and business logic
+
+The new persistence system must not modify the meaning or storage of:
+
+- Products.
+- Categories.
+- Product images.
+- Product prices.
+- Affiliate URLs.
+- Retailer details.
+- Outbound click tracking.
+- Admin approval records.
+- Existing site settings.
+- Existing category spotlight settings.
+- Festival configuration.
+
+The page document must store presentation and layout configuration rather than authoritative product data.
+
+The existing Supabase database must remain functional throughout implementation.
+
+---
+
+# PART 3 — DESIGN THE PERSISTENCE ARCHITECTURE
+
+## 7. Establish the data model
+
+Design a normalized persistence structure suitable for storing page configurations, drafts, and immutable published versions.
+
+Evaluate dedicated tables for:
+
+### A. Store pages
+
+Represents a logical page.
+
+Suggested responsibilities:
+
+- Page identity.
+- Page type.
+- Slug.
+- Store scope.
+- Current published version reference.
+- Current publication revision.
+- Creation and update timestamps.
+- Administrative metadata.
+
+### B. Page drafts
+
+Stores an editable design draft.
+
+Suggested responsibilities:
+
+- Draft identity.
+- Related page.
+- Validated or pending-validation PageDocument.
+- Draft revision number.
+- Base published revision.
+- Created-by reference.
+- Last-edited-by reference.
+- Creation and update timestamps.
+- Draft state.
+
+### C. Page versions
+
+Stores immutable design snapshots.
+
+Suggested responsibilities:
+
+- Version identity.
+- Related page.
+- Version number.
+- Schema version.
+- Validated PageDocument snapshot.
+- Creation timestamp.
+- Creator identity.
+- Optional release notes.
+- Content checksum or equivalent integrity metadata.
+
+### D. Publishing events
+
+Stores relevant history.
+
+Suggested responsibilities:
+
+- Page identity.
+- Published version.
+- Previous published version.
+- Publishing administrator.
+- Timestamp.
+- Action type.
+- Relevant revision metadata.
+
+Do not store private credentials, API keys, or sensitive user information in publishing events.
+
+### E. Store themes
+
+Evaluate whether a separate table is necessary in this phase.
+
+A theme may eventually contain global colors, typography, component presets, and shared page styles.
+
+If the theme system is not mature enough to persist safely, document the proposed future structure rather than introducing a premature or misleading implementation.
+
+**Do not create redundant tables merely because they appear in this suggested list. Choose a coherent design with clear ownership.**
+
+---
+
+# PART 4 — SINGLE-STORE COMPATIBILITY AND FUTURE SAAS EXPANSION
+
+## 8. Preserve the current store architecture
+
+The current application originated as a single storefront.
+
+The existing `site_settings` model previously used a singleton configuration.
+
+Do not assume that the repository already implements complete multi-tenant isolation.
+
+### Requirements
+
+- Existing store continues working.
+- New page records have a consistent store scope.
+- Current single-store behavior remains unchanged.
+- Future multi-store expansion is considered.
+- Store identifiers must not grant cross-store access.
+- No fake tenant isolation should be presented as production-ready security.
+
+If there is no authoritative tenant model, use a carefully defined single-store scope.
+
+Document how this scope could be migrated to a genuine tenant model later.
+
+### Future SaaS requirement
+
+Eventually, each customer must have:
+
+- Their own storefront.
+- Their own page documents.
+- Their own drafts.
+- Their own published versions.
+- Their own theme configuration.
+- Their own administrators.
+- Their own database access boundaries.
+
+This future capability should influence identifiers and constraints, but must not trigger an uncontrolled multi-tenant rewrite during Prompt 8.
+
+---
+
+# PART 5 — SECURE DATABASE MIGRATIONS
+
+## 9. Implement migration files
+
+Create appropriate forward migrations using the existing repository conventions.
+
+Include:
+
+- Tables.
+- Primary keys.
+- Foreign keys.
+- Unique constraints.
+- Check constraints.
+- Indexes.
+- Timestamps.
+- Referential integrity.
+- Necessary triggers.
+- Grants.
+- Row Level Security.
+- Database functions where justified.
+
+Use PostgreSQL-compatible SQL and Drizzle conventions already present in the project.
+
+Update migration metadata through the supported tooling when required.
+
+Do not leave migration snapshots or journals inconsistent.
+
+### Data integrity requirements
+
+Enforce appropriate invariants such as:
+
+- Unique logical page identity within store scope.
+- Valid relationship between a page and its draft.
+- Versions belonging to the correct page.
+- Published pointers referencing versions of that same page.
+- Unique version numbers per page.
+- Monotonic revision handling.
+- Immutable published-version payloads.
+- Valid draft revision values.
+- Safe page deletion behavior.
+
+Do not rely exclusively on frontend TypeScript validation for relational integrity.
+
+## 10. Make migration execution safe
+
+Before applying migrations:
+
+1. Determine whether a development/test database is available.
+2. Verify that it is not the live production database.
+3. Inspect existing schema state.
+4. Check for naming collisions.
+5. Check migration dependencies.
+6. Verify permissions and required extensions.
+7. Plan rollback or forward-recovery procedures.
+
+Apply migrations only in an authorized development or staging environment.
+
+**Do not automatically apply destructive or unverified migrations to production.**
+
+If a test database is unavailable, create the migration and test it through available static or isolated techniques, then mark live execution as pending.
+
+Never claim successful migration execution without actual evidence.
+
+---
+
+# PART 6 — SUPABASE ROW LEVEL SECURITY
+
+## 11. Implement strict draft isolation
+
+This is the most important security rule:
+
+**Public users must never be able to retrieve unpublished page drafts.**
+
+Configure database access so that:
+
+- Anonymous visitors cannot read drafts.
+- Normal unauthenticated visitors cannot modify pages.
+- Only authorized administrators can create or edit drafts.
+- Only authorized administrators can view administrative version metadata.
+- Only authorized administrators can publish or roll back versions.
+- Public clients can retrieve only approved published presentation data.
+- Future tenant scopes cannot be bypassed through user-controlled IDs.
+
+Use the existing administrator authorization model.
+
+Do not introduce weaker email checks in frontend code as a substitute for database authorization.
+
+## 12. Restrict direct access to version records
+
+A dangerous architecture would grant public SELECT access to a page-versions table containing both published and unpublished versions.
+
+Avoid that.
+
+Design a controlled public-read path that returns only the version currently referenced as published.
+
+Approaches may include:
+
+- A carefully secured public database function.
+- A validated server endpoint.
+- Another narrowly scoped access mechanism compatible with existing RLS.
+
+Choose the safest solution for the actual application.
+
+Do not expose full draft or version tables to public users merely to simplify queries.
+
+If using a security-definer SQL function:
+
+- Use explicit schema qualification.
+- Set a safe search path.
+- Restrict execution grants.
+- Validate input.
+- Return only necessary public fields.
+- Prevent unintended privileged data access.
+- Avoid arbitrary dynamic SQL.
+- Verify authorization separately for administrative mutations.
+
+Review the actual Supabase security model before selecting the final implementation.
+
+## 13. Test authorization boundaries
+
+Verify at minimum:
+
+- Anonymous users cannot read drafts.
+- Anonymous users cannot write drafts.
+- Non-admin authenticated users cannot read administrative drafts.
+- Non-admin users cannot publish.
+- Non-admin users cannot alter versions.
+- Administrators can access permitted store designs.
+- Public users can read only current published content.
+- Historical unpublished snapshots do not leak.
+- Invalid page IDs cannot bypass authorization.
+- Future store scoping cannot be bypassed by supplying another store ID.
+
+These tests should be performed against a safe test database wherever possible.
+
+Mock-only security tests do not prove real PostgreSQL RLS behavior.
+
+---
+
+# PART 7 — DRAFT CREATION AND PERSISTENCE
+
+## 14. Implement draft storage
+
+Create a safe TypeScript persistence service compatible with the PageDocument schema from Prompt 5.
+
+Required capabilities:
+
+- Create an initial draft.
+- Load a draft.
+- Save a draft.
+- Update an existing draft.
+- Read draft metadata.
+- Discard or archive a draft according to the chosen model.
+- Restore draft state from the currently published version.
+- Track revision numbers.
+- Return meaningful validation and conflict errors.
+
+Do not store draft content exclusively in browser memory or localStorage.
+
+Database persistence is necessary so administrators can resume work across sessions and devices.
+
+## 15. Integrate Zod validation
+
+Reuse the existing PageDocument validator.
+
+Do not create a second incompatible validator.
+
+Before storing a document:
+
+1. Validate the document schema.
+2. Verify supported schema version.
+3. Check node identity.
+4. Check size and depth limits.
+5. Verify legal nested structures.
+6. Validate media references.
+7. Validate data-binding descriptors.
+8. Reject unsafe executable content.
+9. Enforce protected business-data boundaries.
+
+### Important
+
+Client-side validation is not a security boundary.
+
+For protected writes and publishing, validation and authorization must also be enforced at a trusted server/database boundary.
+
+SQL constraints should enforce relevant structural and referential invariants.
+
+If full application-level validation cannot be implemented inside PostgreSQL, create an authorized server-side validation workflow and ensure privileged publishing operations cannot bypass the required checks through a direct untrusted client call.
+
+Document the trust model.
+
+---
+
+# PART 8 — OPTIMISTIC CONCURRENCY AND EDITING CONFLICTS
+
+## 16. Implement revision-based updates
+
+A significant future feature is multi-admin editing.
+
+If two administrators edit the same draft, one should not silently overwrite the other's work.
+
+Use optimistic concurrency.
+
+Suggested behavior:
+
+1. Administrator loads draft revision 12.
+2. Administrator makes changes.
+3. Save operation includes expected revision 12.
+4. Database checks the current revision.
+5. If still revision 12, save succeeds as revision 13.
+6. If another save already created revision 13, reject the stale write with a conflict.
+
+Return structured conflict information.
+
+Do not silently replace newer work.
+
+Use atomic database operations rather than separate read-then-write requests vulnerable to races.
+
+### Required conflict states
+
+- Save successful.
+- Document validation failed.
+- Draft not found.
+- Unauthorized.
+- Revision conflict.
+- Network failure.
+- Database unavailable.
+- Document version unsupported.
+
+The future editor can decide whether to reload, compare, or merge.
+
+Prompt 8 should implement the persistence contract, not the full conflict-resolution interface.
+
+---
+
+# PART 9 — IMMUTABLE PAGE VERSION HISTORY
+
+## 17. Implement immutable versions
+
+Once a version is published, its content must not be modified in place.
+
+The version record should represent a historical snapshot.
+
+Support:
+
+- Version ID.
+- Version number.
+- Document snapshot.
+- Schema version.
+- Created timestamp.
+- Author identity.
+- Optional description.
+- Integrity metadata.
+
+Ensure that ordinary admin updates cannot silently mutate a previously published snapshot.
+
+Choose appropriate database constraints, privileges, and service boundaries.
+
+## 18. Implement version history retrieval
+
+Create safe APIs for:
+
+- Listing page versions.
+- Reading one authorized historical version.
+- Identifying the current published version.
+- Comparing metadata between versions.
+- Determining whether a draft is based on an outdated published version.
+
+Do not yet build the history-management UI.
+
+Avoid loading all full JSON snapshots when the caller only needs version metadata.
+
+Use pagination and bounded queries where appropriate.
+
+---
+
+# PART 10 — ATOMIC PUBLISHING FOUNDATION
+
+## 19. Design safe publishing
+
+Publishing must never update the public page through multiple non-atomic client-side steps.
+
+The desired publishing sequence is:
+
+1. Verify administrator authorization.
+2. Load the intended draft revision.
+3. Validate the document through the trusted publishing boundary.
+4. Verify the draft has not changed unexpectedly.
+5. Create or select an immutable version snapshot.
+6. Atomically update the page's published-version pointer.
+7. Record the publishing event.
+8. Return the new published revision.
+9. Invalidate or refresh relevant application caches.
+
+Use a transaction or an equivalent atomic database operation.
+
+If any essential step fails, the previously published page must remain active.
+
+## 20. Implement the publishing primitive safely
+
+This prompt may implement the database publishing operation and its trusted service contract.
+
+It must not build the final administrator Publish button or the full release-management interface.
+
+The publishing primitive must:
+
+- Require admin authorization.
+- Accept validated page/version identity.
+- Verify expected draft revision.
+- Preserve the previous published version.
+- Create an immutable snapshot.
+- Update the published pointer atomically.
+- Record an audit event.
+- Return structured success/failure output.
+
+The database must not rely on a freely client-supplied `validated: true` flag as proof that arbitrary JSON is safe.
+
+Create and document a trustworthy validation boundary.
+
+## 21. Prevent incomplete drafts from going live
+
+If a design document is:
+
+- Invalid.
+- Unsupported.
+- Too large.
+- Missing critical component references.
+- Corrupted.
+- Based on an incompatible schema version.
+
+Publishing must be rejected safely.
+
+Do not replace the existing live design with an invalid document.
+
+Do not return a success message before the transaction is committed.
+
+---
+
+# PART 11 — ROLLBACK AND RECOVERY FOUNDATION
+
+## 22. Prepare safe rollback support
+
+The administrator must eventually be able to restore a previous design version.
+
+Implement the necessary backend contract.
+
+A rollback should:
+
+1. Require administrator authorization.
+2. Verify the target historical version belongs to the page.
+3. Verify compatibility with the current schema.
+4. Validate the restored content.
+5. Create a new release event or version as required by the chosen model.
+6. Atomically switch the published pointer.
+7. Preserve the full historical audit trail.
+
+Do not modify or erase the historical version.
+
+Do not build the rollback UI yet.
+
+## 23. Maintain safe fallbacks
+
+The storefront must remain usable when:
+
+- No page document has been persisted.
+- No version has been published.
+- Supabase is temporarily unavailable.
+- A published document has become incompatible.
+- A configuration cannot be validated.
+- A requested version does not exist.
+
+For a homepage without a valid persisted design, fall back to the canonical built-in homepage document from Prompt 7.
+
+Where safe, continue using the last known valid published configuration.
+
+Do not replace the homepage with a blank screen or generic error message simply because the design database is unavailable.
+
+Make fallback behavior explicit and testable.
+
+---
+
+# PART 12 — PUBLIC DATA-READ ARCHITECTURE
+
+## 24. Create a safe published-page retrieval contract
+
+The public storefront should retrieve only the active published design.
+
+Define a TypeScript API conceptually similar to:
+
+- `getPublishedPage(pageSlug)`
+- `getPublishedPageVersion(pageId)`
+- `getAdminDraft(pageId)`
+- `savePageDraft(...)`
+- `listPageVersions(pageId)`
+- `publishPageDraft(...)`
+- `restorePublishedVersion(...)`
+
+Use naming consistent with existing project conventions.
+
+Do not blindly implement these exact names if the repository already uses appropriate alternatives.
+
+### Public read constraints
+
+- Return only public presentation configuration.
+- Do not expose draft documents.
+- Do not expose administrative author metadata.
+- Do not expose email addresses.
+- Do not expose private site settings.
+- Do not expose privileged database fields.
+- Do not expose unpublished version IDs unnecessarily.
+
+Validate returned configuration before rendering.
+
+## 25. Preserve existing storefront loading behavior
+
+Prompt 7 should have established the canonical default homepage document.
+
+Prompt 8 must not turn the public homepage into a fragile dependency on a new untested database API.
+
+If public configuration loading is integrated in this phase, make it a controlled, independently reversible change and test fallback behavior.
+
+Otherwise, implement and test the read service independently, leaving the current homepage route active until the following integration milestone.
+
+**Do not silently switch production traffic to the new persistence system without completing the required parity, security, and performance checks.**
+
+---
+
+# PART 13 — DRAFT PREVIEW SECURITY
+
+## 26. Prepare authenticated preview access
+
+The future editor must display unpublished draft designs.
+
+These drafts must remain private.
+
+Define secure access for administrator previews.
+
+Requirements:
+
+- Only authorized users can load private drafts.
+- A public visitor cannot infer or retrieve a draft by guessing an ID.
+- Draft previews cannot expose admin secrets.
+- Draft content cannot execute untrusted scripts.
+- Preview access does not bypass business-data security.
+- Preview configuration is isolated from published configuration.
+
+Do not create permanent, unauthenticated draft URLs.
+
+If temporary shareable preview links are considered for the future, specify expiry, revocation, authorization, and scoped read requirements.
+
+Do not implement public preview sharing in this prompt unless absolutely required and safely designed.
+
+---
+
+# PART 14 — SEPARATE BUSINESS DATA FROM DESIGN DATA
+
+## 27. Protect existing product and category records
+
+Persist only design structure and validated binding configuration.
+
+The PageDocument must not become the authority for:
+
+- Product name.
+- Product price.
+- Product currency.
+- Product availability.
+- Product affiliate URL.
+- Retailer identity.
+- Product category membership.
+
+The existing product/category tables remain authoritative.
+
+Changing a product card's appearance must only update design configuration.
+
+Changing a collection's grid layout must not modify its underlying product records.
+
+Do not expose protected business fields through configurable visual properties.
+
+## 28. Preserve existing admin settings
+
+Existing site settings may include:
+
+- Store branding.
+- Instagram destination.
+- Festival configuration.
+- Category spotlight selections.
+
+Do not automatically move or delete them during this migration.
+
+Define a clear precedence strategy for future design overrides.
+
+Avoid storing duplicate authoritative configuration in both `site_settings.social_links` and the new page-document tables.
+
+Document any overlapping responsibilities.
+
+---
+
+# PART 15 — MEDIA REFERENCE INTEGRITY
+
+## 29. Preserve referenced assets
+
+Page documents may reference images, videos, and decorative assets.
+
+Ensure that persistence stores approved asset references rather than binary files.
+
+Define future handling of:
+
+- Referenced asset deletion.
+- Missing files.
+- Draft-only assets.
+- Published assets.
+- Unused media.
+- Asset ownership.
+- Future tenant isolation.
+
+A published page should not break because an administrator deletes an image from an unrelated draft.
+
+Do not implement a full media manager in Prompt 8.
+
+Prepare the necessary referential and lifecycle rules.
+
+---
+
+# PART 16 — PERFORMANCE AUDIT BEFORE IMPLEMENTATION
+
+## 30. Review the previous performance baseline
+
+Open:
+
+`PERFORMANCE_BASELINE.md`
+
+Verify:
+
+- Previous commit under test.
+- Environment.
+- Homepage bundle size.
+- Existing render benchmarks.
+- Existing database access patterns.
+- Known browser limitations.
+- Known performance defects.
+
+Record current baseline conditions.
+
+Do not rely blindly on older performance measurements after the repository changes.
+
+## 31. Audit new persistence risks
+
+Identify risks involving:
+
+- Large JSONB documents.
+- Repeated database reads.
+- Repeated Zod validation.
+- Expensive version-history queries.
+- Unnecessary JSON payload transfer.
+- Frequent draft autosave.
+- Database connection exhaustion.
+- Large immutable version histories.
+- Lock contention during publishing.
+- Duplicate Supabase requests.
+- Poor indexing.
+- Unbounded query results.
+- Excessive revision-event records.
+- Cache invalidation.
+- Incorrect query-key reuse.
+- Loading all versions on every page visit.
+
+Design controls to prevent these problems.
+
+---
+
+# PART 17 — DATABASE PERFORMANCE OPTIMIZATION
+
+## 32. Index common access paths
+
+Inspect the real query requirements before defining indexes.
+
+Typical indexed lookups may include:
+
+- Page by store scope and slug.
+- Draft by page ID.
+- Latest version by page ID.
+- Published version by ID.
+- Version-history listing.
+- Publishing events by page and time.
+
+Choose indexes based on actual access paths.
+
+Avoid indexing the entire PageDocument JSONB without a demonstrated need.
+
+Do not add broad GIN indexes merely because the column uses JSONB.
+
+## 33. Keep public page reads efficient
+
+The public storefront normally needs one current published design, not the complete version history.
+
+Optimize public access so the website:
+
+- Retrieves only required configuration.
+- Avoids querying draft tables.
+- Avoids loading all historical versions.
+- Reuses TanStack Query caching where appropriate.
+- Preserves existing SSR/hydration behavior.
+- Falls back quickly when necessary.
+
+Do not fetch design documents separately for every component.
+
+The target architecture should allow one validated published page document to be shared across the registered renderer.
+
+## 34. Avoid repeated full-tree validation
+
+The Prompt 5 schema contains a full-document Zod validator.
+
+Do not execute full-document validation on every card render, scroll event, or pointer movement.
+
+Validation should occur at appropriate trust boundaries:
+
+- Draft import.
+- Draft save.
+- Trusted server mutation.
+- Publishing.
+- Version restoration.
+- Published document retrieval when required.
+
+Cache or reuse validated structures where safe.
+
+Do not introduce unsafe caching that causes administrators to see stale drafts.
+
+---
+
+# PART 18 — AUTOSAVE READINESS
+
+## 35. Prepare efficient draft saving
+
+The future visual editor may make many local changes per second during dragging and resizing.
+
+Do not send a database request for every pointer movement.
+
+Design the persistence API to support:
+
+- Local draft changes.
+- Debounced saving.
+- Bounded retry behavior.
+- Revision-aware saves.
+- Saving indicators.
+- Recoverable network errors.
+- Unsaved-change detection.
+- Explicit save when required.
+
+The actual visual editor's autosave coordinator will be implemented in a later prompt.
+
+Prompt 8 must provide appropriate backend capabilities and document the required client integration pattern.
+
+---
+
+# PART 19 — MIGRATION AND COMPATIBILITY TESTING
+
+## 36. Test migrations against a safe database
+
+Where an authorized development database is available, validate:
+
+- Fresh installation.
+- Upgrade from current schema.
+- Foreign keys.
+- Unique constraints.
+- Version immutability.
+- RLS policies.
+- Administrative operations.
+- Public reads.
+- Atomic publishing.
+- Concurrency handling.
+- Rollback behavior.
+
+Use synthetic records.
+
+Do not modify production product data.
+
+If database execution is unavailable, clearly distinguish SQL review and unit tests from real database integration testing.
+
+## 37. Test schema compatibility
+
+Test documents created using the actual Prompt 5 versioned schema.
+
+Verify that:
+
+- Valid documents can be stored.
+- Invalid documents are rejected.
+- Schema version is retained.
+- Unknown versions are handled safely.
+- Maximum document limits are enforced.
+- Document serialization is lossless.
+- Responsive overrides survive persistence.
+- Node IDs remain stable.
+- Shape properties remain intact.
+- Product/category binding descriptors remain intact.
+
+Do not substitute an untyped arbitrary JSON object for the established schema.
+
+---
+
+# PART 20 — AUTHORIZATION TEST MATRIX
+
+## 38. Implement security tests
+
+Create a meaningful test matrix.
+
+### Anonymous visitor
+
+- Can read the current published design through the approved public API.
+- Cannot read drafts.
+- Cannot list private version history.
+- Cannot publish.
+- Cannot update page configuration.
+- Cannot create publishing events.
+
+### Authenticated non-admin
+
+- Cannot read admin-only drafts.
+- Cannot save drafts.
+- Cannot publish.
+- Cannot restore versions.
+- Cannot bypass authorization by changing page IDs.
+
+### Authorized administrator
+
+- Can access permitted drafts.
+- Can save valid drafts.
+- Can view version history.
+- Can publish valid revisions.
+- Can restore permitted historical designs.
+- Receives conflict errors for stale revisions.
+
+### Invalid requests
+
+- Invalid schema rejected.
+- Oversized document rejected.
+- Unsupported version rejected.
+- Unsafe media URL rejected.
+- Protected data override rejected.
+- Incorrect page/version relationship rejected.
+
+Use real Supabase/PostgreSQL integration tests where possible.
+
+Do not treat application-level mocked authorization checks as full proof of database RLS safety.
+
+---
+
+# PART 21 — VERSION HISTORY AND CONCURRENCY TESTING
+
+## 39. Test historical integrity
+
+Verify:
+
+1. Saving a draft does not change the published page.
+2. Publishing creates or selects an immutable version.
+3. Publishing updates the correct page.
+4. Historical version content remains unchanged.
+5. Another administrator cannot overwrite a newer draft silently.
+6. Failed publishing preserves the previous published version.
+7. Restoring a version retains previous history.
+8. Duplicate publication retries are handled safely.
+9. Version numbers remain valid under concurrent operations.
+10. Unauthorized version access is denied.
+
+Use transactional test coverage where possible.
+
+---
+
+# PART 22 — PERFORMANCE BENCHMARKS
+
+## 40. Measure persistence operations
+
+Where suitable tooling exists, benchmark representative workloads.
+
+Suggested document sizes:
+
+- Small: approximately 25 nodes.
+- Medium: approximately 150 nodes.
+- Large: approximately 500 nodes.
+- Stress case: approximately 1,000 nodes.
+
+Measure:
+
+- Document serialization.
+- Validation.
+- Draft insert.
+- Draft update.
+- Published-page retrieval.
+- Version creation.
+- Version-history listing.
+- Atomic publish.
+- Historical restore.
+- Conflict detection.
+
+Report:
+
+- Test environment.
+- Number of iterations.
+- Median latency.
+- p95 latency where meaningful.
+- Query counts.
+- Payload sizes.
+- Errors.
+- Limitations.
+
+Do not fabricate results.
+
+Distinguish local unit-benchmark results from real database/network latency.
+
+## 41. Compare public storefront performance
+
+After implementation, inspect:
+
+- Client bundle size.
+- Server bundle size.
+- New route dependencies.
+- Network request changes.
+- Cache behavior.
+- Homepage query count.
+- Hydration behavior.
+- Initial page load.
+- Fallback behavior.
+
+A persistence subsystem should not force the customer to download editor UI dependencies.
+
+Do not introduce Moveable, Puck, or other heavy editor-only code into public storefront bundles.
+
+Investigate any unexplained performance regression.
+
+---
+
+# PART 23 — ERROR HANDLING AND RELIABILITY
+
+## 42. Implement structured persistence errors
+
+Define clear application errors for:
+
+- Unauthorized.
+- Forbidden.
+- Not found.
+- Validation failed.
+- Unsupported schema.
+- Draft revision conflict.
+- Published revision conflict.
+- Database unavailable.
+- Migration required.
+- Invalid page/version relationship.
+- Document too large.
+- Storage failure.
+- Unknown internal error.
+
+Do not leak database implementation details or privileged fields to public users.
+
+Preserve useful diagnostic information in protected logs.
+
+Do not log entire private page documents unnecessarily.
+
+## 43. Implement safe recovery behavior
+
+Test:
+
+- Network interruption during save.
+- Save retry after timeout.
+- Repeated publish request.
+- Concurrent publish requests.
+- Database temporarily unavailable.
+- Invalid published document.
+- Missing published version.
+- Rollback transaction failure.
+
+The system must never silently publish a partially written design.
+
+---
+
+# PART 24 — RECOMMENDED SOURCE ORGANIZATION
+
+## 44. Extend the existing visual-editor architecture
+
+Prefer a clean structure similar to:
+
+src/
+  lib/
+    visual-editor/
+      schema/
+        ...
+
+      registry/
+        ...
+
+      rendering/
+        ...
+
+      persistence/
+        page-repository.ts
+        draft-repository.ts
+        version-repository.ts
+        published-page-reader.ts
+        persistence-validation.ts
+        persistence-errors.ts
+        persistence-types.ts
+
+      publishing/
+        publish-page.ts
+        restore-version.ts
+        publish-validation.ts
+
+      __tests__/
+        persistence.test.ts
+        draft-concurrency.test.ts
+        publication.test.ts
+        persistence-security.test.ts
+
+drizzle/
+  migrations/
+    <next-valid-migration>.sql
+
+This is a suggested structure, not a strict naming requirement.
+
+Adapt it to the current repository.
+
+Avoid creating redundant repositories or duplicating existing validation functionality.
+
+Keep database implementation separate from React visual components.
+
+Ensure public-safe modules never import privileged server credentials.
+
+---
+
+# PART 25 — DO NOT BREAK THE LANDING PAGE
+
+## 45. Preserve existing functionality
+
+After implementation:
+
+- Homepage must remain accessible.
+- PlanetHero must remain functional.
+- CelestialScrollWorld must remain functional.
+- ProductScrollRail must remain functional.
+- ProductCard must remain functional.
+- CategorySpotlightHero must remain functional.
+- Header/footer must remain correct.
+- Product/category data must remain unchanged.
+- Affiliate URLs must remain unchanged.
+- Search must continue working.
+- Existing admin screens must remain operational.
+- Supabase authorization must remain secure.
+- No unfinished design may become publicly visible.
+
+The default homepage must continue working even if the new persistence system has no records.
+
+**Do not turn the live website into a dependency on a partially implemented editor database.**
+
+---
+
+# PART 26 — STRICT IMPLEMENTATION SCOPE
+
+## 46. Features included in Prompt 8
+
+Implement:
+
+- Database schema.
+- Migration files.
+- Row Level Security.
+- Page persistence.
+- Draft storage.
+- Immutable version history.
+- Published-page retrieval.
+- Optimistic concurrency.
+- Backend publishing primitive.
+- Backend version restoration primitive.
+- Trusted validation boundaries.
+- Controlled fallback behavior.
+- Database and service tests.
+- Performance auditing.
+- GitHub documentation and checkpoint.
+
+## 47. Features excluded from Prompt 8
+
+Do not implement:
+
+- Full admin design studio.
+- Drag-and-drop canvas.
+- Resize handles.
+- Shape editing handles.
+- Live grid manipulation.
+- Card template inspector.
+- Mini-preview interface.
+- Visual layer navigator.
+- Theme preset library.
+- Animation timeline interface.
+- Complete publish/rollback UI.
+- AI-generated themes.
+- Public draft-sharing links.
+- Unrequested multi-store migration.
+
+Those features belong to subsequent implementation phases.
+
+**Prompt 8 creates the backend foundation that these features will eventually use.**
+
+---
+
+# PART 27 — GITHUB DOCUMENTATION REQUIREMENTS
+
+## 48. Update IMPLEMENTATION_PROGRESS.md
+
+Record:
+
+- Prompt 8 implementation status.
+- Tables and migrations created.
+- Persistence services created.
+- Draft support.
+- Version-history support.
+- Publishing primitive status.
+- Security testing.
+- Performance testing.
+- Remaining risks.
+- Next prompt.
+
+Do not mark Prompt 8 complete if essential authorization or migration tests remain unresolved.
+
+## 49. Update ARCHITECTURE_AUDIT.md
+
+Document:
+
+- Database schema.
+- Entity relationships.
+- Published-version pointer.
+- Draft state.
+- Version immutability.
+- RLS policy design.
+- Public access path.
+- Admin mutation path.
+- Concurrency model.
+- Rollback model.
+- Validation trust boundary.
+- Existing-store compatibility.
+- Future SaaS expansion constraints.
+
+Include an entity relationship diagram or clear equivalent.
+
+## 50. Update PERFORMANCE_BASELINE.md
+
+Record:
+
+- Starting commit.
+- Measurement environment.
+- Query benchmarks.
+- Document sizes.
+- Database operation timings.
+- Bundle impact.
+- Network impact.
+- Query-count changes.
+- Cache considerations.
+- Regressions.
+- Unverified results.
+
+Do not invent performance data.
+
+## 51. Update AI_STUDIO_HANDOFF.md
+
+Make the project recoverable from another Google AI Studio account.
+
+Include:
+
+- Repository URL.
+- Correct branch.
+- Previously completed prompt.
+- Prompt 8 actual status.
+- Latest verified GitHub checkpoint.
+- Migrations created.
+- Whether migrations were applied.
+- Database setup prerequisites.
+- Required environment variable names.
+- Tests run.
+- Outstanding risks.
+- Remaining blockers.
+- Next implementation task.
+
+Never store secret values.
+
+---
+
+# PART 28 — GITHUB COMMIT AND PUSH
+
+## 52. Review code before committing
+
+Inspect:
+
+- Active branch.
+- Current Git status.
+- Files created.
+- Files modified.
+- SQL migration changes.
+- Generated database types.
+- Dependency changes.
+- Test results.
+- Security implications.
+- Environment files.
+- Potential secrets.
+
+Do not stage unrelated changes.
+
+Do not overwrite previous work.
+
+## 53. Create the Prompt 8 Git checkpoint
+
+Once the implementation is sufficiently verified, create a conventional commit.
+
+Suggested message:
+
+`feat(editor): add secure page drafts and versioned persistence`
+
+Push to the designated development branch.
+
+Do not push directly to `main`.
+
+Do not force-push.
+
+Do not automatically merge.
+
+If actual migration testing or security validation remains incomplete, mark the implementation status accurately and document remaining verification requirements.
+
+## 54. Verify GitHub synchronization
+
+After pushing:
+
+1. Fetch remote branch HEAD.
+2. Confirm commit exists remotely.
+3. Verify correct branch.
+4. Verify migrations are committed.
+5. Verify persistence services are committed.
+6. Verify tests are committed.
+7. Verify four progress documents are committed.
+8. Report final SHA.
+9. Report any uncommitted or unpushed changes.
+
+If the push fails, report the actual failure.
+
+Do not claim remote synchronization succeeded without verification.
+
+---
+
+# PART 29 — FINAL ACCEPTANCE CRITERIA
+
+## Database
+
+- Page identity model implemented.
+- Draft storage implemented.
+- Immutable version storage implemented.
+- Published-version pointer implemented.
+- Relevant indexes and constraints created.
+- Migration files valid.
+- No unauthorized production migration performed.
+
+## Security
+
+- Strict RLS or equivalent protected boundaries.
+- Public users cannot access drafts.
+- Non-admin users cannot publish.
+- Historical private data is protected.
+- Trusted validation is enforced.
+- Protected business data remains protected.
+- No privileged credentials exposed to the client.
+
+## Persistence
+
+- Create draft works.
+- Load draft works.
+- Save draft works.
+- Revision conflict detection works.
+- Version history works.
+- Published document retrieval works.
+- Atomic publishing primitive works.
+- Safe restore primitive works.
+- Invalid documents are rejected.
+- Missing documents use a safe fallback.
+
+## Compatibility
+
+- Existing homepage remains functional.
+- Existing registered renderer remains compatible.
+- Product and category data remain authoritative.
+- No unrelated visual changes.
+- No duplicate business queries.
+- No affiliate tracking regressions.
+
+## Performance
+
+- Baseline audited.
+- Database query performance assessed.
+- Validation overhead assessed.
+- Bundle impact investigated.
+- Network behavior investigated.
+- Major regressions addressed.
+- Missing measurements identified honestly.
+
+## GitHub
+
+- Correct repository verified.
+- Prompt 7 prerequisite verified.
+- Active development branch confirmed.
+- Four handoff documents updated.
+- Verified work committed.
+- Push status accurately reported.
+- Remote checkpoint verified before claiming success.
+- Next session can continue from GitHub.
+
+---
+
+# PART 30 — REQUIRED FINAL REPORT
+
+Produce a comprehensive report titled:
+
+**"Visual Storefront Editor — Prompt 8 Secure Persistence, Drafts, Publishing Foundation, Performance Audit & GitHub Checkpoint"**
+
+Include:
+
+### A. GitHub recovery and prerequisite verification
+
+Repository, branch, starting SHA, Prompt 7 status, and previous checkpoints.
+
+### B. Database architecture
+
+Tables, keys, relationships, and design decisions.
+
+### C. Migration report
+
+Files created, execution environment, migration status, and recovery plan.
+
+### D. Supabase security report
+
+RLS policies, function permissions, public/private access and test results.
+
+### E. Draft persistence implementation
+
+Storage, loading, saving, validation, and revision handling.
+
+### F. Version-history implementation
+
+Immutable snapshots, metadata and historical retrieval.
+
+### G. Atomic publishing implementation
+
+Transaction logic, authorization, validation and failure behavior.
+
+### H. Rollback and recovery
+
+Restoration contracts, fallback behavior and integrity guarantees.
+
+### I. Data-binding protection
+
+Separation of design documents from product/category business data.
+
+### J. Performance baseline
+
+Verified pre-implementation results.
+
+### K. Performance after implementation
+
+Query results, payload sizes, bundle impact and limitations.
+
+### L. Automated tests
+
+Commands executed, tests passed, failures and blocked checks.
+
+### M. File-change inventory
+
+Every new and modified file.
+
+### N. GitHub checkpoint
+
+Commit message, branch, SHA and remote verification.
+
+### O. Handoff documentation
+
+Status of all four permanent documents.
+
+### P. Remaining risks
+
+Outstanding technical, security, migration and performance issues.
+
+### Q. Next development milestone
+
+Read the latest verified roadmap and specify the next task.
+
+### R. Final readiness assessment
+
+Choose:
+
+**GO** — All essential migration, security, persistence, functionality, and GitHub requirements are sufficiently verified.
+
+**CONDITIONAL GO** — Implementation is usable but specific documented issues or verification gaps remain.
+
+**NO-GO** — Critical security, database, migration, compatibility, or synchronization requirements prevent safe progress.
+
+Explain the decision using actual evidence.
+
+---
+
+# FINAL EXECUTION DIRECTIVE
+
+Follow this execution order:
+
+1. Verify the latest GitHub state.
+2. Recover the correct development branch.
+3. Read the four permanent handoff documents.
+4. Verify Prompt 7 was completed.
+5. Inspect current Supabase architecture.
+6. Audit existing application and database performance.
+7. Design secure page/draft/version persistence.
+8. Create database migrations.
+9. Implement RLS and protected data access.
+10. Implement typed draft persistence.
+11. Implement version-history storage.
+12. Implement revision-based concurrency.
+13. Implement trusted validation boundaries.
+14. Implement atomic publishing and restore primitives.
+15. Implement public published-document retrieval.
+16. Preserve existing homepage fallback behavior.
+17. Run schema, security and integration tests.
+18. Measure persistence and application performance.
+19. Resolve regressions introduced by this task.
+20. Update all four permanent documentation files.
+21. Review all Git changes.
+22. Commit verified changes.
+23. Push to the correct development branch.
+24. Verify the remote commit.
+25. Produce the final technical report.
+
+**DO NOT CLAIM DATABASE SECURITY IS VERIFIED WITHOUT TESTING THE ACTUAL AUTHORIZATION BOUNDARIES.**
+
+**DO NOT CLAIM MIGRATIONS WERE APPLIED UNLESS THEY WERE EXECUTED.**
+
+**DO NOT CLAIM GITHUB SYNCHRONIZATION SUCCEEDED WITHOUT REMOTE VERIFICATION.**
+
+**DO NOT CHANGE THE EXISTING STOREFRONT'S VISUAL DESIGN.**
+
+**DO NOT BEGIN PROMPT 9 AUTOMATICALLY.**
+
+The ultimate objective is a production-grade Shopify-style Visual Storefront Editor in which administrators can customize the actual landing page through drag-and-drop, resizing, shape manipulation, advanced product/category grids, and real-time previews.
+
+Prompt 8 must provide the secure, performant, durable persistence foundation required to save, recover, version, and safely publish those future visual customizations.

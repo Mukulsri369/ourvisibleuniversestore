@@ -119,7 +119,12 @@ function validateNodeTreeInvariants(doc: PageDocument): {
   let nodeCount = 0;
   let maxDepth = 0;
 
-  const visit = (node: EditorNode, depth: number, parentType: ComponentType | null, path: string) => {
+  const visit = (
+    node: EditorNode,
+    depth: number,
+    parentType: ComponentType | null,
+    path: string,
+  ) => {
     nodeCount += 1;
     if (depth > maxDepth) {
       maxDepth = depth;

@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type RefObject } from "react";
 import { motion, useScroll, useTransform, useSpring, useReducedMotion } from "motion/react";
 import { CelestialPlanet, type CelestialPlanetConfig } from "./CelestialPlanet";
+import { useCanvasScrollContext } from "@/lib/visual-editor/rendering/CanvasScrollContext";
 import earthCutout from "@/assets/planets/earth-cutout.png.asset.json";
 import venusCutout from "@/assets/planets/venus-cutout.png.asset.json";
 import marsCutout from "@/assets/planets/mars-cutout.png.asset.json";
@@ -59,6 +60,7 @@ const CELESTIAL_CONFIGS: Record<"earth" | "venus" | "mars", CelestialPlanetConfi
 export function CelestialScrollWorld() {
   const [mounted, setMounted] = useState(false);
   const reducedMotion = useReducedMotion();
+  const canvasScrollCtx = useCanvasScrollContext();
 
   useEffect(() => {
     setMounted(true);
@@ -69,11 +71,29 @@ export function CelestialScrollWorld() {
     return null;
   }
 
-  return <CelestialScrollWorldCanvas reducedMotion={!!reducedMotion} />;
+  return (
+    <CelestialScrollWorldCanvas
+      reducedMotion={!!reducedMotion}
+      scrollContainerRef={
+        canvasScrollCtx?.isIsolatedStudioCanvas ? canvasScrollCtx.scrollContainerRef : undefined
+      }
+      isIsolatedStudioCanvas={!!canvasScrollCtx?.isIsolatedStudioCanvas}
+    />
+  );
 }
 
-function CelestialScrollWorldCanvas({ reducedMotion }: { reducedMotion: boolean }) {
-  const { scrollYProgress } = useScroll();
+function CelestialScrollWorldCanvas({
+  reducedMotion,
+  scrollContainerRef,
+  isIsolatedStudioCanvas,
+}: {
+  reducedMotion: boolean;
+  scrollContainerRef?: RefObject<HTMLElement | null>;
+  isIsolatedStudioCanvas: boolean;
+}) {
+  const { scrollYProgress } = useScroll(
+    scrollContainerRef ? { container: scrollContainerRef } : undefined,
+  );
 
   // Smooth out scroll delta with spring physics for natural celestial inertia
   const smoothProgress = useSpring(scrollYProgress, {
@@ -170,11 +190,8 @@ function CelestialScrollWorldCanvas({ reducedMotion }: { reducedMotion: boolean 
   );
   const marsRotate = useTransform(smoothProgress, [0, 1], [15, -160]);
 
-  return (
-    <div
-      aria-hidden="true"
-      className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none"
-    >
+  const planetsContent = (
+    <>
       {/* Subtle Cosmic Orbital Ellipses */}
       <svg
         className="absolute inset-0 w-full h-full opacity-15 pointer-events-none stroke-primary/30"
@@ -255,6 +272,27 @@ function CelestialScrollWorldCanvas({ reducedMotion }: { reducedMotion: boolean 
           className="w-full h-full"
         />
       </motion.div>
+    </>
+  );
+
+  if (isIsolatedStudioCanvas) {
+    return (
+      <div
+        aria-hidden="true"
+        data-celestial-scroll-mode="studio-canvas"
+        className="sticky top-0 left-0 right-0 h-0 w-full pointer-events-none z-0 overflow-visible select-none"
+      >
+        <div className="relative h-[780px] w-full overflow-hidden">{planetsContent}</div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      aria-hidden="true"
+      className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none"
+    >
+      {planetsContent}
     </div>
   );
 }

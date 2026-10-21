@@ -75,8 +75,10 @@ function productMatchesCategory(
   categorySlug?: string,
 ): boolean {
   if (categoryId) {
+    if (product.category_ids?.length) {
+      return product.category_ids.includes(categoryId);
+    }
     if (product.category_id === categoryId) return true;
-    if (product.category_ids?.includes(categoryId)) return true;
   }
   if (categorySlug) {
     if (product.category?.slug === categorySlug) return true;

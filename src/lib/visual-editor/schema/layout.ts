@@ -4,6 +4,7 @@ import { ALIGNMENT_MODES, type AlignmentMode } from "./geometry";
 export const LAYOUT_MODES = [
   "block",
   "flex",
+  "stack",
   "grid",
   "bento",
   "masonry",
@@ -13,6 +14,15 @@ export const LAYOUT_MODES = [
 ] as const;
 
 export type LayoutMode = (typeof LAYOUT_MODES)[number];
+
+export const FLEX_DIRECTIONS = ["row", "row-reverse", "column", "column-reverse"] as const;
+export type FlexDirection = (typeof FLEX_DIRECTIONS)[number];
+
+export const FLEX_WRAPS = ["nowrap", "wrap", "wrap-reverse"] as const;
+export type FlexWrap = (typeof FLEX_WRAPS)[number];
+
+export const GRID_AUTO_FLOWS = ["row", "column", "row dense", "column dense"] as const;
+export type GridAutoFlow = (typeof GRID_AUTO_FLOWS)[number];
 
 export const JUSTIFY_CONTENT_MODES = [
   "start",
@@ -43,11 +53,11 @@ export const GridTrackDefinitionSchema: z.ZodType<GridTrackDefinition> = z
   .strict();
 
 export interface CssGridConfig {
-  columns: number;
+  columns?: number;
   rows?: number;
-  columnGapPx: number;
-  rowGapPx: number;
-  autoFlow?: "row" | "column" | "row dense" | "column dense";
+  columnGapPx?: number;
+  rowGapPx?: number;
+  autoFlow?: GridAutoFlow;
   autoFit?: boolean;
   minColumnWidthPx?: number;
   alignItems?: AlignmentMode;
@@ -56,13 +66,15 @@ export interface CssGridConfig {
   rowTracks?: GridTrackDefinition[];
 }
 
+export type GridLayoutConfig = CssGridConfig;
+
 export const CssGridConfigSchema: z.ZodType<CssGridConfig> = z
   .object({
-    columns: z.number().int().min(1).max(24),
+    columns: z.number().int().min(1).max(24).optional(),
     rows: z.number().int().min(1).max(100).optional(),
-    columnGapPx: z.number().finite().min(0).max(256),
-    rowGapPx: z.number().finite().min(0).max(256),
-    autoFlow: z.enum(["row", "column", "row dense", "column dense"]).optional(),
+    columnGapPx: z.number().finite().min(0).max(256).optional(),
+    rowGapPx: z.number().finite().min(0).max(256).optional(),
+    autoFlow: z.enum(GRID_AUTO_FLOWS).optional(),
     autoFit: z.boolean().optional(),
     minColumnWidthPx: z.number().finite().min(40).max(2000).optional(),
     alignItems: z.enum(ALIGNMENT_MODES).optional(),
@@ -72,6 +84,8 @@ export const CssGridConfigSchema: z.ZodType<CssGridConfig> = z
   })
   .strict();
 
+export const GridLayoutConfigSchema = CssGridConfigSchema;
+
 export interface GridItemPlacement {
   colSpan?: number;
   rowSpan?: number;
@@ -80,6 +94,8 @@ export interface GridItemPlacement {
   alignSelf?: AlignmentMode;
   justifySelf?: AlignmentMode;
 }
+
+export type GridItemConfig = GridItemPlacement;
 
 export const GridItemPlacementSchema: z.ZodType<GridItemPlacement> = z
   .object({
@@ -92,25 +108,31 @@ export const GridItemPlacementSchema: z.ZodType<GridItemPlacement> = z
   })
   .strict();
 
+export const GridItemConfigSchema = GridItemPlacementSchema;
+
 export interface FlexboxConfig {
-  direction: "row" | "row-reverse" | "column" | "column-reverse";
-  wrap?: "nowrap" | "wrap" | "wrap-reverse";
+  direction?: FlexDirection;
+  wrap?: FlexWrap;
   justifyContent?: JustifyContentMode;
   alignItems?: AlignmentMode;
   columnGapPx?: number;
   rowGapPx?: number;
 }
 
+export type FlexLayoutConfig = FlexboxConfig;
+
 export const FlexboxConfigSchema: z.ZodType<FlexboxConfig> = z
   .object({
-    direction: z.enum(["row", "row-reverse", "column", "column-reverse"]),
-    wrap: z.enum(["nowrap", "wrap", "wrap-reverse"]).optional(),
+    direction: z.enum(FLEX_DIRECTIONS).optional(),
+    wrap: z.enum(FLEX_WRAPS).optional(),
     justifyContent: z.enum(JUSTIFY_CONTENT_MODES).optional(),
     alignItems: z.enum(ALIGNMENT_MODES).optional(),
     columnGapPx: z.number().finite().min(0).max(256).optional(),
     rowGapPx: z.number().finite().min(0).max(256).optional(),
   })
   .strict();
+
+export const FlexLayoutConfigSchema = FlexboxConfigSchema;
 
 export interface FlexItemConfig {
   grow?: number;
@@ -195,7 +217,7 @@ export const MasonryLayoutConfigSchema: z.ZodType<MasonryLayoutConfig> = z
   .strict();
 
 export interface LayoutConfig {
-  mode: LayoutMode;
+  mode?: LayoutMode;
   grid?: CssGridConfig;
   flex?: FlexboxConfig;
   carousel?: CarouselLayoutConfig;
@@ -205,7 +227,7 @@ export interface LayoutConfig {
 
 export const LayoutConfigSchema: z.ZodType<LayoutConfig> = z
   .object({
-    mode: z.enum(LAYOUT_MODES),
+    mode: z.enum(LAYOUT_MODES).optional(),
     grid: CssGridConfigSchema.optional(),
     flex: FlexboxConfigSchema.optional(),
     carousel: CarouselLayoutConfigSchema.optional(),

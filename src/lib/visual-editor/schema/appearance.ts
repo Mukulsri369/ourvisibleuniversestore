@@ -4,10 +4,31 @@ import { DimensionValueSchema, type DimensionValue } from "./geometry";
 const SAFE_COLOR_REGEX =
   /^(#[0-9a-fA-F]{3,8}|rgba?\(\s*\d+(\.\d+)?\s*,\s*\d+(\.\d+)?\s*,\s*\d+(\.\d+)?(\s*,\s*(0|1|0?\.\d+))?\s*\)|hsla?\(\s*\d+(\.\d+)?(deg)?\s*,\s*\d+(\.\d+)?%\s*,\s*\d+(\.\d+)?%(\s*,\s*(0|1|0?\.\d+))?\s*\)|oklch\(\s*[0-9.]+%?\s+[0-9.]+\s+[0-9.]+(\s*\/\s*[0-9.]+%?)?\s*\)|transparent|currentColor|token:[a-zA-Z0-9_-]{1,64})$/;
 
+export const THEME_COLOR_TOKENS = [
+  "token:background",
+  "token:foreground",
+  "token:card",
+  "token:card-foreground",
+  "token:primary",
+  "token:primary-foreground",
+  "token:secondary",
+  "token:secondary-foreground",
+  "token:muted",
+  "token:muted-foreground",
+  "token:accent",
+  "token:accent-foreground",
+  "token:border",
+  "token:nebula",
+] as const;
+
+export type ThemeColorToken = (typeof THEME_COLOR_TOKENS)[number];
+
 export const SafeColorValueSchema = z
   .string()
   .max(120)
   .regex(SAFE_COLOR_REGEX, "Invalid or unsafe CSS color value");
+
+export const CssColorValueSchema = SafeColorValueSchema;
 
 const SAFE_FONT_FAMILY_REGEX = /^[a-zA-Z0-9\s,'"-]{1,120}$/;
 
@@ -15,18 +36,21 @@ export const SafeFontFamilySchema = z
   .string()
   .max(120)
   .regex(SAFE_FONT_FAMILY_REGEX, "Unsafe font-family value")
-  .refine(
-    (val) => !/[;{}<>()\\]/.test(val),
-    "Font family cannot contain CSS injection characters",
-  );
+  .refine((val) => !/[;{}<>()\\]/.test(val), "Font family cannot contain CSS injection characters");
+
+export const FONT_WEIGHT_VALUES = [100, 200, 300, 400, 500, 600, 700, 800, 900] as const;
+export type FontWeightValue = (typeof FONT_WEIGHT_VALUES)[number];
+
+export const TEXT_ALIGN_MODES = ["left", "center", "right", "justify"] as const;
+export type TextAlignMode = (typeof TEXT_ALIGN_MODES)[number];
 
 export interface TypographyConfig {
   fontFamily?: string;
   fontSize?: DimensionValue;
-  fontWeight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+  fontWeight?: FontWeightValue;
   lineHeight?: number;
   letterSpacingEm?: number;
-  textAlign?: "left" | "center" | "right" | "justify";
+  textAlign?: TextAlignMode;
   color?: string;
   textTransform?: "none" | "uppercase" | "lowercase" | "capitalize";
   textDecoration?: "none" | "underline" | "line-through";
@@ -88,9 +112,12 @@ export const GradientConfigSchema: z.ZodType<GradientConfig> = z
   })
   .strict();
 
+export const BORDER_STYLES = ["none", "solid", "dashed", "dotted", "double"] as const;
+export type BorderStyle = (typeof BORDER_STYLES)[number];
+
 export interface BorderConfig {
   widthPx: number;
-  style: "none" | "solid" | "dashed" | "dotted" | "double";
+  style: BorderStyle;
   color: string;
 }
 
@@ -148,6 +175,8 @@ export interface VisualFilterConfig {
   grayscalePercent?: number;
 }
 
+export type FilterConfig = VisualFilterConfig;
+
 export const VisualFilterConfigSchema: z.ZodType<VisualFilterConfig> = z
   .object({
     blurPx: z.number().finite().min(0).max(100).optional(),
@@ -158,6 +187,8 @@ export const VisualFilterConfigSchema: z.ZodType<VisualFilterConfig> = z
     grayscalePercent: z.number().finite().min(0).max(100).optional(),
   })
   .strict();
+
+export const FilterConfigSchema = VisualFilterConfigSchema;
 
 export interface AppearanceConfig {
   typography?: TypographyConfig;

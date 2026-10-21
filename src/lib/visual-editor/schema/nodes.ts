@@ -49,10 +49,7 @@ export const STOREFRONT_COMPONENT_TYPES = [
 
 export type StorefrontComponentType = (typeof STOREFRONT_COMPONENT_TYPES)[number];
 
-export const COMPONENT_TYPES = [
-  ...GENERIC_COMPONENT_TYPES,
-  ...STOREFRONT_COMPONENT_TYPES,
-] as const;
+export const COMPONENT_TYPES = [...GENERIC_COMPONENT_TYPES, ...STOREFRONT_COMPONENT_TYPES] as const;
 
 export type ComponentType = (typeof COMPONENT_TYPES)[number];
 
@@ -233,9 +230,7 @@ export const EditorNodeSchema: z.ZodType<EditorNode> = z.lazy(() =>
       style: NodeStyleBundleSchema,
       responsive: ResponsiveOverridesSchema.optional(),
       binding: DataBindingSchema.optional(),
-      media: z
-        .record(z.string().regex(/^[a-zA-Z0-9_-]{1,64}$/), MediaAssetRefSchema)
-        .optional(),
+      media: z.record(z.string().regex(/^[a-zA-Z0-9_-]{1,64}$/), MediaAssetRefSchema).optional(),
       children: z.array(EditorNodeSchema),
       slots: z
         .record(z.string().regex(/^[a-zA-Z0-9_-]{1,64}$/), z.array(EditorNodeSchema))

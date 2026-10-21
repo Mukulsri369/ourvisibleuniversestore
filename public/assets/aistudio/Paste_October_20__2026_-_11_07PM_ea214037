@@ -1,0 +1,1960 @@
+# PROMPT 9 OF 48 — VISUAL STORE DESIGN STUDIO, REAL STOREFRONT CANVAS, ADMIN INTEGRATION, RESPONSIVE WORKSPACE, GITHUB CONTINUITY & PERFORMANCE AUDIT
+
+## YOUR ROLE
+
+Act as a Principal Full-Stack Architect, Senior React 19 Engineer, TanStack Start Specialist, Visual Editor Systems Architect, Advanced UI/UX Designer, Browser Rendering Engineer, Supabase Security Engineer, GitHub DevOps Specialist, and Production Performance Engineer.
+
+You are developing my existing affiliate-store SaaS into a professional, no-code visual storefront builder.
+
+**GitHub Repository:**
+https://github.com/Mukulsri369/ourvisibleuniversestore
+
+**Development Environment:** Google AI Studio — Argon 4
+
+**Development Roadmap:** 48 prompts across 10 development phases.
+
+**Current Stage:** Phase 3 — Visual Editor Studio & Interaction Infrastructure.
+
+**Current Task:** Prompt 9 of 48.
+
+### PREVIOUS DEVELOPMENT MILESTONES
+
+- Prompt 1 — Complete repository architecture audit.
+- Prompt 2 — Storefront compatibility and zero-regression contracts.
+- Prompt 3 — Visual editor technology evaluation.
+- Prompt 4 — Landing-page visual baseline capture.
+- Prompt 5 — Versioned PageDocument schema and validation.
+- Prompt 6 — Component registry, real storefront adapters, and shared renderer.
+- Prompt 7 — Real homepage migration to PageRenderer.
+- Prompt 8 — Secure Supabase persistence, drafts, and version-history foundation.
+
+### PRIMARY OBJECTIVE
+
+Implement the first fully functional administrator-facing **Store Design Studio**.
+
+This must be a premium visual editing workspace comparable in quality and usability to professional website and storefront design tools.
+
+The studio must display the **actual existing storefront**, using its real React components, real layout, real product/category data, fonts, media, animations, and shared rendering architecture.
+
+It must provide the foundation for future drag-and-drop editing, resizing, shape manipulation, responsive design, grid customization, and live mini-previews.
+
+The initial studio must include:
+
+1. A new admin navigation entry.
+2. A protected, full-screen design workspace.
+3. The actual storefront displayed in the central canvas.
+4. A navigable component/layer tree.
+5. Click-to-select component behavior.
+6. A contextual properties inspector.
+7. Desktop, tablet, and mobile viewport controls.
+8. Canvas zoom and scrolling.
+9. Basic visual selection and hover highlighting.
+10. Draft loading through the existing persistence system.
+11. A minimal functional editing and draft-saving workflow.
+12. Safe customer-style preview mode.
+13. Clear loading, error, and unsaved-change states.
+14. Comprehensive performance and regression validation.
+15. Verified GitHub checkpoint and cross-account handoff.
+
+This is the **Design Studio shell and integration phase**.
+
+Advanced drag handles, unrestricted geometric editing, fully customizable product/category grids, and the complete animation editor belong to subsequent prompts.
+
+Do not implement all future features prematurely.
+
+---
+
+# PART 1 — GITHUB RECOVERY AND DEPENDENCY VERIFICATION
+
+## 1. Verify the actual repository state
+
+Connect to:
+
+https://github.com/Mukulsri369/ourvisibleuniversestore
+
+Before modifying code, inspect:
+
+- Active branch.
+- Available remote branches.
+- Local HEAD.
+- Remote HEAD.
+- Working-tree status.
+- Uncommitted changes.
+- Unpushed commits.
+- Last verified implementation checkpoint.
+- Existing visual-editor modules.
+- Pending implementation tasks.
+
+A previously observed remote `main` commit was:
+
+`28d80db39d13150eb69ae34405ba3c06e0792acc`
+
+This is a historical reference only.
+
+Always retrieve the latest remote state.
+
+Do not assume it remains current.
+
+## 2. Read permanent project handoff documents
+
+Read:
+
+- `IMPLEMENTATION_PROGRESS.md`
+- `ARCHITECTURE_AUDIT.md`
+- `PERFORMANCE_BASELINE.md`
+- `AI_STUDIO_HANDOFF.md`
+
+These documents must remain the persistent source of development continuity across Google AI Studio accounts.
+
+Preserve previously recorded information.
+
+Verify their conclusions against actual source code.
+
+## 3. Verify Prompt 7
+
+Inspect the current homepage implementation.
+
+Confirm whether it uses the shared PageRenderer rather than an unrelated duplicate renderer.
+
+Locate:
+
+- Canonical default homepage document.
+- Homepage data resolver.
+- Shared rendering integration.
+- Existing page fallback.
+- Dynamic category rendering.
+- Hero and celestial compatibility.
+- Relevant visual and functional tests.
+
+If the previous prompt was completed locally but not pushed, recover that work carefully.
+
+Do not rewrite it.
+
+## 4. Verify Prompt 8
+
+Locate and inspect the actual persistence implementation.
+
+Confirm the availability of:
+
+- Page storage.
+- Private draft retrieval.
+- Draft saving.
+- Schema validation.
+- Revision-based conflict handling.
+- Published-version retrieval.
+- Version history.
+- Protected administrative access.
+- Database migration records.
+- RLS policies.
+- Safe fallback behavior.
+
+### Mandatory prerequisite rule
+
+The latest previously visible remote state did not yet establish completion of Prompts 7 and 8.
+
+Therefore:
+
+**Do not assume these systems exist merely because they were requested in previous prompts.**
+
+If they exist in the current workspace, verify their implementation and preserve them.
+
+If they are incomplete, identify the exact blockers.
+
+Do not create an incompatible second persistence system or duplicate PageRenderer.
+
+Do not expose a working Design Studio route that silently writes drafts through an unverified backend.
+
+If either prerequisite is critically missing, report a NO-GO with precise remediation requirements before attempting to activate Prompt 9 features.
+
+---
+
+# PART 2 — GITHUB BRANCH AND MULTI-ACCOUNT CONTINUITY
+
+## 5. Continue on the correct development branch
+
+Use the actual verified visual-editor development branch.
+
+Preferred branch:
+
+`feature/visual-storefront-editor`
+
+Do not blindly assume it exists on the remote.
+
+If the current code is on `main` while the documentation references an unpushed development branch, reconcile the discrepancy carefully.
+
+Do not reset, overwrite, or discard existing work.
+
+Do not force-push.
+
+Do not automatically merge into `main`.
+
+## 6. Enforce cross-account handoff
+
+A different Google AI Studio account must be able to continue the project.
+
+At the end of this task:
+
+- Update all four persistent project documents.
+- Record the implemented UI components.
+- Record route and authentication behavior.
+- Record supported and unsupported editor interactions.
+- Record persistence integration details.
+- Record test results.
+- Record performance findings.
+- Record unresolved blockers.
+- Commit verified code.
+- Push it to the correct development branch.
+- Verify the remote commit.
+- Document the next prompt's starting point.
+
+Never rely solely on the current AI Studio conversation history.
+
+---
+
+# PART 3 — AUDIT THE EXISTING ADMIN PORTAL
+
+## 7. Inspect the current admin architecture
+
+Inspect:
+
+- `src/routes/_admin.tsx`
+- `src/routes/_admin.admin.index.tsx`
+- `src/routes/_admin.admin.settings.tsx`
+- Existing admin navigation.
+- Existing authentication and authorization.
+- Existing layout classes.
+- Shared admin components.
+- Responsive behavior.
+- Route generation.
+- Current admin styling.
+
+The existing admin shell has used:
+
+- A fixed sidebar.
+- A maximum-width content container.
+- A responsive mobile navigation header.
+- Supabase authentication.
+- Database-backed administrator authorization.
+
+Verify the current implementation.
+
+### Critical layout issue
+
+The regular admin content container has historically used:
+
+`max-w-6xl`
+
+The Design Studio must not be restricted to that narrow content region.
+
+It requires a genuine application workspace capable of using available screen width and height.
+
+Do not simply place a full-width iframe inside the old constrained container.
+
+---
+
+# PART 4 — CREATE THE STORE DESIGN STUDIO ROUTE
+
+## 8. Add a dedicated admin route
+
+Create a protected design-studio route.
+
+Preferred public-facing path:
+
+`/admin/design`
+
+Use the repository's existing TanStack Router file-based routing conventions.
+
+Choose the appropriate source filename according to the actual route configuration.
+
+Example conceptual module:
+
+`src/routes/_admin.admin.design.tsx`
+
+Verify the generated route structure.
+
+Do not invent an incompatible route definition.
+
+### Route requirements
+
+- Administrator-only.
+- Compatible with existing Supabase auth.
+- Uses the existing authorized user context.
+- No public indexing.
+- Appropriate loading/error states.
+- Lazy-loaded editor-only code.
+- Clean navigation back to the admin dashboard.
+- No authentication bypass.
+- No exposure of private drafts.
+
+The route must not be accessible merely by knowing its URL.
+
+Keep database-side RLS enforcement active.
+
+## 9. Add Design Studio to admin navigation
+
+Add a clear navigation entry:
+
+**Design Studio**
+
+Recommended icon: layout/design-related icon from the existing Lucide package.
+
+The navigation entry should:
+
+- Open the real studio.
+- Reflect the active route.
+- Work on desktop and mobile.
+- Preserve existing admin navigation.
+- Support keyboard access.
+- Not interfere with logout or account state.
+
+Do not remove existing admin features.
+
+---
+
+# PART 5 — BUILD A FULL-SCREEN WORKSPACE
+
+## 10. Create a dedicated workspace shell
+
+The Design Studio should use the available viewport as efficiently as possible.
+
+The intended interface contains:
+
+### Top toolbar
+
+- Store Design Studio branding.
+- Current page title.
+- Draft/published status.
+- Device selection.
+- Viewport size.
+- Zoom controls.
+- Edit/Preview mode.
+- Save draft.
+- Return to admin.
+
+Only display actionable controls.
+
+### Left sidebar
+
+- Pages and component layers.
+- Expandable tree.
+- Search/filter.
+- Current selection.
+- Component visibility/lock indicators.
+- Collapsible sidebar.
+
+### Center canvas
+
+- Real storefront.
+- Accurate viewport width.
+- Scrollable page.
+- Selection and hover indicators.
+- Optional canvas rulers/guides foundation.
+- Canvas background.
+- Zoom support.
+
+### Right inspector
+
+- Selected component details.
+- Component type.
+- Current properties.
+- Supported editing capabilities.
+- Basic validated property editing.
+- Responsive property state.
+- Clear unsupported-property explanations.
+
+### Status area
+
+- Saved/unsaved state.
+- Loading state.
+- Validation errors.
+- Draft revision.
+- Preview mode.
+- Connection errors where relevant.
+
+## 11. Workspace layout requirements
+
+Use suitable combinations of CSS Grid, Flexbox, and the existing `react-resizable-panels` library where appropriate.
+
+Support:
+
+- Resizable side panels.
+- Minimum and maximum sidebar sizes.
+- Collapsible panels.
+- Persistent selection while resizing panels.
+- Smooth layout transitions.
+- Accessible keyboard navigation.
+- No unexpected horizontal overflow.
+- Proper mobile/tablet admin adaptation.
+
+Do not add another panel-resizing library unnecessarily.
+
+### Important
+
+A professional design editor must not feel like a normal admin form squeezed into a narrow column.
+
+Treat the studio as a dedicated application workspace.
+
+---
+
+# PART 6 — BUILD THE REAL STOREFRONT CANVAS
+
+## 12. Use the actual shared renderer
+
+The central canvas must use the PageRenderer created in Prompts 5–7.
+
+Inspect the actual implementation, including:
+
+- `src/lib/visual-editor/rendering/PageRenderer.tsx`
+- `src/lib/visual-editor/rendering/RenderContext.tsx`
+- `src/lib/visual-editor/rendering/RenderNode.tsx`
+- `src/lib/visual-editor/adapters/AdapterBoundary.tsx`
+- `src/lib/visual-editor/registry/component-registry.ts`
+
+Reuse existing contracts.
+
+Do not create another component registry.
+
+Do not copy homepage JSX into an editor-only mockup.
+
+The canvas must render:
+
+- Real PlanetHero.
+- Real CelestialScrollWorld.
+- Real festival section.
+- Real product collections.
+- Real category spotlights.
+- Real product rails.
+- Real promotional sections.
+- Real shared branding and global chrome.
+
+Use the existing data bindings and registered component adapters.
+
+## 13. Display actual product and category data
+
+The canvas should use the store's authorized product/category data through the existing data catalog and query services.
+
+Preserve:
+
+- Product names.
+- Product images.
+- Prices.
+- Category structure.
+- Existing product selections.
+- Existing settings.
+- Existing section ordering.
+
+Do not substitute unrelated demo products or fake category names.
+
+If a store has no products, show the actual component empty state rather than inserting misleading content.
+
+Use deterministic fixtures only in automated tests or clearly labeled offline demonstrations.
+
+## 14. Select a reliable canvas isolation strategy
+
+Evaluate the best canvas hosting approach against the real application.
+
+Possible architectures:
+
+### Option A — In-document rendering
+
+Render PageRenderer inside the studio's central workspace.
+
+Advantages:
+
+- Direct React context integration.
+- Easier state sharing.
+- Simpler selection callbacks.
+
+Challenges:
+
+- Global CSS inheritance.
+- Fixed positioning.
+- Scroll-linked animations.
+- Canvas viewport simulation.
+- Layout measurement.
+
+### Option B — Same-origin isolated preview document
+
+Use a controlled same-origin canvas route or iframe that mounts the real PageRenderer.
+
+Advantages:
+
+- More realistic viewport dimensions.
+- Independent document scrolling.
+- Better isolation of fixed backgrounds and scroll-driven animation.
+- Potentially closer public-page rendering behavior.
+
+Challenges:
+
+- Authentication and route protection.
+- Controlled parent/canvas communication.
+- Data/state synchronization.
+- Selection overlays.
+- Browser resource usage.
+
+### Decision requirement
+
+Evaluate both against the actual:
+
+- PlanetHero.
+- CelestialScrollWorld.
+- TanStack Router.
+- Supabase data.
+- Motion scroll hooks.
+- CSS breakpoints.
+- Existing shared header/footer.
+
+Select the architecture most likely to preserve real storefront fidelity.
+
+Do not choose based only on implementation convenience.
+
+If using an iframe or separate preview route:
+
+- Keep it same-origin where practical.
+- Protect draft access.
+- Validate parent/canvas communication.
+- Avoid arbitrary cross-origin message handling.
+- Do not expose private draft content publicly.
+- Avoid duplicating business queries unnecessarily.
+- Prevent duplicate heavy media initialization.
+
+If using in-document rendering:
+
+- Demonstrate that viewport and scroll behavior can be measured accurately.
+- Prevent the workspace's scroll container from distorting global celestial effects.
+- Avoid global CSS conflicts.
+
+Record the architectural decision in `ARCHITECTURE_AUDIT.md`.
+
+---
+
+# PART 7 — VIEWPORT AND DEVICE PREVIEW CONTROLS
+
+## 15. Implement working viewport presets
+
+Provide responsive controls for:
+
+- Desktop.
+- Tablet.
+- Mobile.
+
+Recommended default presets:
+
+- Desktop: 1440px.
+- Tablet: 768px.
+- Mobile: 390px.
+
+Also allow choosing other practical dimensions.
+
+The controls should update the **actual storefront content viewport**, not simply change an icon.
+
+### Requirements
+
+1. Switching device changes the canvas viewport.
+2. Responsive CSS behaves at the correct width.
+3. PageDocument responsive overrides resolve correctly.
+4. The current selected node remains selected where possible.
+5. Side panels remain outside the simulated viewport.
+6. Canvas zoom does not corrupt responsive breakpoint evaluation.
+7. No unexpected page reload occurs.
+8. Preview scroll position is handled deliberately.
+
+## 16. Implement zoom controls
+
+Support practical zoom levels, for example:
+
+- 25%.
+- 50%.
+- 75%.
+- 100%.
+- Fit to workspace.
+
+The zoom value affects visual presentation of the canvas but must not modify the saved design.
+
+Distinguish:
+
+**Page width**
+
+from:
+
+**Canvas display scale**
+
+A 390px mobile viewport displayed at 75% zoom must still behave like a 390px mobile viewport.
+
+Do not allow zoom to change responsive property inheritance.
+
+## 17. Make canvas scrolling functional
+
+Administrators must be able to:
+
+- Scroll through the entire landing page.
+- Navigate to lower sections.
+- Select offscreen sections through the layer tree.
+- Scroll the selected element into view.
+- Keep the top toolbar available.
+- Use mouse-wheel and trackpad input naturally.
+
+Ensure scroll behavior does not interfere with existing horizontal product carousels.
+
+Do not allow the editor's outer page to unexpectedly scroll instead of the intended canvas.
+
+---
+
+# PART 8 — LAYER TREE NAVIGATOR
+
+## 18. Render the real PageDocument structure
+
+The left panel must reflect the actual PageDocument hierarchy.
+
+It should not use a separately hardcoded list of sections.
+
+Display registered components using trusted registry metadata.
+
+At minimum show:
+
+- Component name.
+- Component type.
+- Nesting.
+- Selected state.
+- Visibility status.
+- Locked status.
+- Appropriate component icon.
+
+The current homepage may contain repeated, data-driven category sections.
+
+Represent them correctly.
+
+## 19. Implement functional tree navigation
+
+Support:
+
+1. Expand/collapse nodes.
+2. Select a node.
+3. Highlight the selected node.
+4. Scroll to the corresponding canvas element.
+5. Preserve selection when changing inspector tabs.
+6. Clear selection.
+7. Navigate nested relationships.
+8. Search layers by name or type.
+9. Indicate hidden components.
+10. Indicate locked or protected components.
+
+Do not invent nonexistent nodes.
+
+### Dynamic categories
+
+For data-driven sections, use stable virtual identities derived from real category identifiers.
+
+Do not store duplicate permanent nodes for each runtime-generated category merely to support tree selection.
+
+Use a consistent mapping between a repeated template and its rendered instances.
+
+Document any future need for per-category overrides.
+
+## 20. Do not implement structural dragging yet
+
+Full layer drag-and-drop and nested reordering are planned for later prompts.
+
+This phase should make tree navigation and selection work properly.
+
+Do not introduce a drag handle that appears interactive but cannot reorder elements.
+
+If reordering is not yet supported, do not advertise it as implemented.
+
+---
+
+# PART 9 — ELEMENT SELECTION AND VISUAL HIGHLIGHTING
+
+## 21. Implement basic canvas selection
+
+The administrator must be able to click an editable registered element and select it.
+
+Use existing stable `EditorNode.id` identities.
+
+Reuse existing editor-mode selection callbacks where supported.
+
+Required behavior:
+
+- Click component.
+- Identify its registered node.
+- Update selected node ID.
+- Highlight the selected component.
+- Highlight its layer-tree entry.
+- Display its information in the inspector.
+
+Do not navigate to the product page when selecting a product card.
+
+Do not trigger affiliate redirects.
+
+Do not record fake outbound clicks.
+
+## 22. Implement selection overlays
+
+Provide:
+
+- Visible selected-element outline.
+- Subtle hover outline.
+- Selected component label.
+- Clear distinction between hover and selection.
+- Accurate positioning around the rendered element.
+
+The outline must not change the component's real dimensions.
+
+Use editor-only overlays or equivalent non-layout-affecting positioning.
+
+Do not apply a normal border that increases width or height.
+
+Do not change ProductCard appearance merely because it is selected.
+
+### Overlay correctness
+
+Test selection against:
+
+- Images.
+- Text blocks.
+- Buttons.
+- Product cards.
+- Containers.
+- Sections.
+- Hero regions.
+- Elements inside scrollable rails.
+- Nested grid elements.
+
+Where complex or non-DOM elements cannot be individually selected yet, expose the nearest supported registered component boundary.
+
+Do not falsely claim arbitrary Three.js object selection has been implemented.
+
+## 23. Preserve selection under scrolling and resizing
+
+Selection outlines must remain aligned when:
+
+- Scrolling the canvas.
+- Switching breakpoints.
+- Changing zoom.
+- Resizing side panels.
+- Loading an image.
+- Revealing a lazy-loaded category.
+- Resizing the browser window.
+
+Use efficient position measurement techniques.
+
+Avoid continuous polling.
+
+Use ResizeObserver, scroll updates, or appropriate browser events only where required.
+
+Clean up observers and listeners correctly.
+
+---
+
+# PART 10 — CONTEXTUAL PROPERTIES INSPECTOR
+
+## 24. Build the inspector shell
+
+The right panel must display the currently selected registered node.
+
+At minimum include:
+
+### Component information
+
+- Name.
+- Type.
+- Node ID where useful.
+- Component category.
+- Locked state.
+- Supported editing capabilities.
+
+### Layout
+
+- Current width/height configuration.
+- Positioning.
+- Spacing.
+- Layout mode.
+- Grid configuration where supported.
+
+### Appearance
+
+- Background.
+- Border.
+- Shape.
+- Radius.
+- Opacity.
+- Typography where relevant.
+
+### Responsive
+
+- Current breakpoint.
+- Inherited property values.
+- Current overrides.
+- Visibility.
+
+### Advanced
+
+- Binding information.
+- Media references.
+- Animation configuration.
+- Unsupported capabilities and limitations.
+
+## 25. Only expose real, supported controls
+
+Use the actual trusted component registry to determine editability.
+
+Do not display functioning-looking settings that silently do nothing.
+
+For unsupported properties, either:
+
+- Hide the control, or
+- Clearly display that the property is not supported yet.
+
+Do not allow changing protected business fields such as product price or affiliate URL through the design inspector.
+
+## 26. Implement a minimal genuine editing workflow
+
+To demonstrate that the studio is more than a static prototype, implement a small but complete, safe property-editing vertical slice.
+
+Examples of suitable properties:
+
+- Editable promotional heading text.
+- A supported section's visibility.
+- A validated background color.
+- A supported section spacing property.
+
+Choose properties that are genuinely implemented by the existing renderer and schema.
+
+### Required data flow
+
+Admin selects a supported node
+→ Inspector displays current validated property
+→ Admin changes property
+→ Immutable PageDocument update
+→ Actual canvas rerenders
+→ Draft becomes dirty
+→ Admin saves draft through Prompt 8 persistence
+→ Refresh restores the saved change.
+
+Ensure this works end to end.
+
+Do not claim that all properties can be edited merely because one property works.
+
+Do not edit product or affiliate business records.
+
+Do not modify the published page while saving a draft.
+
+### Scope limitation
+
+Do not implement the full professional inspector feature set yet.
+
+Advanced dragging, geometric resizing, card shape handles, multi-selection, and visual grid editing belong to subsequent prompts.
+
+---
+
+# PART 11 — DESIGN STATE MANAGEMENT
+
+## 27. Create a reliable workspace state model
+
+The studio needs clear state separation.
+
+### Persisted page configuration
+
+The validated PageDocument loaded from persistence.
+
+### Working draft
+
+The administrator's current local modifications.
+
+### Editor UI state
+
+- Selected node.
+- Hovered node.
+- Active inspector tab.
+- Expanded layer nodes.
+- Device preset.
+- Canvas width.
+- Zoom level.
+- Edit/Preview mode.
+- Panel visibility.
+
+### Persistence state
+
+- Loading.
+- Saved.
+- Unsaved.
+- Saving.
+- Error.
+- Revision conflict.
+
+Do not mix all these concerns into one giant React state object.
+
+## 28. Use efficient updates
+
+Leverage the existing immutable tree utilities from Prompt 5.
+
+Do not deep-clone the entire document with JSON serialization on every selection change.
+
+Do not run full Zod validation every time the mouse moves.
+
+Use validated localized updates.
+
+Save only after appropriate validation.
+
+Maintain stable React component identities.
+
+---
+
+# PART 12 — DRAFT LOADING AND SAVING
+
+## 29. Integrate Prompt 8 persistence
+
+Load the authorized administrator's draft using the existing persistence services.
+
+Avoid creating a second draft API.
+
+Supported states:
+
+- Draft exists.
+- No draft exists.
+- Loading.
+- Invalid draft.
+- Unauthorized.
+- Network failure.
+- Revision conflict.
+
+If no draft exists, initialize the editor's working state from the canonical default or current published PageDocument, according to the established persistence contract.
+
+Do not modify the live published page merely by opening the editor.
+
+## 30. Implement Save Draft
+
+The Save Draft control must actually work.
+
+Required behavior:
+
+1. Validate the working document.
+2. Submit the correct revision.
+3. Save through the authorized persistence service.
+4. Handle successful response.
+5. Update local revision metadata.
+6. Clear dirty state only when the saved revision matches the intended changes.
+7. Display useful errors.
+8. Handle concurrent-save conflicts.
+9. Preserve unsaved changes when saving fails.
+
+Do not claim success before the backend confirms the save.
+
+Avoid parallel duplicate save requests.
+
+## 31. Prevent accidental loss of unsaved work
+
+If the administrator tries to leave with unsaved changes:
+
+- Display an appropriate warning where supported.
+- Preserve the draft in memory while navigating inside the studio.
+- Handle refresh/navigation as safely as the browser permits.
+- Do not silently discard the working document.
+
+Do not promise that every browser crash can be recovered unless local recovery storage is actually implemented and tested.
+
+The complete autosave system is planned for a later phase.
+
+## 32. Do not expose premature publishing controls
+
+The backend publishing primitive may exist from Prompt 8.
+
+However, the full publishing workflow requires further validation and UI design.
+
+Do not show an enabled Publish button that performs an unsafe or incomplete operation.
+
+Either omit Publish until its verified UI workflow exists, or show a clearly non-interactive informational label indicating that publishing is not yet available in the studio.
+
+Do not present inactive controls as working features.
+
+---
+
+# PART 13 — EDIT MODE AND PREVIEW MODE
+
+## 33. Implement mode switching
+
+Provide a functional Edit/Preview toggle.
+
+### Edit mode
+
+- Element selection active.
+- Selection outlines visible.
+- Properties inspector available.
+- Affiliate redirects blocked.
+- Product navigation blocked during selection.
+- Draft remains editable.
+
+### Preview mode
+
+- Selection outlines hidden.
+- Editor gestures disabled.
+- Actual draft design remains visible.
+- Safe permitted interactive behavior available.
+- External affiliate redirects remain blocked within the admin preview unless a separately verified explicit testing path is used.
+- No fake click-tracking events.
+
+Use existing `RenderMode` and interaction policy contracts.
+
+Do not create unrelated mode state that conflicts with PageRenderer.
+
+## 34. Provide a published-site comparison link
+
+Allow administrators to open the currently published store in a separate tab.
+
+This link should display the real public website.
+
+Clearly distinguish:
+
+- Draft preview.
+- Published storefront.
+
+Do not misrepresent the unpublished draft as already live.
+
+---
+
+# PART 14 — HEADER, FOOTER AND GLOBAL COMPONENTS
+
+## 35. Maintain shared chrome correctly
+
+The storefront header and footer are normally rendered by the shared route layout.
+
+The Design Studio canvas should visually include the same real components as the public page, without duplicating them.
+
+Investigate the established shared chrome ownership strategy.
+
+A correct canvas must show:
+
+- Store header.
+- Logo.
+- Navigation.
+- Homepage content.
+- Footer.
+
+If the canvas provides separate selectable global component regions, they must reference the actual shared components.
+
+Do not use a fake editor-specific header or footer.
+
+Do not modify public route composition merely to display them inside the studio.
+
+---
+
+# PART 15 — RESPONSIVE ADMIN WORKSPACE
+
+## 36. Desktop experience
+
+At desktop widths, the preferred studio layout is:
+
+- Left layer sidebar.
+- Center canvas.
+- Right inspector.
+- Top toolbar.
+
+The canvas should use as much remaining width as possible.
+
+Support resizing and collapsing the side panels.
+
+## 37. Tablet experience
+
+At tablet widths:
+
+- Allow sidebar collapsing.
+- Maintain a usable central canvas.
+- Keep device controls accessible.
+- Prevent toolbar overflow.
+- Make panels scroll independently where necessary.
+
+## 38. Mobile administration
+
+The design studio should remain usable on mobile for basic tasks.
+
+Suggested adaptations:
+
+- Full-width canvas.
+- Layers in a drawer.
+- Inspector in a drawer or bottom sheet.
+- Compact toolbar.
+- Accessible selection controls.
+
+Do not promise desktop-level freeform precision editing on a narrow mobile screen until those interactions are actually developed.
+
+---
+
+# PART 16 — PERFORMANCE AUDIT BEFORE IMPLEMENTATION
+
+## 39. Read existing performance documentation
+
+Open:
+
+`PERFORMANCE_BASELINE.md`
+
+Identify:
+
+- Last measured commit.
+- Browser limitations.
+- Previous homepage bundle size.
+- Existing rendering benchmarks.
+- Current PageRenderer performance.
+- Existing animation performance concerns.
+
+Capture a fresh baseline where practical.
+
+## 40. Identify editor-specific performance risks
+
+Investigate:
+
+- Large component trees.
+- Expensive React rerenders.
+- Inspector updates affecting the entire canvas.
+- Repeated media initialization.
+- Selection overlay measurement.
+- Scroll event handling.
+- ResizeObserver overhead.
+- Multiple PageRenderer instances.
+- Heavy canvas previews.
+- Dynamic category loading.
+- Draft fetching and saving.
+- Component registry imports.
+- WebGL and video resource usage.
+
+### Critical performance rule
+
+**The public storefront must not download the editor UI or editor-only interaction dependencies.**
+
+Load the studio through an appropriate route-level lazy-loading boundary.
+
+Separate public-safe renderer code from admin-only workspace code.
+
+---
+
+# PART 17 — PERFORMANCE-OPTIMIZED IMPLEMENTATION
+
+## 41. Optimize selection updates
+
+Selection changes should not rebuild the entire page document.
+
+Use:
+
+- Stable node IDs.
+- Lightweight state updates.
+- Memoized registry references.
+- Localized overlay changes.
+- Efficient lookup.
+- Appropriate event delegation.
+
+Avoid unnecessary context updates that cause every expensive storefront component to remount.
+
+## 42. Optimize the layers panel
+
+For deeply nested documents:
+
+- Use efficient tree traversal.
+- Avoid unnecessary repeated filtering.
+- Preserve expansion state.
+- Render only necessary tree content.
+- Avoid recomputing the entire document hierarchy on each hover event.
+
+Do not introduce a heavy tree-view library unless justified.
+
+## 43. Optimize viewport switching
+
+Switching Desktop → Mobile → Desktop should:
+
+- Update the actual canvas viewport.
+- Preserve the working draft.
+- Avoid refetching unchanged product data.
+- Avoid unnecessary database calls.
+- Minimize expensive component remounts.
+- Preserve selection where possible.
+
+Measure and investigate slow transitions.
+
+## 44. Avoid duplicate heavy scenes
+
+The actual landing page contains special animated components.
+
+Do not accidentally mount multiple active instances of:
+
+- PlanetHero video players.
+- CelestialScrollWorld.
+- Three.js scenes where present.
+- Repeated animation effects.
+
+Pause or isolate expensive previews where appropriate.
+
+A draft preview and main editor canvas should not both run expensive video/WebGL scenes continuously when only one is visible.
+
+---
+
+# PART 18 — PERFORMANCE TESTING AFTER IMPLEMENTATION
+
+## 45. Compare bundle size
+
+Measure:
+
+- Public homepage bundle.
+- Admin Design Studio bundle.
+- Shared renderer bundle.
+- New editor UI dependencies.
+- Initial route loading impact.
+- CSS changes.
+
+The editor route may have an appropriately larger bundle than the public storefront.
+
+However, editor-only code should remain isolated.
+
+Document any unexpected public bundle growth.
+
+## 46. Measure interactive performance
+
+Where executable browser tooling is available, measure:
+
+- Studio initial load.
+- Time until actual canvas is visible.
+- Layer selection response.
+- Canvas hover response.
+- Inspector update latency.
+- Device-switch latency.
+- Zoom responsiveness.
+- Scroll smoothness.
+- Draft-save latency.
+- Memory behavior after repeated navigation.
+
+Measure desktop and representative mobile conditions where feasible.
+
+Use actual data.
+
+Do not invent FPS numbers, timing values, Lighthouse scores, or memory results.
+
+## 47. Verify observer and event-listener cleanup
+
+Test repeated:
+
+- Studio opening/closing.
+- Canvas zoom changes.
+- Layer selection.
+- Inspector updates.
+- Preview-mode switching.
+- Viewport switching.
+- Route navigation.
+
+Confirm that listeners, observers, and media resources are released appropriately.
+
+---
+
+# PART 19 — AUTOMATED TESTING
+
+## 48. Route and authorization tests
+
+Verify:
+
+- Admin can open Design Studio.
+- Anonymous visitor cannot access it.
+- Non-admin user cannot access it.
+- Protected draft APIs remain protected.
+- Existing admin routes continue working.
+- Admin navigation correctly highlights Design Studio.
+
+Use actual security integration tests where possible.
+
+Do not claim database RLS has been verified through mocked frontend checks alone.
+
+## 49. Workspace layout tests
+
+Verify:
+
+- Toolbar renders.
+- Layer panel renders.
+- Canvas renders.
+- Inspector renders.
+- Panels can collapse.
+- Panel resizing works.
+- No major layout overflow.
+- Keyboard focus remains usable.
+
+## 50. Real canvas tests
+
+Verify:
+
+- PageRenderer renders the actual homepage configuration.
+- Product and category data bindings remain correct.
+- PlanetHero is represented.
+- Celestial background is represented.
+- Header/footer are not duplicated.
+- Dynamic category sections appear correctly.
+- Existing media loads according to supported conditions.
+
+## 51. Selection tests
+
+Verify:
+
+- Clicking a node updates selection.
+- Layer tree reflects selection.
+- Inspector displays selected node.
+- Nested node selection behaves predictably.
+- Hidden nodes are represented appropriately.
+- Selection does not trigger product navigation.
+- Selection does not trigger affiliate redirects or click tracking.
+
+## 52. Viewport tests
+
+Verify:
+
+- Desktop preset changes viewport.
+- Tablet preset changes viewport.
+- Mobile preset changes viewport.
+- Zoom works.
+- Zoom does not alter stored design.
+- Responsive properties follow documented inheritance.
+- The canvas remains scrollable.
+
+## 53. Draft editing and saving tests
+
+Verify:
+
+- Draft loads successfully.
+- A supported property can be edited.
+- The actual canvas updates.
+- Dirty state appears.
+- Save persists the change.
+- Refresh restores the saved draft.
+- Published design does not change.
+- Save failures display correctly.
+- Revision conflicts are handled.
+- Unauthorized writes are blocked.
+
+Do not fabricate successful persistence tests.
+
+## 54. Performance regression tests
+
+Verify:
+
+- Public storefront does not import editor-only UI.
+- Selection does not remount the entire homepage.
+- Device switching does not produce duplicate queries.
+- No runaway event listeners.
+- No unexpected heavy media duplication.
+- No major bundle regression without explanation.
+
+---
+
+# PART 20 — VISUAL PARITY VERIFICATION
+
+## 55. Compare actual canvas and public storefront
+
+Where browser tooling is available, compare:
+
+- Public homepage.
+- Draft in the editor canvas.
+- Preview-mode rendering.
+
+Use equivalent:
+
+- Content.
+- Viewport.
+- Fonts.
+- CSS.
+- Media state.
+- Scroll position.
+- Animation state.
+
+Selection overlays should be excluded from comparison without changing the underlying layout.
+
+### Critical viewport rule
+
+The editor canvas should be compared at its own declared page width.
+
+Do not compare a 390px mobile canvas against the entire desktop admin window.
+
+## 56. Explicitly test celestial scrolling
+
+The existing celestial effects are sensitive to the document's scroll coordinate system.
+
+Verify that:
+
+- Background planets appear correctly.
+- Scrolling affects them as intended.
+- Canvas overflow does not trap or clip the scene.
+- Switching viewport does not cause uncontrolled jumps.
+- Repeated preview changes do not leak animation subscriptions.
+
+If the chosen canvas architecture cannot preserve the public scroll behavior, do not label it pixel-accurate.
+
+Identify and resolve the mismatch before claiming completion.
+
+---
+
+# PART 21 — ERROR HANDLING AND USER EXPERIENCE
+
+## 57. Loading states
+
+Provide useful states for:
+
+- Opening Design Studio.
+- Loading a page.
+- Fetching the draft.
+- Resolving product/category data.
+- Loading media.
+- Saving changes.
+
+Avoid a permanently blank canvas.
+
+## 58. Error states
+
+Handle:
+
+- Missing draft.
+- Invalid document.
+- Unauthorized access.
+- Database unavailable.
+- Unsupported schema version.
+- Failed save.
+- Revision conflict.
+- Missing selected node.
+- Component rendering error.
+
+Errors should be understandable and actionable.
+
+Do not show raw database errors, credentials, or internal stack traces to ordinary users.
+
+## 59. Preserve working state
+
+A failure in one inspector control must not discard the entire working draft.
+
+A single faulty component should not necessarily crash the whole studio.
+
+Use appropriate error boundaries and recoverable state management.
+
+---
+
+# PART 22 — VISUAL QUALITY STANDARDS
+
+## 60. Create a premium editor experience
+
+The interface should feel comparable to modern professional design applications.
+
+Prioritize:
+
+- Clear visual hierarchy.
+- Balanced panel widths.
+- Subtle borders.
+- Legible typography.
+- High-quality spacing.
+- Consistent iconography.
+- Smooth but restrained transitions.
+- Responsive toolbars.
+- Clear selection states.
+- Accessible controls.
+- Useful contextual information.
+
+Reuse existing UI primitives where suitable.
+
+Do not introduce excessive decorative effects that distract from designing the actual storefront.
+
+The main canvas should remain the visual focus.
+
+## 61. Follow interaction-quality standards
+
+Every interactive control must:
+
+- Have an understandable purpose.
+- Respond correctly.
+- Show appropriate feedback.
+- Remain keyboard-accessible where practical.
+- Avoid accidental destructive actions.
+- Preserve unsaved work.
+- Use clear disabled states.
+
+Do not add fake functionality merely to make the studio look complete.
+
+---
+
+# PART 23 — RECOMMENDED SOURCE ORGANIZATION
+
+## 62. Extend the existing visual-editor system
+
+Adapt the existing codebase.
+
+Potential modules:
+
+src/
+  routes/
+    _admin.admin.design.tsx
+
+  components/
+    visual-editor/
+      StudioShell.tsx
+      StudioToolbar.tsx
+      StudioLayersPanel.tsx
+      StudioCanvas.tsx
+      StudioInspector.tsx
+      StudioStatusBar.tsx
+      StudioViewportControls.tsx
+      StudioSelectionOverlay.tsx
+      StudioLoadingState.tsx
+
+  lib/
+    visual-editor/
+      studio/
+        studio-state.ts
+        studio-selection.ts
+        studio-viewport.ts
+        studio-document.ts
+        studio-persistence.ts
+
+      __tests__/
+        studio-shell.test.tsx
+        studio-selection.test.tsx
+        studio-viewport.test.tsx
+        studio-persistence.test.ts
+
+These are conceptual filenames.
+
+Follow the actual repository's conventions.
+
+If an isolated same-origin canvas route is selected, include its protected route and communication contract.
+
+Do not create placeholder files without implemented behavior.
+
+Do not duplicate the existing PageRenderer or component adapters.
+
+---
+
+# PART 24 — STRICT IMPLEMENTATION BOUNDARIES
+
+## 63. Implement in Prompt 9
+
+- Protected Design Studio route.
+- Admin navigation integration.
+- Full-screen workspace.
+- Top toolbar.
+- Layer navigator.
+- Actual PageRenderer canvas.
+- Basic node selection.
+- Selection and hover overlays.
+- Contextual inspector shell.
+- Responsive viewport switching.
+- Canvas zoom.
+- Edit/Preview mode.
+- Minimal real design-property editing.
+- Draft loading and saving.
+- Unsaved-change feedback.
+- Loading and error states.
+- Tests.
+- Performance audit.
+- GitHub checkpoint and handoff.
+
+## 64. Do NOT implement in Prompt 9
+
+- Advanced section drag-and-drop.
+- Nested element dragging.
+- Corner/edge resizing.
+- Rotation handles.
+- Direct shape manipulation.
+- Full grid resizing engine.
+- Complete product/category card designer.
+- Full mini-preview editor.
+- Animation timeline editor.
+- Multi-selection.
+- Complete undo/redo system.
+- Theme-generation AI.
+- Full production publishing interface.
+- Unrequested business-data changes.
+
+These are future development tasks.
+
+Implement only what can be completed and validated to a professional standard in this phase.
+
+---
+
+# PART 25 — DEVELOPMENT EXECUTION ORDER
+
+## 65. Follow these steps
+
+### Step 1 — GitHub verification
+Recover the latest code and active development branch.
+
+### Step 2 — Prerequisite audit
+Verify Prompts 7 and 8.
+
+### Step 3 — Performance baseline
+Record current public and admin behavior.
+
+### Step 4 — Admin layout architecture
+Implement a dedicated full-width Design Studio route.
+
+### Step 5 — Workspace shell
+Implement toolbar, panels, and central canvas container.
+
+### Step 6 — Real storefront rendering
+Connect PageRenderer, the actual homepage document, and the existing data catalog.
+
+### Step 7 — Responsive controls
+Implement desktop/tablet/mobile viewport settings and zoom.
+
+### Step 8 — Layer navigator
+Create the functional tree from the real PageDocument.
+
+### Step 9 — Canvas selection
+Connect registered element identities, click selection, and hover overlays.
+
+### Step 10 — Inspector
+Show real properties and trusted component capabilities.
+
+### Step 11 — Minimal editing
+Implement a supported property update against the working draft.
+
+### Step 12 — Persistence
+Connect actual Save Draft functionality.
+
+### Step 13 — Preview mode
+Implement safe viewing without editor overlays.
+
+### Step 14 — Regression tests
+Validate functionality, security, and compatibility.
+
+### Step 15 — Performance audit
+Measure bundle and interaction impact.
+
+### Step 16 — Remediation
+Fix regressions introduced by Prompt 9.
+
+### Step 17 — Documentation
+Update the four permanent project records.
+
+### Step 18 — GitHub checkpoint
+Commit, push, and remotely verify the implementation.
+
+### Step 19 — Completion report
+Provide honest results and remaining limitations.
+
+Do not skip dependency verification.
+
+---
+
+# PART 26 — GITHUB DOCUMENTATION UPDATES
+
+## 66. Update IMPLEMENTATION_PROGRESS.md
+
+Record:
+
+- Prompt 9 actual implementation status.
+- Route created.
+- Workspace components.
+- Real canvas integration.
+- Selection functionality.
+- Inspector functionality.
+- Draft-editing support.
+- Persistence status.
+- Test results.
+- Performance measurements.
+- Known issues.
+- Next prompt.
+
+## 67. Update ARCHITECTURE_AUDIT.md
+
+Document:
+
+- Design Studio layout architecture.
+- Admin route strategy.
+- Canvas isolation decision.
+- Shared renderer integration.
+- Layer-tree architecture.
+- Node selection model.
+- Responsive viewport model.
+- Inspector data flow.
+- Edit/Preview interaction policies.
+- Draft persistence integration.
+- Security boundaries.
+
+## 68. Update PERFORMANCE_BASELINE.md
+
+Record:
+
+- Starting commit.
+- Test environment.
+- Public bundle impact.
+- Admin studio bundle size.
+- Studio startup behavior.
+- Selection response.
+- Viewport-switch behavior.
+- Scroll performance.
+- Media lifecycle findings.
+- Measured regressions.
+- Unverified benchmarks.
+
+Do not invent performance metrics.
+
+## 69. Update AI_STUDIO_HANDOFF.md
+
+Include:
+
+- Correct repository URL.
+- Development branch.
+- Last verified completed prompt.
+- Prompt 9 implementation details.
+- Relevant source files.
+- Important architecture decisions.
+- Verified tests.
+- Blocked tests.
+- Performance status.
+- Remaining bugs.
+- GitHub synchronization status.
+- Exact next prompt.
+- Prerequisites for continuing from another AI Studio account.
+
+Never store secret values.
+
+---
+
+# PART 27 — GITHUB COMMIT & PUSH
+
+## 70. Review all changes
+
+Before committing:
+
+- Verify the correct branch.
+- Inspect modified files.
+- Inspect new files.
+- Confirm no secrets are staged.
+- Confirm no unintended database changes.
+- Run applicable tests.
+- Verify the production build.
+- Check public bundle changes.
+- Confirm the admin route is protected.
+- Confirm previous work is preserved.
+
+## 71. Create a Git checkpoint
+
+Recommended commit message:
+
+`feat(editor): add visual design studio workspace and live canvas`
+
+Push to the verified visual-editor development branch.
+
+Do not push directly to `main`.
+
+Do not force-push.
+
+Do not automatically merge.
+
+## 72. Verify the remote checkpoint
+
+After pushing:
+
+1. Fetch remote HEAD.
+2. Confirm the commit exists.
+3. Verify the expected files.
+4. Verify handoff documents.
+5. Report final commit SHA.
+6. Report uncommitted changes.
+7. Report any synchronization failure.
+
+Do not claim successful GitHub synchronization unless it is verified remotely.
+
+---
+
+# PART 28 — ACCEPTANCE CRITERIA
+
+Prompt 9 is complete only when the following are genuinely working.
+
+### Admin integration
+
+- Design Studio appears in admin navigation.
+- Protected route works.
+- Non-admin users cannot access the studio.
+- Existing admin features remain functional.
+
+### Workspace
+
+- Full-screen layout works.
+- Left layer panel works.
+- Central canvas works.
+- Right inspector works.
+- Toolbar works.
+- Panel resizing/collapse works.
+- Mobile/tablet administration is usable.
+
+### Real storefront
+
+- Actual homepage components render.
+- Actual product/category bindings work.
+- Hero and celestial sections appear correctly.
+- No fake duplicate storefront.
+- Header/footer are not duplicated.
+- Responsive layout is preserved.
+
+### Interaction
+
+- Components can be selected.
+- Hover highlighting works.
+- Selected layer updates.
+- Inspector updates.
+- Viewport switching works.
+- Zoom works.
+- Canvas scrolling works.
+- Edit/Preview mode works.
+
+### Persistence
+
+- Authorized draft loads.
+- Supported property editing works.
+- Canvas reflects changes.
+- Save Draft persists data.
+- Refresh restores saved changes.
+- Published page remains unchanged.
+- Save conflicts/errors are handled.
+
+### Performance
+
+- Public bundle isolation verified.
+- Editor route loads appropriately.
+- Selection performance assessed.
+- Responsive controls assessed.
+- No significant unexplained regression.
+- Heavy media lifecycle assessed.
+- Browser limitations documented.
+
+### GitHub
+
+- Correct branch verified.
+- Prompts 7 and 8 verified.
+- Progress documents updated.
+- Code reviewed.
+- Tests executed.
+- Verified work committed.
+- Push attempted.
+- Remote commit verified before claiming success.
+- Next-session handoff prepared.
+
+Do not mark incomplete or unverified requirements as passed.
+
+---
+
+# PART 29 — REQUIRED FINAL REPORT
+
+Produce a detailed report titled:
+
+**"Visual Storefront Editor — Prompt 9 Design Studio Shell, Live Canvas, Admin Integration, Performance Audit & GitHub Checkpoint"**
+
+Include:
+
+### A. Repository verification
+Repository, branch, starting SHA, prerequisite status.
+
+### B. Design Studio implementation
+Route, workspace, toolbar, layers, canvas, inspector.
+
+### C. Real storefront integration
+How the actual landing page is rendered.
+
+### D. Canvas architecture decision
+In-document vs. isolated preview, rationale and tradeoffs.
+
+### E. Layer navigator
+Node hierarchy, selection, dynamic sections.
+
+### F. Properties inspector
+Supported controls, editing capabilities and limitations.
+
+### G. Responsive controls
+Viewport presets, zoom and breakpoint behavior.
+
+### H. Editing and preview modes
+Safe selection and customer-preview interaction policies.
+
+### I. Draft loading and saving
+Persistence integration, errors and revision handling.
+
+### J. Security
+Admin authorization, draft access, protected business logic.
+
+### K. Performance before implementation
+Verified measurements.
+
+### L. Performance after implementation
+Bundle impact, interaction measurements, rendering behavior.
+
+### M. Testing
+Executed commands, results, failures and blocked checks.
+
+### N. Visual parity
+Actual comparison evidence and unresolved differences.
+
+### O. File inventory
+Every file created or modified.
+
+### P. GitHub checkpoint
+Commit message, branch, SHA and remote verification.
+
+### Q. Progress documentation
+Status of all four persistent files.
+
+### R. Known limitations
+Unsupported controls, unresolved issues and deferred functionality.
+
+### S. Next implementation milestone
+Exact next scope according to the latest verified roadmap.
+
+### T. Final readiness decision
+
+Choose:
+
+**GO** — The studio loads the real storefront, supports functional selection, responsive viewing, a safe editing/save workflow, passes critical tests, and has a verified GitHub checkpoint.
+
+**CONDITIONAL GO** — Core functionality exists but documented test, performance, visual, or integration gaps remain.
+
+**NO-GO** — Missing prerequisites, invalid admin security, broken real-page rendering, unsafe persistence, or critical functionality regressions prevent progression.
+
+Provide evidence for the decision.
+
+---
+
+# FINAL EXECUTION DIRECTIVE
+
+Implement the first functional Store Design Studio in the existing admin panel.
+
+Start by recovering the latest GitHub development state and verifying Prompts 7 and 8.
+
+Then:
+
+1. Build the protected full-screen design route.
+2. Add Design Studio to admin navigation.
+3. Implement the complete workspace shell.
+4. Mount the real storefront through the existing PageRenderer.
+5. Build the functional layer navigator.
+6. Implement basic click selection and hover outlining.
+7. Build the contextual properties inspector.
+8. Implement accurate device viewport controls.
+9. Add working canvas zoom and scrolling.
+10. Integrate authenticated draft loading.
+11. Implement one or more genuinely supported property edits.
+12. Integrate working draft saving.
+13. Implement safe Edit/Preview mode switching.
+14. Test routing, security, rendering, responsive behavior and persistence.
+15. Audit performance before and after.
+16. Fix regressions introduced by this prompt.
+17. Update all four permanent project documents.
+18. Review Git changes.
+19. Commit and push verified work.
+20. Verify the remote GitHub commit.
+21. Produce the implementation report.
+
+**DO NOT CREATE A FAKE LANDING PAGE.**
+
+**DO NOT REBUILD EXISTING PRODUCT OR CATEGORY COMPONENTS.**
+
+**DO NOT LOAD HEAVY EDITOR-ONLY DEPENDENCIES INTO THE PUBLIC STOREFRONT.**
+
+**DO NOT ALLOW DRAFT EDITING TO MODIFY THE PUBLISHED WEBSITE.**
+
+**DO NOT PRESENT INERT CONTROLS AS WORKING FEATURES.**
+
+**DO NOT CLAIM BROWSER VISUAL PARITY WITHOUT ACTUAL BROWSER VERIFICATION.**
+
+**DO NOT CLAIM GITHUB PUSH SUCCESS WITHOUT REMOTE VERIFICATION.**
+
+**DO NOT BEGIN PROMPT 10 AUTOMATICALLY.**
+
+The ultimate objective is to create a premium, production-grade storefront design studio where an administrator can visually customize the exact landing page through direct drag-and-drop, resizing, shape editing, flexible product/category grids, animations, and synchronized real-time previews.
+
+Prompt 9 must establish the reliable, visually accurate, secure, high-performance workspace upon which those advanced editing interactions will be built.

@@ -47,9 +47,17 @@ export function PlanetHeroAdapter({ node, resolvedStyle }: ComponentAdapterRende
     );
   }
 
+  const shouldWrapRelativeZ10 = node.props.customAttributes?.wrapRelativeZ10 === true;
+
   return (
     <AdapterBoundary node={node} resolvedStyle={resolvedStyle}>
-      <PlanetHero />
+      {shouldWrapRelativeZ10 ? (
+        <div className="relative z-10">
+          <PlanetHero />
+        </div>
+      ) : (
+        <PlanetHero />
+      )}
     </AdapterBoundary>
   );
 }

@@ -340,7 +340,8 @@ export const HOMEPAGE_HERO_AND_DYNAMIC_CATEGORIES_FIXTURE: PageDocument = {
   metadata: {
     createdAt: FIXED_TIMESTAMP,
     updatedAt: FIXED_TIMESTAMP,
-    description: "Models the actual PlanetHero, CelestialScrollWorld, Festival, Rails, and Dynamic Categories",
+    description:
+      "Models the actual PlanetHero, CelestialScrollWorld, Festival, Rails, and Dynamic Categories",
   },
   settings: {
     celestialWorldEnabled: true,

@@ -1,0 +1,1646 @@
+# PROMPT 7 OF 48 — REAL HOMEPAGE MIGRATION TO SHARED PAGE RENDERER, PIXEL-ACCURATE COMPATIBILITY, GITHUB CHECKPOINT & FULL PERFORMANCE AUDIT
+
+## YOUR ROLE
+
+Act as a Principal Full-Stack Architect, Senior React 19 Engineer, TanStack Start Specialist, Advanced Visual Page Builder Architect, TypeScript Engineer, Browser Rendering Specialist, GitHub DevOps Engineer, and Production Performance Engineer.
+
+You are developing my existing SaaS affiliate-store application into an advanced Shopify-style visual storefront builder.
+
+**GitHub Repository:** https://github.com/Mukulsri369/ourvisibleuniversestore
+
+**Development Environment:** Google AI Studio — Argon 4
+
+**Development Roadmap:** 48 prompts across 10 phases.
+
+**Current Stage:** Phase 2 — Core Page Rendering Architecture.
+
+**Current Task:** Prompt 7 of 48.
+
+This task follows:
+
+- Prompt 1 — Complete repository audit.
+- Prompt 2 — Compatibility and zero-regression contracts.
+- Prompt 3 — Technology evaluation and interaction proof of concept.
+- Prompt 4 — Original landing-page baseline.
+- Prompt 5 — Versioned PageDocument schema, validation, GitHub continuity, and performance audit.
+- Prompt 6 — Component registry, real storefront adapters, and shared renderer foundation.
+
+### PRIMARY OBJECTIVE
+
+Convert the real storefront homepage from its current hardcoded section composition into a configuration-driven page rendered through the shared rendering system.
+
+The converted homepage must retain its existing appearance, functionality, responsiveness, animations, product data, category data, and affiliate behavior.
+
+This must be an actual integration into the working storefront—not a standalone demo, duplicated preview, or simulated homepage.
+
+The new architecture must become the foundation for future direct visual customization.
+
+**CRITICAL NON-NEGOTIABLE REQUIREMENT:**
+
+The visual editor and public storefront must use the same registered React component implementations.
+
+Do not recreate a separate visual imitation of the current homepage.
+
+Do not change the existing design merely to simplify the migration.
+
+---
+
+# PART 1 — MANDATORY GITHUB RECOVERY & PREREQUISITE VERIFICATION
+
+## 1. Connect to the correct GitHub repository
+
+Repository:
+
+https://github.com/Mukulsri369/ourvisibleuniversestore
+
+Before modifying code, verify:
+
+- Current repository URL.
+- Local active branch.
+- Remote branches.
+- Latest remote HEAD.
+- Current local HEAD.
+- Working-tree changes.
+- Unpushed commits.
+- Existing development checkpoints.
+- Previous implementation files.
+- Whether Prompts 5 and 6 are complete.
+
+A previously observed `main` SHA was:
+
+`f05569b41f74c3c89006f9fe7ef32ba6a48fde56`
+
+This is only a reference. Always obtain the latest commit dynamically.
+
+Do not assume the current repository matches the previously observed state.
+
+## 2. Read all existing handoff documents
+
+Read:
+
+- `IMPLEMENTATION_PROGRESS.md`
+- `ARCHITECTURE_AUDIT.md`
+- `PERFORMANCE_BASELINE.md`
+- `AI_STUDIO_HANDOFF.md`
+
+These documents preserve implementation history across Google AI Studio accounts.
+
+Check the actual code against the documented status.
+
+**GitHub source and verified implementation are authoritative. A progress statement alone is not proof that a feature works.**
+
+## 3. Verify Prompt 5
+
+Locate the typed page schema, including:
+
+- `PageDocument`
+- `EditorNode`
+- Node validation.
+- Component identifiers.
+- Geometry and shape contracts.
+- Responsive overrides.
+- Data bindings.
+- Animation configuration.
+- Tree utilities.
+- Fixtures.
+- Existing schema tests.
+
+Inspect the actual exports and behavior.
+
+Do not create a second incompatible schema.
+
+## 4. Verify Prompt 6 before continuing
+
+Locate and inspect the actual:
+
+- Component registry.
+- Registry metadata.
+- Storefront adapters.
+- Shared `PageRenderer`.
+- Rendering contexts.
+- Data-resolution contracts.
+- Responsive styling adapter.
+- Registry tests.
+- Renderer integration tests.
+
+The previously visible GitHub `main` branch contained Prompt 5 schema files but did not show the Prompt 6 registry or renderer implementation.
+
+Therefore, search:
+
+1. The current working tree.
+2. Local development branches.
+3. Remote development branches.
+4. Unpushed commits.
+5. GitHub-connected workspace changes.
+
+If Prompt 6 exists locally but has not been pushed, preserve it and reconcile its GitHub synchronization.
+
+If Prompt 6 is genuinely missing or incomplete, **do not improvise a second incompatible architecture or silently mark it complete.**
+
+Report the dependency blocker and identify precisely what must be completed before Prompt 7 can safely proceed.
+
+Proceed with Prompt 7 only after the shared renderer foundation is verified.
+
+## 5. Preserve the development branch
+
+Continue on the existing visual-editor development branch if available.
+
+Preferred branch:
+
+`feature/visual-storefront-editor`
+
+Do not overwrite local work.
+
+Do not force-push.
+
+Do not merge into `main` automatically.
+
+Do not discard unexpected modifications.
+
+Do not create an unrelated project or restart the application from scratch.
+
+---
+
+# PART 2 — ESTABLISH THE EXACT CURRENT HOMEPAGE BEHAVIOR
+
+## 6. Inspect the current homepage thoroughly
+
+Primary file:
+
+`src/routes/_store.index.tsx`
+
+Inspect its current implementation line by line.
+
+Also examine:
+
+- `src/routes/_store.tsx`
+- `src/components/store/StoreChrome.tsx`
+- `src/components/store/PlanetHero.tsx`
+- `src/components/store/CelestialScrollWorld.tsx`
+- `src/components/store/ProductScrollRail.tsx`
+- `src/components/store/ProductCard.tsx`
+- `src/components/store/CategorySpotlightHero.tsx`
+- `src/components/store/CategoryCard.tsx`
+- `src/components/store/BuyButton.tsx`
+- `src/components/store/ProductQuickPreviewModal.tsx`
+- `src/lib/store.ts`
+- `src/lib/planets.ts`
+- `src/lib/celestial-catalog.ts`
+- `src/styles.css`
+
+Follow additional dependencies as necessary.
+
+Record the actual current rendering tree.
+
+## 7. Preserve every existing homepage section
+
+The original homepage has included:
+
+1. Global celestial scroll background.
+2. PlanetHero.
+3. Festival Special.
+4. Featured products.
+5. New arrivals.
+6. Dynamically repeated category spotlight sections.
+7. Category-specific product rails.
+8. Progressive category loading.
+9. Explore by interest.
+10. Why shop with us.
+11. Instagram promotional section.
+
+The shared storefront layout separately manages the header and footer.
+
+Verify the actual current architecture and preserve it.
+
+The default page document must reproduce the current section order and default presentation.
+
+### Do not accidentally alter
+
+- Section spacing.
+- Container width.
+- Background gradients.
+- CSS stacking order.
+- Font styles.
+- Hero height.
+- Planet transitions.
+- Product card proportions.
+- Product rail behavior.
+- Category presentation.
+- Responsive breakpoints.
+- Footer layout.
+
+**The initial migrated homepage should look like the existing homepage without requiring the administrator to configure anything.**
+
+---
+
+# PART 3 — IMPLEMENT THE DEFAULT HOMEPAGE DOCUMENT
+
+## 8. Create the canonical default homepage configuration
+
+Using the existing PageDocument schema, create a complete default configuration representing the real homepage.
+
+Use the exact schema format created in Prompt 5.
+
+Do not introduce a different document format.
+
+The default document should include:
+
+- Stable document identity.
+- Valid schema version.
+- Homepage metadata.
+- Ordered section nodes.
+- Registered component types.
+- Validated presentation properties.
+- Dynamic data bindings.
+- Appropriate responsive defaults.
+- Existing design references.
+- Safe animation configuration.
+
+Use deterministic, stable node IDs.
+
+Avoid generating fresh node IDs every time the page renders.
+
+### Important design principle
+
+The default document is a declarative description of the existing homepage.
+
+It should not become a massive collection of copied JSX strings or raw HTML.
+
+The shared registry and adapters must continue owning the actual rendering logic.
+
+## 9. Represent the homepage's global celestial background
+
+The existing `CelestialScrollWorld` is a fixed visual background tied to page scrolling.
+
+This is not an ordinary content section.
+
+Represent it through the existing supported schema and registry architecture without changing its positioning context.
+
+The renderer must preserve:
+
+- Full-page scroll behavior.
+- Existing motion springs.
+- Planet trajectories.
+- Fixed positioning.
+- Stacking order.
+- Background visibility.
+- Existing responsiveness.
+
+Do not wrap the celestial world in a container that clips its motion or changes its coordinate system.
+
+Use a dedicated background layer or root-level rendering slot if necessary.
+
+The implementation must still be driven by the shared page configuration.
+
+## 10. Represent PlanetHero correctly
+
+Preserve the current PlanetHero implementation.
+
+The default document must identify and render the hero using the existing registered component.
+
+Do not replace the video-backed planetary hero with a static banner.
+
+Retain:
+
+- Planet selection.
+- Current videos and poster images.
+- Text.
+- CTA behavior.
+- Transitions.
+- Scroll indicator.
+- Responsive layout.
+
+Optional configurable properties must fall back to the original styles and behavior.
+
+Do not add unnecessary wrapper elements that affect hero dimensions or positioning.
+
+---
+
+# PART 4 — PRESERVE FESTIVAL, FEATURED & NEW ARRIVALS
+
+## 11. Festival Special
+
+The current homepage reads festival content from existing settings.
+
+Preserve:
+
+- Existing enabled/disabled behavior.
+- Eyebrow.
+- Title.
+- Description.
+- Visual container.
+- Decorative background.
+- Product rail.
+- Empty state.
+- Explore-lights link.
+- Responsive styling.
+
+The PageDocument should identify the section structure and supported visual configuration.
+
+The existing site settings must remain authoritative for current festival content until the future content configuration architecture explicitly changes that responsibility.
+
+Avoid duplicating source-of-truth data.
+
+### Important
+
+If the current implementation uses product shuffling, preserve current behavior for this migration unless a separately approved compatibility fix is required.
+
+Document any conflict between manually curated festival ordering and client-side shuffling.
+
+Do not silently change storefront semantics while migrating the renderer.
+
+## 12. Featured products
+
+Preserve:
+
+- Existing data source.
+- Product selection.
+- Visibility conditions.
+- Heading.
+- View-all link.
+- Product rail.
+- Card dimensions.
+- Responsive scrolling.
+- Existing sorting/shuffling behavior.
+
+The new document should use a typed collection binding, not duplicate product objects.
+
+## 13. New arrivals
+
+Preserve:
+
+- Current query source.
+- Existing heading.
+- View-all navigation.
+- Product rail.
+- Responsive card behavior.
+- Empty-state/visibility behavior.
+- Product ordering semantics.
+
+The shared renderer must avoid unnecessary duplicate queries.
+
+---
+
+# PART 5 — DYNAMIC CATEGORY SECTIONS
+
+## 14. Preserve dynamically generated category sections
+
+This is a critical architectural challenge.
+
+The existing homepage dynamically creates category spotlight and product rail sections based on category records.
+
+Do not convert these into permanently hardcoded entries for every category currently stored in the database.
+
+The architecture must remain data-driven.
+
+When a category is added or removed through the admin portal, the homepage must continue responding correctly.
+
+The PageDocument should represent a reusable category-section template or validated repeated-section binding.
+
+## 15. Maintain category ordering
+
+Respect the existing category order as determined by the active implementation.
+
+Preserve:
+
+- Category identifiers.
+- Category slugs.
+- Category titles.
+- Product associations.
+- Admin-defined sorting.
+- Only displaying categories with appropriate products.
+- Stable category keys.
+
+The future visual editor should eventually be able to customize one category template and apply it across multiple categories.
+
+However, do not implement the entire template-design interface in this prompt.
+
+## 16. Preserve spotlight product selection
+
+The current homepage supports spotlight product selection using existing administrator settings and fallbacks.
+
+Maintain the same priority behavior, where present:
+
+1. Administrator-selected spotlight product.
+2. Suitable featured product.
+3. Suitable fallback product.
+
+Preserve the existing category-derived celestial visual metadata.
+
+Do not break `getCelestialSystemForCategory` or equivalent configuration functions.
+
+## 17. Preserve progressive category loading
+
+The existing homepage incrementally reveals category content through IntersectionObserver-driven behavior.
+
+Do not replace it with immediate rendering of every category unless a verified compatibility requirement explicitly demands that change.
+
+Maintain:
+
+- Initial visible category count.
+- Progressive increments.
+- Sentinel behavior.
+- Observer cleanup.
+- Scroll position behavior.
+- Appropriate loading feedback.
+- Stable layout during loading.
+
+### Critical scroll-animation interaction
+
+`CelestialScrollWorld` depends on document scrolling.
+
+Changing progressive category mounting behavior can affect document height and scroll positions.
+
+Verify that the migration does not introduce new jumps, discontinuities, or unexpected scroll-progress changes.
+
+Do not use unstable keys that remount all category sections when new categories appear.
+
+---
+
+# PART 6 — MARKETING AND PROMOTIONAL SECTIONS
+
+## 18. Explore by interest
+
+Preserve:
+
+- Existing interest values.
+- Their original order.
+- Existing layout.
+- Responsive wrapping.
+- Button/chip design.
+- Search links.
+- Hover styling.
+
+Prepare the section to be represented as an editable registered block.
+
+Do not modify interest labels or search behavior unintentionally.
+
+## 19. Why shop with us
+
+Preserve:
+
+- Existing benefit cards.
+- Icons.
+- Headings.
+- Descriptions.
+- Three-column desktop presentation.
+- Mobile stacking.
+- Typography.
+- Glass effects.
+- Spacing.
+
+Ensure icon components are resolved through trusted application code.
+
+Do not store executable React icon components in PageDocument JSON.
+
+## 20. Instagram promotional section
+
+Preserve:
+
+- Existing decorative background.
+- Headline.
+- Description.
+- Instagram destination from site settings.
+- Button styling.
+- External-link behavior.
+- Responsive layout.
+
+Any future editable URL configuration must use safe destination validation.
+
+Do not replace the actual configured Instagram URL with hardcoded demo data.
+
+---
+
+# PART 7 — HEADER, FOOTER & SHARED CHROME
+
+## 21. Prevent duplicate shared components
+
+Inspect:
+
+`src/routes/_store.tsx`
+
+and:
+
+`src/components/store/StoreChrome.tsx`
+
+The existing header and footer are shared across storefront routes.
+
+Do not duplicate them by rendering them both:
+
+- In the shared route layout, and
+- Inside the homepage PageDocument.
+
+Choose a consistent architectural strategy.
+
+For example:
+
+- Global store chrome remains in the shared storefront layout.
+- Page-specific sections are rendered through PageRenderer.
+- The registry maintains header/footer definitions for future global design configuration.
+
+If future full-page editing requires treating header/footer as selectable design regions, define how their editor representations will reference the same actual global components.
+
+Do not make homepage-specific changes that break category, product, search, or informational pages.
+
+---
+
+# PART 8 — REFACTOR THE HOMEPAGE WITHOUT DUPLICATING BUSINESS LOGIC
+
+## 22. Establish clean data-flow boundaries
+
+The homepage currently uses TanStack Query and Supabase-backed data.
+
+Preserve existing query contracts.
+
+The new data flow should conceptually be:
+
+Existing homepage queries
+→ Validated runtime data
+→ PageDocument bindings
+→ Shared data resolver
+→ Registered component adapter
+→ Existing React component
+
+Avoid storing current product results inside the PageDocument.
+
+The document should contain binding descriptors and presentation configuration—not database records.
+
+## 23. Avoid multiple competing data sources
+
+There must be only one authoritative source for:
+
+- Product names.
+- Prices.
+- Product IDs.
+- Category IDs.
+- Affiliate destinations.
+- Availability.
+- Category membership.
+- Site settings.
+
+Do not create a second product store inside the visual editor.
+
+Do not introduce unnecessary Supabase requests per component.
+
+Avoid N+1 queries.
+
+Reuse existing cached query results where possible.
+
+## 24. Preserve interaction logic
+
+Maintain:
+
+- Product-card click behavior.
+- Product detail navigation.
+- Quick preview.
+- Carousel controls.
+- Image hover transitions.
+- Product affiliate buttons.
+- Outbound click tracking.
+- Search navigation.
+- Category navigation.
+- Header/footer links.
+
+Do not change the public product BuyButton behavior.
+
+Do not introduce traditional checkout/cart logic.
+
+Future editor mode should intercept editing gestures safely, but that interaction engine belongs to later prompts.
+
+---
+
+# PART 9 — ACTUAL HOMEPAGE INTEGRATION
+
+## 25. Connect the real homepage route
+
+This prompt must move beyond isolated fixtures.
+
+After verification, integrate PageRenderer into the actual homepage route.
+
+**The intended end state is that the real homepage renders through the shared document-driven architecture.**
+
+Do not leave PageRenderer unused while claiming the migration is complete.
+
+Do not generate a separate showcase page and call it the homepage migration.
+
+## 26. Preserve the existing route loader
+
+Keep the current TanStack route behavior, including:
+
+- Route loader and prefetching.
+- React Query hydration.
+- SEO metadata.
+- Error handling.
+- Existing product/category/settings queries.
+- Browser navigation.
+- Client hydration behavior.
+
+Do not introduce server/client inconsistencies.
+
+If the default document must be loaded synchronously, use a validated static configuration or another architecture appropriate to the current implementation.
+
+Do not introduce a production database dependency merely to load the default design.
+
+Database persistence will be addressed in a later prompt.
+
+## 27. Use a controlled migration/rollback mechanism
+
+Because this is a significant rendering refactor, create a safe internal rollback strategy.
+
+Requirements:
+
+1. Preserve a recoverable legacy implementation during verification.
+2. Implement the document-rendered version.
+3. Compare both against the same data and viewport.
+4. Activate the shared renderer for the real homepage only after required checks pass.
+5. Maintain a clear rollback path if regressions are discovered.
+
+A temporary feature flag may be appropriate.
+
+However, avoid leaving an indefinite duplicate implementation or permanently maintaining two independent homepage architectures.
+
+The old implementation should become a temporary compatibility reference, not a second long-term source of truth.
+
+If validation is incomplete, keep the existing public rendering active and report Prompt 7 as incomplete or conditionally complete.
+
+Never deploy an unverified migration merely to satisfy a completion checklist.
+
+---
+
+# PART 10 — PIXEL-ACCURATE LANDING-PAGE PRESERVATION
+
+## 28. Match the original design
+
+The shared-rendered homepage must preserve the original design when no user overrides have been applied.
+
+Compare:
+
+- Section order.
+- Section width and height.
+- Container max-width.
+- Padding.
+- Margins.
+- Typography.
+- Text wrapping.
+- Colors.
+- Gradients.
+- Card dimensions.
+- Image proportions.
+- Rounded corners.
+- Background effects.
+- Positioning.
+- Z-index.
+- Responsive behavior.
+- Animation states.
+
+The default document must not unintentionally override existing CSS.
+
+### Critical rule
+
+**No explicit override means legacy visual behavior.**
+
+The adapter should not apply generic design defaults on top of the original component when they change its appearance.
+
+## 29. Avoid layout-affecting wrappers
+
+The renderer may need node identity and selection metadata.
+
+However, introducing wrappers can change:
+
+- Width calculations.
+- Flex behavior.
+- CSS grid behavior.
+- Positioning contexts.
+- Sticky elements.
+- Overflow clipping.
+- CSS selectors.
+- Motion animation coordinates.
+
+Investigate each wrapper.
+
+Prefer mechanisms that preserve the actual DOM layout.
+
+Do not use `display: contents` blindly on elements requiring positioning, semantics, event boundaries, or accessibility behavior.
+
+Use the simplest safe approach for each component.
+
+---
+
+# PART 11 — RESPONSIVE DESIGN VERIFICATION
+
+## 30. Validate representative viewports
+
+Compare the migrated homepage at:
+
+- 360px.
+- 390px.
+- 768px.
+- 1024px.
+- 1440px.
+- 1920px.
+
+Where browser tooling is available, capture before/after screenshots.
+
+Use consistent:
+
+- Browser version.
+- Device scale factor.
+- Fonts.
+- Product data.
+- Media state.
+- Animation state.
+- Scroll position.
+- Color scheme.
+
+Verify:
+
+- No horizontal overflow.
+- No missing content.
+- No incorrect card widths.
+- No text clipping.
+- No broken navigation.
+- No unexpected column changes.
+- No hero cropping regression.
+- No duplicate scrollbars.
+- No excessive blank regions.
+
+Record actual screenshot comparison results.
+
+Do not invent visual parity measurements.
+
+## 31. Respect Prompt 5 responsive inheritance
+
+Use the established PageDocument responsive system.
+
+Do not build a second breakpoint engine.
+
+Where the existing application already uses Tailwind responsive classes, ensure that introducing schema-level styles does not override those classes unintentionally.
+
+The future administrator should eventually be able to customize device-specific properties.
+
+This prompt must establish a correct default baseline without forcing every current CSS rule into inline styles.
+
+---
+
+# PART 12 — ANIMATION COMPATIBILITY & SCROLL BEHAVIOR
+
+## 32. Preserve the existing animation engines
+
+Maintain existing Motion and Three.js functionality.
+
+Do not rewrite specialized animation components as generic page-builder effects.
+
+Protect:
+
+- PlanetHero transitions.
+- Video playback.
+- Poster loading.
+- Planet selection.
+- CelestialScrollWorld movement.
+- Scroll-linked Motion values.
+- Product card hover effects.
+- Carousel behavior.
+- Reduced-motion preferences.
+
+## 33. Prevent unnecessary remounts
+
+Stable document IDs and component keys are mandatory.
+
+Changes to one section should not automatically recreate unrelated heavy components.
+
+Investigate:
+
+- PlanetHero lifecycle.
+- CelestialScrollWorld lifecycle.
+- Video elements.
+- Scroll subscriptions.
+- IntersectionObservers.
+- Motion springs.
+- Product image timers.
+
+The renderer should not remount the entire homepage merely because a localized configuration node changes.
+
+## 34. Test long-page scrolling
+
+The homepage combines:
+
+- Fixed celestial backgrounds.
+- Dynamic category sections.
+- Progressively loaded content.
+- Horizontal product rails.
+
+Test continuous scrolling from top to bottom.
+
+Check:
+
+- Visual continuity.
+- Sudden planet jumps.
+- Flickering.
+- Unexpected clipping.
+- Duplicate animation instances.
+- Scroll position changes.
+- Category loading stability.
+- Observer cleanup.
+
+Document any issues introduced by the migration.
+
+Do not conflate pre-existing defects with newly introduced regressions.
+
+---
+
+# PART 13 — FUTURE VISUAL EDITOR COMPATIBILITY
+
+## 35. Preserve selectable element identity
+
+Every registered and editable node should have stable identity.
+
+Future tools will use this identity for:
+
+- Direct selection.
+- Drag-and-drop.
+- Resizing.
+- Shape editing.
+- Layer navigation.
+- Style inspector.
+- Responsive overrides.
+- Mini-preview synchronization.
+- Undo/redo.
+- Publishing.
+
+The renderer must expose a safe mechanism for finding its associated node.
+
+Do not expose private data.
+
+Do not introduce visible selection overlays into public mode.
+
+## 36. Prepare real-page editing
+
+The future editor must be able to operate on the exact homepage rendering.
+
+Therefore:
+
+- Section identity must be stable.
+- Layout configuration must be serializable.
+- Business data must remain protected.
+- Components must expose trusted customization boundaries.
+- Responsive behavior must be deterministic.
+- Node relationships must be recoverable.
+- Rendering modes must remain explicit.
+
+Do not implement the visual editor's drag handles yet.
+
+## 37. Prepare product/category customization
+
+The architecture must support later switching from existing product rails to layouts such as:
+
+- Standard grid.
+- Bento grid.
+- Masonry.
+- Carousel.
+- Editorial layout.
+- Responsive arrangements.
+
+The schema and registry must eventually support card-level resizing and shape editing.
+
+However, Prompt 7 must preserve the current rails as the default presentation.
+
+Do not introduce new category-grid designs into the public homepage during migration.
+
+## 38. Prepare mini-preview synchronization
+
+The editor will later show small live previews in the properties panel.
+
+The mini-preview must reuse the same registered component renderer as the main canvas.
+
+Prompt 7 should preserve this shared-rendering architecture and verify that it can accept the default homepage configuration.
+
+Do not create unrelated miniature card implementations.
+
+The full inspector and interactive mini-preview UI belong to later development prompts.
+
+---
+
+# PART 14 — PERFORMANCE AUDIT BEFORE IMPLEMENTATION
+
+## 39. Read the previous performance baseline
+
+Open:
+
+`PERFORMANCE_BASELINE.md`
+
+Identify:
+
+- Last tested commit.
+- Build environment.
+- Public route bundle sizes.
+- JS/CSS totals.
+- Existing schema benchmarks.
+- Known performance defects.
+- Browser testing limitations.
+
+Do not assume measurements from an earlier commit remain valid.
+
+Record a fresh pre-Prompt-7 reference.
+
+## 40. Audit migration-related performance risks
+
+Evaluate:
+
+- New PageRenderer rendering overhead.
+- Registry lookup frequency.
+- Repeated schema validation.
+- Responsive style resolution.
+- Duplicate Supabase queries.
+- Unstable React keys.
+- Product-card rerendering.
+- Large category lists.
+- Progressive loading.
+- New hydration work.
+- Additional wrappers.
+- Hero remounting.
+- Background animation lifecycles.
+- Bundle splitting.
+- Loading of editor-only libraries.
+
+### Mandatory architecture requirement
+
+Do not import Moveable, dnd-kit, Puck editor UI, or other heavy editor-only dependencies into public storefront routes.
+
+The public homepage should only load what it needs to render the published design.
+
+## 41. Keep full-document validation outside hot paths
+
+Prompt 5 performance documentation has already highlighted that full-tree validation can be expensive for large documents.
+
+Do not run complete Zod validation:
+
+- On every animation frame.
+- On every scroll event.
+- On every pointermove.
+- On every individual ProductCard render.
+
+Validate at appropriate document boundaries.
+
+Use trusted, validated runtime structures during rendering.
+
+If additional checks are necessary, keep them localized and efficient.
+
+---
+
+# PART 15 — PERFORMANCE AUDIT AFTER IMPLEMENTATION
+
+## 42. Compare before/after production builds
+
+Run the available build process.
+
+Compare:
+
+- Homepage route JavaScript.
+- Shared renderer chunk size.
+- Storefront component bundles.
+- Global CSS.
+- Server-side output.
+- Total client assets.
+- New dependencies.
+- Network requests where measurable.
+
+Explain any bundle growth.
+
+Do not impose an unsupported claim that the new renderer must add exactly zero bytes.
+
+Instead, require that overhead be necessary, measured, and proportionate.
+
+Unexpected bundle increases must be investigated.
+
+## 43. Measure rendering and hydration
+
+Where tooling permits, assess:
+
+- Initial homepage rendering.
+- Hydration.
+- Main-thread activity.
+- Category-section rendering.
+- Product-heavy sections.
+- Renderer rerender frequency.
+- Animation component mounting.
+- Long-page scrolling.
+- Mobile viewport behavior.
+
+Use actual measurements.
+
+If browser runtime tools are unavailable, label those checks as blocked and provide a runnable browser verification plan.
+
+Do not treat JSDOM tests as proof of real browser rendering or GPU smoothness.
+
+## 44. Performance acceptance
+
+The migrated homepage should not introduce unexplained:
+
+- Extra data requests.
+- Excessive rerenders.
+- Repeated media initialization.
+- Animation remounts.
+- Severe scroll stutter.
+- New layout shifts.
+- Unnecessary DOM nesting.
+- Large editor-library downloads.
+- Unexpected memory leaks.
+
+Investigate regressions caused by this implementation.
+
+Do not perform unrelated large-scale optimizations during the migration.
+
+---
+
+# PART 16 — TESTING REQUIREMENTS
+
+## 45. Unit tests
+
+Add tests for:
+
+- Canonical default homepage document.
+- Valid schema version.
+- Stable node IDs.
+- Correct section order.
+- Correct registry resolution.
+- Valid data bindings.
+- Safe handling of unknown nodes.
+- Responsive defaults.
+- Configuration fallback behavior.
+- No duplicate global chrome.
+
+## 46. Integration tests
+
+Use the actual React storefront components.
+
+Verify:
+
+- PlanetHero renders through the registry.
+- CelestialScrollWorld is mounted appropriately.
+- Festival content respects existing settings.
+- Featured products render correctly.
+- New arrivals render correctly.
+- Category sections use real category data.
+- Spotlight selection follows existing rules.
+- ProductScrollRail retains current behavior.
+- Marketing sections render.
+- Header/footer appear only once.
+
+Use controlled fixtures and appropriate application providers.
+
+Do not substitute mocked visual component implementations where the purpose is to test real component compatibility.
+
+## 47. Functional regression tests
+
+Verify:
+
+- Product navigation.
+- Category navigation.
+- Search navigation.
+- Quick preview.
+- Product image display.
+- Affiliate buttons.
+- Outbound click tracking.
+- Festival enable/disable logic.
+- Admin-driven category ordering.
+- Instagram destination.
+- Mobile navigation.
+- SEO metadata.
+- Existing loading and empty states.
+
+Avoid real production data writes or unnecessary external redirects during tests.
+
+## 48. SSR and hydration tests
+
+Verify:
+
+- Server-rendered markup compatibility.
+- Client hydration.
+- No duplicate components.
+- No browser-only API execution during SSR.
+- No missing provider context.
+- No unstable IDs.
+- No hydration mismatch introduced by dynamic product ordering.
+
+Pay special attention to client-side shuffling and the initial server-compatible state.
+
+## 49. Progressive loading tests
+
+Verify:
+
+- Initial category count.
+- Observer trigger behavior.
+- Incremental category reveal.
+- Sentinel cleanup.
+- No duplicate category sections.
+- No skipped categories.
+- Stable React keys.
+- Correct fallback when IntersectionObserver is unavailable.
+
+## 50. Visual regression tests
+
+Where browser tooling exists, use the baseline artifacts created in Prompt 4.
+
+Compare the same page before and after migration.
+
+Capture relevant animation states.
+
+If automated screenshots are unavailable, do not claim exact pixel parity.
+
+Record the missing checks as an explicit release blocker where they are critical for activation.
+
+---
+
+# PART 17 — RECOMMENDED CODE STRUCTURE
+
+## 51. Extend the existing visual-editor modules
+
+Prefer adapting the structure created in Prompts 5 and 6.
+
+Possible modules include:
+
+- `default-homepage-document.ts`
+- `home-data-context.ts`
+- `home-collection-resolver.ts`
+- `repeated-category-section.tsx`
+- `homepage-renderer.tsx`
+- `storefront-rendering-boundary.tsx`
+- `legacy-homepage.tsx`
+- `homepage-migration.test.tsx`
+- `homepage-parity.test.tsx`
+
+These are conceptual filenames.
+
+Inspect the current repository and choose the appropriate structure.
+
+Do not duplicate renderer logic.
+
+Do not create unnecessary abstractions or placeholder modules.
+
+Avoid placing hundreds of lines of configuration and data-transformation logic directly inside `_store.index.tsx`.
+
+Keep the route focused on loading the required data and composing the renderer.
+
+---
+
+# PART 18 — CONTROLLED IMPLEMENTATION ORDER
+
+Implement this task in the following sequence.
+
+### Step 1 — GitHub recovery
+
+Verify Prompts 5 and 6 and the latest development branch.
+
+### Step 2 — Baseline audit
+
+Inspect current homepage, renderer, registry, and performance.
+
+### Step 3 — Default document
+
+Build and validate the canonical homepage PageDocument.
+
+### Step 4 — Data binding
+
+Connect existing home/category/settings query results to typed binding resolvers.
+
+### Step 5 — Existing section adapters
+
+Ensure all existing homepage sections are rendered through real React components.
+
+### Step 6 — Dynamic categories
+
+Implement repeated category sections and progressive loading compatibility.
+
+### Step 7 — Shared chrome
+
+Ensure header/footer remain correctly composed.
+
+### Step 8 — Isolated parity testing
+
+Render original and new implementations under identical controlled conditions.
+
+### Step 9 — Homepage integration
+
+Connect the shared renderer to the actual homepage using the agreed controlled migration strategy.
+
+### Step 10 — Functional regression testing
+
+Verify navigation, products, affiliate links, categories, and animations.
+
+### Step 11 — Responsive and visual validation
+
+Run available browser comparisons and layout checks.
+
+### Step 12 — Performance audit
+
+Compare bundles, rendering, hydration, and scroll behavior.
+
+### Step 13 — Remediation
+
+Fix regressions introduced by this prompt.
+
+### Step 14 — Git documentation
+
+Update project progress and architecture records.
+
+### Step 15 — Commit and push
+
+Create the GitHub checkpoint and verify it remotely.
+
+### Step 16 — Final report
+
+State what was implemented and what remains unresolved.
+
+Do not skip prerequisite verification.
+
+---
+
+# PART 19 — GITHUB CONTINUITY REQUIREMENTS
+
+## 52. Update IMPLEMENTATION_PROGRESS.md
+
+Record:
+
+- Prompt 7 status.
+- Default homepage document status.
+- Actual homepage renderer integration.
+- Migrated sections.
+- Working data bindings.
+- Test results.
+- Visual parity status.
+- Performance impact.
+- Remaining issues.
+- Next development task.
+
+Do not mark Prompt 7 complete unless the real homepage integration works and the required tests are satisfactorily verified.
+
+## 53. Update ARCHITECTURE_AUDIT.md
+
+Document:
+
+- Final homepage composition.
+- PageDocument-to-renderer pipeline.
+- Dynamic section handling.
+- Product/category data-resolution strategy.
+- Header/footer ownership.
+- Legacy default style preservation.
+- Rendering contexts.
+- Fallback strategy.
+- SSR/hydration considerations.
+- Future visual editor integration points.
+
+## 54. Update PERFORMANCE_BASELINE.md
+
+Record:
+
+- Starting commit.
+- Measurement environment.
+- Original homepage bundle measurements.
+- Migrated homepage bundle measurements.
+- Rendering measurements.
+- Hydration findings.
+- Animation performance.
+- Scroll behavior.
+- Mobile behavior.
+- Any regression.
+- Unavailable metrics.
+
+Distinguish verified measurements from estimated impact.
+
+## 55. Update AI_STUDIO_HANDOFF.md
+
+Make the project resumable from another Google AI Studio account.
+
+Include:
+
+- Correct repository URL.
+- Active development branch.
+- Latest previously verified checkpoint.
+- Prompt 7 implementation summary.
+- Actual homepage integration state.
+- Tests run.
+- Browser validation status.
+- Known regressions.
+- Pending fixes.
+- Git push status.
+- Next prompt number.
+- Exact files that should be inspected in Prompt 8.
+
+Do not store secret credentials.
+
+---
+
+# PART 20 — GITHUB COMMIT & PUSH
+
+## 56. Review changes
+
+Before committing:
+
+1. Verify branch.
+2. Inspect the working tree.
+3. Review every modified file.
+4. Exclude unrelated changes.
+5. Check dependency changes.
+6. Check generated artifacts.
+7. Check for secrets.
+8. Confirm no unauthorized database writes.
+9. Run relevant verification commands.
+10. Confirm rollback instructions are documented.
+
+## 57. Create the checkpoint
+
+After sufficient validation, create a conventional commit.
+
+Recommended message:
+
+`feat(storefront): migrate homepage to shared page renderer`
+
+Push to the designated development branch.
+
+Do not force-push.
+
+Do not merge into `main`.
+
+Do not overwrite other development work.
+
+If the implementation is incomplete, use accurate commit messaging and document the remaining work rather than claiming a full migration.
+
+## 58. Verify GitHub remotely
+
+After pushing:
+
+- Fetch the remote branch.
+- Confirm the final commit SHA.
+- Confirm source files are present.
+- Confirm documentation is present.
+- Confirm the branch is correct.
+- Confirm the commit is available from GitHub.
+- Report uncommitted or unpushed work.
+
+If synchronization fails, report the failure honestly.
+
+Do not claim GitHub continuity is complete without remote verification.
+
+---
+
+# PART 21 — STRICT SCOPE LIMITATIONS
+
+This prompt MAY implement:
+
+- Canonical homepage document.
+- Homepage-to-renderer integration.
+- Data-binding adapters.
+- Existing component configuration.
+- Dynamic category rendering.
+- Progressive loading compatibility.
+- Public-mode rendering integration.
+- Controlled migration fallback.
+- Tests.
+- Visual verification.
+- Performance measurements.
+- GitHub documentation and checkpoint.
+
+This prompt MUST NOT implement:
+
+- Full visual editor UI.
+- Drag handles.
+- Resize handles.
+- Shape-editing handles.
+- Grid manipulation interface.
+- Layers panel.
+- Typography inspector.
+- Mini-preview interface.
+- Undo/redo system.
+- Theme generator.
+- Database publishing workflow.
+- Visual editor admin route.
+- Unrequested product-management changes.
+- Unrequested affiliate behavior changes.
+
+Do not rebuild the application from scratch.
+
+Do not introduce heavy editor dependencies into the public storefront.
+
+Do not change production product/category records.
+
+Do not begin the next prompt automatically.
+
+---
+
+# PART 22 — FINAL ACCEPTANCE CRITERIA
+
+Prompt 7 is complete only when all essential requirements are verified.
+
+## Architecture
+
+- Prompt 5 schema reused.
+- Prompt 6 registry reused.
+- One shared renderer used.
+- Canonical homepage document created.
+- Existing components reused.
+- No fake duplicate storefront.
+- Stable node identities.
+- Validated data bindings.
+
+## Homepage
+
+- Actual homepage integrated.
+- Hero preserved.
+- Celestial background preserved.
+- Festival section preserved.
+- Featured products preserved.
+- New arrivals preserved.
+- Dynamic categories preserved.
+- Category spotlights preserved.
+- Progressive loading preserved.
+- Interests section preserved.
+- Benefits section preserved.
+- Instagram section preserved.
+- Header/footer not duplicated.
+
+## Functionality
+
+- Product links work.
+- Category links work.
+- Search works.
+- Quick preview works.
+- Affiliate redirects remain correct.
+- Tracking remains intact.
+- Existing product/category data remains authoritative.
+- Existing admin functionality is unaffected.
+- Existing SEO and error behavior are preserved.
+
+## Visual compatibility
+
+- Default component styles are unchanged.
+- Original layout is preserved.
+- Responsive behavior is preserved.
+- No new clipping or overflow.
+- Animation behavior is preserved.
+- Actual browser screenshot comparisons are documented where available.
+
+## Performance
+
+- Before/after build comparison completed.
+- Shared renderer overhead investigated.
+- No unnecessary public editor imports.
+- No unintended extra data requests.
+- No excessive animation remounting.
+- No unexplained major regression.
+
+## GitHub
+
+- Correct branch confirmed.
+- Prerequisites verified.
+- Documentation updated.
+- Changes reviewed.
+- Appropriate checkpoint committed.
+- Push attempted through an authorized workflow.
+- Remote push verified before claiming synchronization.
+- Cross-account handoff prepared.
+
+Any unverified requirement must be explicitly identified.
+
+A source-code inspection alone is not proof of pixel-accurate visual parity.
+
+---
+
+# PART 23 — REQUIRED FINAL REPORT
+
+Produce a detailed final report titled:
+
+**"Visual Storefront Editor — Prompt 7 Real Homepage Migration, Visual Parity, Performance Audit & GitHub Checkpoint"**
+
+Include:
+
+### A. GitHub verification
+
+Repository, branch, starting SHA, prerequisite status, final commit SHA and synchronization status.
+
+### B. Implementation summary
+
+What was actually completed.
+
+### C. Homepage document
+
+Explain the canonical PageDocument structure and component mapping.
+
+### D. Shared renderer integration
+
+Explain how the real homepage now renders through the shared architecture.
+
+### E. Section-by-section migration
+
+Provide a table showing the status of every existing homepage section.
+
+### F. Data binding
+
+Explain how existing product/category/settings data remains authoritative.
+
+### G. Dynamic category handling
+
+Explain category repetition, ordering, spotlight selection and progressive loading.
+
+### H. Header/footer composition
+
+Explain how duplication is prevented.
+
+### I. Visual parity report
+
+Actual before/after comparisons, differences, and limitations.
+
+### J. Responsive results
+
+Tested viewports and outstanding problems.
+
+### K. Animation compatibility
+
+Hero, celestial scrolling, card effects, and lifecycle findings.
+
+### L. Performance before migration
+
+Verified measurements and source findings.
+
+### M. Performance after migration
+
+Bundle changes, runtime measurements, regression analysis, and limitations.
+
+### N. Automated tests
+
+Commands executed, passing tests, failures, and unexecuted checks.
+
+### O. File-change inventory
+
+Every new or modified source file.
+
+### P. GitHub checkpoint
+
+Commit message, branch, commit SHA, push result and remote verification.
+
+### Q. Updated project documents
+
+Status of the four persistent handoff files.
+
+### R. Remaining technical issues
+
+Blocked work, known defects, and unresolved risks.
+
+### S. Prompt 8 readiness
+
+Identify the next implementation dependency according to the latest verified roadmap.
+
+### T. Final decision
+
+Choose:
+
+**GO**
+The homepage successfully uses the shared renderer, critical functionality passes, required parity evidence is sufficient, performance is acceptable, and the GitHub checkpoint is verified.
+
+**CONDITIONAL GO**
+The migration is implemented but specific documented verification or integration issues remain.
+
+**NO-GO**
+The migration is unsafe, prerequisites are missing, critical functionality has regressed, or the new rendering architecture cannot reliably reproduce the existing homepage.
+
+Provide evidence for the decision.
+
+---
+
+# FINAL EXECUTION DIRECTIVE
+
+Your highest priority is to make the existing landing page genuinely configuration-driven while preserving the current customer experience.
+
+Execute the following:
+
+1. Recover the latest GitHub project state.
+2. Verify Prompt 5 and Prompt 6.
+3. Read all handoff documentation.
+4. Audit the actual current homepage.
+5. Establish the current performance and visual baseline.
+6. Create the canonical default homepage document.
+7. Connect existing data queries to the shared rendering architecture.
+8. Adapt real homepage components without duplicating JSX.
+9. Preserve dynamically generated category sections and lazy loading.
+10. Prevent duplicate global header/footer rendering.
+11. Integrate the real homepage route through a controlled migration.
+12. Run functional, rendering, responsive, and hydration tests.
+13. Perform available browser visual comparisons.
+14. Audit performance before and after.
+15. Resolve regressions caused by this migration.
+16. Update all four persistent project documents.
+17. Review the Git diff.
+18. Commit and push verified implementation work.
+19. Verify the remote GitHub commit.
+20. Deliver the complete implementation report.
+
+**DO NOT BEGIN PROMPT 8 AUTOMATICALLY.**
+
+**DO NOT CLAIM A SUCCESSFUL MIGRATION UNTIL THE ACTUAL HOMEPAGE USES THE SHARED RENDERER.**
+
+**DO NOT CLAIM PIXEL-ACCURATE PARITY WITHOUT ACTUAL COMPARISON EVIDENCE.**
+
+**DO NOT CHANGE THE EXISTING LANDING-PAGE DESIGN UNLESS ABSOLUTELY NECESSARY AND EXPLICITLY DOCUMENTED.**
+
+Our long-term objective is a visual storefront design studio where users can directly drag, resize, reshape, rearrange, and customize every supported part of their actual landing page, including advanced product/category grids and small real-time previews.
+
+Prompt 7 must make the foundation real, stable, responsive, high-performance, and ready for future editing features.

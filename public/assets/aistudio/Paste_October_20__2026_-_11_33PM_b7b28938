@@ -1,0 +1,1944 @@
+# PROMPT 10 OF 48 — ADVANCED CANVAS SELECTION ENGINE, PRECISE DOM HIT-TESTING, ELEMENT GEOMETRY OVERLAYS, NESTED SELECTION, INTERACTION INFRASTRUCTURE, PERFORMANCE AUDIT & GITHUB CHECKPOINT
+
+## YOUR ROLE
+
+Act as a Principal Frontend Architect, Senior React 19 Engineer, Figma-Style Visual Editor Engineer, Browser Geometry Specialist, Advanced Pointer Interaction Engineer, TanStack Start Specialist, TypeScript Architect, UI/UX Systems Engineer, GitHub DevOps Specialist, and Production Performance Engineer.
+
+You are developing my existing SaaS affiliate-store application into a highly advanced visual storefront builder.
+
+**Repository:** https://github.com/Mukulsri369/ourvisibleuniversestore
+
+**Development Environment:** Google AI Studio — Argon 4
+
+**Roadmap:** 48 prompts across 10 phases.
+
+**Current Stage:** Phase 3 — Visual Editor Studio & Interaction Infrastructure.
+
+**Current Task:** Prompt 10 of 48.
+
+### PREVIOUS DEVELOPMENT MILESTONES
+
+- Prompt 1 — Repository architecture audit.
+- Prompt 2 — Compatibility and zero-regression contracts.
+- Prompt 3 — Editor technology evaluation.
+- Prompt 4 — Landing-page baseline capture.
+- Prompt 5 — PageDocument schema and validation.
+- Prompt 6 — Component registry and shared renderer.
+- Prompt 7 — Actual homepage integration.
+- Prompt 8 — Supabase persistence and draft foundation.
+- Prompt 9 — Admin Design Studio with live storefront canvas, layers, and inspector.
+
+---
+
+# PRIMARY OBJECTIVE
+
+Implement a high-precision visual element selection and interaction infrastructure that allows administrators to interact directly with the actual storefront rendered inside the Design Studio.
+
+The editor must feel closer to Figma, Webflow, and Shopify's professional theme editors than a conventional website settings panel.
+
+When an administrator moves the pointer over the storefront, supported editable elements should be detected accurately.
+
+When the administrator selects an element, the system must:
+
+1. Identify the correct registered component.
+2. Highlight its exact visual boundaries.
+3. Display its component name.
+4. Update the layer navigator.
+5. Update the contextual inspector.
+6. Read and display its dimensions.
+7. Preserve selection during scrolling and zooming.
+8. Distinguish nested components from their parents.
+9. Support keyboard-based selection.
+10. Respect locked and protected components.
+11. Prevent unintended navigation or affiliate tracking.
+12. Prepare for future dragging, resizing, and shape manipulation.
+
+The selection engine must operate on the **actual existing React storefront components**, not duplicated editor-only visual imitations.
+
+### Important scope clarification
+
+Prompt 10 builds the advanced selection, hit-testing, boundary measurement, and interaction infrastructure.
+
+Do not implement the complete drag-and-drop engine, resizing handles, rotation controls, or grid manipulation engine yet.
+
+Those features will use the infrastructure created here in subsequent prompts.
+
+---
+
+# PART 1 — GITHUB RECOVERY AND PREVIOUS PROMPT VALIDATION
+
+## 1. Verify the correct GitHub repository
+
+Connect to:
+
+https://github.com/Mukulsri369/ourvisibleuniversestore
+
+Before writing code, verify:
+
+- Repository identity.
+- Current local branch.
+- Remote branches.
+- Latest remote HEAD.
+- Current local HEAD.
+- Working-tree changes.
+- Uncommitted changes.
+- Unpushed commits.
+- Existing checkpoints.
+- Latest implementation status.
+
+A previously observed `main` SHA was:
+
+`28d80db39d13150eb69ae34405ba3c06e0792acc`
+
+This is a historical reference only.
+
+Fetch the latest current state.
+
+Do not assume previous commits, branches, or files have remained unchanged.
+
+## 2. Read persistent development documents
+
+Read:
+
+- `IMPLEMENTATION_PROGRESS.md`
+- `ARCHITECTURE_AUDIT.md`
+- `PERFORMANCE_BASELINE.md`
+- `AI_STUDIO_HANDOFF.md`
+
+These documents are essential for continuing work across different Google AI Studio accounts.
+
+Preserve existing implementation history.
+
+Verify all important status claims against actual source files.
+
+## 3. Recover Prompts 7, 8, and 9
+
+The previously visible remote repository documented Prompt 6 as completed.
+
+Prompts 7, 8, and 9 may exist in another AI Studio workspace or local branch without having been pushed.
+
+Inspect the available development state.
+
+Verify:
+
+### Prompt 7
+
+- Canonical homepage PageDocument.
+- Real homepage rendering through PageRenderer.
+- Actual product/category bindings.
+- Dynamic category sections.
+- Existing hero and celestial effects.
+- Fallback rendering.
+- Functional regression tests.
+
+### Prompt 8
+
+- Secure page persistence.
+- Private drafts.
+- Draft revision handling.
+- Publishing/version foundation.
+- Database migration files.
+- RLS protections.
+- Persistence tests.
+
+### Prompt 9
+
+- Protected `/admin/design` route.
+- Full-screen studio workspace.
+- Real storefront canvas.
+- Layer navigator.
+- Properties inspector.
+- Device viewport controls.
+- Canvas zoom.
+- Basic element selection.
+- Edit/Preview modes.
+- Draft loading and saving.
+
+Do not rebuild these features if they already exist.
+
+### Dependency gate
+
+If Prompt 9's studio is missing or critically incomplete, do not create a disconnected standalone selection demo and claim Prompt 10 is complete.
+
+Recover the existing work, identify missing prerequisites, and clearly report the blocker.
+
+Any required recovery must preserve the previously established schema, registry, renderer, persistence system, and Git history.
+
+## 4. Continue on the correct development branch
+
+Use the existing verified visual-editor branch.
+
+Preferred branch:
+
+`feature/visual-storefront-editor`
+
+Do not reset unrelated work.
+
+Do not force-push.
+
+Do not automatically merge into `main`.
+
+Do not overwrite uncommitted changes.
+
+At the end of the prompt, the implementation must be committed and pushed to the authorized development branch where credentials and tooling permit.
+
+---
+
+# PART 2 — AUDIT THE EXISTING SELECTION ARCHITECTURE
+
+## 5. Inspect the actual Design Studio implementation
+
+Locate the modules introduced in Prompt 9.
+
+Inspect:
+
+- Studio shell.
+- Central canvas.
+- Canvas rendering boundary.
+- Layer tree.
+- Properties inspector.
+- Toolbar.
+- Viewport controls.
+- Zoom implementation.
+- Edit/Preview mode.
+- Selection state.
+- Hover state.
+- Draft document state.
+
+Determine what already works and what requires enhancement.
+
+Do not assume names or locations for files without inspecting the repository.
+
+## 6. Inspect the existing shared renderer
+
+Pay particular attention to:
+
+- `src/lib/visual-editor/rendering/PageRenderer.tsx`
+- `src/lib/visual-editor/rendering/RenderNode.tsx`
+- `src/lib/visual-editor/rendering/RenderContext.tsx`
+- `src/lib/visual-editor/adapters/AdapterBoundary.tsx`
+- `src/lib/visual-editor/registry/component-registry.ts`
+- `src/lib/visual-editor/registry/component-capabilities.ts`
+- `src/lib/visual-editor/utils/node-tree.ts`
+
+Previous implementations have included:
+
+- `selectedNodeId`.
+- `hoveredNodeId`.
+- `onSelectNode`.
+- `onHoverNode`.
+- `data-editor-node-id`.
+- `RenderMode`.
+- Trusted component capabilities.
+- Capture-phase interaction interception.
+
+Verify their actual current implementation.
+
+Extend them where appropriate.
+
+Do not create competing selection callbacks or a second incompatible component identity system.
+
+---
+
+# PART 3 — DESIGN THE CENTRAL SELECTION ENGINE
+
+## 7. Implement a dedicated selection controller
+
+Create a reusable selection controller for the Design Studio.
+
+The controller should own the editor's selection interaction state.
+
+Conceptual state:
+
+- Selected node identity.
+- Hovered node identity.
+- Active selection hierarchy.
+- Selection source.
+- Selected runtime instance where applicable.
+- Pointer interaction mode.
+- Current active canvas.
+- Current viewport geometry.
+
+Do not duplicate the entire PageDocument in selection state.
+
+Selection should reference nodes by stable identity.
+
+### Selection sources
+
+Support selection initiated by:
+
+- Clicking the canvas.
+- Clicking a layer.
+- Keyboard navigation.
+- Navigating a parent-child breadcrumb.
+- Returning from Preview mode.
+- Restoring a saved editor UI state where appropriate.
+
+All selection sources must update the same underlying selection state.
+
+## 8. Maintain a single authoritative selection
+
+If a node is selected in the canvas:
+
+- The corresponding layer highlights.
+- The inspector shows that node.
+- The selection outline appears around the correct rendered element.
+
+If a node is selected in the layer tree:
+
+- The corresponding canvas element highlights.
+- The canvas scrolls it into view where possible.
+- The inspector updates.
+
+There must not be independent, conflicting selection states in each panel.
+
+---
+
+# PART 4 — PRECISE DOM HIT-TESTING
+
+## 9. Implement accurate component hit-testing
+
+When the pointer interacts with the canvas, determine the actual registered component underneath it.
+
+Support:
+
+- Nested containers.
+- Text blocks.
+- Images.
+- Buttons.
+- Product cards.
+- Category cards.
+- Product rails.
+- Hero sections.
+- Backgrounds.
+- Grid items.
+- Decorative elements where registered and supported.
+
+Use the existing registered node IDs.
+
+Prefer DOM event paths and trusted editor metadata rather than guessing identity from class names.
+
+Consider:
+
+- Event composed paths.
+- Closest registered node boundaries.
+- DOM element-to-node mapping.
+- Registered component capabilities.
+- Locked state.
+- Nested selection depth.
+
+Do not use brittle heuristics based only on tag names such as `DIV`, `IMG`, or `BUTTON`.
+
+## 10. Prioritize the most specific eligible element
+
+Example:
+
+Section
+→ ProductGrid
+→ GridItem
+→ ProductCard
+→ Image
+
+If the image is independently registered and selectable, clicking it should select that image node.
+
+If the image is part of a protected internal ProductCard implementation and is not independently represented in PageDocument, select the nearest eligible registered node instead.
+
+Do not pretend every internal DOM element is independently editable.
+
+### Important
+
+Distinguish between:
+
+**DOM descendants**
+
+and
+
+**editable PageDocument nodes**.
+
+Only valid, trusted registered nodes may be selected as independent editable objects.
+
+The same principle applies to buttons, decorative icons, and text within complex components.
+
+## 11. Handle overlapping elements
+
+Real storefronts may contain:
+
+- Absolute-positioned decorative elements.
+- Gradient overlays.
+- Fixed celestial backgrounds.
+- Floating buttons.
+- Stacking contexts.
+- Overlapping images.
+- Transparent elements.
+
+Hit-testing must respect actual visual stacking order while avoiding decorative overlays that should not intercept selection.
+
+Where several eligible nodes overlap, implement a predictable selection rule.
+
+Consider a modifier-assisted method for cycling between eligible ancestors or overlapping registered elements.
+
+Do not allow invisible background layers to make foreground elements impossible to select.
+
+---
+
+# PART 5 — NESTED ELEMENT SELECTION
+
+## 12. Support parent-child hierarchy navigation
+
+The editor must understand nested component relationships.
+
+When an element is selected, its hierarchy should be available.
+
+For example:
+
+Homepage
+→ Featured Products
+→ Product Collection
+→ Product Card Template
+
+Display an understandable selection breadcrumb.
+
+The administrator should be able to select the parent component from the breadcrumb or layer tree.
+
+## 13. Provide selection depth controls
+
+Support practical controls such as:
+
+- Select current node.
+- Select parent.
+- Select child through layers.
+- Navigate ancestors.
+- Clear selection.
+- Return to previous selection where practical.
+
+Use predictable keyboard shortcuts.
+
+For example:
+
+- `Escape` clears selection or exits an active temporary interaction.
+- A documented modifier combination can move to the parent.
+- Arrow keys navigate the focused layer tree.
+
+Choose shortcuts that do not interfere with browser navigation or text editing.
+
+Do not activate keyboard shortcuts when the administrator is typing into an input or textarea.
+
+## 14. Prepare deeper selection for later prompts
+
+Eventually, administrators should be able to select and customize individual headings, images, cards, and shapes within complex sections.
+
+However, the current schema may expose only a section or component boundary for some legacy components.
+
+Do not rewrite entire legacy components merely to add more selectable elements.
+
+Create an extensible model for exposing safe nested editable slots in later prompts.
+
+Record unsupported internal selection boundaries accurately.
+
+---
+
+# PART 6 — HANDLE REPEATED PRODUCT AND CATEGORY COMPONENTS
+
+## 15. Distinguish template identity from rendered instance identity
+
+The homepage contains dynamically repeated content.
+
+Examples:
+
+- Multiple products in one collection.
+- Multiple categories.
+- Repeated category spotlight sections.
+- Multiple cards using the same ProductCard template.
+
+A single PageDocument node may generate multiple runtime instances.
+
+Therefore, implement a clear identity model.
+
+Distinguish:
+
+### Definition identity
+
+The PageDocument node or reusable component template.
+
+### Runtime instance identity
+
+The specific rendered item associated with a product or category.
+
+For example:
+
+- ProductCard template node.
+- ProductCard instance for a particular product ID.
+
+The instance reference must not be confused with the product record itself.
+
+## 16. Generate stable runtime instance keys
+
+For repeated components, use deterministic identities derived from appropriate stable fields.
+
+Possible inputs:
+
+- Template node ID.
+- Product ID.
+- Category ID.
+- Stable collection instance ID.
+
+Avoid array indices when they could change with sorting or filtering.
+
+Do not use random IDs on every render.
+
+Avoid leaking sensitive business fields into DOM attributes.
+
+## 17. Selection behavior for repeated items
+
+When the administrator clicks a specific product card:
+
+- Identify the rendered product instance.
+- Identify its parent card template.
+- Update the correct layer context.
+- Display the selected component boundary.
+- Show only supported presentation properties.
+- Preserve the relationship to real product data.
+
+### Important distinction
+
+Selecting one rendered product card does not automatically mean the administrator is editing that product's database record.
+
+Design editing is separate from product management.
+
+The inspector should eventually distinguish:
+
+- Edit shared card template.
+- Edit collection layout.
+- Edit supported instance-specific presentation override, if implemented.
+
+Do not implement unsupported per-product design overrides prematurely.
+
+---
+
+# PART 7 — PRECISE ELEMENT GEOMETRY ENGINE
+
+## 18. Implement element boundary measurement
+
+The selection engine must know exactly where the selected component appears.
+
+Use browser geometry APIs appropriately.
+
+Investigate and use:
+
+- `getBoundingClientRect()`.
+- `ResizeObserver`.
+- Scroll events.
+- Visual viewport information where relevant.
+- CSS transform matrices where necessary.
+- Existing canvas viewport and zoom state.
+
+Do not rely on hardcoded offsets.
+
+Measure geometry from the actual rendered DOM.
+
+## 19. Define a geometry result contract
+
+Create a typed geometry structure capable of representing:
+
+- Node identity.
+- Runtime instance identity.
+- Bounding rectangle.
+- Width.
+- Height.
+- Top.
+- Left.
+- Right.
+- Bottom.
+- Canvas-relative position.
+- Viewport-relative position.
+- Current canvas scale.
+- Visibility status.
+- Clipping state.
+- Measurement validity.
+
+Distinguish between:
+
+- Document coordinates.
+- Canvas-local coordinates.
+- Viewport coordinates.
+- Overlay coordinates.
+
+Do not mix these coordinate spaces.
+
+## 20. Correctly handle canvas zoom
+
+Suppose an administrator displays a 1440px desktop canvas at 50% zoom.
+
+The underlying page must still behave like a 1440px viewport.
+
+The visible selection rectangle must align with the scaled rendering.
+
+Do not simply divide all coordinates by a fixed zoom number without verifying the actual transform hierarchy.
+
+Support the canvas hosting strategy selected in Prompt 9.
+
+If a same-origin iframe is used, account for its viewport, offset, and scrolling.
+
+If the canvas renders in the same document, account for the actual layout and transformation context.
+
+## 21. Handle nested transforms
+
+Some elements may already use CSS transforms or Motion animation transforms.
+
+For example:
+
+- Planet motion.
+- Product hover translation.
+- Decorative rotations.
+- Scale animations.
+- Carousel transitions.
+
+The measurement engine must distinguish between:
+
+**Visual bounding rectangle**
+
+and
+
+**Persistent design geometry**.
+
+Do not store an animation-transformed position as the element's saved layout.
+
+The visual overlay should follow the element's rendered position.
+
+The persistent geometry should continue to come from validated design configuration.
+
+This separation is essential for future drag-and-resize implementation.
+
+---
+
+# PART 8 — ACCURATE SELECTION OVERLAYS
+
+## 22. Implement a dedicated overlay layer
+
+Create editor-only overlays for selected and hovered nodes.
+
+The overlays must not modify the storefront's intrinsic layout.
+
+Suggested overlay elements:
+
+- Selection outline.
+- Hover outline.
+- Component name label.
+- Selection bounding box.
+- Optional dimensions label.
+- Optional breadcrumb control.
+
+Keep controls minimal and professional.
+
+### Required behavior
+
+- No added layout spacing.
+- No extra border affecting dimensions.
+- No change to CSS grid sizing.
+- No accidental clipping.
+- No interference with product images.
+- No alteration of the original storefront styles.
+
+Use a non-layout-affecting overlay approach.
+
+## 23. Synchronize overlay positions
+
+Selection overlays must remain aligned when:
+
+1. Canvas scrolls.
+2. Browser viewport resizes.
+3. Studio side panels resize.
+4. Device preset changes.
+5. Zoom level changes.
+6. Product carousel scrolls.
+7. A product image loads.
+8. Text reflows.
+9. Fonts finish loading.
+10. A category section appears progressively.
+11. Motion transforms change.
+12. A selected component is hidden.
+13. A selected component is removed.
+14. The canvas changes from Edit to Preview mode.
+
+Do not implement excessive continuous polling.
+
+Use event-driven updates and requestAnimationFrame scheduling where appropriate.
+
+## 24. Handle clipped and offscreen elements
+
+When an element is partially clipped by its container:
+
+- Keep the selection overlay aligned with the actual visible geometry.
+- Avoid drawing interactive controls outside the available editing surface without intention.
+- Handle internal scrolling containers.
+- Preserve accurate element identity.
+
+When the selected element is offscreen:
+
+- Keep its selection state.
+- Indicate its location in the layer panel.
+- Allow scrolling it back into view.
+- Avoid unnecessary geometry calculations for permanently hidden content.
+
+## 25. Support elements with multiple DOM fragments
+
+Some React components may produce:
+
+- Fragments.
+- Multiple sibling elements.
+- Portals.
+- Text nodes.
+- Complex nested layouts.
+
+Do not assume every React component maps to exactly one DOM element.
+
+Define a supported selection-boundary strategy.
+
+When a component spans multiple DOM fragments, either:
+
+- Measure a trusted set of associated elements, or
+- Select a stable existing logical boundary.
+
+Do not add arbitrary wrappers that break layouts simply to simplify hit-testing.
+
+---
+
+# PART 9 — SELECTION LABELS AND DIMENSION DISPLAY
+
+## 26. Display contextual selection information
+
+When a component is selected, show an unobtrusive label.
+
+Examples:
+
+- Hero Section.
+- Product Card.
+- Category Spotlight.
+- Heading.
+- Image.
+- Container.
+- Product Collection.
+
+Where useful, also show dimensions such as:
+
+`320 × 420`
+
+Distinguish rendered dimensions from saved design values.
+
+## 27. Implement smart label placement
+
+Selection labels should:
+
+- Stay readable.
+- Avoid overflowing the viewport.
+- Avoid covering important handles in later phases.
+- Reposition when near screen edges.
+- Remain visually stable during scrolling.
+- Avoid intercepting normal canvas interactions.
+
+Use existing design-system styling.
+
+Do not introduce large labels that obstruct the storefront.
+
+---
+
+# PART 10 — HOVER INTERACTION ENGINE
+
+## 28. Implement reliable hover detection
+
+When the pointer moves over an eligible element:
+
+- Determine the hovered registered node.
+- Show a subtle hover outline.
+- Avoid unnecessary React rerenders.
+- Respect locked/protected components.
+- Avoid excessive repeated updates.
+
+Do not run full document validation or expensive tree traversal on every pointer movement.
+
+## 29. Prevent hover flickering
+
+Hover outlines can flicker when:
+
+- Moving between nested elements.
+- Moving across an overlay.
+- Moving between text and image regions.
+- Scrolling a carousel.
+- Crossing overlapping elements.
+
+Implement stable hover ownership.
+
+Selection overlays should not become new hit-test targets that interfere with the underlying component.
+
+## 30. Optimize pointer movement
+
+Use appropriate event handling.
+
+Where pointermove measurement is necessary:
+
+- Batch updates with requestAnimationFrame.
+- Avoid redundant state changes.
+- Reuse cached element references where safe.
+- Prevent layout thrashing.
+- Clean up listeners.
+
+Do not add a global mousemove listener to every product card.
+
+Prefer a centralized canvas-level interaction strategy when compatible with the actual component tree.
+
+---
+
+# PART 11 — PROTECTED INTERACTION MODES
+
+## 31. Define explicit interaction states
+
+Establish a central interaction model suitable for future tools.
+
+Possible states:
+
+- Idle.
+- Hovering.
+- Selecting.
+- Navigating hierarchy.
+- Editing text.
+- Canvas panning.
+- Previewing.
+- Dragging — reserved for later implementation.
+- Resizing — reserved for later implementation.
+- Reshaping — reserved for later implementation.
+
+Only implement the states needed for Prompt 10.
+
+Define the ownership boundaries for future interactions.
+
+The system must not later allow selection, dragging, resizing, and carousel scrolling to compete for the same pointer event.
+
+## 32. Preserve Edit mode behavior
+
+In Edit mode:
+
+- Clicking a registered element selects it.
+- Selection overlays appear.
+- Hover outlines appear.
+- Inspector updates.
+- Product navigation is blocked.
+- Affiliate redirects are blocked.
+- Outbound click tracking is blocked.
+- Editing controls remain accessible.
+
+## 33. Preserve Preview mode behavior
+
+In Preview mode:
+
+- Selection overlays disappear.
+- Hover outlines disappear.
+- Editor node selection is disabled.
+- Preview interaction follows the verified policy.
+- Affiliate tracking is not polluted.
+- External redirects remain controlled.
+- Draft appearance remains visible.
+
+Do not create a new interaction policy that conflicts with `RenderContext.tsx`.
+
+Reuse the existing trusted interaction mode architecture.
+
+---
+
+# PART 12 — SECURITY AND AFFILIATE BEHAVIOR
+
+## 34. Protect existing storefront functionality
+
+The public storefront must remain unchanged.
+
+Preserve:
+
+- Product links.
+- Category links.
+- Search links.
+- Quick-preview behavior.
+- Affiliate buttons.
+- Outbound click tracking.
+- Header navigation.
+- Footer navigation.
+
+Editor selection must not accidentally initiate any of these customer actions.
+
+## 35. Intercept interactions safely
+
+Use the existing adapter interaction boundaries where appropriate.
+
+Inspect their event-capture behavior carefully.
+
+Pay special attention to:
+
+- Nested anchors.
+- Buttons.
+- Product cards.
+- Quick-preview buttons.
+- Modals.
+- Keyboard activation.
+- Touch interaction.
+- Portal content.
+
+Do not globally block all clicks outside the canvas.
+
+Do not weaken existing security controls.
+
+## 36. Protect data-bound fields
+
+Selection must never modify:
+
+- Product prices.
+- Affiliate URLs.
+- Product identities.
+- Category identities.
+- Inventory state.
+- Administrator permissions.
+
+Selection is a design interaction.
+
+Business data remains authoritative in the existing application.
+
+---
+
+# PART 13 — LAYER PANEL SYNCHRONIZATION
+
+## 37. Synchronize selection with the layer tree
+
+When a canvas component is selected:
+
+- Highlight the corresponding layer.
+- Expand its ancestors if necessary.
+- Scroll the layer into view.
+- Preserve current document hierarchy.
+- Show the correct selected type.
+
+When a layer is selected:
+
+- Highlight its canvas element.
+- Scroll it into view.
+- Update the inspector.
+- Preserve the selected node ID.
+
+## 38. Support dynamic runtime instances
+
+The layer panel should distinguish between:
+
+- A template node.
+- A repeated section.
+- A rendered item instance.
+
+Do not insert fake permanent nodes into the PageDocument just to show repeated products.
+
+Use stable runtime instance metadata.
+
+## 39. Handle hidden and locked nodes
+
+Hidden elements:
+
+- Remain discoverable in the layer tree where appropriate.
+- Do not generate visible canvas selection outlines when not rendered.
+- Can be identified as hidden.
+
+Locked elements:
+
+- May be inspectable.
+- Must not be editable through unsupported operations.
+- Must not receive future drag/resize permissions merely because a user clicks them.
+
+The trusted registry capabilities remain authoritative.
+
+---
+
+# PART 14 — PROPERTIES INSPECTOR SYNCHRONIZATION
+
+## 40. Connect selection to the actual inspector
+
+When a new element is selected:
+
+- Update its component name.
+- Display type.
+- Display supported properties.
+- Show rendered dimensions.
+- Show saved geometry.
+- Show responsive overrides.
+- Show relevant shape properties.
+- Show editing limitations.
+
+Do not display stale properties from the previously selected element.
+
+## 41. Distinguish actual and configured geometry
+
+Example:
+
+The selected card may render at:
+
+`288px × 370px`
+
+But the saved configuration may be:
+
+- Width: auto.
+- Grid span: 1.
+- Aspect ratio: inherited.
+- Radius: 16px.
+
+Display these concepts accurately.
+
+Do not automatically replace responsive layout rules with fixed pixel values merely because an element is selected.
+
+## 42. Prepare future visual editing
+
+The inspector should eventually integrate with:
+
+- Drag resizing.
+- Shape handles.
+- Typography controls.
+- Grid manipulation.
+- Responsive editing.
+- Animation controls.
+
+Prompt 10 should establish the correct geometry and selection data flow.
+
+Do not prematurely implement all advanced controls.
+
+---
+
+# PART 15 — KEYBOARD AND ACCESSIBILITY
+
+## 43. Implement keyboard navigation
+
+Support practical keyboard operations for selection.
+
+At minimum:
+
+- Focusable layer items.
+- Arrow navigation through the layer tree.
+- Enter/Space activation where appropriate.
+- Escape to clear selection or exit a temporary selection mode.
+- Keyboard focus visibility.
+- Parent navigation through a documented shortcut or accessible breadcrumb.
+
+Avoid stealing keyboard shortcuts from text inputs.
+
+## 44. Implement accessible selection feedback
+
+Selected state should be recognizable without relying only on color.
+
+Use:
+
+- Clear visual outlines.
+- Selected labels.
+- Accessible state attributes.
+- Keyboard focus feedback.
+- Meaningful component names.
+
+Do not create non-semantic clickable elements without suitable keyboard behavior.
+
+## 45. Support reduced motion
+
+Selection UI transitions should respect reduced-motion preferences.
+
+Do not introduce distracting repeated animations around selected components.
+
+---
+
+# PART 16 — RESPONSIVE VIEWPORT AND ZOOM ACCURACY
+
+## 46. Verify every viewport mode
+
+Test the selection engine at:
+
+- 360px.
+- 390px.
+- 768px.
+- 1024px.
+- 1440px.
+- 1920px.
+
+These widths refer to the actual canvas content viewport, not necessarily the admin browser window.
+
+Selection must remain accurate across breakpoints.
+
+## 47. Verify zoom levels
+
+Test representative canvas zoom levels:
+
+- 25%.
+- 50%.
+- 75%.
+- 100%.
+- Fit to workspace.
+
+Selection boundaries must align precisely at each supported zoom level.
+
+Zoom must not modify stored design properties.
+
+## 48. Verify scrolling contexts
+
+Test:
+
+- Main canvas scrolling.
+- Horizontal product rail scrolling.
+- Nested overflow containers.
+- Long category lists.
+- Fixed elements.
+- Sticky elements.
+- Browser viewport resizing.
+
+If using an iframe canvas, verify coordinate mapping across the parent document and child document.
+
+If using in-document rendering, verify scroll offsets and transform scaling.
+
+Do not claim coordinate accuracy based only on JSDOM.
+
+Real browser geometry validation is necessary.
+
+---
+
+# PART 17 — CELESTIAL, HERO AND ANIMATION COMPATIBILITY
+
+## 49. Special handling for PlanetHero
+
+The existing hero may include:
+
+- Videos.
+- Animated planets.
+- Text overlays.
+- Interactive planet selection.
+- Buttons.
+- Scroll effects.
+
+Ensure clicking the hero in Edit mode selects an appropriate registered element.
+
+Do not allow the hero's internal animations to disrupt the selection overlay.
+
+Do not rebuild its DOM.
+
+## 50. Special handling for CelestialScrollWorld
+
+The celestial world may occupy a fixed layer behind the storefront.
+
+Ensure:
+
+- It does not intercept normal foreground selection.
+- It remains selectable through layers where supported.
+- It is not wrapped in a clipping container.
+- Its global scroll behavior remains intact.
+- Its geometry does not distort the selected foreground elements.
+
+Do not claim individual celestial objects are independently editable unless they are registered and supported.
+
+## 51. Animated geometry synchronization
+
+When Motion changes an element's transform:
+
+- Selection boundaries should track the actual rendered position where required.
+- Persistent design geometry must remain unchanged.
+- Updates should not cause unnecessary React rerenders.
+- Animation resource usage must remain controlled.
+
+Do not poll every DOM element continuously.
+
+Use an efficient strategy for the selected or currently hovered animated element.
+
+---
+
+# PART 18 — PERFORMANCE AUDIT BEFORE IMPLEMENTATION
+
+## 52. Read existing performance records
+
+Open:
+
+`PERFORMANCE_BASELINE.md`
+
+Review:
+
+- Last verified commit.
+- Test environment.
+- Homepage bundle.
+- Studio bundle.
+- Existing rendering benchmarks.
+- Known scrolling problems.
+- Browser measurement limitations.
+- Current runtime warnings.
+
+Record the starting conditions for Prompt 10.
+
+## 53. Audit interaction-related performance
+
+Investigate risks involving:
+
+- Frequent pointer events.
+- DOM hit-testing.
+- Nested traversal.
+- Geometry measurement.
+- Selection-state updates.
+- ResizeObserver events.
+- Scroll listeners.
+- Zoom transforms.
+- Sidebar rerenders.
+- Inspector rerenders.
+- Animated element tracking.
+- Long pages with many products.
+
+Identify potential performance bottlenecks before implementation.
+
+---
+
+# PART 19 — PERFORMANCE-FIRST IMPLEMENTATION
+
+## 54. Optimize selection latency
+
+Set an explicit performance objective for responsive selection.
+
+Use the following as engineering targets, not claims of current performance:
+
+- Selection should feel immediate.
+- Hover outlines should update smoothly.
+- Expensive work must not block pointer interaction.
+- Selection changes should avoid remounting heavy components.
+- Overlay updates should aim to stay within the browser frame budget.
+
+At 60Hz, one frame is approximately 16.67ms.
+
+Use this as a reference when evaluating work performed during interactive frames.
+
+Do not interpret the entire 16.67ms as available for the selection engine alone.
+
+## 55. Avoid full-document updates
+
+Selecting or hovering an element must not:
+
+- Rewrite the PageDocument.
+- Trigger a Supabase save.
+- Increment a draft revision.
+- Revalidate the entire document unnecessarily.
+- Refetch products.
+- Recreate the PageRenderer.
+- Restart videos.
+- Reinitialize Three.js scenes.
+
+Selection is editor UI state, not a document modification.
+
+## 56. Use efficient geometry updates
+
+Prefer:
+
+- Centralized measurement.
+- Cached references where valid.
+- requestAnimationFrame batching.
+- ResizeObserver for dimension changes.
+- Scroll-aware updates.
+- Selective observer subscriptions.
+- Cleanup on unmount.
+
+Avoid:
+
+- A ResizeObserver on every product in a large catalog without need.
+- Repeated forced synchronous layout.
+- Excessive full-document queries.
+- Unbounded pointermove handlers.
+- Expensive object allocation for every hover event.
+
+---
+
+# PART 20 — POST-IMPLEMENTATION PERFORMANCE AUDIT
+
+## 57. Measure actual interaction performance
+
+Where browser automation is available, test:
+
+- Time from click to selection outline update.
+- Hover detection response.
+- Selection during scrolling.
+- Overlay position accuracy.
+- Zoom-switch performance.
+- Layer-tree synchronization.
+- Inspector update time.
+- Repeated nested selection.
+- Animated element selection.
+- Memory behavior.
+
+Record the environment and measurement method.
+
+Do not fabricate results.
+
+## 58. Benchmark large documents
+
+Test representative PageDocuments with:
+
+- 25 nodes.
+- 150 nodes.
+- 500 nodes.
+- 1,000 nodes.
+
+These are representative testing scales, not subscription limits.
+
+Assess:
+
+- Node lookup.
+- Element identity lookup.
+- Selection update.
+- Layer synchronization.
+- Geometry measurement.
+- Hover update.
+
+Avoid full tree scans on every pointer movement where a direct lookup is possible.
+
+## 59. Verify public bundle isolation
+
+The public storefront must not import editor-only:
+
+- Selection overlays.
+- Geometry inspector infrastructure.
+- Editor pointer controllers.
+- Layer-tree interaction code.
+- Future drag-and-drop engines.
+
+Verify bundle separation.
+
+An admin editor may require additional JavaScript, but ordinary customers should not download it.
+
+---
+
+# PART 21 — AUTOMATED TESTING
+
+## 60. Selection controller tests
+
+Test:
+
+1. Selecting a registered node.
+2. Selecting a nested node.
+3. Selecting a parent.
+4. Clearing selection.
+5. Preserving selection across inspector updates.
+6. Selecting a node through the layer tree.
+7. Handling missing node IDs.
+8. Handling hidden nodes.
+9. Handling locked nodes.
+10. Switching rendering modes.
+
+## 61. Hit-testing tests
+
+Test:
+
+- Nested DOM structures.
+- Deepest eligible node.
+- Decorative overlays.
+- Overlapping elements.
+- Product cards.
+- Buttons.
+- Images.
+- Transparent overlays.
+- Runtime repeated instances.
+- Event paths across registered boundaries.
+
+Do not assume all browser hit-testing APIs behave identically in JSDOM.
+
+Use real browser tests where necessary.
+
+## 62. Geometry tests
+
+Test:
+
+- Basic rectangles.
+- Nested scrolling.
+- Canvas zoom.
+- Viewport switching.
+- Element resizing due to responsive layout.
+- Animation transforms.
+- Partially clipped elements.
+- Offscreen elements.
+- Missing DOM elements.
+- Invalidated measurements.
+
+## 63. Overlay tests
+
+Verify:
+
+- Selection overlay aligns with measured geometry.
+- Hover outline does not affect layout.
+- Overlay does not intercept underlying element selection.
+- Scrolling updates outline position.
+- Zoom updates geometry.
+- Side panel resizing does not misalign the overlay.
+- Hidden nodes do not display ghost outlines.
+
+## 64. Product and affiliate protection tests
+
+Verify that clicking a ProductCard in Edit mode:
+
+- Selects the intended registered node.
+- Does not navigate.
+- Does not open retailer links.
+- Does not log outbound clicks.
+- Does not mutate product data.
+
+Public mode must continue behaving as before.
+
+## 65. Dynamic section tests
+
+Verify:
+
+- Stable product instance identities.
+- Stable category instance identities.
+- Correct selection after list reordering.
+- Correct selection after progressive loading.
+- No stale overlay after a node is removed.
+- No incorrect selection when a category changes.
+
+## 66. Accessibility tests
+
+Verify:
+
+- Keyboard selection.
+- Focus visibility.
+- Layer-tree navigation.
+- Selection labeling.
+- Shortcut suppression inside text fields.
+- Reduced-motion behavior.
+
+## 67. Build and regression tests
+
+Run applicable:
+
+- TypeScript checks.
+- ESLint.
+- Vitest.
+- Production build.
+- Admin route tests.
+- Public storefront tests.
+- Browser interaction tests where available.
+
+Report exact commands and results.
+
+Do not claim successful verification for tests not executed.
+
+---
+
+# PART 22 — REAL BROWSER VALIDATION
+
+## 68. Verify geometric accuracy in an actual browser
+
+Selection geometry is inherently dependent on browser layout.
+
+Therefore, JSDOM tests alone are insufficient to demonstrate pixel-accurate overlays.
+
+Where available, run browser tests with Playwright or another suitable browser automation system.
+
+Measure and compare:
+
+- Selected element bounding rectangle.
+- Overlay bounding rectangle.
+- Coordinate differences.
+- Behavior after scrolling.
+- Behavior after zoom.
+- Behavior after responsive changes.
+
+Record appropriate tolerances.
+
+Account for:
+
+- Subpixel rounding.
+- Device pixel ratio.
+- Browser zoom.
+- Font rendering.
+- CSS transforms.
+- Animation state.
+
+If browser tooling is unavailable, document that limitation clearly.
+
+Do not report exact overlay parity without real browser evidence.
+
+---
+
+# PART 23 — RECOMMENDED SOURCE ARCHITECTURE
+
+## 69. Extend the existing studio
+
+A possible modular structure:
+
+src/
+  components/
+    visual-editor/
+      selection/
+        SelectionOverlay.tsx
+        HoverOverlay.tsx
+        SelectionLabel.tsx
+        SelectionBreadcrumb.tsx
+        ElementDimensions.tsx
+
+  lib/
+    visual-editor/
+      interactions/
+        selection-controller.ts
+        selection-state.ts
+        hit-testing.ts
+        interaction-modes.ts
+        keyboard-selection.ts
+        runtime-node-identity.ts
+
+      geometry/
+        geometry-types.ts
+        geometry-measurement.ts
+        coordinate-transform.ts
+        overlay-positioning.ts
+        geometry-observer.ts
+
+      __tests__/
+        selection-controller.test.ts
+        hit-testing.test.ts
+        coordinate-transform.test.ts
+        selection-overlay.test.tsx
+        interaction-safety.test.tsx
+
+These filenames are conceptual.
+
+Inspect the actual Prompt 9 implementation and follow its existing structure.
+
+Avoid unnecessary abstraction.
+
+Do not create a second store or selection system if suitable infrastructure already exists.
+
+---
+
+# PART 24 — STRICT SCOPE LIMITATIONS
+
+## 70. Implement in Prompt 10
+
+Implement:
+
+- Centralized selection controller.
+- Accurate registered-node hit-testing.
+- Nested component selection.
+- Parent hierarchy navigation.
+- Runtime instance identity.
+- Geometry measurement.
+- Coordinate transformation.
+- Selection overlay.
+- Hover overlay.
+- Component labels.
+- Dimension display.
+- Layer-tree synchronization.
+- Inspector synchronization.
+- Keyboard selection.
+- Lock and visibility handling.
+- Preview mode compatibility.
+- Scroll and zoom accuracy.
+- Tests.
+- Performance audit.
+- GitHub continuity.
+
+## 71. Do not implement yet
+
+Do NOT implement:
+
+- Full element drag-and-drop.
+- Eight-direction resizing handles.
+- Interactive rotation controls.
+- Border-radius drag handles.
+- Complete freeform positioning.
+- Grid-track resizing.
+- Masonry/bento layout editor.
+- Full product-card design panel.
+- Multi-selection/group transformations.
+- Animation timeline.
+- Full undo/redo engine.
+- AI theme generation.
+- New product-management functionality.
+
+Prepare stable integration contracts for these features.
+
+Do not expose controls that imply these features already work.
+
+---
+
+# PART 25 — IMPLEMENTATION EXECUTION ORDER
+
+## 72. Follow this sequence
+
+### Step 1 — GitHub recovery
+Verify repository, branch, previous commits, and handoff files.
+
+### Step 2 — Dependency verification
+Verify Prompts 7–9.
+
+### Step 3 — Architecture inspection
+Review the existing canvas, renderer, selection state, and adapter boundaries.
+
+### Step 4 — Performance baseline
+Record existing studio performance.
+
+### Step 5 — Selection controller
+Implement centralized, typed selection state.
+
+### Step 6 — Runtime identity
+Support registered node and repeated instance identification.
+
+### Step 7 — DOM hit-testing
+Implement nearest eligible component detection and nested selection.
+
+### Step 8 — Geometry engine
+Implement actual DOM measurement and coordinate transformations.
+
+### Step 9 — Selection overlays
+Implement accurate visual highlighting and labels.
+
+### Step 10 — Hover controller
+Implement efficient hover tracking.
+
+### Step 11 — Layers synchronization
+Connect canvas selection to the real layer navigator.
+
+### Step 12 — Inspector synchronization
+Display accurate selected-node information and geometry.
+
+### Step 13 — Keyboard navigation
+Implement accessible hierarchy navigation.
+
+### Step 14 — Interaction protection
+Prevent customer actions during selection.
+
+### Step 15 — Responsive verification
+Test zoom, viewport changes, and scrolling.
+
+### Step 16 — Automated tests
+Run unit and integration tests.
+
+### Step 17 — Browser tests
+Verify actual geometry where tooling permits.
+
+### Step 18 — Performance audit
+Measure selection latency, memory, and bundle impact.
+
+### Step 19 — Regression remediation
+Resolve introduced issues.
+
+### Step 20 — Documentation
+Update permanent progress records.
+
+### Step 21 — GitHub checkpoint
+Commit and push verified changes.
+
+### Step 22 — Remote verification
+Confirm the commit exists on the intended branch.
+
+### Step 23 — Final report
+Provide actual implementation and testing evidence.
+
+---
+
+# PART 26 — GITHUB DOCUMENTATION REQUIREMENTS
+
+## 73. Update IMPLEMENTATION_PROGRESS.md
+
+Record:
+
+- Prompt 10 status.
+- Selection controller implementation.
+- Hit-testing features.
+- Supported nested selections.
+- Geometry engine.
+- Overlay implementation.
+- Keyboard functionality.
+- Runtime instance handling.
+- Tests performed.
+- Performance findings.
+- Known limitations.
+- Next implementation task.
+
+## 74. Update ARCHITECTURE_AUDIT.md
+
+Document:
+
+- Selection architecture.
+- DOM identity strategy.
+- Runtime instance identity.
+- Hit-testing algorithm.
+- Geometry coordinate systems.
+- Overlay positioning.
+- Pointer event ownership.
+- Nested selection rules.
+- Lock/visibility rules.
+- Renderer integration.
+- Performance decisions.
+- Future drag/resize integration requirements.
+
+## 75. Update PERFORMANCE_BASELINE.md
+
+Record:
+
+- Starting commit.
+- Test environment.
+- Selection latency.
+- Hover update behavior.
+- Geometry measurement cost.
+- Zoom/scroll performance.
+- Studio bundle changes.
+- Public bundle impact.
+- Memory/observer findings.
+- Verified regressions.
+- Unavailable browser metrics.
+
+Do not invent measurements.
+
+## 76. Update AI_STUDIO_HANDOFF.md
+
+Include:
+
+- Repository URL.
+- Development branch.
+- Last verified completed prompt.
+- Prompt 10 implementation details.
+- Geometry APIs.
+- Selection controller APIs.
+- Overlay modules.
+- Test results.
+- Performance results.
+- Known limitations.
+- GitHub synchronization status.
+- Exact next prompt.
+- Required files for the next AI Studio account.
+
+Do not store secrets or access tokens.
+
+---
+
+# PART 27 — GITHUB COMMIT AND PUSH
+
+## 77. Review all changes
+
+Before committing:
+
+- Verify active branch.
+- Inspect changed files.
+- Confirm no unrelated modifications.
+- Confirm no secrets staged.
+- Run tests.
+- Verify public storefront compatibility.
+- Verify no unexpected database changes.
+- Check editor bundle isolation.
+- Confirm cleanup of experimental code.
+
+## 78. Create the Prompt 10 commit
+
+Recommended conventional commit message:
+
+`feat(editor): add precision selection and canvas geometry engine`
+
+Push to the verified development branch.
+
+Do not force-push.
+
+Do not push directly to `main` unless an explicitly authorized project workflow requires it.
+
+Do not merge automatically.
+
+## 79. Verify remote synchronization
+
+After pushing:
+
+1. Fetch remote HEAD.
+2. Confirm expected commit.
+3. Verify files exist remotely.
+4. Verify tests are committed.
+5. Verify all four progress documents.
+6. Report final commit SHA.
+7. Report remaining uncommitted changes.
+
+If the push fails, report the failure honestly and preserve the local work.
+
+---
+
+# PART 28 — DEFINITION OF DONE
+
+Prompt 10 is complete only when the following are verified.
+
+### Selection engine
+
+- Centralized selection state.
+- Correct registered-node hit-testing.
+- Nested selection.
+- Parent selection.
+- Stable runtime instance identity.
+- Layer synchronization.
+- Inspector synchronization.
+- Keyboard selection.
+
+### Geometry
+
+- Accurate bounding rectangles.
+- Correct canvas-local coordinates.
+- Correct zoom transformations.
+- Correct scroll offsets.
+- Responsive viewport accuracy.
+- Overlay alignment.
+- Safe handling of hidden/offscreen nodes.
+
+### Interaction
+
+- Hover highlights work.
+- Selected outlines work.
+- Labels display correctly.
+- Locked nodes are respected.
+- Public navigation remains unchanged.
+- Edit-mode affiliate actions are prevented.
+- Preview mode remains functional.
+
+### Performance
+
+- No full document saves on selection.
+- No full-tree validation per pointer event.
+- No unnecessary heavy-component remounting.
+- Event listeners and observers clean up.
+- Public bundle remains isolated from editor-only code.
+- Performance measurements are recorded where possible.
+
+### Testing
+
+- Selection tests pass.
+- Hit-testing tests pass.
+- Geometry tests pass.
+- Integration tests pass.
+- Public storefront regression tests pass.
+- Browser geometry validation is completed where available, otherwise clearly marked incomplete.
+- Existing admin functionality remains unaffected.
+
+### GitHub
+
+- Correct branch verified.
+- Previous work preserved.
+- Documentation updated.
+- Source reviewed.
+- Verified implementation committed.
+- Push attempted through the authorized workflow.
+- Remote commit verified before reporting success.
+- Cross-account handoff prepared.
+
+Do not mark unverified requirements as passed.
+
+---
+
+# PART 29 — REQUIRED FINAL REPORT
+
+Produce a detailed report titled:
+
+**"Visual Storefront Editor — Prompt 10 Precision Selection, Geometry Engine, Performance Audit & GitHub Checkpoint"**
+
+Include:
+
+### A. GitHub repository verification
+Repository, branch, starting commit, prerequisite status, final commit and push result.
+
+### B. Selection architecture
+Central controller, state ownership, node identity, and runtime instances.
+
+### C. Hit-testing
+DOM event handling, nested selection, overlaps, and limitations.
+
+### D. Geometry engine
+Measurement APIs, coordinate spaces, zoom, and scrolling.
+
+### E. Selection overlays
+Positioning, labels, hover highlights, and synchronization.
+
+### F. Layer and inspector integration
+How selection state is shared across the studio.
+
+### G. Keyboard accessibility
+Shortcuts, focus behavior, and supported navigation.
+
+### H. Interaction safety
+Customer navigation, affiliate tracking, and protected components.
+
+### I. Responsive behavior
+Device presets, zoom levels, and coordinate accuracy.
+
+### J. Animation compatibility
+PlanetHero, CelestialScrollWorld, and transformed elements.
+
+### K. Performance before implementation
+Verified baseline.
+
+### L. Performance after implementation
+Selection latency, geometry update performance, bundle changes, and memory behavior.
+
+### M. Automated tests
+Executed commands, pass/fail results, and blocked checks.
+
+### N. Browser verification
+Actual geometric accuracy, measured differences, and limitations.
+
+### O. File inventory
+Every file created or modified.
+
+### P. GitHub checkpoint
+Commit message, branch, final SHA, and remote verification.
+
+### Q. Progress documentation
+Status of the four permanent documents.
+
+### R. Known issues
+Unsupported selection types, unresolved bugs, and technical risks.
+
+### S. Next prompt readiness
+Architecture dependencies for future drag-and-drop and resizing.
+
+### T. Final readiness decision
+
+Choose:
+
+**GO** — Precision selection, geometry, synchronization, testing, performance verification, and GitHub checkpoint are sufficiently complete.
+
+**CONDITIONAL GO** — Core implementation works but documented verification or integration issues remain.
+
+**NO-GO** — Missing prerequisites, serious selection inaccuracies, broken interaction protection, critical regressions, or unrecoverable GitHub synchronization problems prevent safe continuation.
+
+Explain the decision with evidence.
+
+---
+
+# FINAL EXECUTION DIRECTIVE
+
+Begin by connecting to the GitHub repository and recovering the latest verified development state.
+
+Confirm that the Design Studio from Prompt 9 actually exists and works.
+
+Then implement the advanced selection and geometry infrastructure using the current shared renderer, registry, and component identities.
+
+Deliver:
+
+1. A unified selection controller.
+2. Accurate hit-testing for supported components.
+3. Nested selection and hierarchy navigation.
+4. Stable runtime identities for repeated product/category components.
+5. Correct browser geometry measurement.
+6. Reliable coordinate transformations.
+7. Responsive and zoom-aware selection overlays.
+8. Smooth hover highlighting.
+9. Layer-tree and inspector synchronization.
+10. Keyboard accessibility.
+11. Safe interaction interception.
+12. Performance-optimized geometry updates.
+13. Comprehensive automated tests.
+14. Real browser verification where possible.
+15. Before/after performance analysis.
+16. Updated project documentation.
+17. A verified GitHub checkpoint.
+18. A complete implementation report.
+
+**DO NOT CREATE A SECOND OR FAKE STOREFRONT RENDERER.**
+
+**DO NOT MODIFY PRODUCT PRICES, AFFILIATE URLS, OR OTHER PROTECTED BUSINESS DATA.**
+
+**DO NOT ALLOW EDITOR SELECTION TO TRIGGER AFFILIATE TRACKING.**
+
+**DO NOT USE EXPENSIVE FULL-DOCUMENT VALIDATION DURING POINTER MOVEMENT.**
+
+**DO NOT CLAIM PIXEL-ACCURATE GEOMETRY WITHOUT REAL BROWSER MEASUREMENTS.**
+
+**DO NOT CLAIM GITHUB PUSH SUCCESS WITHOUT REMOTE VERIFICATION.**
+
+**DO NOT BEGIN PROMPT 11 AUTOMATICALLY.**
+
+The final objective is to establish a precise, extensible visual interaction foundation that can later support Figma-style element dragging, edge/corner resizing, shape manipulation, snapping, alignment, and advanced responsive grid editing—all on the actual storefront without damaging its existing appearance, animations, or affiliate functionality.

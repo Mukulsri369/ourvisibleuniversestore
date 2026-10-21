@@ -13,7 +13,7 @@ import {
   insertChildNode,
   removeNodeById,
   reorderChildNodes,
-   resolveResponsiveStyle,
+  resolveResponsiveStyle,
   safeParsePageDocument,
   serializePageDocument,
   updateNodeById,

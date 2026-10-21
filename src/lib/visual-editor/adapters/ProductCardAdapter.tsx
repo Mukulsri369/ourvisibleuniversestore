@@ -3,6 +3,11 @@ import { ProductCard } from "@/components/store/ProductCard";
 import type { ComponentAdapterRenderProps } from "../registry/component-registry";
 import { usePageRenderContext } from "../rendering/RenderContext";
 import { resolveSingleProduct } from "../rendering/data-resolver";
+import {
+  resolveImageCropCssProperties,
+  resolveNodeCssProperties,
+} from "../rendering/style-resolver";
+import type { NodeStyleBundle } from "../schema/responsive";
 import { AdapterBoundary } from "./AdapterBoundary";
 
 /**
@@ -10,7 +15,8 @@ import { AdapterBoundary } from "./AdapterBoundary";
  * - Preserves 100% of product business data (`id`, `name`, `price`, `currency`, `affiliate_url`, `images`, `category`).
  * - Supports reusable card template styles via `cardTemplates["ProductCard"]` or `cardTemplates["ProductCardCompact"]`
  *   in `PageRenderContext` so updating a template updates all cards without mutating product records.
- * - Protects navigation and outbound affiliate clicks in `editor`, `preview`, and `mini_preview` modes.
+ * - Passes card-level visual overrides (`borderRadius`, `clipPath`, `backgroundColor`, `border`, `boxShadow`, `padding`, `imageCrop`)
+ *   directly to the rendered `<article>` and `<ProductImage>` so the actual card visually updates while preserving image clipping.
  */
 export function ProductCardAdapter({ node, resolvedStyle }: ComponentAdapterRenderProps) {
   const {
@@ -34,6 +40,20 @@ export function ProductCardAdapter({ node, resolvedStyle }: ComponentAdapterRend
   const templateKey = isCompact ? "ProductCardCompact" : "ProductCard";
   const templateBaseStyle = cardTemplates[templateKey] ?? cardTemplates.ProductCard;
 
+  const mergedStyleBundle: NodeStyleBundle = templateBaseStyle
+    ? {
+        ...templateBaseStyle,
+        ...resolvedStyle,
+        geometry: { ...templateBaseStyle.geometry, ...resolvedStyle.geometry },
+        shape: { ...templateBaseStyle.shape, ...resolvedStyle.shape },
+        layout: { ...templateBaseStyle.layout, ...resolvedStyle.layout },
+        appearance: { ...templateBaseStyle.appearance, ...resolvedStyle.appearance },
+      }
+    : resolvedStyle;
+
+  const cardSurfaceStyle = resolveNodeCssProperties(mergedStyleBundle);
+  const imageCropStyle = resolveImageCropCssProperties(mergedStyleBundle.shape?.imageCrop);
+
   return (
     <AdapterBoundary
       node={node}
@@ -43,6 +63,8 @@ export function ProductCardAdapter({ node, resolvedStyle }: ComponentAdapterRend
       <ProductCard
         p={product}
         compact={isCompact}
+        style={cardSurfaceStyle}
+        imageStyle={imageCropStyle}
         onQuickPreview={
           interactionPolicy.allowQuickPreviewModal ? onQuickPreviewProduct : undefined
         }

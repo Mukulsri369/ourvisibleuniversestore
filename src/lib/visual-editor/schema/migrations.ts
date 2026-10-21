@@ -71,7 +71,9 @@ export function checkSchemaVersionCompatibility(input: unknown): SchemaVersionCh
 
 export function migratePageDocumentPayload(
   input: unknown,
-): { ok: true; payload: Record<string, unknown>; migratedFrom?: string } | { ok: false; error: string } {
+):
+  | { ok: true; payload: Record<string, unknown>; migratedFrom?: string }
+  | { ok: false; error: string } {
   const check = checkSchemaVersionCompatibility(input);
   if (!check.compatible) {
     return { ok: false, error: check.reason ?? "Incompatible schema version" };

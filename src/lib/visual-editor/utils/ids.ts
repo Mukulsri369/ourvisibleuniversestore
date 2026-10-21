@@ -12,9 +12,7 @@ export function createDeterministicNodeId(
   sequenceNumber: number,
   prefix = "node",
 ): string {
-  const normalizedType = componentType
-    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
-    .toLowerCase();
+  const normalizedType = componentType.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
   const safePrefix = prefix.replace(/[^a-zA-Z0-9_-]/g, "").toLowerCase() || "node";
   return `${safePrefix}-${normalizedType}-${Math.max(0, Math.floor(sequenceNumber))}`;
 }

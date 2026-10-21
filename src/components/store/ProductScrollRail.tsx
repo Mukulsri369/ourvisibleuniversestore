@@ -20,6 +20,8 @@ interface ProductScrollRailProps {
   items: ProductCardData[];
   className?: string;
   variant?: "default" | "festive";
+  railGapPx?: number;
+  editorParentNodeId?: string;
 }
 
 export function ProductScrollRail({
@@ -31,6 +33,8 @@ export function ProductScrollRail({
   items,
   className = "",
   variant = "default",
+  railGapPx,
+  editorParentNodeId,
 }: ProductScrollRailProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -221,6 +225,7 @@ export function ProductScrollRail({
         {/* Single-Line Horizontal Scroll Container */}
         <div
           ref={scrollRef}
+          style={railGapPx !== undefined ? { gap: `${railGapPx}px` } : undefined}
           className="flex gap-2 sm:gap-3.5 lg:gap-4 overflow-x-auto scrollbar-none scroll-smooth pb-3 pt-1 px-4 sm:px-0 -mx-4 sm:mx-0 snap-x snap-mandatory"
           tabIndex={0}
           role="region"
@@ -231,6 +236,9 @@ export function ProductScrollRail({
               key={p.id}
               p={p}
               compact
+              editorInstanceId={
+                editorParentNodeId ? `${editorParentNodeId}::product::${p.id}` : undefined
+              }
               onQuickPreview={(prod) => setPreviewProduct(prod)}
             />
           ))}

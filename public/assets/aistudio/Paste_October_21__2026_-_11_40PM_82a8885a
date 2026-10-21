@@ -1,0 +1,2188 @@
+# PROMPT 12 OF 48 — ADVANCED CONTEXTUAL PROPERTIES INSPECTOR, REAL-TIME STYLE EDITING, RESPONSIVE OVERRIDES, COMPONENT CUSTOMIZATION, PERFORMANCE AUDIT & GITHUB CHECKPOINT
+
+## YOUR ROLE
+
+Act as a Principal Frontend Architect, Senior React 19 Engineer, Visual Editor Systems Architect, Figma/Webflow-Style Properties Inspector Engineer, CSS Layout Specialist, TypeScript and Zod Validation Engineer, TanStack Start Specialist, GitHub DevOps Engineer, and Production Performance Engineer.
+
+You are developing my existing SaaS affiliate-store application into a professional no-code visual storefront builder.
+
+**GitHub Repository:** https://github.com/Mukulsri369/ourvisibleuniversestore
+
+**Development Environment:** Google AI Studio — Argon 4
+
+**Roadmap:** 48 prompts across 10 phases.
+
+**Current Stage:** Phase 3 — Visual Editor Studio and Interactive Customization.
+
+**Current Task:** Prompt 12 of 48.
+
+### PREVIOUS DEVELOPMENT MILESTONES
+
+- Prompt 1 — Repository architecture audit.
+- Prompt 2 — Compatibility and zero-regression contracts.
+- Prompt 3 — Visual editing technology evaluation.
+- Prompt 4 — Original landing-page baseline.
+- Prompt 5 — Versioned PageDocument schema.
+- Prompt 6 — Component registry and shared renderer.
+- Prompt 7 — Real homepage migration.
+- Prompt 8 — Supabase drafts and version persistence.
+- Prompt 9 — Full-screen Design Studio.
+- Prompt 10 — Precision selection and geometry engine.
+- Prompt 11 — Advanced layer management and structural editing.
+
+---
+
+# PRIMARY OBJECTIVE
+
+Implement an advanced, context-aware Properties Inspector inside the existing Design Studio.
+
+The inspector must enable administrators to customize supported elements of the actual storefront visually.
+
+When an administrator selects an editable component, the properties panel must show the real design properties supported by that component.
+
+Changes must update the actual page immediately.
+
+The final workflow should resemble professional tools such as Webflow, Figma, and Shopify's theme editor while remaining accessible to nontechnical users.
+
+The administrator should be able to:
+
+1. Select an element on the real storefront canvas.
+2. Inspect its actual component type and capabilities.
+3. View rendered dimensions and stored design properties.
+4. Change supported width and height settings.
+5. Adjust padding, margin, and gaps.
+6. Modify compatible layout properties.
+7. Customize colors and backgrounds.
+8. Change typography.
+9. Modify borders and shadows.
+10. Change supported shapes and corner radii.
+11. Adjust image presentation where supported.
+12. Apply responsive overrides.
+13. Reset properties to inherited or original values.
+14. See changes immediately in the central canvas.
+15. Save the edited design as a private draft.
+16. Refresh the studio and recover the saved design.
+17. Preserve the original published storefront until an authorized publishing operation occurs.
+
+**Most important requirement:**
+
+Every enabled inspector control must update a real, supported property through the existing PageDocument and shared renderer.
+
+Do not create visually impressive but nonfunctional controls.
+
+Do not create a second rendering system.
+
+Do not rebuild the storefront as an imitation.
+
+---
+
+# PART 1 — GITHUB RECOVERY AND CONTINUITY
+
+## 1. Verify the correct GitHub repository
+
+Connect to:
+
+https://github.com/Mukulsri369/ourvisibleuniversestore
+
+Retrieve:
+
+- Repository identity.
+- Current branch.
+- Latest remote commit.
+- Local HEAD.
+- Available branches.
+- Working-tree status.
+- Uncommitted modifications.
+- Unpushed commits.
+- Existing development checkpoints.
+
+A previously observed `main` commit was:
+
+`28d80db39d13150eb69ae34405ba3c06e0792acc`
+
+This SHA is only a historical reference.
+
+Always fetch the latest remote state.
+
+Do not blindly overwrite existing work.
+
+## 2. Read persistent implementation documents
+
+Read:
+
+- `IMPLEMENTATION_PROGRESS.md`
+- `ARCHITECTURE_AUDIT.md`
+- `PERFORMANCE_BASELINE.md`
+- `AI_STUDIO_HANDOFF.md`
+
+These files are essential for switching between Google AI Studio accounts.
+
+Preserve existing history.
+
+Verify documentation claims against actual code.
+
+## 3. Verify Prompts 7–11
+
+Before implementation, confirm the real existence and functional status of:
+
+### Prompt 7
+- Canonical homepage document.
+- Actual PageRenderer integration.
+- Data binding.
+- Existing storefront fallback.
+
+### Prompt 8
+- Private drafts.
+- Draft retrieval.
+- Validated saving.
+- Revision conflicts.
+- Published-version isolation.
+
+### Prompt 9
+- Design Studio route.
+- Real canvas.
+- Layers panel.
+- Properties Inspector shell.
+- Responsive viewport controls.
+- Working draft state.
+
+### Prompt 10
+- Selection controller.
+- Node identity.
+- Geometry measurement.
+- Selection boundaries.
+- Canvas-to-inspector synchronization.
+
+### Prompt 11
+- Structural command layer.
+- Rename/reorder/duplicate operations.
+- Visibility and locking.
+- Layer tree.
+- Validated document updates.
+- Draft persistence integration.
+
+Do not recreate these features if they already exist.
+
+If work exists in an AI Studio workspace but has not been pushed to GitHub, preserve and reconcile it.
+
+If a critical prerequisite is unavailable, identify the blocker rather than inventing an incompatible implementation.
+
+## 4. Continue on the correct development branch
+
+Use the verified development branch.
+
+Preferred:
+
+`feature/visual-storefront-editor`
+
+Do not force-push.
+
+Do not discard uncommitted work.
+
+Do not automatically merge into `main`.
+
+Do not modify unrelated source files.
+
+---
+
+# PART 2 — AUDIT THE EXISTING PROPERTY SYSTEM
+
+## 5. Inspect the current styling architecture
+
+Inspect the actual implementations of:
+
+- `src/lib/visual-editor/schema/geometry.ts`
+- `src/lib/visual-editor/schema/layout.ts`
+- `src/lib/visual-editor/schema/shapes.ts`
+- `src/lib/visual-editor/schema/appearance.ts`
+- `src/lib/visual-editor/schema/responsive.ts`
+- `src/lib/visual-editor/schema/media.ts`
+- `src/lib/visual-editor/schema/nodes.ts`
+- `src/lib/visual-editor/schema/validation.ts`
+- `src/lib/visual-editor/rendering/style-resolver.ts`
+- `src/lib/visual-editor/rendering/responsive-styles.ts`
+- `src/lib/visual-editor/registry/component-capabilities.ts`
+- `src/lib/visual-editor/registry/component-registry.ts`
+- `src/lib/visual-editor/utils/responsive-resolution.ts`
+- `src/lib/visual-editor/utils/node-tree.ts`
+
+Also inspect the actual Design Studio inspector and draft state implementation.
+
+Do not assume these files remain unchanged.
+
+## 6. Reuse the existing property contracts
+
+The repository has previously defined:
+
+- `GeometryConfig`
+- `ShapeConfig`
+- `AppearanceConfig`
+- `TypographyConfig`
+- `NodeStyleBundle`
+- `ResponsiveOverrides`
+- `EditorBreakpoint`
+- `resolveNodeCssProperties`
+- `resolveResponsiveNodePresentation`
+- `resolveResponsiveStyle`
+- `updateNodeStyle`
+- Trusted component capabilities.
+
+Verify their current APIs.
+
+Use these contracts as the basis of the new inspector.
+
+**Do not introduce a separate untyped styling model or a parallel collection of generic CSS strings.**
+
+## 7. Audit component-level styling limitations
+
+The current component registry may explicitly restrict certain properties.
+
+Previously documented examples include:
+
+- PlanetHero internal typography and layout controls.
+- CelestialScrollWorld geometry and shape manipulation.
+- ProductScrollRail grid/bento/masonry modes.
+- Component-specific image cropping limitations.
+
+Inspect current trusted capability definitions.
+
+Build a matrix identifying:
+
+- Properties fully supported.
+- Properties conditionally supported.
+- Properties inherited from parent components.
+- Properties not yet supported.
+- Properties forbidden for security or business reasons.
+
+Do not display unsupported properties as editable.
+
+---
+
+# PART 3 — DESIGN A METADATA-DRIVEN PROPERTIES INSPECTOR
+
+## 8. Create a property-definition system
+
+Implement a reusable metadata-driven inspector architecture.
+
+A property definition should conceptually describe:
+
+- Property identifier.
+- Display label.
+- Property group.
+- Value type.
+- Supported units.
+- Default value behavior.
+- Validation requirements.
+- Compatible component types.
+- Required component capability.
+- Responsive support.
+- Reset behavior.
+- Editor control type.
+- Appropriate tooltip/help text.
+
+Possible control types:
+
+- Numeric input.
+- Unit selector.
+- Slider.
+- Toggle.
+- Segmented selector.
+- Dropdown.
+- Text input.
+- Color picker.
+- Gradient editor.
+- Corner-radius control.
+- Spacing control.
+- Asset selector where supported.
+
+Use trusted application definitions.
+
+Do not allow arbitrary PageDocument JSON to inject its own privileged inspector controls.
+
+## 9. Avoid a giant component-specific switch statement
+
+Do not implement hundreds of hardcoded conditions such as:
+
+`if selectedNode.type === "ProductCard" ...`
+
+throughout the inspector UI.
+
+Prefer component capability definitions and reusable property editors.
+
+However, avoid unnecessary abstraction when specialized component behavior genuinely requires a dedicated inspector section.
+
+The architecture must balance reuse with real component-specific functionality.
+
+## 10. Build property groups
+
+Organize the right inspector into meaningful sections.
+
+Recommended groups:
+
+**General**
+- Component name.
+- Type.
+- Visibility.
+- Lock status.
+- Selected breakpoint.
+
+**Layout**
+- Width and height.
+- Minimum/maximum dimensions.
+- Positioning.
+- Alignment.
+- Grid and flex settings where supported.
+
+**Spacing**
+- Padding.
+- Margin.
+- Row gap.
+- Column gap.
+
+**Appearance**
+- Background color.
+- Gradient.
+- Border.
+- Shape.
+- Corner radius.
+- Shadow.
+- Opacity.
+
+**Typography**
+- Font.
+- Size.
+- Weight.
+- Line height.
+- Letter spacing.
+- Alignment.
+- Text color.
+
+**Media**
+- Image fit.
+- Focal point.
+- Aspect ratio.
+- Existing asset reference.
+
+**Responsive**
+- Inherited values.
+- Current breakpoint overrides.
+- Reset override.
+
+**Advanced**
+- Supported animation parameters.
+- Protected data binding information.
+- Unsupported-property explanations.
+
+Show only relevant sections for the selected component.
+
+---
+
+# PART 4 — INSPECTOR USER EXPERIENCE
+
+## 11. Create a professional interface
+
+The inspector must have:
+
+- Compact, organized controls.
+- Clear labels.
+- Predictable spacing.
+- Appropriate icons.
+- Real input values.
+- Useful tooltips.
+- Smooth but restrained transitions.
+- Collapsible property sections.
+- Keyboard accessibility.
+- Clear validation errors.
+- Reset buttons.
+- Inherited-value indicators.
+
+The interface must be understandable to nontechnical store owners.
+
+Do not require administrators to understand CSS syntax for common operations.
+
+## 12. Display component identity
+
+When an element is selected, show:
+
+- Friendly component name.
+- Component type.
+- Lock status.
+- Responsive mode.
+- Relevant dimensions.
+- Trusted editing capabilities.
+
+If no element is selected, display useful guidance rather than stale controls.
+
+If a hidden or removed component is selected, update the inspector safely.
+
+## 13. Preserve inspector state appropriately
+
+When switching between selected components:
+
+- Update the displayed values.
+- Avoid stale property data.
+- Preserve relevant expanded sections.
+- Reset temporary invalid input where appropriate.
+- Do not overwrite edits accidentally.
+- Maintain keyboard focus when safe.
+
+Do not trigger draft saves merely because a property section was expanded.
+
+---
+
+# PART 5 — ACTUAL VALUES, INHERITED VALUES AND OVERRIDES
+
+## 14. Distinguish property origins
+
+The inspector must distinguish:
+
+1. Existing component CSS defaults.
+2. Global theme token values.
+3. Parent/inherited values.
+4. Base PageDocument values.
+5. Breakpoint-specific overrides.
+6. Actual computed browser values.
+
+These concepts are not interchangeable.
+
+### Example
+
+A ProductCard might visually render with a 16px corner radius even though the PageDocument does not explicitly store a radius.
+
+The inspector should not silently save `16px` merely because the component was selected.
+
+It should identify the existing value as inherited or default where possible.
+
+## 15. Implement reliable reset behavior
+
+Every editable property should offer an appropriate reset mechanism.
+
+Reset should remove the explicit override at the relevant property path and restore inherited or original behavior.
+
+Do not replace the property with a guessed default value.
+
+### Essential test
+
+Initial ProductCard:
+- Uses original appearance.
+
+Administrator changes radius:
+- Actual card becomes visibly more rounded.
+
+Administrator clicks Reset:
+- The original component appearance returns exactly.
+
+This pattern should apply to all supported visual properties.
+
+## 16. Avoid accidental default-style changes
+
+When a property has not been customized, preserve the current component's original CSS and styling.
+
+The existing renderer's principle must remain:
+
+**No explicit visual override → original storefront appearance.**
+
+Do not automatically serialize browser-computed values into every PageDocument node.
+
+---
+
+# PART 6 — REAL-TIME PROPERTY EDITING PIPELINE
+
+## 17. Implement one authoritative update path
+
+All inspector changes must follow a controlled data pipeline:
+
+Admin selects component
+→ Inspector reads its configuration
+→ User changes a supported property
+→ Validate the proposed value
+→ Apply an immutable PageDocument update
+→ Resolve responsive styling
+→ Render through the existing component adapter
+→ Actual canvas changes
+→ Mark working draft dirty
+→ Save through existing persistence when requested.
+
+Do not directly mutate DOM styles as the only source of truth.
+
+Direct DOM style changes may be used for transient interactions in later phases, but committed values must exist in PageDocument.
+
+## 18. Separate transient input from committed values
+
+Numeric inputs and color fields may contain intermediate values while the administrator is typing.
+
+For example, entering `120` may temporarily produce an input containing `1` or `12`.
+
+Do not reject every intermediate keystroke by resetting the field.
+
+Use temporary control state where appropriate.
+
+Validate and commit at suitable boundaries.
+
+For controls designed for immediate feedback, use safe incremental updates.
+
+Do not send a database request for every keystroke.
+
+## 19. Validate property updates centrally
+
+Before accepting a property change:
+
+- Check node existence.
+- Check effective lock state.
+- Check trusted capabilities.
+- Check property support.
+- Check value type.
+- Check allowed unit.
+- Check numeric limits.
+- Check responsive breakpoint.
+- Check data-binding boundaries.
+
+Return structured errors.
+
+Do not silently ignore invalid values.
+
+## 20. Respect locked components
+
+A locked component or a component under a locked ancestor must not be modified through the inspector.
+
+The inspector may show values in read-only mode.
+
+The lock behavior must agree with Prompt 11's structural command system.
+
+Do not create an inspector-specific bypass.
+
+---
+
+# PART 7 — DIMENSIONS AND GEOMETRY CONTROLS
+
+## 21. Implement width and height editing
+
+For supported components, expose:
+
+- Width.
+- Height.
+- Minimum width.
+- Minimum height.
+- Maximum width.
+- Maximum height.
+- Aspect ratio.
+
+Use the existing validated dimension types.
+
+Where appropriate, support:
+
+- px.
+- %.
+- rem.
+- vw.
+- vh.
+- auto.
+- Other units already approved by the schema.
+
+Do not expose unsupported units.
+
+## 22. Build a numeric dimension editor
+
+The administrator should be able to:
+
+- Enter a number.
+- Select a supported unit.
+- Increase/decrease by keyboard.
+- Reset to inherited/auto.
+- See the actual canvas update.
+- Understand invalid values.
+
+Do not allow NaN, Infinity, malformed expressions, or unrestricted CSS injection.
+
+## 23. Support aspect-ratio constraints
+
+For components that support aspect ratios, allow:
+
+- Existing ratio.
+- Custom ratio.
+- Lock/unlock behavior.
+- Reset to original.
+
+Do not automatically force fixed heights on components that currently depend on content.
+
+Avoid breaking responsive text layout.
+
+## 24. Separate rendered dimensions from saved constraints
+
+The inspector must show the difference between:
+
+- Actual rendered width and height.
+- Saved width/height configuration.
+- Maximum-width constraint.
+- Parent layout influence.
+- Responsive override.
+
+Do not replace a flexible card's width with a fixed pixel value just because its measured width is 300px.
+
+---
+
+# PART 8 — SPACING CONTROLS
+
+## 25. Implement padding controls
+
+Support:
+
+- Top.
+- Right.
+- Bottom.
+- Left.
+
+Provide a clear spacing editor.
+
+Where useful, support linked sides.
+
+When linked, changing one value should update the intended linked sides.
+
+When unlinked, sides should remain independent.
+
+Use the existing `SpacingBox` schema.
+
+## 26. Implement margin controls
+
+Support valid margins for components whose trusted capabilities allow them.
+
+Do not expose margin controls for elements whose layout cannot support them safely.
+
+Avoid arbitrary negative values unless the current validated geometry model explicitly permits and safely handles them.
+
+## 27. Implement gap controls
+
+For compatible containers, support:
+
+- General gap.
+- Row gap.
+- Column gap.
+
+The canvas must visibly update when these properties change.
+
+Do not expose gap controls on leaf elements that do not contain layout children.
+
+## 28. Preserve responsive spacing
+
+Changes to spacing must respect the active breakpoint.
+
+For example:
+
+- Desktop padding: 48px.
+- Mobile padding: 16px.
+
+Editing mobile must not unintentionally replace desktop values.
+
+Provide reset-to-inherited behavior.
+
+---
+
+# PART 9 — FLEXBOX AND GRID PROPERTY CONTROLS
+
+## 29. Implement supported container layout controls
+
+For registered layout containers, expose appropriate controls.
+
+### Flexbox
+
+- Direction.
+- Wrap.
+- Justification.
+- Alignment.
+- Gap.
+- Grow/shrink where supported.
+- Basis where supported.
+
+### CSS Grid
+
+- Column count.
+- Row configuration.
+- Gap.
+- Alignment.
+- Auto-flow where supported.
+- Item spans.
+- Grid placement.
+
+Use the existing layout schema.
+
+## 30. Restrict advanced layout modes
+
+The project will eventually support:
+
+- Bento.
+- Masonry.
+- Carousel.
+- Editorial layout.
+- Freeform positioning.
+
+However, do not show a mode switch unless the current component adapter actually supports it.
+
+For example, do not claim `ProductScrollRail` supports a full Masonry layout merely because the schema contains a masonry type.
+
+Full product/category grid designer functionality belongs to later prompts.
+
+## 31. Prevent invalid combinations
+
+Validate:
+
+- Grid span within valid constraints.
+- Supported layout modes.
+- Compatible parent type.
+- Suitable responsive behavior.
+- Allowed sizing values.
+
+Do not allow inspector changes that cause malformed PageDocument configuration.
+
+---
+
+# PART 10 — COLORS AND BACKGROUNDS
+
+## 32. Implement a real color picker
+
+Support validated color configuration.
+
+The existing appearance schema has supported formats such as:
+
+- Hex.
+- RGB/RGBA.
+- HSL/HSLA.
+- OKLCH.
+- Approved theme token references.
+
+Verify the actual allowed formats.
+
+Provide:
+
+- Color picker.
+- Textual color input.
+- Opacity where appropriate.
+- Current color preview.
+- Reset control.
+- Clear validation feedback.
+
+Avoid importing a heavyweight color-editor library without evaluating its bundle impact.
+
+## 33. Support theme tokens
+
+Where a component uses a global design token, the inspector should display that relationship.
+
+For example:
+
+- Primary.
+- Accent.
+- Foreground.
+- Background.
+- Card.
+- Border.
+
+Changing one element's color should not automatically overwrite the global token unless the administrator explicitly chooses to edit the global theme through an authorized control.
+
+Global theme editing belongs to a later dedicated phase.
+
+The inspector should support local overrides safely.
+
+## 34. Implement background styling
+
+For compatible components, support:
+
+- Solid color.
+- Approved gradient configuration.
+- Opacity.
+- Background image reference where already supported.
+
+Use the current style resolver.
+
+Do not inject arbitrary CSS.
+
+## 35. Implement gradient controls where supported
+
+Allow editing valid gradient properties, including:
+
+- Gradient type.
+- Supported direction or angle.
+- Gradient stops.
+- Stop colors.
+- Stop positions.
+
+Reject unsupported configurations.
+
+Where a complex existing gradient cannot yet be safely edited, preserve it and report that limitation.
+
+---
+
+# PART 11 — BORDERS, SHADOWS AND VISUAL EFFECTS
+
+## 36. Implement border controls
+
+For supported components, expose:
+
+- Border width.
+- Border color.
+- Border style.
+- Approved border configuration.
+- Reset.
+
+The applied result must be visible on the actual target component.
+
+Avoid adding layout-changing wrapper borders when the intention is to style the existing card.
+
+## 37. Implement shadow and glow controls
+
+Use the existing validated shadow schema.
+
+Support appropriate settings such as:
+
+- Shadow preset.
+- Horizontal offset.
+- Vertical offset.
+- Blur.
+- Spread.
+- Color.
+- Opacity.
+
+Do not allow unbounded expensive visual effects.
+
+Respect mobile performance.
+
+## 38. Implement opacity and filters
+
+Where supported, expose:
+
+- Opacity.
+- Blur.
+- Brightness.
+- Contrast.
+- Saturation.
+- Other existing safe filter properties.
+
+Verify schema and renderer support.
+
+Do not invent unsupported filter parameters.
+
+Apply clear limits to expensive effects.
+
+---
+
+# PART 12 — SHAPE AND CORNER-RADIUS CONTROLS
+
+## 39. Implement shape presets
+
+One of our major requirements is customizable component shape.
+
+For supported elements, expose approved presets such as:
+
+- Square.
+- Rectangle.
+- Rounded rectangle.
+- Pill.
+- Circle.
+- Ellipse.
+- Supported polygon presets.
+
+Use the existing `ShapeConfig` and `SHAPE_TYPES`.
+
+The actual component must change shape visually when a supported preset is selected.
+
+## 40. Implement corner-radius editing
+
+Support:
+
+- Uniform radius.
+- Independent top-left radius.
+- Independent top-right radius.
+- Independent bottom-right radius.
+- Independent bottom-left radius.
+- Supported units.
+- Reset.
+
+Provide linked/unlinked corner controls.
+
+For example:
+
+An administrator selects a supported card and changes the radius from inherited to 24px.
+
+The actual card should become more rounded immediately.
+
+The component's product links and content must remain functional.
+
+## 41. Preserve image and content clipping
+
+Changing radius should not unintentionally leave images protruding outside the card.
+
+Investigate:
+
+- Outer border radius.
+- Image container radius.
+- Overflow.
+- Existing hover transitions.
+- Product badges.
+- CTA regions.
+
+If the current component requires a safe optional presentation prop to apply card-level radius correctly, implement it with backward-compatible defaults.
+
+Do not simply round an outer wrapper while the actual inner card remains visually unchanged.
+
+## 42. Do not implement direct shape handles yet
+
+This prompt implements inspector-based shape and radius editing.
+
+Dragging the corner of a selected card to reshape it belongs to a later geometric interaction phase.
+
+Prepare the property APIs so that future direct-manipulation handles can call the same validated update pathway.
+
+---
+
+# PART 13 — TYPOGRAPHY CONTROLS
+
+## 43. Implement typography editing
+
+For registered text-capable nodes, expose supported properties:
+
+- Font family.
+- Font size.
+- Font weight.
+- Line height.
+- Letter spacing.
+- Text alignment.
+- Text transformation.
+- Text decoration.
+- Text color.
+
+Use the existing `TypographyConfig` schema.
+
+Do not store arbitrary remote font URLs without a trusted asset/loading strategy.
+
+## 44. Protect layout and readability
+
+Typography changes should update the actual canvas without breaking basic accessibility or rendering behavior.
+
+Validate:
+
+- Reasonable font sizes.
+- Safe line height.
+- Supported font values.
+- Text contrast warnings where practical.
+- Responsive wrapping.
+- Overflow.
+- Component geometry.
+
+Do not silently truncate content to accommodate a new font size.
+
+## 45. Separate design typography from content editing
+
+Changing a product title's font size must not change the product name in Supabase.
+
+Changing a marketing heading's visible text is a content operation.
+
+Changing its typography is a presentation operation.
+
+Keep these operations separate.
+
+Do not allow design controls to rewrite protected product records.
+
+---
+
+# PART 14 — MEDIA PRESENTATION CONTROLS
+
+## 46. Support safe image presentation
+
+For components whose adapters support it, expose:
+
+- Object-fit.
+- Image aspect ratio.
+- Focal point.
+- Object-position.
+- Image opacity.
+- Supported crop configuration.
+
+Use existing media and shape contracts.
+
+## 47. Preserve image sources
+
+Changing image cropping or fit must not rewrite product-image records or asset ownership.
+
+The inspector should modify presentation configuration only.
+
+Do not replace actual product images with demo assets.
+
+## 48. Do not build the full media manager yet
+
+A complete media library and asset uploader belong to later prompts.
+
+This phase may display existing asset references or connect to an already implemented safe selection interface.
+
+Do not create a second media-storage system.
+
+---
+
+# PART 15 — RESPONSIVE PROPERTY EDITING
+
+## 49. Implement breakpoint-aware inspector state
+
+The existing schema has included breakpoint identifiers such as:
+
+- `desktop`
+- `desktop_xl`
+- `tablet`
+- `mobile`
+- `mobile_sm`
+
+Verify their actual definitions and resolution order.
+
+Reuse the existing responsive system.
+
+Do not create a second breakpoint inheritance engine.
+
+## 50. Show inherited versus overridden properties
+
+At each breakpoint, indicate whether the displayed value is:
+
+- Explicitly configured.
+- Inherited.
+- Based on the legacy component.
+- Coming from a theme token.
+- A rendered computed value.
+
+Make this understandable without overwhelming the administrator.
+
+## 51. Implement responsive overrides
+
+Example:
+
+Base configuration:
+- Width: auto.
+- Radius: 16px.
+
+Mobile override:
+- Width: 100%.
+- Radius: 12px.
+
+The administrator should be able to edit the mobile values without changing base configuration.
+
+Switching back to desktop should resolve the appropriate existing values.
+
+## 52. Implement reset override
+
+Allow removing an override for the currently selected breakpoint.
+
+Resetting a single property should not erase unrelated overrides in the same responsive object.
+
+For example:
+
+Reset mobile padding
+must not erase mobile typography changes.
+
+Use precise immutable path updates.
+
+## 53. Validate nested responsive overrides
+
+Test partial nested updates.
+
+For example:
+
+Existing mobile override:
+
+- Typography font size: 16px.
+- Geometry padding: 12px.
+
+Administrator changes mobile font weight.
+
+The new font weight must be added without losing font size or padding.
+
+Ensure the existing responsive resolver merges nested properties according to the documented contract.
+
+If the current resolution implementation contains a defect, fix it through a small, tested, compatible change.
+
+Do not silently replace the schema.
+
+## 54. Keep viewport simulation accurate
+
+If the studio shows a mobile canvas at 390px, the inspector must resolve styles for that actual viewport configuration.
+
+Canvas zoom must not change breakpoint inheritance.
+
+A 390px canvas at 75% visual zoom must still use the same mobile style settings.
+
+Do not confuse viewport width with screen space occupied by the inspector.
+
+---
+
+# PART 16 — COMPONENT-SPECIFIC PROPERTY SUPPORT
+
+## 55. Build a verified component-property matrix
+
+Inspect the real registry and adapters for:
+
+- Heading.
+- Text.
+- Section.
+- Container.
+- Grid.
+- GridItem.
+- Image.
+- Button.
+- ProductCard.
+- CategoryCard.
+- ProductScrollRail.
+- ProductGrid.
+- CategoryGrid.
+- CategorySpotlightHero.
+- PlanetHero.
+- CelestialScrollWorld.
+- StoreHeader.
+- StoreFooter.
+
+For each component, identify exactly which inspector controls can produce genuine visual changes.
+
+## 56. Prioritize meaningful end-to-end editing
+
+Ensure representative components support real customization.
+
+At minimum, where the existing architecture permits, validate end-to-end editing for:
+
+1. A generic Section.
+2. A Heading or Text element.
+3. An Image.
+4. A Container or Grid.
+5. A product or category card presentation property.
+6. A responsive property override.
+
+Do not claim card customization works if the property only changes an invisible outer wrapper.
+
+Verify that the actual card appearance changes.
+
+## 57. Preserve specialized components
+
+PlanetHero and CelestialScrollWorld must retain their existing animation and rendering behavior.
+
+Do not expose arbitrary geometry or typography controls for internal elements that the component does not yet support.
+
+Implement controlled optional presentation props only where technically safe, necessary, and covered by compatibility tests.
+
+Defer complex animation and celestial geometry editing to their dedicated development phases.
+
+---
+
+# PART 17 — REAL-TIME CANVAS UPDATE REQUIREMENTS
+
+## 58. Implement immediate preview
+
+When a valid property changes:
+
+- The working PageDocument updates.
+- The existing PageRenderer receives the change.
+- The actual component updates.
+- The selection outline recalculates if geometry changed.
+- The inspector displays the new value.
+- The draft becomes unsaved.
+
+No manual page refresh should be required.
+
+## 59. Preserve component identity
+
+Changing the background color of one card should not unnecessarily remount:
+
+- PlanetHero.
+- CelestialScrollWorld.
+- Unrelated carousels.
+- Other product cards.
+
+Preserve stable keys and component identities.
+
+Avoid remounting the whole homepage for every property change.
+
+## 60. Avoid layout distortion
+
+Direct style updates must respect:
+
+- Existing Tailwind classes.
+- Existing CSS variables.
+- Existing media queries.
+- Parent layout constraints.
+- Responsive configuration.
+- Animation transforms.
+
+Do not use global CSS overrides to implement single-component edits.
+
+The property should affect the intended selected component.
+
+---
+
+# PART 18 — DRAFT MANAGEMENT AND SAVE BEHAVIOR
+
+## 61. Reuse the existing working document state
+
+The inspector must modify the same working draft managed by the Design Studio.
+
+Do not create an inspector-only copy that can diverge from the canvas.
+
+There must be one authoritative working PageDocument.
+
+## 62. Integrate Save Draft
+
+Changes must be recoverable through the persistence system from Prompt 8.
+
+Test:
+
+1. Select a component.
+2. Change a supported property.
+3. See the actual change.
+4. Save the draft.
+5. Receive confirmed success.
+6. Refresh the studio.
+7. See the saved property restored.
+
+The published website must remain unchanged.
+
+## 63. Preserve revision conflict behavior
+
+If another administrator has saved a newer draft revision:
+
+- Do not silently overwrite it.
+- Preserve the local unsaved changes.
+- Display a meaningful conflict state.
+- Follow the existing persistence architecture.
+
+Do not build a second revision system.
+
+## 64. Prepare future history support
+
+Property updates should be represented as clear, reversible document changes.
+
+A future Undo/Redo engine must be able to restore previous values.
+
+Do not build an unrelated history mechanism inside each inspector control.
+
+Use consistent immutable update operations.
+
+---
+
+# PART 19 — SECURITY AND VALIDATION
+
+## 65. Prevent unsafe styles
+
+Use existing Zod validation and trusted property definitions.
+
+Reject:
+
+- Arbitrary JavaScript.
+- HTML event-handler injection.
+- Unsafe URL schemes.
+- Unrestricted CSS expressions.
+- Invalid dimensions.
+- Unsupported CSS property names.
+- Non-finite numeric values.
+- Malformed color values.
+- Invalid shape values.
+
+Do not use `dangerouslySetInnerHTML` for property rendering.
+
+## 66. Protect business data
+
+The inspector must never allow changing through visual properties:
+
+- Product price.
+- Currency.
+- Affiliate URL.
+- Product identity.
+- Retailer destination.
+- Inventory status.
+- Category database identity.
+- Administrator permissions.
+- Private configuration.
+
+These belong to their proper business-management interfaces.
+
+## 67. Enforce authorization
+
+Only authorized administrators may save design changes.
+
+Client-side component locks are not security authorization.
+
+Keep the existing Supabase RLS and trusted server validation protections active.
+
+Do not expose service-role credentials in browser code.
+
+---
+
+# PART 20 — PERFORMANCE AUDIT BEFORE IMPLEMENTATION
+
+## 68. Read PERFORMANCE_BASELINE.md
+
+Review:
+
+- Last verified commit.
+- Existing public bundle sizes.
+- Current studio bundle size.
+- Existing selection latency.
+- Canvas rerender behavior.
+- Schema-validation benchmarks.
+- Responsive-resolution performance.
+- Known animation issues.
+- Browser-testing limitations.
+
+Record the current baseline.
+
+## 69. Audit potential inspector performance costs
+
+Investigate:
+
+- Inspector rerendering on every pointer movement.
+- Large controlled form state.
+- Unnecessary PageRenderer remounting.
+- Repeated Zod parsing.
+- Excessive responsive resolution.
+- Repeated DOM measurements.
+- Continuous draft serialization.
+- Frequent network saves.
+- Expensive color picker dependencies.
+- Shadow/filter rendering costs.
+- Image and video remounts.
+- Layout thrashing.
+
+Document anticipated risks.
+
+---
+
+# PART 21 — PERFORMANCE-OPTIMIZED PROPERTY EDITING
+
+## 70. Use localized immutable updates
+
+Changing one property must not deep-clone the entire document unnecessarily.
+
+Use existing tree utilities and structural sharing.
+
+Avoid changing unrelated node identities.
+
+Do not use JSON serialization as the default state update mechanism.
+
+## 71. Keep interactive inputs responsive
+
+For sliders and rapidly changing values:
+
+- Use appropriate local control state.
+- Batch updates where needed.
+- Avoid expensive validation on every pointer event.
+- Avoid unnecessary layout measurement.
+- Validate committed values.
+- Keep the actual canvas responsive.
+
+Do not send a Supabase request for every slider movement.
+
+## 72. Separate lightweight and expensive work
+
+Lightweight:
+- Current control value.
+- Selected node lookup.
+- Simple validated property update.
+
+Potentially expensive:
+- Full-document validation.
+- Large schema serialization.
+- Database save.
+- Heavy layout measurement.
+- Extensive image rendering.
+
+Schedule expensive operations at appropriate boundaries.
+
+## 73. Preserve public bundle isolation
+
+The normal public storefront must not download:
+
+- Color picker UI.
+- Inspector form controls.
+- Editor panel components.
+- Editor-only state managers.
+- Property control metadata that is only needed for editing.
+- Future drag-and-drop libraries.
+
+Public code should import only the shared rendering and configuration functionality it genuinely needs.
+
+---
+
+# PART 22 — POST-IMPLEMENTATION PERFORMANCE TESTING
+
+## 74. Measure property-update latency
+
+Where browser tooling is available, measure representative operations:
+
+- Change Section background.
+- Change Heading font size.
+- Change Container padding.
+- Change Card corner radius.
+- Change Grid gap.
+- Switch responsive breakpoint.
+- Reset a property.
+- Change a numeric value rapidly.
+- Save draft after multiple edits.
+
+Measure actual results.
+
+Do not fabricate timings.
+
+## 75. Test representative document sizes
+
+Use synthetic documents with approximately:
+
+- 25 nodes.
+- 150 nodes.
+- 500 nodes.
+- 1,000 nodes.
+
+Assess:
+
+- Inspector initialization.
+- Property lookup.
+- Property update.
+- Responsive resolution.
+- Canvas rerender behavior.
+- Validation overhead.
+- Memory behavior.
+
+These are test workloads, not product limits.
+
+## 76. Check public and admin bundle impact
+
+Compare:
+
+- Public homepage route.
+- Shared renderer bundle.
+- Design Studio bundle.
+- Inspector-specific dependencies.
+- CSS payload.
+- Network requests.
+
+Investigate unexpected increases.
+
+## 77. Verify animation stability
+
+Check that property changes do not repeatedly recreate:
+
+- PlanetHero videos.
+- CelestialScrollWorld animations.
+- Unrelated ProductScrollRails.
+- Three.js resources where used.
+
+Ensure observers and listeners clean up correctly.
+
+---
+
+# PART 23 — AUTOMATED TESTING
+
+## 78. Property editor tests
+
+Verify:
+
+- Correct control for a supported property.
+- Correct current value.
+- Valid updates accepted.
+- Invalid values rejected.
+- Unsupported controls hidden or disabled.
+- Locked components cannot be edited.
+- Missing selection handled safely.
+
+## 79. Geometry tests
+
+Verify:
+
+- Width editing.
+- Height editing.
+- Minimum/maximum constraints.
+- Unit changes.
+- Aspect-ratio handling.
+- Reset-to-inherited.
+- Responsive geometry preservation.
+
+## 80. Spacing tests
+
+Verify:
+
+- Padding edits.
+- Margin edits.
+- Linked sides.
+- Independent sides.
+- Row gap.
+- Column gap.
+- Invalid value rejection.
+
+## 81. Appearance tests
+
+Verify:
+
+- Background color.
+- Border configuration.
+- Opacity.
+- Shadow.
+- Gradient.
+- Reset behavior.
+- Invalid colors rejected.
+
+## 82. Shape tests
+
+Verify:
+
+- Shape presets.
+- Uniform corner radius.
+- Independent corner radii.
+- Image clipping where supported.
+- Unsupported shape properties rejected.
+- Actual visual target receives style changes.
+
+## 83. Typography tests
+
+Verify:
+
+- Font size.
+- Font weight.
+- Line height.
+- Letter spacing.
+- Alignment.
+- Color.
+- Responsive overrides.
+- Product data remains unchanged.
+
+## 84. Responsive tests
+
+Verify:
+
+- Base value inheritance.
+- Tablet override.
+- Mobile override.
+- Nested partial overrides.
+- Reset one property without deleting others.
+- Correct property resolution after switching breakpoints.
+- Zoom does not affect breakpoint semantics.
+
+## 85. Real component integration tests
+
+Test representative registered components using their actual adapters.
+
+Do not replace the component implementation with an unrelated mocked visual duplicate when testing appearance behavior.
+
+Verify that accepted properties actually reach the intended DOM element.
+
+## 86. Draft persistence tests
+
+Verify:
+
+- Edit marks draft dirty.
+- Canvas updates.
+- Save persists the document.
+- Refresh restores changes.
+- Reset restores the original styling.
+- Published page remains unchanged.
+- Conflict handling works.
+- Failed saves preserve local work.
+
+## 87. Public storefront regression tests
+
+Verify existing:
+
+- Homepage.
+- Hero.
+- Celestial effects.
+- Product cards.
+- Product rails.
+- Category sections.
+- Search and navigation.
+- Affiliate buttons.
+- Outbound tracking.
+- Admin product management.
+
+---
+
+# PART 24 — ACTUAL BROWSER VALIDATION
+
+## 88. Verify visual changes in a real browser
+
+Where browser tooling is available, select actual components in the Design Studio and perform edits.
+
+Capture before-and-after evidence for:
+
+- Section background.
+- Heading typography.
+- Container spacing.
+- Product/card shape.
+- Image aspect ratio where supported.
+- Responsive override.
+
+Confirm changes are visible in the real canvas.
+
+Do not consider a changed PageDocument JSON value sufficient proof of working visual customization.
+
+## 89. Verify responsive behavior
+
+Test representative content viewports:
+
+- 360px.
+- 390px.
+- 768px.
+- 1024px.
+- 1440px.
+- 1920px.
+
+Check:
+
+- Layout stability.
+- Text wrapping.
+- Card geometry.
+- Container widths.
+- Image cropping.
+- Overflow.
+- Selection overlay alignment.
+- Responsive property inheritance.
+
+## 90. Report browser limitations honestly
+
+If the environment lacks a real browser, mark visual parity and browser interactions as not verified.
+
+JSDOM tests alone are insufficient to prove pixel-level appearance.
+
+Provide a reproducible browser test plan.
+
+Do not claim screenshot verification without actual screenshots.
+
+---
+
+# PART 25 — RECOMMENDED SOURCE ARCHITECTURE
+
+## 91. Extend the existing Design Studio
+
+Suggested modules may include:
+
+src/
+  components/
+    visual-editor/
+      inspector/
+        PropertiesInspector.tsx
+        PropertySection.tsx
+        PropertyField.tsx
+        DimensionControl.tsx
+        SpacingControl.tsx
+        ColorControl.tsx
+        GradientControl.tsx
+        ShapeControl.tsx
+        CornerRadiusControl.tsx
+        TypographyControls.tsx
+        LayoutControls.tsx
+        ResponsivePropertyControl.tsx
+        PropertyResetButton.tsx
+
+  lib/
+    visual-editor/
+      inspector/
+        property-definitions.ts
+        property-capabilities.ts
+        property-resolution.ts
+        property-updates.ts
+        property-validation.ts
+        property-errors.ts
+
+      __tests__/
+        inspector-properties.test.ts
+        inspector-responsive.test.ts
+        inspector-shapes.test.ts
+        inspector-persistence.test.tsx
+
+This is an illustrative structure.
+
+Inspect the existing studio implementation.
+
+Reuse its modules where possible.
+
+Do not create unnecessary placeholder files.
+
+Do not duplicate the existing schema, registry, styling engine, or draft store.
+
+---
+
+# PART 26 — STRICT IMPLEMENTATION SCOPE
+
+## 92. Features included in Prompt 12
+
+Implement:
+
+- Advanced contextual Properties Inspector.
+- Registry-driven property controls.
+- Dimension editing.
+- Spacing editing.
+- Supported flex/grid layout configuration.
+- Background colors.
+- Supported gradients.
+- Borders.
+- Shadows.
+- Opacity.
+- Shape presets.
+- Corner-radius editing.
+- Typography.
+- Supported image presentation.
+- Responsive overrides.
+- Property reset and inheritance.
+- Real-time canvas updates.
+- Lock/capability enforcement.
+- Working draft integration.
+- Draft-saving compatibility.
+- Comprehensive testing.
+- Performance audits.
+- GitHub checkpoint and documentation.
+
+## 93. Features excluded from Prompt 12
+
+Do not implement:
+
+- Direct canvas dragging.
+- Eight-direction resize handles.
+- Interactive rotation handles.
+- Direct corner-radius dragging.
+- Full product/category grid designer.
+- Arbitrary CSS code editor.
+- Complete media asset manager.
+- Full animation timeline.
+- Multi-selection transformation.
+- Complete undo/redo history.
+- AI-generated themes.
+- Unrequested business-data editing.
+- A replacement storefront renderer.
+
+These features belong to future prompts.
+
+**Inspector-based editing now; direct-manipulation editing later.**
+
+Both must eventually use the same validated property-update API.
+
+---
+
+# PART 27 — IMPLEMENTATION EXECUTION ORDER
+
+## 94. Execute in the following sequence
+
+### Step 1 — GitHub recovery
+Verify current repository, branch, and checkpoints.
+
+### Step 2 — Prerequisite verification
+Recover and verify Prompts 7–11.
+
+### Step 3 — Architecture audit
+Inspect schema, registry, style resolver, inspector shell, and draft state.
+
+### Step 4 — Performance baseline
+Record current studio and public-store performance.
+
+### Step 5 — Property definitions
+Build metadata-driven inspector capability definitions.
+
+### Step 6 — Value resolution
+Implement existing/default/inherited/overridden value handling.
+
+### Step 7 — Central update API
+Implement validated immutable property updates.
+
+### Step 8 — Geometry
+Build dimension and unit controls.
+
+### Step 9 — Spacing
+Build padding, margin, and gap controls.
+
+### Step 10 — Layout
+Add supported flex/grid settings.
+
+### Step 11 — Appearance
+Implement colors, gradients, borders, shadows, and opacity.
+
+### Step 12 — Shapes
+Implement shape presets and corner-radius controls.
+
+### Step 13 — Typography
+Implement supported text styling.
+
+### Step 14 — Responsive overrides
+Implement breakpoint-aware controls and property resets.
+
+### Step 15 — Component-specific integration
+Ensure visual properties affect real supported components.
+
+### Step 16 — Canvas synchronization
+Verify immediate visible updates.
+
+### Step 17 — Draft persistence
+Connect to existing Save Draft and revision handling.
+
+### Step 18 — Automated tests
+Test schema updates, controls, and integrations.
+
+### Step 19 — Browser verification
+Verify actual appearance and responsive behavior where possible.
+
+### Step 20 — Performance audit
+Measure update latency, rerenders, and bundle impact.
+
+### Step 21 — Regression remediation
+Resolve defects introduced by Prompt 12.
+
+### Step 22 — Documentation
+Update the four permanent handoff documents.
+
+### Step 23 — GitHub checkpoint
+Commit verified implementation work.
+
+### Step 24 — Push and verify
+Confirm the remote commit.
+
+### Step 25 — Final report
+Report actual implementation results and remaining limitations.
+
+---
+
+# PART 28 — GITHUB CONTINUITY DOCUMENTATION
+
+## 95. Update IMPLEMENTATION_PROGRESS.md
+
+Record:
+
+- Prompt 12 status.
+- Property controls implemented.
+- Supported component types.
+- Unsupported component properties.
+- Responsive behavior.
+- Draft integration.
+- Tests.
+- Performance results.
+- Existing regressions.
+- Remaining issues.
+- Next prompt.
+
+Do not mark incomplete features as finished.
+
+## 96. Update ARCHITECTURE_AUDIT.md
+
+Document:
+
+- Inspector architecture.
+- Property metadata.
+- Trusted capability enforcement.
+- Value inheritance.
+- Style resolution.
+- Immutable update path.
+- Responsive override behavior.
+- Component-specific styling.
+- Actual visual targeting.
+- Reset semantics.
+- Future direct manipulation integration.
+
+## 97. Update PERFORMANCE_BASELINE.md
+
+Record:
+
+- Starting commit.
+- Test environment.
+- Before/after bundle sizes.
+- Inspector initialization.
+- Property update latency.
+- Canvas rerender behavior.
+- Large-document benchmarks.
+- Animation stability.
+- Public bundle impact.
+- Browser test limitations.
+
+Only report actual verified measurements.
+
+## 98. Update AI_STUDIO_HANDOFF.md
+
+Include:
+
+- Repository URL.
+- Development branch.
+- Last verified completed prompt.
+- Property editor modules.
+- Supported property types.
+- Important update APIs.
+- Tests executed.
+- Performance results.
+- Known limitations.
+- GitHub checkpoint status.
+- Exact next prompt.
+
+Another Google AI Studio account must be able to continue development without repeating this work.
+
+Never store secret values.
+
+---
+
+# PART 29 — GITHUB COMMIT AND PUSH
+
+## 99. Review the working tree
+
+Before committing:
+
+1. Verify branch.
+2. Inspect changed files.
+3. Inspect new files.
+4. Verify no unrelated changes.
+5. Verify no secrets are staged.
+6. Run TypeScript checks.
+7. Run ESLint.
+8. Run Vitest.
+9. Run production build.
+10. Check bundle impact.
+11. Verify no unintended database modifications.
+
+## 100. Create the Prompt 12 checkpoint
+
+Recommended commit message:
+
+`feat(editor): implement responsive properties inspector`
+
+Commit verified work and updated project documentation.
+
+Push to the authorized development branch.
+
+Do not force-push.
+
+Do not automatically merge into `main`.
+
+Do not claim completion when essential controls remain unimplemented or untested.
+
+## 101. Verify the remote checkpoint
+
+After pushing:
+
+- Fetch remote HEAD.
+- Confirm commit exists.
+- Confirm intended branch.
+- Verify implemented modules.
+- Verify tests and handoff documents.
+- Report final commit SHA.
+- Report uncommitted changes.
+- Report synchronization blockers if any.
+
+Do not claim push success without remote confirmation.
+
+---
+
+# PART 30 — DEFINITION OF DONE
+
+Prompt 12 is complete only when the following are verified.
+
+## Inspector
+
+- Selected component appears correctly.
+- Controls reflect trusted capabilities.
+- Unsupported properties are not falsely editable.
+- Default/inherited/override values are distinguished.
+- Reset works correctly.
+- Locked nodes cannot be modified.
+
+## Real-time editing
+
+- Dimensions update the actual canvas.
+- Spacing updates the actual canvas.
+- Supported layout properties update correctly.
+- Colors and borders update.
+- Shape and radius changes work.
+- Typography updates correctly.
+- Supported media presentation changes work.
+- Original appearance returns after reset.
+
+## Responsive behavior
+
+- Breakpoint-specific edits work.
+- Inheritance works.
+- Nested overrides are preserved.
+- Property reset does not erase unrelated overrides.
+- Canvas zoom does not change breakpoint interpretation.
+
+## Data protection
+
+- No product-record mutation.
+- No price changes.
+- No affiliate URL modifications.
+- No category-record mutation.
+- No authorization bypass.
+- No unsafe style injection.
+
+## Persistence
+
+- Changes mark the draft dirty.
+- Save Draft persists valid changes.
+- Refresh restores saved configuration.
+- Published storefront remains unchanged.
+- Revision conflicts are handled.
+
+## Performance
+
+- No unnecessary full-document clones.
+- No validation per pointer movement.
+- No excessive database saves.
+- No major unintended rerenders.
+- Public bundle isolation verified.
+- Heavy animation resources remain stable.
+- Benchmarks recorded honestly.
+
+## Testing
+
+- Property control tests.
+- Responsive tests.
+- Component integration tests.
+- Security tests.
+- Draft persistence tests.
+- Public storefront regression tests.
+- Actual browser verification where available.
+
+## GitHub
+
+- Correct repository and branch.
+- Prerequisites verified.
+- Four documents updated.
+- Source reviewed.
+- Verified implementation committed.
+- Push attempted.
+- Remote commit verified before claiming synchronization.
+- Cross-account handoff prepared.
+
+Do not mark an unverified requirement as passed.
+
+---
+
+# PART 31 — REQUIRED FINAL IMPLEMENTATION REPORT
+
+Produce a detailed report titled:
+
+**"Visual Storefront Editor — Prompt 12 Advanced Properties Inspector, Real-Time Styling, Responsive Customization, Performance Audit & GitHub Checkpoint"**
+
+Include:
+
+### A. GitHub verification
+Repository, branch, starting SHA, prerequisites, final checkpoint.
+
+### B. Inspector architecture
+Property definitions, component capabilities, and UI composition.
+
+### C. Value resolution
+Default, inherited, explicit, overridden, and computed values.
+
+### D. Geometry controls
+Dimensions, units, constraints, and aspect ratios.
+
+### E. Spacing controls
+Padding, margin, gap, and linked dimensions.
+
+### F. Layout controls
+Supported flex/grid properties and restrictions.
+
+### G. Appearance controls
+Colors, backgrounds, gradients, borders, shadows, and filters.
+
+### H. Shape editing
+Presets, corner radius, clipping, and actual component targeting.
+
+### I. Typography
+Supported text properties and data separation.
+
+### J. Responsive editing
+Breakpoint overrides, inheritance, and reset behavior.
+
+### K. Real-time canvas integration
+How property changes reach the actual renderer.
+
+### L. Draft persistence
+Save, refresh restoration, validation, and conflict handling.
+
+### M. Security
+Trusted capabilities, lock enforcement, and protected business data.
+
+### N. Performance before implementation
+Measured baseline and known limitations.
+
+### O. Performance after implementation
+Control latency, rerenders, bundle impact, and resource stability.
+
+### P. Automated tests
+Executed commands, results, failures, and blocked checks.
+
+### Q. Browser verification
+Actual visual changes, supported viewports, and remaining unverified claims.
+
+### R. File inventory
+Every file created or modified.
+
+### S. GitHub checkpoint
+Commit message, branch, SHA, push result, and remote verification.
+
+### T. Documentation updates
+Status of all four handoff files.
+
+### U. Known limitations
+Unsupported properties, remaining bugs, and future work.
+
+### V. Next prompt readiness
+Identify the next milestone from the verified implementation roadmap.
+
+### W. Final decision
+
+Choose:
+
+**GO** — Functional properties inspector, responsive editing, persistence, critical tests, acceptable performance, and verified GitHub checkpoint.
+
+**CONDITIONAL GO** — Essential features implemented but documented verification gaps or minor limitations remain.
+
+**NO-GO** — Critical prerequisite failures, broken inspector-to-renderer updates, security problems, major regressions, or unavailable required integration prevent safe continuation.
+
+Explain your assessment using actual evidence.
+
+---
+
+# FINAL EXECUTION DIRECTIVE
+
+Start by recovering the latest verified GitHub development state.
+
+Confirm that Prompts 7–11 are actually implemented and the Design Studio uses the real shared renderer.
+
+Then:
+
+1. Audit existing property schemas and trusted component capabilities.
+2. Build a metadata-driven contextual inspector.
+3. Implement default/inherited/override value resolution.
+4. Implement one validated property-update pathway.
+5. Add dimension and spacing controls.
+6. Add supported flex/grid layout controls.
+7. Add colors, backgrounds, borders, shadows, and opacity.
+8. Add shape presets and independent corner-radius controls.
+9. Add typography editing.
+10. Add supported image presentation controls.
+11. Add responsive property overrides.
+12. Add accurate reset-to-inherited behavior.
+13. Verify edits affect the actual component rather than an unrelated wrapper.
+14. Synchronize updates with the selection engine and Layers panel.
+15. Integrate with the existing working draft.
+16. Verify private draft saving and recovery.
+17. Run unit, integration, and security tests.
+18. Verify actual browser rendering where supported.
+19. Audit performance before and after implementation.
+20. Fix regressions introduced by the work.
+21. Update all four project documentation files.
+22. Review Git changes.
+23. Commit and push verified implementation.
+24. Verify the remote checkpoint.
+25. Produce the final technical report.
+
+**DO NOT BUILD A SECOND STYLING ENGINE.**
+
+**DO NOT ACCEPT PROPERTY CHANGES THAT HAVE NO REAL EFFECT WITHOUT REPORTING THE LIMITATION.**
+
+**DO NOT MODIFY PRODUCT PRICES, AFFILIATE URLS OR OTHER PROTECTED BUSINESS FIELDS.**
+
+**DO NOT BREAK THE ORIGINAL STOREFRONT APPEARANCE WHEN NO OVERRIDES EXIST.**
+
+**DO NOT TRIGGER A DATABASE SAVE FOR EVERY SLIDER OR INPUT EVENT.**
+
+**DO NOT INTRODUCE HEAVY ADMIN EDITOR DEPENDENCIES INTO THE PUBLIC STOREFRONT.**
+
+**DO NOT CLAIM PERFORMANCE OR VISUAL TESTS PASSED UNLESS ACTUALLY EXECUTED.**
+
+**DO NOT CLAIM GITHUB PUSH SUCCESS WITHOUT REMOTE VERIFICATION.**
+
+**DO NOT BEGIN PROMPT 13 AUTOMATICALLY.**
+
+Our final objective is a professional Shopify-style Visual Storefront Editor in which an administrator can customize the actual website using intuitive controls and eventually direct drag-and-drop, eight-direction resizing, shape manipulation, responsive grid editing, animation customization, synchronized previews, and safe publishing.
+
+Prompt 12 must establish a powerful, production-quality property editing system that all future direct-manipulation interactions can reuse.

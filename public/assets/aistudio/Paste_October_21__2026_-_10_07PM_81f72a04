@@ -1,0 +1,1913 @@
+# PROMPT 11 OF 48 — ADVANCED LAYER MANAGEMENT, COMPONENT HIERARCHY, STRUCTURAL EDITING, SAFE REORDERING, DUPLICATION, VISIBILITY, LOCKING, PERFORMANCE AUDIT & GITHUB CHECKPOINT
+
+## YOUR ROLE
+
+Act as a Principal Frontend Architect, Senior React 19 Engineer, Visual Page Builder Engineer, Figma-Style Interaction Specialist, TypeScript Systems Architect, TanStack Start Specialist, Supabase Security Engineer, GitHub DevOps Specialist, and Production Performance Engineer.
+
+You are developing my existing affiliate-store SaaS into a premium, fully customizable Shopify-style Visual Storefront Editor.
+
+**GitHub Repository:** https://github.com/Mukulsri369/ourvisibleuniversestore
+
+**Development Environment:** Google AI Studio — Argon 4
+
+**Roadmap:** 48 prompts across 10 development phases.
+
+**Current Stage:** Phase 3 — Visual Editor & Structural Editing Infrastructure.
+
+**Current Task:** Prompt 11 of 48.
+
+### Previous implementation milestones
+
+- Prompt 1 — Repository architecture audit.
+- Prompt 2 — Compatibility and zero-regression contracts.
+- Prompt 3 — Technology evaluation.
+- Prompt 4 — Original storefront baselines.
+- Prompt 5 — Typed PageDocument schema.
+- Prompt 6 — Component registry and shared renderer.
+- Prompt 7 — Real homepage migration.
+- Prompt 8 — Supabase drafts and version persistence.
+- Prompt 9 — Admin Design Studio and actual storefront canvas.
+- Prompt 10 — Precision selection, hit-testing and geometry measurement.
+
+## PRIMARY OBJECTIVE
+
+Transform the existing Layers panel into a powerful, reliable, and responsive structural design editor.
+
+Administrators should be able to manage the structure of their actual storefront through an intuitive component hierarchy.
+
+The following must become genuinely functional for supported components:
+
+1. View the complete PageDocument hierarchy.
+2. Expand and collapse nested layers.
+3. Select components from the Layers panel.
+4. Rename component layers.
+5. Reorder sections.
+6. Reorder compatible nested components.
+7. Move elements into compatible containers.
+8. Duplicate sections or elements.
+9. Hide and show elements.
+10. Lock and unlock elements.
+11. Safely remove supported elements.
+12. Create compatible containers and organize elements.
+13. Navigate to selected components in the actual canvas.
+14. View and preserve stable runtime identities for repeated components.
+15. Maintain synchronization between Layers, Canvas and Inspector.
+16. Persist valid structural changes in drafts.
+17. Preserve the published storefront until the administrator explicitly publishes a validated design.
+
+### THE MOST IMPORTANT RULE
+
+**All structural editing must operate on the actual validated PageDocument rendered by the real shared storefront renderer.**
+
+Do not create a separate fake page hierarchy.
+
+Do not rebuild storefront components.
+
+Do not store component hierarchy changes in an unrelated editor-only data model.
+
+Do not modify product/category business records through page-structure operations.
+
+---
+
+# PART 1 — GITHUB VERIFICATION AND CONTINUITY
+
+## 1. Verify the GitHub repository
+
+Connect to:
+
+https://github.com/Mukulsri369/ourvisibleuniversestore
+
+Retrieve:
+
+- Current repository identity.
+- Active branch.
+- Latest remote commit.
+- Local HEAD commit.
+- Available development branches.
+- Working-tree status.
+- Uncommitted changes.
+- Unpushed commits.
+- Latest verified implementation checkpoint.
+
+A previously visible `main` SHA was:
+
+`28d80db39d13150eb69ae34405ba3c06e0792acc`
+
+Treat this only as a previous observation.
+
+Do not assume it is still the latest revision.
+
+## 2. Read all four progress documents
+
+Read:
+
+- `IMPLEMENTATION_PROGRESS.md`
+- `ARCHITECTURE_AUDIT.md`
+- `PERFORMANCE_BASELINE.md`
+- `AI_STUDIO_HANDOFF.md`
+
+These files are mandatory for development continuity across different Google AI Studio accounts.
+
+Use them to recover previously implemented features and known technical problems.
+
+Verify every relevant completion claim against the source code.
+
+## 3. Verify Prompts 7–10
+
+Before starting structural editor work, verify that the following are actually available.
+
+### Prompt 7
+
+- Canonical homepage PageDocument.
+- Real homepage integration.
+- Dynamic category-section support.
+- Shared renderer compatibility.
+- Existing storefront fallback.
+
+### Prompt 8
+
+- Secure draft persistence.
+- Draft loading.
+- Save Draft operation.
+- Revision conflict detection.
+- Validated document storage.
+- Published version isolation.
+
+### Prompt 9
+
+- Protected Design Studio route.
+- Full-screen studio.
+- Real canvas.
+- Layers panel.
+- Inspector panel.
+- Working draft state.
+- Responsive viewport controls.
+
+### Prompt 10
+
+- Selection controller.
+- DOM hit-testing.
+- Geometry measurement.
+- Selection overlays.
+- Stable node identities.
+- Layer-to-canvas synchronization.
+- Nested selection infrastructure.
+
+Do not duplicate these systems.
+
+If any critical prerequisite is missing, recover it from legitimate local or remote work when available.
+
+If the missing prerequisite cannot be verified or recovered, document the blocker rather than silently implementing an incompatible substitute.
+
+## 4. Continue on the correct branch
+
+Use the verified development branch.
+
+Preferred branch:
+
+`feature/visual-storefront-editor`
+
+Do not reset or overwrite previous work.
+
+Do not force-push.
+
+Do not automatically merge into `main`.
+
+Preserve unrelated uncommitted changes.
+
+---
+
+# PART 2 — AUDIT THE EXISTING STRUCTURAL MODEL
+
+## 5. Inspect the PageDocument schema
+
+Review the actual files, including:
+
+- `src/lib/visual-editor/schema/nodes.ts`
+- `src/lib/visual-editor/schema/page-document.ts`
+- `src/lib/visual-editor/schema/validation.ts`
+- `src/lib/visual-editor/schema/responsive.ts`
+- `src/lib/visual-editor/utils/node-tree.ts`
+- `src/lib/visual-editor/utils/ids.ts`
+- `src/lib/visual-editor/registry/component-registry.ts`
+- `src/lib/visual-editor/registry/component-capabilities.ts`
+
+Inspect their actual current implementations.
+
+The schema has previously defined properties such as:
+
+- `id`
+- `type`
+- `name`
+- `locked`
+- `hidden`
+- `slotName`
+- `props`
+- `style`
+- `responsive`
+- `binding`
+- `media`
+- `children`
+- `slots`
+
+Verify their current types and validation behavior.
+
+## 6. Reuse existing tree utilities
+
+The repository previously included utilities named:
+
+- `traverseNodes`
+- `findNodeById`
+- `findNodeLocation`
+- `findParentNode`
+- `updateNodeById`
+- `insertChildNode`
+- `removeNodeById`
+- `reorderChildNodes`
+- `cloneSubtreeWithFreshIds`
+
+Inspect these utilities before adding new ones.
+
+Determine which operations already satisfy the structural editing requirements and which need controlled extensions.
+
+Do not create a second competing tree-manipulation library.
+
+## 7. Verify component restrictions
+
+The existing schema includes concepts for:
+
+- Leaf components.
+- Root-only components.
+- Trusted component capabilities.
+- Named slots.
+- Parent-child compatibility.
+
+Respect these restrictions.
+
+Examples:
+
+- A ProductCard should not become a generic container for arbitrary sections.
+- A root-only PlanetHero must not be moved into an unrelated product card.
+- Global storefront chrome must not be duplicated accidentally.
+- The celestial background must not be moved into a clipping layout container.
+- Protected functional elements must not be deleted through arbitrary DOM manipulation.
+
+Make the trusted registry the authority for allowed operations.
+
+---
+
+# PART 3 — UPGRADE THE LAYERS PANEL
+
+## 8. Implement a professional hierarchical Layers panel
+
+The Layers panel must display the real PageDocument structure.
+
+Each layer row should provide:
+
+- Component icon.
+- Component name.
+- Component type.
+- Expand/collapse indicator.
+- Selected state.
+- Hover state.
+- Visibility state.
+- Lock state.
+- Nested indentation.
+- Context menu.
+- Appropriate reorder controls.
+
+Maintain a clean, compact visual design.
+
+Avoid unnecessarily large rows or excessive decoration.
+
+The panel should feel similar to professional design applications.
+
+## 9. Implement efficient hierarchy expansion
+
+Support:
+
+- Expand one layer.
+- Collapse one layer.
+- Expand all relevant layers.
+- Collapse all.
+- Preserve expansion state while editing.
+- Automatically reveal selected nodes.
+- Scroll the selected layer into view.
+
+Do not reset the entire layer tree every time a component is renamed or selected.
+
+## 10. Implement useful layer search
+
+Allow searching by:
+
+- Layer name.
+- Component type.
+- Relevant category/section name.
+- Supported runtime instance label.
+
+Search must work against the actual document and runtime identity model.
+
+When search finds a deeply nested item, reveal its ancestors.
+
+Do not mutate the PageDocument merely to filter the layer display.
+
+## 11. Build a context menu
+
+Provide only genuinely supported actions.
+
+Potential actions:
+
+- Rename.
+- Duplicate.
+- Hide/show.
+- Lock/unlock.
+- Move up.
+- Move down.
+- Move to compatible container.
+- Wrap in container.
+- Remove.
+- Reveal in canvas.
+- Select parent.
+
+Disable or hide operations that are invalid for the selected component.
+
+Do not present inert controls as working features.
+
+---
+
+# PART 4 — LAYER RENAMING
+
+## 12. Implement inline renaming
+
+Administrators should be able to rename a layer directly in the hierarchy.
+
+Example:
+
+`Section 4`
+
+becomes:
+
+`Featured Astronomy Products`
+
+Support:
+
+- Double-click or context-menu rename.
+- Inline text input.
+- Enter to confirm.
+- Escape to cancel.
+- Validation errors.
+- Immediate layer-tree update.
+- Inspector synchronization.
+- Dirty-state tracking.
+
+Use the existing validated node name property.
+
+## 13. Preserve business data
+
+Renaming a layer must not rename:
+
+- Product database records.
+- Category database records.
+- Product titles.
+- Affiliate destinations.
+- Route slugs.
+
+A layer name is editor/document metadata.
+
+It is not automatically customer-facing content.
+
+Clearly distinguish **Rename Layer** from **Edit Visible Heading**.
+
+Do not silently connect those operations.
+
+---
+
+# PART 5 — SECTION REORDERING
+
+## 14. Implement safe root-section reordering
+
+Administrators must be able to change the order of compatible homepage sections.
+
+Example:
+
+Original:
+
+1. PlanetHero.
+2. Festival Special.
+3. Featured Products.
+4. New Arrivals.
+5. Category Sections.
+6. Interest Section.
+7. Benefits Section.
+8. Instagram Section.
+
+Administrator changes:
+
+1. PlanetHero.
+2. Featured Products.
+3. Festival Special.
+4. New Arrivals.
+5. Category Sections.
+6. Interest Section.
+7. Benefits Section.
+8. Instagram Section.
+
+The actual draft canvas must immediately reflect the valid new order.
+
+The published homepage must remain unchanged until publishing.
+
+## 15. Implement accessible reorder controls
+
+At minimum, provide working:
+
+- Move up.
+- Move down.
+
+Prefer an interaction that is keyboard-accessible and easy to verify.
+
+Layer-tree drag-and-drop may also be added if it integrates safely with the chosen interaction architecture.
+
+However, full direct drag-and-drop of sections inside the visual canvas is reserved for a later prompt.
+
+Do not introduce competing pointer interaction engines prematurely.
+
+## 16. Respect root-level restrictions
+
+Some components should not behave like ordinary content sections.
+
+Examples include:
+
+- Global celestial background.
+- Shared store header.
+- Shared store footer.
+- Certain protected hero/global effects.
+
+Review the schema's root-only restrictions and the actual rendering architecture.
+
+Do not allow reordering that breaks fixed background behavior or duplicates global chrome.
+
+A root-only component is not automatically freely reorderable.
+
+Define the permitted operations separately.
+
+## 17. Maintain dynamic category behavior
+
+The homepage may contain a repeated category-section template.
+
+Reordering the template relative to other sections should be supported where valid.
+
+However, changing the order of individual categories should remain governed by the established category-ordering system.
+
+Do not silently rewrite category `sort_order` database values through the visual editor.
+
+Do not duplicate dynamic categories in the document.
+
+---
+
+# PART 6 — NESTED COMPONENT REORDERING
+
+## 18. Support ordering within containers
+
+Allow reordering compatible child nodes inside:
+
+- Sections.
+- Containers.
+- Stacks.
+- Grids.
+- Supported slots.
+
+Examples:
+
+- Move a heading above an image.
+- Reorder two promotional text blocks.
+- Reorder valid grid items.
+- Change the order of decorative elements in a supported container.
+
+These changes must update the actual PageDocument.
+
+## 19. Preserve slot boundaries
+
+Some components expose named slots.
+
+Do not treat all child arrays and slots as interchangeable.
+
+A move operation must know:
+
+- Original parent.
+- Original slot.
+- Original index.
+- Destination parent.
+- Destination slot.
+- Destination index.
+
+Validate the operation before modifying the document.
+
+Do not move a node into an unsupported slot.
+
+Do not drop a section inside its own descendant.
+
+Do not permit circular hierarchy relationships.
+
+## 20. Preserve responsive layouts
+
+Reordering elements inside a CSS Grid or Flexbox may change visual placement.
+
+Use the validated layout model.
+
+Do not automatically assign absolute positioning.
+
+Do not add arbitrary CSS transforms to simulate structural order.
+
+The rendered result must remain responsive.
+
+---
+
+# PART 7 — MOVE BETWEEN COMPATIBLE CONTAINERS
+
+## 21. Implement controlled structural moves
+
+Allow administrators to move eligible nodes between compatible containers.
+
+For example:
+
+- Move an informational text block from one container to another.
+- Move a supported promotional card between grid containers.
+- Move an image into an approved content section.
+
+### Required validation
+
+Before a move:
+
+1. Confirm the source node exists.
+2. Confirm the destination exists.
+3. Check whether the source is locked.
+4. Check whether relevant ancestors are locked.
+5. Verify trusted component capabilities.
+6. Verify parent-child compatibility.
+7. Verify slot compatibility.
+8. Verify that no cycle will be created.
+9. Check document depth.
+10. Check component-specific data requirements.
+11. Check that the move preserves valid bindings.
+12. Validate the resulting document.
+
+If invalid, reject the operation without modifying the working draft.
+
+## 22. Avoid breaking specialized components
+
+Do not allow uncontrolled moves that break:
+
+- PlanetHero.
+- CelestialScrollWorld.
+- ProductScrollRail.
+- CategorySpotlightHero.
+- Shared StoreHeader/StoreFooter.
+- Protected product card templates.
+- Repeated category data bindings.
+
+Moving a generic image is different from moving an internal image belonging to an existing ProductCard implementation.
+
+Respect the registry's supported editing boundaries.
+
+---
+
+# PART 8 — DUPLICATION ENGINE
+
+## 23. Implement component duplication
+
+Administrators must be able to duplicate supported components.
+
+Examples:
+
+- Duplicate a promotional section.
+- Duplicate a banner.
+- Duplicate a valid container.
+- Duplicate a text block.
+- Duplicate a compatible card layout.
+
+The cloned component should appear adjacent to the original when appropriate.
+
+The actual draft canvas must reflect the duplication.
+
+## 24. Generate unique IDs
+
+When duplicating a node:
+
+- Generate a new root node ID.
+- Generate fresh IDs for all nested descendants.
+- Preserve valid parent-child structure.
+- Preserve compatible slots.
+- Preserve visual configuration.
+- Preserve supported media references.
+- Preserve valid binding descriptors.
+- Preserve responsive overrides.
+- Preserve appropriate animation configuration.
+
+Do not copy node IDs.
+
+Do not use array positions as identity.
+
+Use and verify `cloneSubtreeWithFreshIds` where suitable.
+
+## 25. Prevent invalid duplication
+
+Do not permit duplication of:
+
+- Global storefront chrome where duplication would be invalid.
+- The global celestial background when only one instance is supported.
+- Protected singleton components.
+- Any component explicitly marked nonduplicable by trusted capabilities.
+
+If a section cannot be duplicated, disable the action with a clear explanation.
+
+## 26. Protect product data
+
+Duplicating a ProductCard template or product collection must not duplicate actual product records in Supabase.
+
+It must not:
+
+- Create another product database row.
+- Change product prices.
+- Rewrite affiliate URLs.
+- Create fake products.
+- Duplicate click-tracking records.
+
+Duplication operates on the visual document only.
+
+---
+
+# PART 9 — VISIBILITY CONTROLS
+
+## 27. Implement show/hide
+
+Administrators must be able to hide supported sections or elements.
+
+The action should update the validated document.
+
+When hidden:
+
+- The component should disappear from the draft canvas.
+- Its layer should remain in the Layers panel.
+- The layer should display a hidden indicator.
+- The administrator should be able to restore visibility.
+- The associated product/category data should remain unchanged.
+
+Do not delete the underlying node.
+
+## 28. Distinguish global and responsive visibility
+
+The PageDocument schema previously supported a node-level `hidden` property and responsive visibility overrides.
+
+Use them correctly.
+
+### Global hide
+
+Hides the component at every breakpoint.
+
+### Responsive hide
+
+Hides the component only at an intended breakpoint or supported responsive range.
+
+Do not accidentally conflate the two.
+
+If responsive visibility is not implemented in the current inspector, avoid introducing confusing controls that appear to support it.
+
+Use existing responsive inheritance rules.
+
+## 29. Preserve necessary business/legal content
+
+Inspect the current storefront for required disclosures or protected information.
+
+Do not allow arbitrary visual editing to suppress legally required affiliate disclosures without an explicit, compliant design mechanism.
+
+Do not assume all content can be hidden safely.
+
+Use trusted capabilities and explicit policy where necessary.
+
+---
+
+# PART 10 — LOCKING AND PROTECTED EDITING
+
+## 30. Implement lock/unlock
+
+Administrators should be able to lock supported elements to prevent accidental editing.
+
+A locked layer should:
+
+- Display a lock indicator.
+- Remain visible.
+- Remain inspectable where appropriate.
+- Reject reordering.
+- Reject duplication if the operation is not permitted.
+- Reject deletion.
+- Reject unsupported property edits.
+- Reject future drag/resize interactions.
+
+## 31. Propagate inherited locks
+
+If a parent is locked, its descendants should not remain independently modifiable through another panel.
+
+Define effective locking behavior.
+
+For example:
+
+A locked Section prevents edits to its nested Container and Heading until the parent is unlocked or an explicitly permitted operation occurs.
+
+Do not store redundant locked values on every descendant merely to enforce inherited behavior.
+
+## 32. Distinguish design locks from security authorization
+
+A PageDocument `locked` property is an editor-level protection mechanism.
+
+It is not a substitute for Supabase authorization or database RLS.
+
+Trusted component capabilities and server permissions remain authoritative.
+
+A malicious client must not gain admin privileges or alter protected business data by changing a node's lock state.
+
+Authorized administrators may unlock ordinary editable nodes according to the supported workflow.
+
+---
+
+# PART 11 — SAFE DELETION
+
+## 33. Implement structural deletion
+
+Allow administrators to remove supported nodes from the working draft.
+
+Examples:
+
+- Delete a promotional image.
+- Remove a decorative text section.
+- Remove an unwanted container.
+- Remove a duplicated banner.
+
+The operation must update the actual PageDocument.
+
+## 34. Add appropriate confirmation
+
+For potentially destructive structural actions, provide clear confirmation or a reliable immediate restoration mechanism.
+
+The user should understand whether they are deleting:
+
+- A page design element.
+- A complete section.
+- A container with nested elements.
+
+Do not use vague wording such as "Delete item" when the operation removes an entire subtree.
+
+## 35. Preserve database records
+
+Deleting a product collection section must not delete the product database records.
+
+Deleting a CategoryCard presentation node must not delete the category.
+
+Removing a banner must not remove its referenced asset from Supabase Storage automatically.
+
+Structural deletion only modifies the document.
+
+## 36. Handle selection after deletion
+
+When the selected node is deleted:
+
+- Clear its selection or select an appropriate surviving parent.
+- Update the inspector.
+- Remove the selection outline.
+- Update the Layers panel.
+- Preserve the rest of the document.
+- Avoid stale DOM references.
+
+If the selected node has descendants, remove their runtime selection metadata safely.
+
+---
+
+# PART 12 — CONTAINERS, GROUPING AND UNGROUPING
+
+## 37. Implement safe container organization
+
+Support appropriate structural organization operations.
+
+Examples:
+
+- Wrap a supported node in a Container.
+- Move compatible nodes into an existing Container.
+- Move a child out of a Container when valid.
+- Remove an empty Container where safe.
+
+Use existing registered component types.
+
+Do not introduce a new unsupported grouping format.
+
+## 38. Preserve design geometry
+
+Wrapping an element in a new Container can change layout behavior.
+
+Therefore:
+
+- Apply safe layout defaults.
+- Avoid unnecessary width changes.
+- Preserve responsive behavior.
+- Validate inherited styling.
+- Check nesting depth.
+- Avoid introducing clipping or unwanted margins.
+
+If grouping cannot preserve the layout correctly, report the limitation.
+
+Do not silently distort the storefront.
+
+## 39. Define ungrouping rules
+
+If supported, ungroup should move children into the previous parent while preserving valid order.
+
+Validate:
+
+- Parent compatibility.
+- Slot compatibility.
+- Resulting hierarchy.
+- Node identities.
+- Layout consequences.
+
+Do not allow ungrouping of protected specialized components.
+
+Full arbitrary multi-selection grouping may remain deferred until the dedicated multi-selection phase.
+
+---
+
+# PART 13 — STRUCTURAL OPERATION ENGINE
+
+## 40. Create a centralized structural-command layer
+
+Do not let each UI button directly mutate the PageDocument independently.
+
+Implement a reusable set of typed structural commands.
+
+Potential commands:
+
+- RenameNode.
+- ReorderNode.
+- MoveNode.
+- DuplicateNode.
+- SetVisibility.
+- SetLock.
+- RemoveNode.
+- WrapNodeInContainer.
+- UnwrapContainer.
+
+Use naming consistent with the existing architecture.
+
+Each operation should be:
+
+- Pure or controlled through a well-defined state boundary.
+- Immutable.
+- Validated.
+- Deterministic.
+- Testable.
+- Compatible with persisted PageDocument.
+- Aware of trusted component capabilities.
+
+## 41. Use atomic document transformations
+
+For each command:
+
+1. Read the current document.
+2. Validate the command input.
+3. Verify the target node exists.
+4. Verify capabilities.
+5. Verify lock restrictions.
+6. Apply the proposed change immutably.
+7. Validate the resulting hierarchy.
+8. Return a successful new document or structured error.
+9. Update editor working state.
+10. Mark the draft as modified.
+
+If validation fails, do not partially modify the working document.
+
+## 42. Return structured operation results
+
+Provide clear results such as:
+
+- Success.
+- Invalid target.
+- Node not found.
+- Unsupported operation.
+- Locked node.
+- Locked ancestor.
+- Invalid parent.
+- Invalid slot.
+- Invalid depth.
+- Circular move.
+- Duplicate node ID.
+- Protected component.
+- Schema validation failed.
+
+Do not silently ignore failed operations.
+
+Display understandable errors in the studio.
+
+---
+
+# PART 14 — DRAFT PERSISTENCE AND HISTORY
+
+## 43. Integrate existing Save Draft
+
+Structural operations must modify the current working draft.
+
+They must not automatically modify the published storefront.
+
+The data flow must be:
+
+Layer action
+→ Validated structural command
+→ Immutable PageDocument update
+→ Real canvas rerender
+→ Dirty-state update
+→ Save Draft
+→ Authorized persistence service.
+
+Reuse the persistence infrastructure from Prompt 8.
+
+Do not create a second save API.
+
+## 44. Preserve revision conflict protection
+
+If the administrator's draft is based on an outdated revision:
+
+- Do not silently overwrite newer data.
+- Return a conflict.
+- Preserve local unsaved work.
+- Display actionable feedback.
+- Follow the established revision-handling model.
+
+Do not claim a save succeeded before the backend confirms it.
+
+## 45. Prepare future undo/redo compatibility
+
+The future editor will provide full undo/redo support.
+
+Therefore, structural commands should record enough information for a reversible operation model.
+
+However, do not build a complete unlimited history manager in this prompt.
+
+A limited immediate recovery mechanism for destructive actions is acceptable if it is implemented correctly.
+
+The important requirement is that command results are deterministic and compatible with future history management.
+
+---
+
+# PART 15 — CANVAS AND LAYERS SYNCHRONIZATION
+
+## 46. Reflect structural changes immediately
+
+After reordering a section:
+
+- The Layers panel changes order.
+- The actual canvas changes order.
+- The selected component remains correctly identified.
+- The inspector remains synchronized.
+
+After duplicating:
+
+- A new node appears in Layers.
+- The actual component appears in the canvas.
+- Its ID is unique.
+- The new component can be selected.
+
+After hiding:
+
+- The node remains in Layers.
+- The rendered element disappears.
+- A hidden indicator appears.
+
+After deleting:
+
+- The node disappears from Layers.
+- The element disappears from the canvas.
+- The inspector avoids stale selection.
+
+## 47. Preserve scroll and focus where practical
+
+Structural editing can change the page height.
+
+Avoid unnecessary:
+
+- Canvas resets to the top.
+- Inspector resets.
+- Loss of keyboard focus.
+- Selection disappearance.
+- Full-page React remounts.
+
+Use stable node keys.
+
+Recalculate selection geometry after valid changes.
+
+If the selected element has moved to a different position, allow the user to reveal it again.
+
+---
+
+# PART 16 — CELESTIAL ANIMATIONS AND SECTION ORDERING
+
+## 48. Protect scroll-driven effects
+
+The existing storefront includes CelestialScrollWorld and PlanetHero.
+
+Changing section order can change overall page scroll positions.
+
+Investigate the impact on:
+
+- Scroll progress.
+- Planet positioning.
+- Motion transitions.
+- Lazy loading.
+- Animation interpolation.
+- Fixed backgrounds.
+
+Do not rewrite the planetary animation system.
+
+Preserve existing default behavior.
+
+When the administrator intentionally reorders sections, the draft preview should remain stable and avoid unnecessary jumps.
+
+Document limitations of normalized document-scroll animations under structural changes.
+
+## 49. Avoid unnecessary remounts
+
+Reordering a lightweight text block must not reinitialize:
+
+- PlanetHero videos.
+- CelestialScrollWorld.
+- Unrelated product carousels.
+- Existing animations.
+- Heavy rendering resources.
+
+Use stable keys, localized state updates, and proper component boundaries.
+
+---
+
+# PART 17 — PROTECT DYNAMIC CATEGORIES AND PRODUCTS
+
+## 50. Maintain template/instance separation
+
+The editor must distinguish:
+
+- PageDocument component definitions.
+- Runtime product instances.
+- Runtime category instances.
+- Repeated section templates.
+
+Do not serialize each runtime ProductCard as a completely separate permanent design node unless the architecture explicitly requires it.
+
+## 51. Restrict editing operations appropriately
+
+Examples:
+
+**Allowed:**
+- Reorder a Product Collection section.
+- Duplicate a supported promotional banner.
+- Rename a category-section template layer.
+- Hide a marketing section.
+- Lock a reusable card layout.
+
+**Not automatically allowed:**
+- Duplicate a product record by duplicating its visual card.
+- Delete a database category by deleting its visual instance.
+- Rewrite `sort_order` through unrelated section reordering.
+- Change affiliate URLs through visual operations.
+- Move a category spotlight into a component that cannot provide its required data context.
+
+Enforce these distinctions in the structural-command layer.
+
+---
+
+# PART 18 — USER INTERFACE QUALITY
+
+## 52. Create professional layer interactions
+
+The Layers panel must feel intuitive.
+
+Use:
+
+- Clear indentation.
+- Compact action menus.
+- Recognizable icons.
+- Subtle selection highlighting.
+- Strong keyboard focus visibility.
+- Helpful tooltips.
+- Clear disabled states.
+- Consistent spacing.
+- Smooth but restrained transitions.
+
+Avoid showing every action icon permanently on every row if that makes the panel cluttered.
+
+Use a context menu and contextual controls where appropriate.
+
+## 53. Provide clear operation feedback
+
+After structural changes, show appropriate feedback.
+
+Examples:
+
+- Layer renamed.
+- Section moved.
+- Section duplicated.
+- Element hidden.
+- Element locked.
+- Element removed.
+- Operation not allowed.
+- Invalid destination.
+
+Do not display a success message for a rejected command.
+
+---
+
+# PART 19 — PERFORMANCE AUDIT BEFORE IMPLEMENTATION
+
+## 54. Read existing performance measurements
+
+Open:
+
+`PERFORMANCE_BASELINE.md`
+
+Record:
+
+- Starting commit.
+- Test environment.
+- Current studio bundle size.
+- Existing selection latency.
+- Canvas rendering performance.
+- Existing tree traversal performance.
+- Known browser limitations.
+- Known animation issues.
+
+Measure a fresh baseline where tools permit.
+
+## 55. Identify structural editing performance risks
+
+Investigate:
+
+- Tree traversal during every render.
+- Repeated full-document cloning.
+- Full Zod validation after every minor UI event.
+- Slow node lookup.
+- Rebuilding all layer rows.
+- Excessive React context updates.
+- Canvas remounts.
+- Large category lists.
+- Repeated product-data fetching.
+- Expensive layout measurement.
+- Observer leaks.
+- Slow serialization.
+- Excessive database saves.
+
+Document the risks before implementation.
+
+---
+
+# PART 20 — PERFORMANCE-OPTIMIZED STRUCTURAL ENGINE
+
+## 56. Use immutable structural sharing
+
+When one node is renamed, do not deep-clone unrelated sections unnecessarily.
+
+When a component is hidden, preserve references to unaffected subtrees where practical.
+
+When reordering siblings, update only the required hierarchy.
+
+Leverage existing tree utilities.
+
+Avoid using JSON serialization as the default update mechanism.
+
+## 57. Optimize tree rendering
+
+For documents with hundreds of nodes:
+
+- Memoize stable layer rows where useful.
+- Avoid unnecessary expansion recomputation.
+- Use direct ID lookups.
+- Preserve expansion state.
+- Debounce search where appropriate.
+- Avoid recalculating runtime instance structures on every hover event.
+
+Do not add an expensive tree framework unless justified.
+
+## 58. Avoid saving on every minor UI event
+
+Renaming input keystrokes should not trigger a separate database write every character.
+
+Structural commands should update local draft state first.
+
+Use the existing save workflow.
+
+Do not introduce a competing autosave coordinator.
+
+## 59. Keep public bundle isolation
+
+All editor-specific layer controls and structural-command UI must stay out of ordinary public-storefront bundles.
+
+The shared public renderer may consume the resulting validated document, but should not import the administrative Layers panel or editor interaction controls.
+
+---
+
+# PART 21 — POST-IMPLEMENTATION PERFORMANCE TESTING
+
+## 60. Benchmark realistic document sizes
+
+Use representative fixtures:
+
+- Small: 25 nodes.
+- Medium: 150 nodes.
+- Large: 500 nodes.
+- Stress case: 1,000 nodes.
+
+These are performance fixtures, not product limits.
+
+Measure:
+
+- Layer-tree construction.
+- Expand/collapse.
+- Search.
+- Rename.
+- Reorder.
+- Duplicate subtree.
+- Hide/show.
+- Lock/unlock.
+- Remove.
+- Cross-parent move.
+- Validation of resulting document.
+- Canvas update where measurable.
+
+Use multiple iterations.
+
+Report actual median/p95 timings when appropriate.
+
+Do not invent results.
+
+## 61. Check structural editing responsiveness
+
+Where browser tooling permits, verify:
+
+- Layer action to canvas update latency.
+- Large tree expansion responsiveness.
+- Reordering performance.
+- Duplicate rendering performance.
+- Selection persistence.
+- Scroll behavior.
+- Inspector synchronization.
+- Memory usage.
+
+Report the environment and measurement method.
+
+## 62. Check heavy component stability
+
+Verify that simple layer operations do not unnecessarily remount existing hero videos or the celestial animation system.
+
+Assess resource cleanup and component identity preservation.
+
+Document verified behavior.
+
+---
+
+# PART 22 — AUTOMATED TESTING
+
+## 63. Layer-renaming tests
+
+Verify:
+
+- Rename valid node.
+- Reject invalid name.
+- Cancel rename.
+- Preserve component type.
+- Preserve business bindings.
+- Persist the renamed layer.
+
+## 64. Reordering tests
+
+Verify:
+
+- Move up.
+- Move down.
+- Reorder root sections.
+- Reorder nested siblings.
+- Preserve stable IDs.
+- Preserve slot membership.
+- Reject invalid ordering.
+- Respect locked nodes.
+- Preserve unaffected subtrees.
+
+## 65. Moving and nesting tests
+
+Verify:
+
+- Move to compatible parent.
+- Reject incompatible parent.
+- Reject invalid slot.
+- Reject move into descendant.
+- Reject moving root-only nodes into nested containers.
+- Respect document depth limits.
+- Preserve bindings.
+- Preserve responsive configuration.
+
+## 66. Duplication tests
+
+Verify:
+
+- Duplicate supported node.
+- Generate new IDs.
+- Generate new descendant IDs.
+- Preserve valid visual properties.
+- Preserve legal binding descriptors.
+- Reject protected singleton duplication.
+- Reject invalid cloned structures.
+- Do not duplicate database products.
+
+## 67. Visibility tests
+
+Verify:
+
+- Hide node.
+- Show node.
+- Hidden layer remains accessible.
+- Hidden element disappears from canvas.
+- Global visibility and responsive visibility remain distinct.
+- Visibility changes do not delete data.
+
+## 68. Locking tests
+
+Verify:
+
+- Lock node.
+- Unlock node.
+- Prevent edits to locked node.
+- Prevent edits under locked ancestor.
+- Respect trusted component capabilities.
+- Do not bypass server authorization.
+
+## 69. Deletion tests
+
+Verify:
+
+- Delete permitted node.
+- Reject protected deletion.
+- Update selection correctly.
+- Remove descendants.
+- Preserve unrelated sections.
+- Preserve products/categories in database.
+- Handle missing node safely.
+
+## 70. Container tests
+
+Verify:
+
+- Wrap compatible node.
+- Move into compatible container.
+- Unwrap when valid.
+- Reject invalid grouping.
+- Preserve hierarchy.
+- Avoid unnecessary layout changes.
+
+## 71. Persistence tests
+
+Verify:
+
+- Structural edit marks draft dirty.
+- Save stores changed structure.
+- Refresh restores saved structure.
+- Published page remains unchanged.
+- Revision conflict prevents stale overwrite.
+- Invalid document cannot be persisted.
+- Save failure preserves working state.
+
+## 72. Browser integration tests
+
+Where supported, verify:
+
+- Real Layers panel operations.
+- Actual canvas section reordering.
+- Canvas/inspector synchronization.
+- Selection after duplication.
+- Selection after deletion.
+- Hidden component recovery.
+- Responsive layouts.
+- Animation behavior.
+- Accessible keyboard navigation.
+
+Do not claim visual parity using only JSDOM tests.
+
+---
+
+# PART 23 — STRUCTURAL REGRESSION CHECKS
+
+## 73. Preserve the existing storefront by default
+
+If no administrator changes have been made, the original homepage must remain unchanged.
+
+Verify:
+
+- PlanetHero.
+- CelestialScrollWorld.
+- Festival Special.
+- Featured products.
+- New arrivals.
+- Category spotlights.
+- Product rails.
+- Explore by interest.
+- Why shop with us.
+- Instagram section.
+- Header.
+- Footer.
+
+No new default section order should be introduced.
+
+## 74. Protect storefront behavior
+
+Structural editor operations must not damage:
+
+- Product navigation.
+- Search.
+- Category pages.
+- Affiliate links.
+- Outbound click tracking.
+- Admin authentication.
+- Product management.
+- Category management.
+- Existing site settings.
+
+Test public mode separately from editor mode.
+
+## 75. Verify deliberate structural changes
+
+Once an administrator changes section order, the draft preview should accurately reflect it.
+
+Do not mistake intentional draft modifications for regressions.
+
+Compare the untouched default document with the legacy baseline separately from comparisons of deliberately edited drafts.
+
+---
+
+# PART 24 — RECOMMENDED SOURCE STRUCTURE
+
+## 76. Extend the existing editor rather than replacing it
+
+Possible modules:
+
+src/
+  components/
+    visual-editor/
+      layers/
+        LayersPanel.tsx
+        LayerTree.tsx
+        LayerTreeItem.tsx
+        LayerContextMenu.tsx
+        LayerRenameInput.tsx
+        LayerActionControls.tsx
+        LayerSearch.tsx
+
+  lib/
+    visual-editor/
+      structure/
+        structural-commands.ts
+        structural-validation.ts
+        move-node.ts
+        duplicate-node.ts
+        visibility.ts
+        locking.ts
+        grouping.ts
+
+      __tests__/
+        structural-commands.test.ts
+        structural-validation.test.ts
+        layer-operations.test.tsx
+        layer-persistence.test.tsx
+
+These names are illustrative.
+
+Inspect the current studio architecture and reuse established modules.
+
+Do not create unnecessary placeholder files.
+
+Do not implement a second PageDocument store.
+
+Do not duplicate selection or persistence infrastructure.
+
+---
+
+# PART 25 — IMPLEMENTATION ORDER
+
+## 77. Execute in controlled stages
+
+### Step 1 — GitHub verification
+Recover the latest repository state and correct development branch.
+
+### Step 2 — Prerequisite verification
+Confirm Prompts 7–10 are actually implemented.
+
+### Step 3 — Architecture review
+Inspect PageDocument, registry, tree utilities, selection controller, and Layers panel.
+
+### Step 4 — Performance baseline
+Record existing tree and studio performance.
+
+### Step 5 — Structural command architecture
+Implement typed, validated document operations.
+
+### Step 6 — Layer UI
+Upgrade the hierarchy panel and context menus.
+
+### Step 7 — Renaming
+Implement functional inline layer renaming.
+
+### Step 8 — Reordering
+Implement valid section and nested sibling ordering.
+
+### Step 9 — Controlled moving
+Support compatible parent/slot moves.
+
+### Step 10 — Duplication
+Implement safe subtree duplication with fresh IDs.
+
+### Step 11 — Visibility
+Implement hide/show and appropriate responsive behavior.
+
+### Step 12 — Locking
+Implement effective lock rules.
+
+### Step 13 — Deletion
+Implement safe removal and restoration safeguards.
+
+### Step 14 — Containers
+Implement supported wrap/unwrap operations.
+
+### Step 15 — Canvas synchronization
+Ensure the actual storefront canvas reflects every valid structural edit.
+
+### Step 16 — Persistence
+Connect changes to the existing draft save and revision system.
+
+### Step 17 — Automated tests
+Test all structural commands and UI interactions.
+
+### Step 18 — Browser verification
+Check visual layout and interaction behavior where possible.
+
+### Step 19 — Performance audit
+Measure operation latency and bundle impact.
+
+### Step 20 — Regression remediation
+Resolve issues introduced by the changes.
+
+### Step 21 — Documentation
+Update the four project handoff documents.
+
+### Step 22 — Git checkpoint
+Commit and push verified work.
+
+### Step 23 — Remote verification
+Confirm the intended commit exists on GitHub.
+
+### Step 24 — Final report
+Summarize actual results and remaining limitations.
+
+---
+
+# PART 26 — PROJECT CONTINUITY DOCUMENTATION
+
+## 78. Update IMPLEMENTATION_PROGRESS.md
+
+Record:
+
+- Prompt 11 implementation status.
+- Layer operations implemented.
+- Structural command modules.
+- UI components.
+- Supported component restrictions.
+- Draft persistence behavior.
+- Automated test results.
+- Browser verification status.
+- Performance findings.
+- Unresolved issues.
+- Next planned prompt.
+
+Do not mark unsupported features as complete.
+
+## 79. Update ARCHITECTURE_AUDIT.md
+
+Document:
+
+- Structural command architecture.
+- Hierarchy validation.
+- Component capability enforcement.
+- Reorder behavior.
+- Cross-parent moving.
+- Slot handling.
+- Duplication identity.
+- Lock inheritance.
+- Visibility behavior.
+- Safe deletion.
+- Runtime instance restrictions.
+- Persistence integration.
+- Future drag-and-drop integration.
+
+## 80. Update PERFORMANCE_BASELINE.md
+
+Record:
+
+- Starting commit.
+- Execution environment.
+- Before/after bundle sizes.
+- Layer-tree performance.
+- Command benchmarks.
+- Canvas update performance.
+- Memory observations.
+- Animation stability.
+- Unverified browser metrics.
+- New regressions.
+
+Do not fabricate measurements.
+
+## 81. Update AI_STUDIO_HANDOFF.md
+
+Include:
+
+- Repository URL.
+- Development branch.
+- Last verified completed prompt.
+- Implemented structural operations.
+- Important source files.
+- Command APIs.
+- Tests executed.
+- Performance findings.
+- Known bugs.
+- GitHub synchronization status.
+- Exact next prompt and its prerequisites.
+
+Another Google AI Studio account must be able to resume from GitHub without repeating finished work.
+
+Never store credentials or access tokens in project documents.
+
+---
+
+# PART 27 — GITHUB COMMIT AND PUSH
+
+## 82. Review all code changes
+
+Before committing:
+
+1. Verify active branch.
+2. Inspect Git status.
+3. Review modified source files.
+4. Inspect new modules.
+5. Verify no unrelated work was modified.
+6. Verify no secrets are staged.
+7. Run TypeScript checks.
+8. Run lint.
+9. Run Vitest.
+10. Run production build.
+11. Check public bundle isolation.
+12. Verify no unintended database writes.
+
+## 83. Create the checkpoint
+
+Recommended conventional commit message:
+
+`feat(editor): add structural layer editing and hierarchy controls`
+
+Push to the verified development branch.
+
+Do not force-push.
+
+Do not automatically merge into `main`.
+
+If implementation is incomplete, report it honestly and avoid a misleading completion claim.
+
+## 84. Verify remote GitHub synchronization
+
+After pushing:
+
+- Fetch remote HEAD.
+- Confirm expected commit.
+- Confirm correct branch.
+- Verify structural modules.
+- Verify tests.
+- Verify updated handoff files.
+- Report final SHA.
+- Report uncommitted or unpushed changes.
+
+If GitHub push is unavailable, preserve local work and report the actual blocker.
+
+Do not claim synchronization succeeded without remote verification.
+
+---
+
+# PART 28 — DEFINITION OF DONE
+
+Prompt 11 is complete only when all essential requirements are verified.
+
+## Layer management
+
+- Real PageDocument hierarchy displayed.
+- Expand/collapse works.
+- Search works.
+- Selection synchronization works.
+- Context menus work.
+- Rename works.
+
+## Structural editing
+
+- Reordering works.
+- Valid nested reordering works.
+- Compatible parent moves work.
+- Duplicate works.
+- Hide/show works.
+- Lock/unlock works.
+- Safe deletion works.
+- Supported container operations work.
+- Invalid operations are rejected.
+
+## Data integrity
+
+- Stable node IDs preserved.
+- Duplicated nodes receive fresh IDs.
+- Runtime product/category instances remain distinct from document nodes.
+- Product/category business records are untouched.
+- No affiliate URL mutation.
+- Trusted component restrictions are enforced.
+
+## Persistence
+
+- Changes update the draft document.
+- Canvas reflects changes.
+- Save Draft works.
+- Refresh restores saved structure.
+- Published website remains unchanged.
+- Revision conflicts are handled.
+
+## Performance
+
+- Existing baseline reviewed.
+- Structural commands benchmarked.
+- Canvas updates assessed.
+- Public bundle isolation checked.
+- Heavy animations do not remount unnecessarily.
+- No excessive database writes.
+- Missing runtime measurements reported.
+
+## Testing
+
+- Structural unit tests.
+- Layer UI tests.
+- Persistence integration tests.
+- Public storefront regressions.
+- Keyboard accessibility.
+- Browser layout verification where possible.
+
+## GitHub
+
+- Correct branch.
+- Previous progress recovered.
+- Four documents updated.
+- Changes reviewed.
+- Appropriate checkpoint committed.
+- Push attempted.
+- Remote commit verified before claiming success.
+- Next-session handoff prepared.
+
+Do not mark unverified requirements as passed.
+
+---
+
+# PART 29 — REQUIRED FINAL REPORT
+
+Produce a report titled:
+
+**"Visual Storefront Editor — Prompt 11 Structural Layer Management, Hierarchy Editing, Performance Audit & GitHub Checkpoint"**
+
+Include:
+
+### A. GitHub verification
+Repository, branch, starting SHA, prerequisite status and synchronization result.
+
+### B. Structural editing architecture
+Command layer, validation and state ownership.
+
+### C. Layers panel
+Tree layout, search, context menus and selection synchronization.
+
+### D. Reordering
+Root sections, nested children, slot handling and restrictions.
+
+### E. Moving and nesting
+Parent compatibility, invalid moves and document integrity.
+
+### F. Duplication
+New IDs, cloned properties, protected component rules.
+
+### G. Visibility
+Global and responsive visibility behavior.
+
+### H. Locking
+Local locks, ancestor locks and trusted permissions.
+
+### I. Deletion and recovery
+Protected nodes, subtree removal and safe selection updates.
+
+### J. Grouping and containers
+Implemented operations and restrictions.
+
+### K. Dynamic product/category behavior
+Template versus runtime instance handling.
+
+### L. Draft persistence
+Save, revision handling and published-page isolation.
+
+### M. Performance before implementation
+Verified baseline.
+
+### N. Performance after implementation
+Command benchmarks, canvas behavior, bundle impact and limitations.
+
+### O. Automated tests
+Commands executed, results, failures and blocked checks.
+
+### P. Visual regression
+Layout/animation behavior and actual browser verification.
+
+### Q. Source change inventory
+Every file created or modified.
+
+### R. GitHub checkpoint
+Commit message, branch, final SHA and remote verification.
+
+### S. Project documentation
+Status of all four handoff files.
+
+### T. Known limitations
+Unsupported operations, deferred features and open risks.
+
+### U. Next prompt readiness
+Exact next development dependencies.
+
+### V. Final decision
+
+Choose:
+
+**GO** — All essential structural operations, tests, performance checks, and GitHub checkpoint requirements are sufficiently verified.
+
+**CONDITIONAL GO** — Core features are implemented but documented verification or integration gaps remain.
+
+**NO-GO** — Missing prerequisites, broken document integrity, serious data-safety problems, critical regressions, or unrecoverable synchronization issues prevent safe continuation.
+
+Explain the decision using actual evidence.
+
+---
+
+# FINAL EXECUTION DIRECTIVE
+
+Begin by recovering the latest verified GitHub development state.
+
+Confirm that the real Design Studio and precision-selection engine already exist.
+
+Then implement:
+
+1. Advanced Layers panel.
+2. Centralized structural command system.
+3. Inline renaming.
+4. Root-section reordering.
+5. Compatible nested reordering.
+6. Controlled movement between containers.
+7. Safe component duplication.
+8. Show/hide controls.
+9. Lock/unlock controls.
+10. Validated structural deletion.
+11. Supported container organization.
+12. Canvas/Layers/Inspector synchronization.
+13. Draft persistence integration.
+14. Security and data-integrity safeguards.
+15. Unit and integration tests.
+16. Real browser verification where possible.
+17. Before/after performance audit.
+18. Regression remediation.
+19. Four updated project documents.
+20. Git commit and push.
+21. Remote GitHub verification.
+22. Complete implementation report.
+
+**DO NOT CREATE ANOTHER PAGE DOCUMENT SYSTEM.**
+
+**DO NOT DUPLICATE BUSINESS DATA WHEN DUPLICATING VISUAL COMPONENTS.**
+
+**DO NOT MOVE PROTECTED ROOT COMPONENTS INTO INVALID CONTAINERS.**
+
+**DO NOT ALLOW LOCKED NODES TO BE MODIFIED THROUGH ANOTHER EDITOR PANEL.**
+
+**DO NOT MODIFY THE LIVE WEBSITE WHILE EDITING A DRAFT.**
+
+**DO NOT INTRODUCE HEAVY EDITOR LIBRARIES INTO THE PUBLIC STOREFRONT.**
+
+**DO NOT CLAIM TESTS OR PERFORMANCE CHECKS SUCCEEDED WITHOUT EXECUTION.**
+
+**DO NOT CLAIM GITHUB PUSH SUCCESS WITHOUT REMOTE VERIFICATION.**
+
+**DO NOT BEGIN PROMPT 12 AUTOMATICALLY.**
+
+The ultimate objective is a professional Shopify-style visual storefront design platform in which administrators can safely customize the actual website using precise selection, advanced component hierarchy, drag-and-drop, geometric resizing, shape editing, responsive layouts, real-time previews, and validated publishing.
+
+Prompt 11 must establish robust structural editing so that all future visual operations work against one reliable, secure and performant PageDocument hierarchy.

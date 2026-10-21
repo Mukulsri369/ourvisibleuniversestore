@@ -12,11 +12,13 @@ export function ProductImage({
   alt,
   className,
   eager,
+  style,
 }: {
   src: string | null;
   alt: string;
   className?: string;
   eager?: boolean;
+  style?: React.CSSProperties;
 }) {
   const [failed, setFailed] = useState(false);
 
@@ -27,6 +29,7 @@ export function ProductImage({
   if (!src || failed) {
     return (
       <div
+        style={style}
         className={cn(
           "flex items-center justify-center bg-secondary/80 nebula text-muted-foreground",
           className,
@@ -43,6 +46,7 @@ export function ProductImage({
       loading={eager ? "eager" : "lazy"}
       decoding="async"
       onError={() => setFailed(true)}
+      style={style}
       className={cn("object-cover", className)}
     />
   );
@@ -52,12 +56,18 @@ export function ProductCard({
   p,
   compact = false,
   className = "",
+  style,
+  imageStyle,
   onQuickPreview,
+  editorInstanceId,
 }: {
   p: ProductCardData;
   compact?: boolean;
   className?: string;
+  style?: React.CSSProperties;
+  imageStyle?: React.CSSProperties;
   onQuickPreview?: (p: ProductCardData) => void;
+  editorInstanceId?: string;
 }) {
   const price = formatPrice(p.price, p.currency);
   const [active, setActive] = useState(0);
@@ -85,6 +95,9 @@ export function ProductCard({
   if (compact) {
     return (
       <article
+        style={style}
+        data-editor-instance-id={editorInstanceId}
+        data-editor-instance-type={editorInstanceId ? "ProductCard" : undefined}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={cn(
@@ -94,7 +107,10 @@ export function ProductCard({
         )}
       >
         {/* COMPACT IMAGE CONTAINER */}
-        <div className="relative aspect-square w-full overflow-hidden bg-secondary/60">
+        <div
+          style={imageStyle?.aspectRatio ? { aspectRatio: imageStyle.aspectRatio } : undefined}
+          className="relative aspect-square w-full overflow-hidden bg-secondary/60"
+        >
           <Link to="/product/$slug" params={{ slug: p.slug }} className="block size-full relative">
             {hasMultipleImages ? (
               <AnimatePresence initial={false}>
@@ -109,6 +125,7 @@ export function ProductCard({
                   <ProductImage
                     src={currentSrc}
                     alt={currentAlt}
+                    style={imageStyle}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </motion.div>
@@ -117,6 +134,7 @@ export function ProductCard({
               <ProductImage
                 src={p.image}
                 alt={p.imageAlt || p.name}
+                style={imageStyle}
                 className="h-full w-full transition-transform duration-500 group-hover:scale-105"
               />
             )}
@@ -228,6 +246,9 @@ export function ProductCard({
   // STANDARD PRODUCT CARD (DENSE, MAX PHOTO, COMPACT TYPOGRAPHY)
   return (
     <article
+      style={style}
+      data-editor-instance-id={editorInstanceId}
+      data-editor-instance-type={editorInstanceId ? "ProductCard" : undefined}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
@@ -236,7 +257,10 @@ export function ProductCard({
       )}
     >
       {/* MAX PHOTO CONTAINER (70%+ OF CARD HEIGHT) */}
-      <div className="relative aspect-square w-full overflow-hidden bg-secondary/50">
+      <div
+        style={imageStyle?.aspectRatio ? { aspectRatio: imageStyle.aspectRatio } : undefined}
+        className="relative aspect-square w-full overflow-hidden bg-secondary/50"
+      >
         <Link to="/product/$slug" params={{ slug: p.slug }} className="block size-full relative">
           {hasMultipleImages ? (
             <AnimatePresence initial={false}>
@@ -251,6 +275,7 @@ export function ProductCard({
                 <ProductImage
                   src={currentSrc}
                   alt={currentAlt}
+                  style={imageStyle}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </motion.div>
@@ -259,6 +284,7 @@ export function ProductCard({
             <ProductImage
               src={p.image}
               alt={p.imageAlt || p.name}
+              style={imageStyle}
               className="h-full w-full transition-transform duration-500 group-hover:scale-105"
             />
           )}
@@ -325,7 +351,10 @@ export function ProductCard({
             </p>
           )}
           <Link to="/product/$slug" params={{ slug: p.slug }}>
-            <h3 className="line-clamp-2 text-xs sm:text-[13px] font-medium leading-snug text-foreground hover:text-primary transition-colors">
+            <h3
+              style={style?.color ? { color: style.color } : undefined}
+              className="line-clamp-2 text-xs sm:text-[13px] font-medium leading-snug text-foreground hover:text-primary transition-colors"
+            >
               {p.name}
             </h3>
           </Link>
@@ -366,9 +395,13 @@ export function ProductCard({
 export function ProductGrid({
   items,
   className = "",
+  style,
+  editorParentNodeId,
 }: {
   items: ProductCardData[];
   className?: string;
+  style?: React.CSSProperties;
+  editorParentNodeId?: string;
 }) {
   const [previewProduct, setPreviewProduct] = useState<ProductCardData | null>(null);
 
@@ -376,13 +409,21 @@ export function ProductGrid({
     <>
       {/* EXPANDED 5-6 PRODUCT ROW GRID */}
       <div
+        style={style}
         className={cn(
           "grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3.5 md:grid-cols-4 md:gap-4 lg:grid-cols-5 xl:grid-cols-6",
           className,
         )}
       >
         {items.map((p) => (
-          <ProductCard key={p.id} p={p} onQuickPreview={(prod) => setPreviewProduct(prod)} />
+          <ProductCard
+            key={p.id}
+            p={p}
+            editorInstanceId={
+              editorParentNodeId ? `${editorParentNodeId}::product::${p.id}` : undefined
+            }
+            onQuickPreview={(prod) => setPreviewProduct(prod)}
+          />
         ))}
       </div>
 

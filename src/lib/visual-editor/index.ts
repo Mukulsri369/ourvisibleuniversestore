@@ -33,3 +33,11 @@ export * from "./adapters/CategorySpotlightAdapter";
 export * from "./adapters/CategoryCardAdapter";
 export * from "./adapters/StoreChromeAdapter";
 export * from "./adapters/GenericElementsAdapter";
+
+export * from "./homepage/index";
+export * from "./persistence/index";
+export * from "./publishing/index";
+export * from "./geometry/index";
+export * from "./interactions/index";
+export * from "./structure/index";
+export * from "./inspector/index";

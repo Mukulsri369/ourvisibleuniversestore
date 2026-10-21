@@ -1,4 +1,11 @@
-import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  redirect,
+  useLocation,
+  useNavigate,
+} from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   CopyCheck,
@@ -6,6 +13,7 @@ import {
   Flame,
   FolderTree,
   LayoutDashboard,
+  LayoutTemplate,
   LogOut,
   Menu,
   Package,
@@ -14,6 +22,20 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+
+const ADMIN_NAVIGATION_ITEMS = [
+  { to: "/admin" as const, label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/admin/design" as const, label: "Design Studio", icon: LayoutTemplate, exact: false },
+  { to: "/admin/products" as const, label: "Products", icon: Package, exact: false },
+  { to: "/admin/duplicates" as const, label: "Duplicates", icon: CopyCheck, exact: false },
+  { to: "/admin/festival" as const, label: "Festival Special", icon: Flame, exact: false },
+  { to: "/admin/categories" as const, label: "Categories", icon: FolderTree, exact: false },
+  { to: "/admin/settings" as const, label: "Settings", icon: Settings, exact: false },
+] as const;
+
+function isDesignStudioPathname(pathname: string): boolean {
+  return pathname === "/admin/design" || pathname.startsWith("/admin/design/");
+}
 
 // Client-only gate for the admin UI. Real enforcement is database-side:
 // every write is checked by Row Level Security using is_admin().
@@ -35,8 +57,11 @@ export const Route = createFileRoute("/_admin")({
 
 function AdminShell() {
   const navigate = useNavigate();
+  const location = useLocation();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
+
+  const isFullScreenStudio = isDesignStudioPathname(location.pathname);
 
   async function logout() {
     await qc.cancelQueries();
@@ -45,20 +70,26 @@ function AdminShell() {
     navigate({ to: "/admin/login", search: { denied: undefined }, replace: true });
   }
 
+  // Dedicated full-screen workspace for `/admin/design` (Part 3, Section 7 & Part 5, Section 10):
+  // Bypasses the regular `lg:pl-60` sidebar and `max-w-6xl` narrow form container.
+  if (isFullScreenStudio) {
+    return (
+      <div
+        data-testid="admin-fullscreen-studio-layout"
+        className="h-screen w-screen overflow-hidden bg-background text-foreground"
+      >
+        <Outlet />
+      </div>
+    );
+  }
+
   const sidebar = (
     <div className="flex h-full flex-col gap-1 p-4">
       <Link to="/admin" className="mb-6 flex items-center gap-2 px-2">
         <span className="size-2 rounded-full bg-primary shadow-glow" />
         <span className="font-display text-lg">OVU Admin</span>
       </Link>
-      {[
-        { to: "/admin" as const, label: "Dashboard", icon: LayoutDashboard, exact: true },
-        { to: "/admin/products" as const, label: "Products", icon: Package, exact: false },
-        { to: "/admin/duplicates" as const, label: "Duplicates", icon: CopyCheck, exact: false },
-        { to: "/admin/festival" as const, label: "Festival Special", icon: Flame, exact: false },
-        { to: "/admin/categories" as const, label: "Categories", icon: FolderTree, exact: false },
-        { to: "/admin/settings" as const, label: "Settings", icon: Settings, exact: false },
-      ].map((n) => (
+      {ADMIN_NAVIGATION_ITEMS.map((n) => (
         <Link
           key={n.to}
           to={n.to}
