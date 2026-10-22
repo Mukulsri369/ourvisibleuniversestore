@@ -5,3 +5,7 @@ export * from "./studio-persistence";
 export * from "./studio-state";
 export * from "../structure/index";
 export * from "../inspector/index";
+export * from "../history/index";
+export * from "../autosave/index";
+export * from "../recovery/index";
+

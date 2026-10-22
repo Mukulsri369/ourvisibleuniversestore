@@ -1,0 +1,2100 @@
+# PROMPT 13 OF 48 — PRODUCTION-GRADE UNDO/REDO ENGINE, SMART AUTOSAVE, DRAFT RECOVERY, EDITING STATE RELIABILITY, PERFORMANCE AUDIT & GITHUB CHECKPOINT
+
+## YOUR ROLE
+
+Act as a Principal Frontend Architect, Senior React 19 Engineer, Advanced Visual Editor Systems Architect, Figma/Webflow-Style History Engine Specialist, TypeScript Engineer, Supabase Persistence Architect, Distributed State Management Engineer, GitHub DevOps Specialist, and Production Performance Engineer.
+
+You are developing my existing SaaS affiliate-store application into a professional, fully customizable visual storefront builder.
+
+**GitHub Repository:**
+https://github.com/Mukulsri369/ourvisibleuniversestore
+
+**Development Environment:** Google AI Studio — Argon 4
+
+**Roadmap:** 48 prompts across 10 development phases.
+
+**Current Stage:** Phase 3 — Visual Editor Studio, Editing State & Reliability.
+
+**Current Task:** Prompt 13 of 48.
+
+### PREVIOUS DEVELOPMENT MILESTONES
+
+- Prompt 1 — Repository architecture audit.
+- Prompt 2 — Compatibility and zero-regression contracts.
+- Prompt 3 — Visual editor technology evaluation.
+- Prompt 4 — Original landing-page baseline capture.
+- Prompt 5 — PageDocument schema and validation.
+- Prompt 6 — Component registry and shared renderer.
+- Prompt 7 — Real homepage integration.
+- Prompt 8 — Secure Supabase draft persistence and version history.
+- Prompt 9 — Admin Design Studio.
+- Prompt 10 — Advanced selection and geometry infrastructure.
+- Prompt 11 — Layer management and structural editing.
+- Prompt 12 — Advanced Properties Inspector and real-time styling.
+
+---
+
+# PRIMARY OBJECTIVE
+
+Implement a production-grade editing history, intelligent autosave, and draft recovery system for the Visual Storefront Editor.
+
+The system must ensure that administrators can confidently customize their actual storefront without losing work, corrupting documents, overwriting another administrator's changes, or accidentally publishing unfinished designs.
+
+The administrator must be able to:
+
+1. Undo previous design changes.
+2. Redo undone changes.
+3. Reverse section reordering.
+4. Reverse layer duplication or deletion.
+5. Reverse visibility and lock changes.
+6. Reverse typography, color, spacing, shape, and responsive property edits.
+7. Group rapid slider changes into logical history entries.
+8. Save design changes automatically after inactivity.
+9. Use manual Save Draft at any time.
+10. See accurate saving and unsaved-change indicators.
+11. Recover saved drafts after refresh or browser restart.
+12. Recover recent unsaved work where safe local recovery is implemented.
+13. Handle offline or interrupted network connections.
+14. Prevent stale save responses from overwriting newer local changes.
+15. Detect and handle editing conflicts.
+16. Preserve the currently published website until explicit publication.
+17. Maintain a stable, responsive real storefront canvas.
+18. Continue development seamlessly through GitHub from a different Google AI Studio account.
+
+### THE MOST IMPORTANT REQUIREMENT
+
+**All history and autosave operations must act upon the same validated PageDocument used by the existing shared storefront renderer.**
+
+Do not create a second page-document model.
+
+Do not implement an independent history manager inside each properties control.
+
+Do not save customer product records as visual editor history.
+
+Do not modify the public website during draft editing.
+
+---
+
+# PART 1 — GITHUB VERIFICATION & RECOVERY
+
+## 1. Connect to the correct repository
+
+Connect to:
+
+https://github.com/Mukulsri369/ourvisibleuniversestore
+
+Retrieve the latest verified:
+
+- Repository identity.
+- Current local branch.
+- Remote branches.
+- Local HEAD.
+- Remote HEAD.
+- Working-tree status.
+- Uncommitted changes.
+- Unpushed commits.
+- Completed implementation milestones.
+- Existing architecture documentation.
+
+A previously observed `main` commit was:
+
+`28d80db39d13150eb69ae34405ba3c06e0792acc`
+
+Treat this only as a historical reference.
+
+Always retrieve the latest actual state.
+
+## 2. Read the permanent handoff documents
+
+Read:
+
+- `IMPLEMENTATION_PROGRESS.md`
+- `ARCHITECTURE_AUDIT.md`
+- `PERFORMANCE_BASELINE.md`
+- `AI_STUDIO_HANDOFF.md`
+
+These files support development continuity across Google AI Studio accounts.
+
+Preserve their useful history and verify completion claims against actual code.
+
+## 3. Recover Prompts 7–12
+
+Before implementing this task, verify the existence and current functionality of:
+
+### Prompt 7
+- Canonical homepage PageDocument.
+- Real PageRenderer integration.
+- Existing product/category data bindings.
+
+### Prompt 8
+- Draft persistence.
+- Draft revision numbers.
+- Optimistic concurrency.
+- Published-version isolation.
+- Authorized page updates.
+
+### Prompt 9
+- Protected Design Studio.
+- Working draft state.
+- Save Draft.
+- Real canvas.
+- Editor toolbar.
+
+### Prompt 10
+- Stable selection controller.
+- Node identity.
+- Canvas overlays.
+- Geometry measurement.
+
+### Prompt 11
+- Structural command engine.
+- Rename, reorder, duplicate, visibility, locking, and deletion operations.
+
+### Prompt 12
+- Validated property update engine.
+- Responsive overrides.
+- Style editing.
+- Live canvas updates.
+- Reset-to-inherited operations.
+
+Do not recreate these systems if they already exist.
+
+If the work is in a local AI Studio workspace but not pushed to GitHub, preserve and reconcile it.
+
+If critical prerequisites are missing and cannot be recovered, identify the blocker rather than implementing an incompatible replacement.
+
+## 4. Continue on the correct Git branch
+
+Use the actual verified development branch.
+
+Preferred:
+
+`feature/visual-storefront-editor`
+
+Do not force-push.
+
+Do not discard uncommitted work.
+
+Do not merge into `main` automatically.
+
+Preserve unrelated changes.
+
+---
+
+# PART 2 — AUDIT THE CURRENT EDITOR STATE ARCHITECTURE
+
+## 5. Inspect existing state management
+
+Locate and inspect the actual implementations for:
+
+- Working PageDocument state.
+- Draft loading and saving.
+- Structural commands.
+- Property updates.
+- Component selection.
+- Canvas viewport controls.
+- Layers panel.
+- Properties Inspector.
+- Dirty-state tracking.
+- Existing save indicators.
+- Revision conflicts.
+
+Identify whether existing edit operations are centralized or distributed.
+
+## 6. Identify current state ownership
+
+Document the source of truth for:
+
+### Persisted draft
+
+The last successfully saved server-side document revision.
+
+### Working document
+
+The current design containing local changes.
+
+### Published document
+
+The immutable currently published design version.
+
+### Editing history
+
+Local reversible changes to the working document.
+
+### Editor UI state
+
+Selection, hover, canvas zoom, current breakpoint, expanded layers, open inspector sections, and panel visibility.
+
+### Persistence state
+
+Saving, saved, unsaved, offline, failed, and conflict states.
+
+These state categories must remain logically separate.
+
+Changing the selected layer must not change the document revision.
+
+Changing zoom must not create a history entry.
+
+Opening an inspector section must not trigger autosave.
+
+---
+
+# PART 3 — DESIGN THE UNIFIED EDITING TRANSACTION SYSTEM
+
+## 7. Create one authoritative editing transaction pipeline
+
+All supported document modifications must use a consistent transaction boundary.
+
+The intended architecture:
+
+User action
+→ Structural or property command
+→ Capability and lock validation
+→ Immutable PageDocument transformation
+→ Working document update
+→ History transaction recording
+→ Canvas and inspector update
+→ Dirty-state update
+→ Autosave scheduling.
+
+Reuse the command architecture from Prompts 11 and 12.
+
+Do not allow individual UI controls to bypass the history system.
+
+## 8. Define editing transaction metadata
+
+An editing transaction should identify:
+
+- Unique transaction ID.
+- Action type.
+- Human-readable description.
+- Affected node IDs.
+- Previous and next document state or reversible changes.
+- Transaction creation time.
+- Grouping/coalescing identity where appropriate.
+- Originating editor action.
+- Whether the transaction was committed.
+- Whether the transaction is undoable.
+
+Do not store passwords, Supabase credentials, or unrelated customer data.
+
+Choose an efficient history representation after evaluating the actual document and update utilities.
+
+## 9. Preserve immutable state
+
+Never mutate the existing PageDocument in place.
+
+History entries must represent stable states.
+
+Previous history must not change when the current document is edited.
+
+Avoid unnecessary deep clones.
+
+Use structural sharing, patches, inverse operations, or bounded snapshots where technically appropriate.
+
+Document and test the chosen history model.
+
+---
+
+# PART 4 — IMPLEMENT UNDO
+
+## 10. Implement global Undo
+
+Provide a working Undo action.
+
+Undo must restore the previous valid design state.
+
+Examples:
+
+- Change background color → Undo restores previous color.
+- Increase card radius → Undo restores previous radius.
+- Reorder a section → Undo restores original position.
+- Delete a section → Undo restores the complete section.
+- Duplicate a component → Undo removes the duplicate.
+- Rename a layer → Undo restores its previous name.
+- Hide a component → Undo restores visibility.
+- Change mobile padding → Undo restores previous mobile padding.
+
+Undo must operate against the validated working document, not by manually manipulating the rendered DOM.
+
+## 11. Preserve stable identities
+
+Undo should preserve existing node identities.
+
+When restoring a deleted section, restore its original valid node and descendant IDs where possible.
+
+When undoing duplication, do not regenerate unrelated IDs.
+
+When undoing reordering, restore the original structural relationships.
+
+Avoid unnecessary remounts of unaffected React components.
+
+## 12. Handle invalid history safely
+
+If a history entry cannot be applied because the document or schema has changed unexpectedly:
+
+- Do not corrupt the current document.
+- Return a structured error.
+- Preserve the last valid working state.
+- Provide understandable feedback.
+- Record diagnostic information.
+
+Do not silently apply an invalid patch.
+
+---
+
+# PART 5 — IMPLEMENT REDO
+
+## 13. Implement global Redo
+
+Redo must reapply the most recently undone valid transaction.
+
+Example:
+
+1. Change corner radius from 16px to 24px.
+2. Undo → 16px.
+3. Redo → 24px.
+
+The actual canvas must reflect every state.
+
+## 14. Invalidate redo after new edits
+
+Follow standard editor history behavior.
+
+Example:
+
+1. Change color to blue.
+2. Change radius to 24px.
+3. Undo the radius change.
+4. Make a new spacing edit.
+5. The old undone radius change must no longer be available through Redo.
+
+Do not preserve an incompatible redo branch without implementing an explicit branching history model.
+
+## 15. Prevent invalid Redo operations
+
+When no redo entry exists:
+
+- Disable Redo.
+- Do not create a new history transaction.
+- Do not mark the draft dirty.
+- Do not trigger autosave.
+
+Ensure the toolbar accurately reflects availability.
+
+---
+
+# PART 6 — HISTORY GROUPING AND TRANSACTION COALESCING
+
+## 16. Avoid one history entry per slider event
+
+The user may drag a radius slider through many intermediate values.
+
+Example:
+
+16px → 17px → 18px → 19px → ... → 40px.
+
+This should normally count as one intentional adjustment.
+
+Undo should return directly to the original value, not step backward through every intermediate slider position.
+
+## 17. Implement transaction grouping
+
+Support grouping for:
+
+- Slider dragging.
+- Color picker movement.
+- Continuous numeric adjustment.
+- Text input editing.
+- Repeated keyboard nudges in later phases.
+- Future direct drag-and-resize operations.
+
+A transaction should begin at the appropriate user interaction boundary and commit when the interaction completes.
+
+Possible boundaries include:
+
+- Pointer down/up.
+- Focus/blur.
+- Confirm/commit action.
+- A bounded idle grouping window.
+
+Use the actual control architecture.
+
+## 18. Avoid incorrect grouping
+
+Unrelated edits must remain independent.
+
+Example:
+
+- Change font size.
+- Change card background.
+- Reorder section.
+
+These should not automatically become one history step merely because they happened within a short time.
+
+Use transaction identity and action context instead of time alone.
+
+## 19. Prepare direct-manipulation history
+
+Future prompts will introduce:
+
+- Drag-and-drop.
+- Eight-direction resizing.
+- Rotation.
+- Shape dragging.
+- Grid-track manipulation.
+
+Design a transaction lifecycle compatible with:
+
+Begin interaction
+→ Apply transient changes
+→ Commit one transaction
+→ Undo/Redo.
+
+Do not implement those physical manipulation tools yet.
+
+---
+
+# PART 7 — HISTORY STACK DESIGN AND MEMORY CONTROL
+
+## 20. Implement bounded history
+
+The user may edit for several hours.
+
+History must not consume unbounded memory.
+
+Define a configurable capacity based on the chosen representation.
+
+A starting target might be a bounded number of meaningful transactions, with memory-budget safeguards.
+
+The actual limit should be informed by benchmarks.
+
+Do not store full copies of large documents for every minor style update if a more efficient representation is suitable.
+
+## 21. Evaluate history storage strategies
+
+Compare:
+
+### Full document snapshots
+Simple and reliable, but can consume more memory.
+
+### Reversible patches
+Efficient for small updates, but require careful correctness and inverse-operation handling.
+
+### Hybrid history
+Periodic full snapshots combined with patches or transactions.
+
+Choose the approach that best fits the actual PageDocument update architecture.
+
+Document the reasoning.
+
+Do not add a large immutable-state library without evaluating its cost.
+
+## 22. Keep history local to the editing session
+
+Local Undo/Redo history is different from published version history.
+
+Do not store every slider movement as a new permanent page version in Supabase.
+
+Published version history belongs to Prompt 8's persistence architecture.
+
+Undo/Redo should operate on the working draft.
+
+Saving a draft must not automatically erase local editing history.
+
+---
+
+# PART 8 — HISTORY TOOLBAR AND KEYBOARD SHORTCUTS
+
+## 23. Add functional toolbar controls
+
+Add:
+
+- Undo.
+- Redo.
+
+Each control must:
+
+- Perform the advertised operation.
+- Reflect disabled state.
+- Have an accessible label.
+- Provide a tooltip.
+- Update the actual canvas.
+- Update the inspector.
+- Preserve the correct draft status.
+
+Do not add decorative buttons without working handlers.
+
+## 24. Implement keyboard shortcuts
+
+Support conventional shortcuts where compatible:
+
+**Undo**
+- Ctrl+Z on Windows/Linux.
+- Cmd+Z on macOS.
+
+**Redo**
+- Ctrl+Shift+Z.
+- Cmd+Shift+Z.
+- Ctrl+Y where appropriate.
+
+Avoid intercepting browser shortcuts unnecessarily.
+
+## 25. Respect text input editing
+
+When the user is typing inside:
+
+- A text field.
+- A textarea.
+- A rich-text editor.
+- A numeric property input.
+
+Native text editing must behave predictably.
+
+Do not intercept Ctrl+Z and replace an input's local text undo with an unrelated page-level document undo.
+
+Define shortcut priority clearly.
+
+## 26. Support clear history feedback
+
+Optionally show a human-readable description for the next Undo/Redo action.
+
+Examples:
+
+- Undo: Change Background.
+- Undo: Move Section.
+- Redo: Change Corner Radius.
+
+Do not claim a detailed history timeline exists unless it is implemented.
+
+---
+
+# PART 9 — SELECTION AND CANVAS STATE DURING HISTORY NAVIGATION
+
+## 27. Keep editor UI synchronized
+
+After Undo/Redo:
+
+- Update the actual page.
+- Update the Layers panel.
+- Update the inspector.
+- Update selected component metadata.
+- Update selection geometry.
+- Update dirty-state indicators.
+
+Avoid stale DOM references.
+
+## 28. Handle deleted or restored selections
+
+If Undo restores a deleted component:
+
+- Reconcile its node identity.
+- Allow it to be selected again.
+- Restore selection where appropriate.
+
+If Redo deletes the selected component:
+
+- Clear or relocate selection safely.
+- Remove stale overlays.
+- Update the inspector.
+
+## 29. Preserve non-document UI settings
+
+Undoing a color change should not unexpectedly change:
+
+- Canvas zoom.
+- Device viewport.
+- Open sidebar.
+- Inspector tab.
+- Layers-panel expansion state.
+
+These are editor UI settings, not design-document changes.
+
+Selection may be restored deliberately when useful, but should not create confusing jumps.
+
+---
+
+# PART 10 — SMART AUTOSAVE ARCHITECTURE
+
+## 30. Integrate with the existing persistence system
+
+Reuse the secure draft repository and revision-based saving from Prompt 8.
+
+Do not create a second competing draft API.
+
+Do not bypass Supabase authorization.
+
+Do not directly write the published document while editing.
+
+## 31. Implement debounced autosave
+
+The editor should save automatically after the administrator stops making changes.
+
+Use a configurable trailing debounce, with a reasonable starting interval such as 1.5–2.5 seconds of inactivity.
+
+This value is a design starting point, not a measured performance requirement.
+
+The implementation must support:
+
+- Debounced saving.
+- Maximum wait for sustained editing.
+- Manual Save Draft.
+- Avoiding unnecessary duplicate saves.
+- Retry handling.
+- Conflict detection.
+- Cancellation/cleanup.
+
+Do not save on every pointer movement or keypress.
+
+## 32. Define autosave triggers
+
+Autosave should respond to meaningful document changes.
+
+Examples:
+
+- Layer rename.
+- Section reorder.
+- Component duplication.
+- Visibility change.
+- Property adjustment.
+- Typography change.
+- Responsive override.
+- Shape change.
+- Undo/Redo that changes the working document.
+
+Autosave must not trigger merely because the administrator:
+
+- Selects a component.
+- Hovers over a node.
+- Scrolls the canvas.
+- Changes canvas zoom.
+- Opens an inspector section.
+- Expands the Layers panel.
+- Switches the selected viewport.
+- Moves the mouse.
+
+## 33. Save committed transactions, not transient pointer states
+
+During a continuous slider adjustment or future drag operation, the UI may update repeatedly.
+
+Autosave should normally wait until the interaction commits or becomes suitably idle.
+
+Do not persist hundreds of intermediate states.
+
+A maximum-wait safeguard may protect sustained editing, but it must not record malformed intermediate documents.
+
+## 34. Avoid redundant saves
+
+If the current validated document equals the last successfully persisted document, do not perform another write.
+
+Use a deterministic document change identifier or equivalent equality strategy.
+
+Do not treat changing an unrelated UI timestamp or selection value as a substantive design change.
+
+Account for intentional document metadata updates without creating false dirty states.
+
+---
+
+# PART 11 — ROBUST SAVE STATE MACHINE
+
+## 35. Define explicit save states
+
+Implement a clear persistence state machine.
+
+Recommended states:
+
+- Loading.
+- Saved.
+- Unsaved changes.
+- Saving.
+- Offline.
+- Save failed.
+- Revision conflict.
+- Validation error.
+- Recovery available.
+
+Choose exact names appropriate to the current architecture.
+
+Do not overload a single boolean such as `isSaving` to represent every state.
+
+## 36. Show accurate saving feedback
+
+The toolbar should display meaningful statuses such as:
+
+- All changes saved.
+- Unsaved changes.
+- Saving…
+- Offline — changes not synced.
+- Save failed.
+- A newer draft exists.
+- Recovery available.
+
+Do not show “Saved” simply because a request was sent.
+
+Only confirmed persistence may clear the relevant save state.
+
+## 37. Track the exact saved revision
+
+The editor must know:
+
+- Current working document identity.
+- Current local edit generation.
+- Last submitted generation.
+- Last successfully saved generation.
+- Server draft revision.
+- Base revision.
+- Whether newer local changes exist.
+
+Use a clear typed model.
+
+Do not assume the latest completed network request necessarily corresponds to the latest local state.
+
+---
+
+# PART 12 — HANDLE ASYNCHRONOUS SAVE RACES
+
+## 38. Prevent stale responses from clearing dirty state
+
+Example:
+
+1. Administrator edits draft generation 10.
+2. Autosave for generation 10 begins.
+3. Administrator edits again, creating generation 11.
+4. The server confirms generation 10.
+
+The UI must not display generation 11 as saved.
+
+Generation 11 is still unsaved.
+
+Update persisted revision metadata appropriately and schedule the newer save.
+
+## 39. Handle out-of-order responses
+
+Network operations may complete in an unexpected order.
+
+Use a disciplined save coordinator.
+
+Prefer a single in-flight save per page/draft where appropriate, with coalescing of newer pending edits.
+
+Do not allow two uncontrolled writes to overwrite each other.
+
+## 40. Prevent stale server data from overwriting local changes
+
+Refetching the draft must not automatically replace a newer local working document.
+
+Explicitly differentiate:
+
+- Initial draft load.
+- Background refresh.
+- Save acknowledgement.
+- Conflict response.
+- Intentional user reload.
+
+Do not overwrite unsaved changes during background query refetching.
+
+---
+
+# PART 13 — OPTIMISTIC CONCURRENCY AND MULTI-ADMIN EDITING
+
+## 41. Reuse database revision checking
+
+Prompt 8 should have established revision-based save protection.
+
+Reuse the actual implementation.
+
+A save must include the expected server revision.
+
+A stale save must be rejected.
+
+Do not use last-write-wins for protected design documents.
+
+## 42. Implement clear conflict handling
+
+Example:
+
+- Administrator A loads revision 15.
+- Administrator B loads revision 15.
+- Administrator A saves revision 16.
+- Administrator B attempts to save based on revision 15.
+
+Administrator B must receive a conflict.
+
+Do not silently overwrite revision 16.
+
+## 43. Preserve local work during conflict
+
+On conflict:
+
+- Stop unsafe automatic retries.
+- Preserve the unsaved local draft.
+- Preserve local history where appropriate.
+- Display a clear conflict state.
+- Allow the user to reload or deliberately resolve the conflict.
+
+Do not automatically discard local changes.
+
+Do not silently merge complex PageDocument trees without a tested merge strategy.
+
+## 44. Distinguish transient failures from conflicts
+
+A network timeout and a revision conflict are not the same problem.
+
+### Transient network failure
+
+A bounded retry with backoff may be appropriate.
+
+### Validation failure
+
+The document must be corrected.
+
+### Revision conflict
+
+Automatic retry with an updated revision could overwrite someone else's work.
+
+Do not treat all failures identically.
+
+---
+
+# PART 14 — OFFLINE AND NETWORK FAILURE HANDLING
+
+## 45. Detect connection failures
+
+The editor must handle situations where the network becomes unavailable during editing.
+
+Requirements:
+
+- Preserve the current working document in memory.
+- Preserve local undo/redo history.
+- Show that saving has not succeeded.
+- Avoid a misleading Saved indicator.
+- Retry safely after connectivity returns.
+- Preserve correct server revision handling.
+
+Browser online/offline events may provide hints, but actual request results remain authoritative.
+
+## 46. Implement bounded retry logic
+
+For transient failures:
+
+- Use controlled exponential backoff or an equivalent bounded policy.
+- Avoid infinite rapid retries.
+- Avoid flooding Supabase.
+- Prevent duplicate concurrent saves.
+- Stop retrying on validation or authorization errors.
+- Stop unsafe automatic retry on revision conflicts.
+
+Retry only the correct current document generation.
+
+## 47. Support manual Retry Save
+
+Provide an actionable retry control when saving fails.
+
+The button must invoke the real authorized persistence service.
+
+Do not claim success before confirmation.
+
+---
+
+# PART 15 — RECOVERY AFTER REFRESH OR BROWSER RESTART
+
+## 48. Recover successfully persisted drafts
+
+The primary recovery mechanism must be the secure Supabase draft.
+
+After reopening the Design Studio:
+
+- Authenticate the administrator.
+- Load the correct page draft.
+- Validate the stored PageDocument.
+- Restore its saved design configuration.
+- Restore the server revision.
+- Render the actual canvas.
+- Show the correct saved status.
+
+Do not load an unrelated store's draft.
+
+## 49. Evaluate recovery of unsaved local work
+
+Some work may not yet have reached the server when the browser closes.
+
+Design a safe optional recovery mechanism.
+
+Possible approaches include:
+
+- Session-scoped recovery.
+- IndexedDB-based temporary checkpoints.
+- Other appropriately protected browser-local storage.
+
+Evaluate privacy and security implications before storing unpublished design documents locally.
+
+### Required security considerations
+
+- Scope recovery to the appropriate user, store, page, and draft.
+- Never store authentication tokens alongside recovery data.
+- Avoid storing secrets or private credentials.
+- Define retention limits.
+- Remove recovery data appropriately after confirmed persistence, logout, or expiration.
+- Do not restore data into a different user's session.
+- Recognize that client-side encryption with a key accessible to the same application is not a complete protection against XSS.
+
+Do not claim secure offline recovery merely because the document was written to localStorage.
+
+If safe local recovery cannot be implemented within the existing threat model, prioritize verified server draft recovery and clearly report the limitation.
+
+## 50. Make recovery explicit
+
+If a newer unsaved local recovery checkpoint exists:
+
+- Identify its page/draft scope.
+- Compare it with the server revision.
+- Show an understandable recovery choice.
+- Avoid silently overwriting the saved server draft.
+- Allow the administrator to discard stale recovery data.
+
+Do not automatically replay an old recovery checkpoint over a newer published or server-saved design.
+
+---
+
+# PART 16 — NAVIGATION AND UNSAVED CHANGE PROTECTION
+
+## 51. Handle route navigation
+
+If the administrator attempts to leave the Design Studio while changes remain unsaved:
+
+- Attempt a safe final save where appropriate.
+- Provide a warning if changes remain at risk.
+- Allow the user to stay in the editor.
+- Do not block navigation indefinitely.
+- Preserve browser accessibility.
+
+Use the router's supported navigation-blocking mechanism where suitable.
+
+## 52. Handle page reload and tab closing
+
+Use browser lifecycle events appropriately.
+
+Do not assume asynchronous requests started during `beforeunload` will always finish.
+
+If a save cannot be guaranteed, provide standard unsaved-change protection.
+
+Avoid claiming guaranteed background saving on browser termination.
+
+## 53. Clear dirty state correctly
+
+Dirty state must reflect the difference between the working document and the confirmed persisted state.
+
+Undoing changes back to the last saved document should clear dirty state appropriately when the documents truly match.
+
+Do not rely solely on whether the history stack is nonempty.
+
+A user may have history entries while the current document equals the saved draft.
+
+---
+
+# PART 17 — DRAFT SAVES VERSUS PUBLISHING
+
+## 54. Preserve published-page isolation
+
+Autosave must only write to the administrator's draft.
+
+It must never:
+
+- Update the published-version pointer.
+- Create a public publication event.
+- Modify the live homepage.
+- Change the customer's storefront before publication.
+- Delete historical published versions.
+
+Published versions remain governed by the authorized publishing workflow.
+
+## 55. Distinguish local history from published versions
+
+The application has two distinct history concepts.
+
+### Local editing history
+
+Undo/Redo transactions within the editor.
+
+### Permanent version history
+
+Immutable design versions stored by the publishing system.
+
+Do not conflate them.
+
+A routine autosave should not create a new permanent published version.
+
+## 56. Handle Undo after autosave
+
+Example:
+
+1. Administrator changes a section background.
+2. Autosave confirms the changed draft.
+3. Administrator clicks Undo.
+
+Undo should restore the earlier working appearance.
+
+That action becomes a new unsaved change relative to the latest server revision.
+
+The next autosave should persist the restored design safely.
+
+Do not prevent Undo simply because the current design was already saved.
+
+---
+
+# PART 18 — STRUCTURAL EDITING HISTORY
+
+## 57. Integrate Prompt 11 commands
+
+Ensure Undo/Redo supports real structural operations.
+
+Examples:
+
+- Rename section.
+- Reorder sections.
+- Move node into compatible container.
+- Duplicate subtree.
+- Hide/show.
+- Lock/unlock.
+- Delete subtree.
+- Wrap/unwrap container.
+
+Use the actual structural command definitions.
+
+Do not rebuild separate Undo implementations for each action.
+
+## 58. Validate restored hierarchies
+
+After reversing a structural operation:
+
+- Node IDs must remain valid.
+- Parent-child relationships must remain valid.
+- Slot restrictions must remain satisfied.
+- Component capabilities must be respected.
+- Document limits must remain satisfied.
+
+History must not be allowed to restore a corrupted document.
+
+## 59. Preserve data bindings
+
+Undoing a structural change must not modify:
+
+- Product prices.
+- Affiliate URLs.
+- Category identities.
+- Inventory data.
+- Product database rows.
+
+The operation restores visual configuration only.
+
+---
+
+# PART 19 — PROPERTIES INSPECTOR HISTORY
+
+## 60. Integrate Prompt 12 editing
+
+Undo/Redo must support:
+
+- Width and height.
+- Padding and margins.
+- Grid/flex configuration.
+- Background colors.
+- Gradients.
+- Border properties.
+- Shadows.
+- Shape presets.
+- Corner radii.
+- Typography.
+- Supported media presentation.
+- Responsive overrides.
+
+## 61. Preserve breakpoint-specific changes
+
+Example:
+
+1. Administrator selects Mobile.
+2. Changes padding to 12px.
+3. Changes Desktop padding to 40px.
+4. Clicks Undo.
+
+Undo should restore the appropriate last changed breakpoint property.
+
+Do not erase unrelated responsive overrides.
+
+## 62. Preserve reset semantics
+
+Resetting a property to inherited is a real document change.
+
+Undo must restore the previous explicit override.
+
+Redo must remove it again.
+
+Do not replace the inherited value with a guessed static default.
+
+---
+
+# PART 20 — HISTORY SECURITY AND AUTHORIZATION
+
+## 63. Do not treat local history as authorization
+
+Undo/Redo must not allow the editor to bypass:
+
+- Trusted component capabilities.
+- Protected business fields.
+- Effective lock rules.
+- PageDocument validation.
+- Server authorization.
+- Supabase RLS.
+
+Historical transactions should not introduce arbitrary executable content.
+
+## 64. Protect against stale authority
+
+If authorization changes while the editor is open:
+
+- Future protected saves must fail safely.
+- The UI must not claim persistence succeeded.
+- Sensitive draft data should be handled according to the security model.
+- The editor must not bypass authorization using previously cached permissions.
+
+## 65. Do not expose private draft data
+
+Avoid logging complete PageDocuments, sensitive URLs, or administrator metadata into public analytics systems.
+
+Do not transmit editing history to third-party services without an explicit authorized requirement.
+
+---
+
+# PART 21 — PERFORMANCE AUDIT BEFORE IMPLEMENTATION
+
+## 66. Read PERFORMANCE_BASELINE.md
+
+Review:
+
+- Starting commit.
+- Existing PageDocument performance.
+- Existing editor bundle sizes.
+- Structural command benchmarks.
+- Property-editing latency.
+- Current draft-save behavior.
+- Existing animation performance concerns.
+- Browser test limitations.
+
+Record a fresh baseline where tools allow.
+
+## 67. Identify history and autosave performance risks
+
+Investigate:
+
+- Full-document snapshots on every keystroke.
+- Unbounded history stacks.
+- Repeated serialization.
+- Expensive document hashing.
+- Excessive Zod validation.
+- Autosave storms.
+- Multiple in-flight saves.
+- React rerenders.
+- Expensive equality comparisons.
+- Local recovery storage overhead.
+- Large JSONB payload transfers.
+- Stale observer subscriptions.
+- Unnecessary canvas remounts.
+
+Document the risks before implementation.
+
+---
+
+# PART 22 — PERFORMANCE-OPTIMIZED HISTORY ENGINE
+
+## 68. Minimize history memory usage
+
+Use a bounded, efficient representation.
+
+Do not retain unlimited redundant copies of large documents.
+
+Benchmark the selected history strategy.
+
+Record memory usage where measurable.
+
+## 69. Keep Undo/Redo responsive
+
+Undo/Redo should not perform unnecessary database requests before updating the local canvas.
+
+The working document should update locally.
+
+Autosave may persist the resulting change afterward.
+
+Do not require a server round trip for ordinary local history navigation.
+
+## 70. Keep non-document interactions lightweight
+
+Selection, hover, zoom, and inspector navigation must not append history transactions.
+
+Do not run full history comparison on every pointer event.
+
+## 71. Avoid excessive persistence requests
+
+Use:
+
+- Debounce.
+- Maximum wait where appropriate.
+- Single-flight saves.
+- Pending-change coalescing.
+- Confirmed revision tracking.
+- Equality/change detection.
+
+Do not save every intermediate slider value.
+
+## 72. Preserve component lifecycle
+
+History changes to one card must not unnecessarily remount:
+
+- PlanetHero.
+- CelestialScrollWorld.
+- Unrelated ProductScrollRails.
+- Other unaffected components.
+
+Use stable React keys and immutable structural sharing.
+
+---
+
+# PART 23 — PERFORMANCE BENCHMARKS
+
+## 73. Benchmark representative documents
+
+Use synthetic validated PageDocuments containing approximately:
+
+- 25 nodes.
+- 150 nodes.
+- 500 nodes.
+- 1,000 nodes.
+
+These are performance test sizes, not commercial product limits.
+
+Benchmark:
+
+- Recording a transaction.
+- Undo.
+- Redo.
+- Clearing redo after a new edit.
+- Grouping slider changes.
+- Structural deletion restoration.
+- Property edit restoration.
+- Dirty-state detection.
+- Serialization.
+- Autosave request preparation.
+- History pruning.
+
+Use repeatable test conditions.
+
+## 74. Record meaningful measurements
+
+Where possible, report:
+
+- Median transaction latency.
+- p95 latency.
+- Memory consumption.
+- History storage growth.
+- Save request count.
+- Average payload size.
+- Autosave frequency.
+- Canvas rerender impact.
+
+Do not invent results.
+
+Clearly distinguish unit benchmarks from real browser measurements.
+
+## 75. Verify public bundle isolation
+
+The customer-facing storefront must not download editor-only history infrastructure, autosave coordinator UI, or recovery interfaces.
+
+Inspect production bundle output.
+
+The Design Studio may load additional code.
+
+The public storefront must remain isolated from editor-only functionality.
+
+---
+
+# PART 24 — REAL BROWSER AND NETWORK TESTING
+
+## 76. Test actual user interactions
+
+Where a real browser is available, execute workflows such as:
+
+1. Open Design Studio.
+2. Select a section.
+3. Change its background color.
+4. Undo.
+5. Redo.
+6. Reorder a section.
+7. Undo the reordering.
+8. Save.
+9. Refresh.
+10. Confirm the expected draft appears.
+
+Use the real shared renderer.
+
+Do not substitute fake DOM components merely to show tests passing.
+
+## 77. Test interrupted network saves
+
+Where browser tooling supports request interception:
+
+- Delay save responses.
+- Simulate request failure.
+- Simulate offline operation.
+- Restore connectivity.
+- Confirm safe retry.
+- Confirm dirty-state accuracy.
+
+## 78. Test overlapping edits and saves
+
+Simulate:
+
+- Save request in progress.
+- New edit occurs.
+- First save returns.
+- New edit remains unsaved.
+- Next save persists the newer document.
+
+Also test delayed and stale responses.
+
+## 79. Test multiple browser tabs or users
+
+Where possible, simulate two administrators editing the same draft revision.
+
+Verify that optimistic concurrency prevents silent overwrites.
+
+Do not treat mock-only tests as proof of actual database concurrency.
+
+---
+
+# PART 25 — AUTOMATED UNIT AND INTEGRATION TESTS
+
+## 80. Core history tests
+
+Verify:
+
+- Undo one edit.
+- Undo multiple edits.
+- Redo one edit.
+- Redo multiple edits.
+- Clear redo after a new edit.
+- No-op changes do not create history.
+- History respects configured bounds.
+- Invalid transactions are rejected.
+- Unaffected document nodes preserve identity where applicable.
+
+## 81. Grouping tests
+
+Verify:
+
+- Continuous slider updates produce one logical history entry.
+- Color picker changes group appropriately.
+- Unrelated operations remain separate.
+- Aborted interactions do not commit invalid history.
+- Future drag/resize transaction contracts are supported.
+
+## 82. Structural history tests
+
+Verify:
+
+- Rename Undo/Redo.
+- Reorder Undo/Redo.
+- Duplicate Undo/Redo.
+- Delete Undo/Redo.
+- Visibility Undo/Redo.
+- Lock Undo/Redo.
+- Container move Undo/Redo.
+- Subtree IDs remain stable and valid.
+
+## 83. Responsive history tests
+
+Verify:
+
+- Mobile override restored correctly.
+- Desktop property unaffected.
+- Nested override reset reversed correctly.
+- Unrelated responsive values preserved.
+- Inherited value behavior remains correct.
+
+## 84. Autosave tests
+
+Verify:
+
+- Meaningful edits schedule autosave.
+- UI-only changes do not schedule autosave.
+- Rapid edits are debounced.
+- Maximum wait works as intended.
+- No duplicate save requests.
+- Save acknowledgement updates the correct generation.
+- Failed save does not clear dirty state.
+- Manual Save Draft works during pending autosave.
+- Pending save operations are coordinated correctly.
+
+Use controllable fake timers for debounce tests where appropriate.
+
+Do not depend on real-time waiting in unit tests.
+
+## 85. Race-condition tests
+
+Verify:
+
+- Local edit during in-flight save.
+- Stale response received.
+- Newer generation remains dirty.
+- Conflict prevents overwrite.
+- Network retry uses correct document.
+- Duplicate responses do not corrupt state.
+- Background refetch does not replace unsaved work.
+
+## 86. Recovery tests
+
+Verify:
+
+- Saved draft loads after refresh.
+- Saved revision restores correctly.
+- Missing draft falls back safely.
+- Invalid draft is rejected.
+- Local recovery is appropriately scoped if implemented.
+- Stale recovery is not silently applied.
+- Recovery data is cleared according to the retention policy.
+
+## 87. Security tests
+
+Verify:
+
+- Non-admin cannot save.
+- Unauthorized draft retrieval blocked.
+- History cannot modify protected business data.
+- Draft autosave never publishes.
+- Existing RLS remains effective.
+- Authorization failures display correctly.
+
+## 88. Public storefront regression tests
+
+Verify:
+
+- Homepage.
+- PlanetHero.
+- CelestialScrollWorld.
+- Product cards.
+- Product rails.
+- Category sections.
+- Search.
+- Navigation.
+- Affiliate redirects.
+- Outbound click tracking.
+- Existing admin workflows.
+
+---
+
+# PART 26 — AUTOSAVE USER EXPERIENCE
+
+## 89. Create clear toolbar status indicators
+
+The administrator should always understand whether changes are safe.
+
+Display appropriate status such as:
+
+- Saved.
+- Unsaved changes.
+- Saving…
+- Offline.
+- Save failed.
+- Conflict detected.
+
+Avoid confusing multiple contradictory badges.
+
+Use concise status text and appropriate accessible announcements.
+
+## 90. Provide useful save feedback
+
+When saving completes:
+
+- Confirm the saved revision.
+- Update status accurately.
+- Preserve current selection.
+- Preserve canvas position.
+- Avoid visual flickering.
+- Do not reset the inspector.
+
+When saving fails:
+
+- Preserve the working document.
+- Show a useful error.
+- Offer retry where appropriate.
+
+## 91. Do not interrupt editing unnecessarily
+
+Autosave must not freeze the canvas.
+
+Undo/Redo should feel immediate.
+
+Do not display a blocking modal after every save.
+
+Use unobtrusive status feedback.
+
+Reserve dialogs for conflicts or genuinely important recovery decisions.
+
+---
+
+# PART 27 — RECOMMENDED SOURCE STRUCTURE
+
+## 92. Extend the existing Visual Editor architecture
+
+A possible structure is:
+
+src/
+  lib/
+    visual-editor/
+      history/
+        history-types.ts
+        history-controller.ts
+        history-transactions.ts
+        history-grouping.ts
+        history-reducer.ts
+        history-limits.ts
+
+      autosave/
+        autosave-coordinator.ts
+        autosave-state.ts
+        save-queue.ts
+        save-errors.ts
+        revision-tracking.ts
+
+      recovery/
+        draft-recovery.ts
+        recovery-policy.ts
+
+      __tests__/
+        history-controller.test.ts
+        history-transactions.test.ts
+        history-grouping.test.ts
+        autosave.test.ts
+        save-race-conditions.test.ts
+        recovery.test.ts
+        history-persistence.test.tsx
+
+  components/
+    visual-editor/
+      history/
+        HistoryControls.tsx
+        SaveStatus.tsx
+        RecoveryDialog.tsx
+
+These filenames are illustrative.
+
+Inspect the actual project first.
+
+Reuse existing state management, persistence services, command functions, and UI components.
+
+Avoid unnecessary placeholder files.
+
+Do not create a second editor store.
+
+Do not introduce a new database history table unless the verified persistence architecture requires one.
+
+---
+
+# PART 28 — STRICT IMPLEMENTATION SCOPE
+
+## 93. Features included in Prompt 13
+
+Implement:
+
+- Unified Undo/Redo engine.
+- Transaction grouping.
+- Bounded history.
+- Keyboard shortcuts.
+- History toolbar controls.
+- Structural editing history.
+- Properties Inspector history.
+- Responsive history.
+- Smart autosave.
+- Accurate dirty-state tracking.
+- Save request coordination.
+- Revision-aware persistence.
+- Conflict detection and safe feedback.
+- Network failure handling.
+- Saved draft recovery.
+- Safe optional unsaved-work recovery.
+- Unsaved-change navigation protection.
+- Performance audits.
+- Security tests.
+- GitHub checkpoint and handoff documentation.
+
+## 94. Features excluded from Prompt 13
+
+Do not implement:
+
+- Direct canvas drag-and-drop.
+- Eight-direction resize handles.
+- Rotation handles.
+- Direct shape dragging.
+- Advanced grid-track manipulation.
+- Full animation timeline.
+- AI theme generation.
+- Complete collaborative real-time editing.
+- Automatic three-way merge of arbitrary PageDocument trees.
+- A new product database schema.
+- A new component registry.
+- A second shared renderer.
+- A replacement draft persistence system.
+- Automatic publication of saved changes.
+
+These belong to future phases.
+
+---
+
+# PART 29 — IMPLEMENTATION EXECUTION ORDER
+
+## 95. Follow this exact sequence
+
+### Step 1 — GitHub recovery
+Verify repository, branch, working tree, and checkpoints.
+
+### Step 2 — Prerequisite verification
+Confirm Prompts 7–12 are implemented.
+
+### Step 3 — Architecture audit
+Inspect editor state, commands, existing persistence, and revisions.
+
+### Step 4 — Performance baseline
+Record existing editing and saving performance.
+
+### Step 5 — Transaction model
+Define unified editing transaction contracts.
+
+### Step 6 — History engine
+Implement bounded Undo/Redo.
+
+### Step 7 — Transaction grouping
+Support slider, color, and text-edit coalescing.
+
+### Step 8 — Structural integration
+Connect Prompt 11 commands to history.
+
+### Step 9 — Inspector integration
+Connect Prompt 12 property changes to history.
+
+### Step 10 — Toolbar controls
+Implement Undo/Redo buttons and keyboard shortcuts.
+
+### Step 11 — Autosave coordinator
+Implement debounce, max wait, and save request coordination.
+
+### Step 12 — Revision tracking
+Track local generations and server revisions.
+
+### Step 13 — Conflict handling
+Protect newer drafts from stale saves.
+
+### Step 14 — Network recovery
+Implement retry states and offline behavior.
+
+### Step 15 — Draft recovery
+Implement verified server recovery and safe local recovery where appropriate.
+
+### Step 16 — Navigation protection
+Warn about changes that remain unsaved.
+
+### Step 17 — Unit tests
+Test history, autosave, concurrency, and recovery.
+
+### Step 18 — Browser tests
+Verify real Design Studio behavior where possible.
+
+### Step 19 — Performance audit
+Benchmark history, save frequency, memory and UI responsiveness.
+
+### Step 20 — Regression remediation
+Fix defects introduced by this prompt.
+
+### Step 21 — Documentation
+Update the four permanent project files.
+
+### Step 22 — Git review
+Inspect diffs and staged files.
+
+### Step 23 — Commit
+Commit verified implementation.
+
+### Step 24 — Push
+Push to the correct development branch.
+
+### Step 25 — Remote verification
+Confirm the intended commit exists on GitHub.
+
+### Step 26 — Final report
+Report actual results, limitations, and next steps.
+
+---
+
+# PART 30 — GITHUB CONTINUITY REQUIREMENTS
+
+## 96. Update IMPLEMENTATION_PROGRESS.md
+
+Record:
+
+- Prompt 13 status.
+- History engine implementation.
+- Undo/Redo coverage.
+- Transaction grouping.
+- Autosave behavior.
+- Dirty-state tracking.
+- Concurrency handling.
+- Recovery behavior.
+- Tests executed.
+- Performance findings.
+- Known limitations.
+- Next prompt.
+
+Do not mark incomplete or unverified features as complete.
+
+## 97. Update ARCHITECTURE_AUDIT.md
+
+Document:
+
+- Editing transaction architecture.
+- History stack representation.
+- Undo/Redo semantics.
+- Redo invalidation.
+- Transaction grouping.
+- Memory limits.
+- Working document ownership.
+- Autosave state machine.
+- Save generation tracking.
+- Revision conflict handling.
+- Recovery strategy.
+- Security boundaries.
+- Future direct-manipulation integration points.
+
+## 98. Update PERFORMANCE_BASELINE.md
+
+Record:
+
+- Starting commit.
+- Test environment.
+- History operation benchmarks.
+- Memory usage.
+- History growth.
+- Autosave request count.
+- Payload sizes.
+- Save latency.
+- Canvas response.
+- Bundle changes.
+- Heavy animation stability.
+- Missing browser measurements.
+
+Do not fabricate performance numbers.
+
+## 99. Update AI_STUDIO_HANDOFF.md
+
+Include:
+
+- Repository URL.
+- Active development branch.
+- Last verified completed prompt.
+- History modules.
+- Autosave modules.
+- Important state APIs.
+- Save/revision model.
+- Recovery architecture.
+- Tests executed.
+- Performance results.
+- Known bugs.
+- Remote checkpoint status.
+- Exact next prompt.
+- Files the next AI Studio account must inspect.
+
+Never store authentication tokens or credentials.
+
+---
+
+# PART 31 — GITHUB COMMIT AND PUSH
+
+## 100. Review all changes
+
+Before committing:
+
+1. Verify the branch.
+2. Inspect Git status.
+3. Review all source modifications.
+4. Exclude unrelated files.
+5. Check for secrets.
+6. Run TypeScript validation.
+7. Run ESLint.
+8. Run Vitest.
+9. Run production build.
+10. Review client bundle changes.
+11. Verify public storefront compatibility.
+12. Confirm no unauthorized database modifications.
+
+## 101. Create the Prompt 13 checkpoint
+
+Recommended commit message:
+
+`feat(editor): add undo redo and reliable draft autosave`
+
+Commit verified work and updated project documentation.
+
+Push to the authorized development branch.
+
+Do not force-push.
+
+Do not automatically merge into `main`.
+
+Do not claim full completion if critical autosave or conflict-handling tests remain incomplete.
+
+## 102. Verify remote synchronization
+
+After pushing:
+
+- Fetch remote HEAD.
+- Confirm the intended commit.
+- Verify correct branch.
+- Verify source modules.
+- Verify tests.
+- Verify documentation updates.
+- Report final commit SHA.
+- Report uncommitted changes.
+
+If the push fails, report the actual blocker.
+
+Do not claim successful synchronization without remote verification.
+
+---
+
+# PART 32 — DEFINITION OF DONE
+
+Prompt 13 is complete only when the following are verified.
+
+## Undo/Redo
+
+- Undo works across supported structural operations.
+- Undo works across supported style operations.
+- Redo works correctly.
+- New edits clear redo history appropriately.
+- Continuous editing can produce grouped transactions.
+- History is bounded.
+- Invalid history cannot corrupt the document.
+- Existing node identities remain stable.
+
+## Autosave
+
+- Meaningful edits schedule autosave.
+- UI-only actions do not schedule autosave.
+- Rapid changes are debounced.
+- Save requests are coordinated.
+- Dirty-state tracking is accurate.
+- Manual Save Draft works.
+- Confirmed saves update the correct generation.
+- Stale responses do not clear newer changes.
+- Duplicate requests are avoided.
+
+## Recovery
+
+- Saved drafts restore after refresh.
+- Failed saves preserve working changes.
+- Network interruptions are handled.
+- Revision conflicts prevent silent overwrites.
+- Unsaved-work recovery is implemented safely where feasible.
+- Navigation warns when work remains unsaved.
+- Old recovery data cannot overwrite a newer server revision silently.
+
+## Security
+
+- Draft edits do not publish automatically.
+- Product data remains unchanged.
+- Affiliate URLs remain unchanged.
+- Existing RLS remains active.
+- No unauthorized saves.
+- No credentials in local recovery.
+- No arbitrary executable history content.
+
+## Performance
+
+- History memory growth is bounded.
+- Undo/Redo is responsive.
+- No unnecessary full-document cloning.
+- No autosave storm.
+- No history entry per pointer movement.
+- Public bundle remains isolated.
+- Heavy animation components are not remounted unnecessarily.
+- Actual performance measurements are recorded where possible.
+
+## Testing
+
+- History unit tests.
+- Transaction grouping tests.
+- Structural history tests.
+- Responsive history tests.
+- Autosave tests.
+- Race-condition tests.
+- Persistence tests.
+- Security tests.
+- Public storefront regression tests.
+- Real browser verification where available.
+
+## GitHub
+
+- Correct repository verified.
+- Previous implementation recovered.
+- Development branch confirmed.
+- Four permanent documents updated.
+- Changes reviewed.
+- Implementation committed.
+- Push attempted.
+- Remote checkpoint verified before claiming success.
+- Cross-account handoff prepared.
+
+Do not mark unverified requirements as passed.
+
+---
+
+# PART 33 — REQUIRED FINAL REPORT
+
+Produce a comprehensive report titled:
+
+**"Visual Storefront Editor — Prompt 13 Undo/Redo, Smart Autosave, Draft Recovery, Performance Audit & GitHub Checkpoint"**
+
+Include:
+
+### A. GitHub verification
+Repository, branch, starting SHA, prerequisites, final checkpoint.
+
+### B. Editing state architecture
+Working document, history, UI state, persistence state.
+
+### C. History engine
+Representation, transaction model, limits and memory behavior.
+
+### D. Undo/Redo integration
+Supported structural and property operations.
+
+### E. Transaction grouping
+Slider, color and continuous editing behavior.
+
+### F. Toolbar and keyboard support
+Functional controls and shortcut precedence.
+
+### G. Autosave architecture
+Debounce, maximum wait, request coordination and save state machine.
+
+### H. Revision and concurrency handling
+Local generations, server revisions, stale responses and conflicts.
+
+### I. Failure and recovery
+Network failures, retries, saved draft recovery and optional local recovery.
+
+### J. Unsaved-change protection
+Navigation handling, dirty-state accuracy and page lifecycle behavior.
+
+### K. Security
+Authorization, private drafts and protected business data.
+
+### L. Performance before implementation
+Verified baseline.
+
+### M. Performance after implementation
+History latency, memory, autosave network usage, bundle impact.
+
+### N. Automated tests
+Actual commands, pass/fail counts, errors and blocked checks.
+
+### O. Browser integration verification
+Executed workflows and limitations.
+
+### P. Regression checks
+Existing storefront, animation, affiliate and admin behavior.
+
+### Q. Source change inventory
+All files created or modified.
+
+### R. GitHub checkpoint
+Commit message, branch, final SHA and remote verification.
+
+### S. Documentation updates
+Status of the four permanent handoff files.
+
+### T. Known limitations
+Incomplete features, blockers and remaining technical risks.
+
+### U. Prompt 14 readiness
+Exact next milestone from the verified development roadmap.
+
+### V. Final decision
+
+Choose:
+
+**GO** — History, autosave, recovery, conflict protection, critical tests and GitHub synchronization are sufficiently verified.
+
+**CONDITIONAL GO** — Core implementation works but clearly documented validation gaps or minor limitations remain.
+
+**NO-GO** — Critical prerequisites, unsafe save behavior, data corruption, revision conflicts, security problems or serious regressions prevent safe continuation.
+
+Explain the decision using actual evidence.
+
+---
+
+# FINAL EXECUTION DIRECTIVE
+
+Begin by recovering the latest verified GitHub development state.
+
+Confirm that the real Design Studio, structural editing commands, contextual Properties Inspector, and draft persistence already exist.
+
+Then:
+
+1. Audit existing editor state management.
+2. Define one unified editing transaction model.
+3. Implement bounded Undo/Redo.
+4. Implement transaction grouping for continuous edits.
+5. Connect structural commands.
+6. Connect property updates.
+7. Add functional toolbar controls and keyboard shortcuts.
+8. Implement accurate dirty-state tracking.
+9. Implement a debounced autosave coordinator.
+10. Handle in-flight saves and stale responses correctly.
+11. Preserve optimistic concurrency and revision protection.
+12. Implement safe failure and retry behavior.
+13. Restore persisted drafts reliably.
+14. Implement safe unsaved-work recovery where feasible.
+15. Protect against accidental navigation data loss.
+16. Validate publishing isolation.
+17. Run comprehensive history, persistence, security and race-condition tests.
+18. Perform real browser verification where possible.
+19. Audit performance before and after implementation.
+20. Fix regressions caused by this task.
+21. Update all four permanent handoff documents.
+22. Review Git changes.
+23. Commit verified work.
+24. Push to the correct development branch.
+25. Verify the remote commit.
+26. Produce the complete implementation report.
+
+**DO NOT CREATE ANOTHER PAGE DOCUMENT OR DRAFT PERSISTENCE SYSTEM.**
+
+**DO NOT IMPLEMENT SEPARATE UNDO STACKS FOR EACH INSPECTOR CONTROL.**
+
+**DO NOT SAVE ON EVERY POINTER MOVEMENT OR SLIDER VALUE CHANGE.**
+
+**DO NOT ALLOW OUT-OF-ORDER SAVE RESPONSES TO MARK NEWER UNSAVED CHANGES AS SAVED.**
+
+**DO NOT SILENTLY OVERWRITE ANOTHER ADMINISTRATOR'S WORK.**
+
+**DO NOT CONFUSE UNDO/REDO HISTORY WITH PERMANENT PUBLISHED VERSION HISTORY.**
+
+**DO NOT ALLOW AUTOSAVE TO PUBLISH THE WEBSITE.**
+
+**DO NOT MODIFY PRODUCT DATA, AFFILIATE URLS OR OTHER PROTECTED BUSINESS FIELDS.**
+
+**DO NOT INTRODUCE HISTORY OR AUTOSAVE UI INTO THE PUBLIC STOREFRONT BUNDLE.**
+
+**DO NOT CLAIM TESTS, PERFORMANCE CHECKS OR GITHUB PUSH SUCCEEDED WITHOUT VERIFICATION.**
+
+**DO NOT BEGIN PROMPT 14 AUTOMATICALLY.**
+
+The ultimate objective is a professional Shopify-style Visual Storefront Editor with Figma-like direct manipulation, advanced product/category layout controls, shape editing, responsive design, animations, live previews, and secure publishing.
+
+Prompt 13 must make the editing experience reliable and recoverable before the next phase introduces more complex canvas interactions, where a single user gesture may update design geometry many times per second.

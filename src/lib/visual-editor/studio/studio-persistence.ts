@@ -12,6 +12,12 @@ import {
   type StorePageDraftRecord,
   type StorePageRecord,
 } from "../persistence/index";
+import {
+  clearLocalDraftRecoveryCheckpoint,
+  evaluateDraftRecoveryCandidate,
+  writeLocalDraftRecoveryCheckpoint,
+  type DraftRecoveryEvaluationResult,
+} from "../recovery/index";
 import type { PageDocument } from "../schema/page-document";
 
 export type StudioDraftInitializationSource =
@@ -30,6 +36,7 @@ export interface StudioDraftLoadResult {
   readonly pageRecord: StorePageRecord | null;
   readonly draftRecord: StorePageDraftRecord | null;
   readonly error: PersistenceError | null;
+  readonly recoveryEvaluation?: DraftRecoveryEvaluationResult;
 }
 
 export interface StudioSaveDraftInput {
@@ -53,22 +60,44 @@ export interface StudioSaveDraftOutcome {
 
 const SESSION_RECOVERY_KEY_PREFIX = "ovu-studio-unsaved-draft:";
 
-export function saveLocalDraftRecoverySnapshot(pageKey: string, doc: PageDocument): void {
+export function saveLocalDraftRecoverySnapshot(
+  pageKey: string,
+  doc: PageDocument,
+  options?: {
+    readonly baseDraftRevision?: number;
+    readonly storeScope?: string;
+    readonly userScope?: string;
+    readonly lastTransactionLabel?: string | null;
+  },
+): void {
   if (typeof window === "undefined" || !window.sessionStorage) return;
   try {
     window.sessionStorage.setItem(`${SESSION_RECOVERY_KEY_PREFIX}${pageKey}`, JSON.stringify(doc));
   } catch {
     // Ignore storage quota errors
   }
+  writeLocalDraftRecoveryCheckpoint({
+    pageKey,
+    storeScope: options?.storeScope ?? DEFAULT_STORE_SCOPE,
+    userScope: options?.userScope ?? "admin",
+    baseDraftRevision: options?.baseDraftRevision ?? 0,
+    document: doc,
+    lastTransactionLabel: options?.lastTransactionLabel ?? null,
+  });
 }
 
-export function clearLocalDraftRecoverySnapshot(pageKey: string): void {
-  if (typeof window === "undefined" || !window.sessionStorage) return;
-  try {
-    window.sessionStorage.removeItem(`${SESSION_RECOVERY_KEY_PREFIX}${pageKey}`);
-  } catch {
-    // Ignore storage access errors
-  }
+export function clearLocalDraftRecoverySnapshot(
+  pageKey: string,
+  options?: {
+    readonly storeScope?: string;
+    readonly userScope?: string;
+  },
+): void {
+  clearLocalDraftRecoveryCheckpoint({
+    pageKey,
+    storeScope: options?.storeScope ?? DEFAULT_STORE_SCOPE,
+    userScope: options?.userScope ?? "admin",
+  });
 }
 
 /**
@@ -78,22 +107,21 @@ export function clearLocalDraftRecoverySnapshot(pageKey: string): void {
  * Invariants:
  * - Never modifies the live published storefront merely by opening the studio.
  * - If an active draft exists, restores its validated `PageDocument` and `draftRevision`.
- * - If no draft exists yet, seeds the working state from the currently published document
- *   (if published) or `DEFAULT_HOMEPAGE_PAGE_DOCUMENT` with `draftRevision: 0`.
- * - If the database is unreachable or returns an error, surfaces a structured `PersistenceError`
- *   while providing `DEFAULT_HOMEPAGE_PAGE_DOCUMENT` so the studio canvas is never blank
- *   (except for `UNAUTHORIZED` / `FORBIDDEN`, where the caller blocks access).
+ * - Evaluates any session-scoped local recovery checkpoint against the server revision without
+ *   silently overwriting the server draft.
  */
 export async function loadStudioWorkspaceDraft(
   options: DraftRepositoryOptions & {
     pageKey?: string;
     pageSlug?: string;
+    userScope?: string;
     adapter?: PersistenceDatabaseAdapter;
   } = {},
 ): Promise<StudioDraftLoadResult> {
   const pageKey = options.pageKey ?? "home";
   const pageSlug = options.pageSlug ?? "/";
   const storeScope = options.storeScope ?? DEFAULT_STORE_SCOPE;
+  const userScope = options.userScope ?? "admin";
 
   try {
     const pageRecord = await getStorePageByKey(pageKey, {
@@ -109,6 +137,11 @@ export async function loadStudioWorkspaceDraft(
 
       if (existingDraft) {
         const cloned = structuredClone(existingDraft.draftDocument);
+        const recoveryEvaluation = evaluateDraftRecoveryCandidate({
+          scope: { storeScope, pageKey, userScope },
+          serverDraftRevision: existingDraft.draftRevision,
+          serverDocument: existingDraft.draftDocument,
+        });
         return {
           source: "loaded_existing_draft",
           workingDocument: cloned,
@@ -120,6 +153,7 @@ export async function loadStudioWorkspaceDraft(
           pageRecord,
           draftRecord: existingDraft,
           error: null,
+          recoveryEvaluation,
         };
       }
 
@@ -129,6 +163,11 @@ export async function loadStudioWorkspaceDraft(
           storeScope,
         });
         const baseDoc = structuredClone(publishedRead.document);
+        const recoveryEvaluation = evaluateDraftRecoveryCandidate({
+          scope: { storeScope, pageKey, userScope },
+          serverDraftRevision: 0,
+          serverDocument: publishedRead.document,
+        });
         return {
           source: "initialized_from_published",
           workingDocument: baseDoc,
@@ -139,11 +178,17 @@ export async function loadStudioWorkspaceDraft(
           pageRecord,
           draftRecord: null,
           error: null,
+          recoveryEvaluation,
         };
       }
     }
 
     const canonicalDoc = structuredClone(DEFAULT_HOMEPAGE_PAGE_DOCUMENT);
+    const recoveryEvaluation = evaluateDraftRecoveryCandidate({
+      scope: { storeScope, pageKey, userScope },
+      serverDraftRevision: 0,
+      serverDocument: DEFAULT_HOMEPAGE_PAGE_DOCUMENT,
+    });
     return {
       source: "initialized_from_canonical",
       workingDocument: canonicalDoc,
@@ -154,6 +199,7 @@ export async function loadStudioWorkspaceDraft(
       pageRecord: pageRecord ?? null,
       draftRecord: null,
       error: null,
+      recoveryEvaluation,
     };
   } catch (err) {
     const mappedError = mapDatabaseErrorToPersistenceError(err);
@@ -168,6 +214,7 @@ export async function loadStudioWorkspaceDraft(
       pageRecord: null,
       draftRecord: null,
       error: mappedError,
+      recoveryEvaluation: { status: "none" },
     };
   }
 }
@@ -181,10 +228,11 @@ export async function loadStudioWorkspaceDraft(
  */
 export async function saveStudioWorkspaceDraft(
   input: StudioSaveDraftInput,
-  options: DraftRepositoryOptions = {},
+  options: DraftRepositoryOptions & { userScope?: string } = {},
 ): Promise<StudioSaveDraftOutcome> {
   const pageKey = input.pageKey ?? "home";
   const slug = input.slug ?? "/";
+  const storeScope = options.storeScope ?? DEFAULT_STORE_SCOPE;
   const title = (input.title ?? input.workingDocument.name ?? "Storefront Homepage").trim();
 
   const result = await savePageDraft(
@@ -195,13 +243,16 @@ export async function saveStudioWorkspaceDraft(
       title: title || "Storefront Homepage",
       document: input.workingDocument,
       expectedDraftRevision: input.expectedDraftRevision,
-      storeScope: options.storeScope ?? DEFAULT_STORE_SCOPE,
+      storeScope,
     },
     options,
   );
 
   if (result.ok) {
-    clearLocalDraftRecoverySnapshot(pageKey);
+    clearLocalDraftRecoverySnapshot(pageKey, {
+      storeScope,
+      userScope: options.userScope,
+    });
     return {
       ok: true,
       persistedDocument: structuredClone(result.draft.draftDocument),

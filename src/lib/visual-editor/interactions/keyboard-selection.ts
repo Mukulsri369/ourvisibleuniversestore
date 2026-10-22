@@ -26,7 +26,9 @@ export type StudioKeyboardSelectionAction =
   | { readonly type: "none" }
   | { readonly type: "clear_selection" }
   | { readonly type: "select_target"; readonly targetId: string; readonly scrollIntoView: boolean }
-  | { readonly type: "save_draft" };
+  | { readonly type: "save_draft" }
+  | { readonly type: "undo" }
+  | { readonly type: "redo" };
 
 export interface KeyboardSelectionEventLike {
   readonly key: string;
@@ -38,11 +40,13 @@ export interface KeyboardSelectionEventLike {
 }
 
 /**
- * Resolves global studio keyboard shortcuts for selection and hierarchy navigation:
+ * Resolves global studio keyboard shortcuts for selection, history, and persistence:
+ * - `Cmd/Ctrl+S`: Save working draft (active globally)
+ * - `Cmd/Ctrl+Z`: Undo last editing transaction (only when not focused in a text/number input)
+ * - `Cmd/Ctrl+Shift+Z` or `Ctrl+Y`: Redo last undone transaction (only when not focused in a text/number input)
  * - `Escape`: Clear current selection
  * - `Alt+ArrowUp` or `[`: Select parent component/template
  * - `Alt+ArrowDown` or `]`: Select first child component/instance
- * - `Cmd/Ctrl+S`: Save working draft
  */
 export function resolveStudioKeyboardSelectionAction(
   event: KeyboardSelectionEventLike,
@@ -51,15 +55,29 @@ export function resolveStudioKeyboardSelectionAction(
   categories: readonly Category[] = [],
 ): StudioKeyboardSelectionAction {
   const isMod = Boolean(event.metaKey || event.ctrlKey);
+  const lowerKey = (event.key || "").toLowerCase();
 
   // Cmd/Ctrl+S is allowed globally to save the draft
-  if (isMod && event.key.toLowerCase() === "s") {
+  if (isMod && !event.shiftKey && !event.altKey && lowerKey === "s") {
     return { type: "save_draft" };
   }
 
-  // Never intercept keys when the user is typing in an input, textarea, select, or contenteditable
+  // Never intercept Undo/Redo or navigation keys when the user is typing in an input, textarea, select, or contenteditable
   if (isEditableInputTarget(event.target)) {
     return { type: "none" };
+  }
+
+  // Undo: Cmd/Ctrl+Z (without Shift or Alt)
+  if (isMod && !event.shiftKey && !event.altKey && lowerKey === "z") {
+    return { type: "undo" };
+  }
+
+  // Redo: Cmd/Ctrl+Shift+Z or Ctrl+Y
+  if (
+    (isMod && Boolean(event.shiftKey) && !event.altKey && lowerKey === "z") ||
+    (Boolean(event.ctrlKey) && !event.metaKey && !event.shiftKey && !event.altKey && lowerKey === "y")
+  ) {
+    return { type: "redo" };
   }
 
   if (event.key === "Escape") {

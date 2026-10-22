@@ -41,3 +41,7 @@ export * from "./geometry/index";
 export * from "./interactions/index";
 export * from "./structure/index";
 export * from "./inspector/index";
+export * from "./history/index";
+export * from "./autosave/index";
+export * from "./recovery/index";
+

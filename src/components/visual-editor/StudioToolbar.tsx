@@ -18,11 +18,13 @@ import {
 import type { RenderMode } from "@/lib/visual-editor/rendering/RenderContext";
 import type { EditorBreakpoint } from "@/lib/visual-editor/schema/responsive";
 import type {
+  PersistenceError,
   StudioDevicePreset,
   StudioMobileDrawer,
   StudioPersistenceStatus,
   StudioZoomMode,
 } from "@/lib/visual-editor/studio";
+import { HistoryControls, SaveStatus } from "./history";
 import { StudioViewportControls } from "./StudioViewportControls";
 import { cn } from "@/lib/utils";
 
@@ -41,6 +43,19 @@ export interface StudioToolbarProps {
   leftPanelCollapsed: boolean;
   rightPanelCollapsed: boolean;
   mobileActiveDrawer: StudioMobileDrawer;
+  canUndo?: boolean;
+  canRedo?: boolean;
+  nextUndoLabel?: string | null;
+  nextRedoLabel?: string | null;
+  isOnline?: boolean;
+  retryAttempt?: number;
+  persistenceError?: PersistenceError | null;
+  validationError?: string | null;
+  hasRecoveryCheckpoint?: boolean;
+  onUndo?: () => void;
+  onRedo?: () => void;
+  onRetrySave?: () => void;
+  onOpenRecovery?: () => void;
   onReturnToAdmin: () => void;
   onSaveDraft: () => void;
   onResetWorkingDraft: () => void;
@@ -68,6 +83,19 @@ export function StudioToolbar({
   leftPanelCollapsed,
   rightPanelCollapsed,
   mobileActiveDrawer,
+  canUndo = false,
+  canRedo = false,
+  nextUndoLabel = null,
+  nextRedoLabel = null,
+  isOnline = true,
+  retryAttempt = 0,
+  persistenceError = null,
+  validationError = null,
+  hasRecoveryCheckpoint = false,
+  onUndo,
+  onRedo,
+  onRetrySave,
+  onOpenRecovery,
   onReturnToAdmin,
   onSaveDraft,
   onResetWorkingDraft,
@@ -81,27 +109,12 @@ export function StudioToolbar({
 }: StudioToolbarProps) {
   const isSaving = persistenceStatus === "saving";
 
-  const statusSummaryText = (() => {
-    if (persistenceStatus === "loading") return "Loading draft…";
-    if (persistenceStatus === "saving") return "Saving draft…";
-    if (persistenceStatus === "conflict") return "Revision conflict";
-    if (persistenceStatus === "error") return "Save error · Unsaved changes";
-    if (isDirty || persistenceStatus === "unsaved") {
-      return draftRevision > 0
-        ? `Unsaved changes · Base Rev ${draftRevision}`
-        : "Unsaved changes · New Draft";
-    }
-    return draftRevision > 0
-      ? `Draft Saved · Rev ${draftRevision}`
-      : "Canonical Baseline · Unmodified";
-  })();
-
   return (
     <header
       data-testid="studio-toolbar"
       className="flex min-h-14 w-full shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border bg-card/95 px-3 py-1.5 backdrop-blur"
     >
-      {/* Left Zone: Return to Admin, Studio Identity, Page Title & Metadata */}
+      {/* Left Zone: Return to Admin, Studio Identity, Page Title & Save Status */}
       <div className="flex items-center gap-2.5 min-w-0">
         <button
           type="button"
@@ -182,14 +195,19 @@ export function StudioToolbar({
               {pageTitle}
             </span>
           </div>
-          <div
-            data-testid="studio-persistence-summary"
-            className="flex items-center gap-1.5 text-[11px] font-mono tabular-nums text-muted-foreground"
-          >
-            <span>{statusSummaryText}</span>
-            <span aria-hidden="true">·</span>
-            <span>{isPublishedLive ? "Live Store Published" : "Canonical Storefront Live"}</span>
-          </div>
+          <SaveStatus
+            status={persistenceStatus}
+            isDirty={isDirty}
+            draftRevision={draftRevision}
+            isPublishedLive={isPublishedLive}
+            isOnline={isOnline}
+            retryAttempt={retryAttempt}
+            error={persistenceError}
+            validationError={validationError}
+            hasRecoveryCheckpoint={hasRecoveryCheckpoint}
+            onRetrySave={onRetrySave}
+            onOpenRecovery={onOpenRecovery}
+          />
         </div>
       </div>
 
@@ -207,8 +225,20 @@ export function StudioToolbar({
         />
       </div>
 
-      {/* Right Zone: Edit/Preview Toggle, View Live Store, Discard & Save Draft */}
+      {/* Right Zone: History (Undo/Redo), Edit/Preview Toggle, View Live Store, Revert & Save Draft */}
       <div className="flex items-center gap-2">
+        {onUndo && onRedo && (
+          <HistoryControls
+            canUndo={canUndo}
+            canRedo={canRedo}
+            nextUndoLabel={nextUndoLabel}
+            nextRedoLabel={nextRedoLabel}
+            disabled={persistenceStatus === "loading" || renderMode !== "editor"}
+            onUndo={onUndo}
+            onRedo={onRedo}
+          />
+        )}
+
         {/* Edit / Preview Segmented Toggle */}
         <div
           role="group"

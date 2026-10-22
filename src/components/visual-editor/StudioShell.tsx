@@ -25,14 +25,26 @@ import type { SafeComponentProps } from "@/lib/visual-editor/schema/nodes";
 import type { EditorBreakpoint } from "@/lib/visual-editor/schema/responsive";
 import {
   applyWorkingDocumentUpdate,
+  areDocumentsContentEqual,
+  canRedoHistory,
+  canUndoHistory,
+  classifySaveFailure,
   clearLocalDraftRecoverySnapshot,
+  computeRetryBackoffDelayMs,
+  createInitialHistoryState,
   createInitialStudioDocumentState,
   createInitialStudioPersistenceState,
   createInitialStudioUIState,
-  executeStructuralCommand,
+  executeStructuralCommandWithHistory,
   getAncestorLayerIdsForTarget,
+  getNextRedoLabel,
+  getNextUndoLabel,
   inferDevicePresetFromWidth,
+  isDocumentDirty,
   loadStudioWorkspaceDraft,
+  recordEditingTransaction,
+  recordPropertyMutationInHistory,
+  redoEditingTransaction,
   resetInspectorBreakpointOverrides,
   resetInspectorStyleProperty,
   resolveSelectedNodeContext,
@@ -40,12 +52,16 @@ import {
   saveLocalDraftRecoverySnapshot,
   saveStudioWorkspaceDraft,
   STUDIO_DEVICE_PRESETS,
+  undoEditingTransaction,
   updateInspectorStyleProperty,
   updateStudioNodeAppearance,
   updateStudioNodeName,
   updateStudioNodeProp,
   updateStudioNodeSpacing,
   updateStudioNodeVisibility,
+  type DraftRecoveryEvaluationResult,
+  type HistoryActionType,
+  type HistoryState,
   type InspectorStylePath,
   type StructuralCommand,
   type StructuralOperationResult,
@@ -59,6 +75,7 @@ import {
   type StudioUIState,
   type StudioZoomMode,
 } from "@/lib/visual-editor/studio";
+import { RecoveryDialog } from "./history";
 import { StudioCanvas } from "./StudioCanvas";
 import { StudioInspector } from "./StudioInspector";
 import { StudioLayersPanel } from "./StudioLayersPanel";
@@ -82,6 +99,14 @@ export interface StudioShellProps {
   initialCategories?: Category[];
   initialSettings?: Settings | null;
   onNavigateToAdmin?: () => void;
+  /**
+   * Optional autosave configuration (defaults to enabled with 1800ms debounce and 8000ms maxWait).
+   */
+  autosaveEnabled?: boolean;
+  autosaveDebounceMs?: number;
+  autosaveMaxWaitMs?: number;
+  autosaveMaxRetries?: number;
+  autosaveBaseRetryDelayMs?: number;
 }
 
 const EMPTY_HOME_DATA: HomeData = {
@@ -97,6 +122,11 @@ export function StudioShell({
   initialCategories,
   initialSettings,
   onNavigateToAdmin,
+  autosaveEnabled = true,
+  autosaveDebounceMs = 1800,
+  autosaveMaxWaitMs = 8000,
+  autosaveMaxRetries = 3,
+  autosaveBaseRetryDelayMs = 1500,
 }: StudioShellProps) {
   const queryClient = useQueryClient();
 
@@ -138,10 +168,11 @@ export function StudioShell({
     categoriesQueryResult.isLoading,
   ]);
 
-  // 1. Separated State Slices (Part 11, Section 27 & Prompt 10 Part 3, Section 7)
+  // 1. Separated State Slices (Document, History, UI, and Persistence)
   const [documentState, setDocumentState] = useState<StudioDocumentState>(() =>
     createInitialStudioDocumentState(),
   );
+  const [historyState, setHistoryState] = useState<HistoryState>(() => createInitialHistoryState());
   const [uiState, setUiState] = useState<StudioUIState>(() => createInitialStudioUIState());
   const [persistenceState, setPersistenceState] = useState<StudioPersistenceState>(() =>
     createInitialStudioPersistenceState(),
@@ -154,53 +185,199 @@ export function StudioShell({
   } | null>(null);
   const [showUnsavedExitConfirm, setShowUnsavedExitConfirm] = useState(false);
   const [lastUndoSnapshot, setLastUndoSnapshot] = useState<StructuralUndoSnapshot | null>(null);
+  const [recoveryEvaluation, setRecoveryEvaluation] =
+    useState<DraftRecoveryEvaluationResult | null>(null);
+  const [showRecoveryDialog, setShowRecoveryDialog] = useState(false);
 
+  // Refs for synchronous race-free save coordination
   const isSavingRef = useRef(false);
+  const queuedSaveAfterInFlightRef = useRef<{ needed: boolean; isManual: boolean }>({
+    needed: false,
+    isManual: false,
+  });
+  const localGenerationRef = useRef(0);
+  const lastSubmittedGenerationRef = useRef(0);
+  const lastSavedGenerationRef = useRef(0);
+  const latestWorkingDocumentRef = useRef(documentState.workingDocument);
+  latestWorkingDocumentRef.current = documentState.workingDocument;
+  const latestPersistedDocumentRef = useRef(documentState.persistedDocument);
+  latestPersistedDocumentRef.current = documentState.persistedDocument;
+  const latestDraftRevisionRef = useRef(persistenceState.draftRevision);
+  latestDraftRevisionRef.current = persistenceState.draftRevision;
+  const isOnlineRef = useRef<boolean>(
+    typeof navigator !== "undefined" && typeof navigator.onLine === "boolean"
+      ? navigator.onLine
+      : true,
+  );
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const maxWaitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // 2. Load Authorized Draft on Mount (Part 12, Section 29)
-  const loadDraft = useCallback(async () => {
-    setPersistenceState((prev) => ({
-      ...prev,
-      status: "loading",
-      error: null,
-      validationError: null,
-    }));
-
-    const outcome = await loadStudioWorkspaceDraft({
-      adapter: persistenceAdapter,
-      pageKey: "home",
-      pageSlug: "/",
-    });
-
-    setDocumentState({
-      persistedDocument: outcome.persistedDocument,
-      workingDocument: outcome.workingDocument,
-      isDirty: false,
-    });
-
-    setPersistenceState({
-      status: outcome.error ? "error" : "saved",
-      initializationSource: outcome.source,
-      draftRevision: outcome.draftRevision,
-      publishedRevision: outcome.publishedRevision,
-      isPublishedLive: outcome.isPublishedLive,
-      lastSavedAt: outcome.draftRecord?.updatedAt ?? null,
-      error: outcome.error,
-      validationError: null,
-      pageRecord: outcome.pageRecord,
-      draftRecord: outcome.draftRecord,
-    });
-  }, [persistenceAdapter]);
+  const clearAutosaveTimers = useCallback(() => {
+    if (debounceTimerRef.current !== null) {
+      clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
+    if (maxWaitTimerRef.current !== null) {
+      clearTimeout(maxWaitTimerRef.current);
+      maxWaitTimerRef.current = null;
+    }
+    if (retryTimerRef.current !== null) {
+      clearTimeout(retryTimerRef.current);
+      retryTimerRef.current = null;
+    }
+  }, []);
 
   useEffect(() => {
-    void loadDraft();
+    return () => {
+      clearAutosaveTimers();
+    };
+  }, [clearAutosaveTimers]);
+
+  // 2. Load Authorized Draft on Mount (Part 12, Section 29 & Prompt 13 Part 15, Section 48)
+  const loadDraft = useCallback(
+    async (options?: { forceOverwriteUnsaved?: boolean }) => {
+      // Prevent background refetch from overwriting unsaved local work (Prompt 13, Part 12, Section 40)
+      if (
+        !options?.forceOverwriteUnsaved &&
+        persistenceState.status !== "loading" &&
+        !areDocumentsContentEqual(
+          latestWorkingDocumentRef.current,
+          latestPersistedDocumentRef.current,
+        )
+      ) {
+        return;
+      }
+
+      clearAutosaveTimers();
+      setPersistenceState((prev) => ({
+        ...prev,
+        status: "loading",
+        error: null,
+        validationError: null,
+      }));
+
+      const outcome = await loadStudioWorkspaceDraft({
+        adapter: persistenceAdapter,
+        pageKey: "home",
+        pageSlug: "/",
+      });
+
+      localGenerationRef.current = 0;
+      lastSubmittedGenerationRef.current = 0;
+      lastSavedGenerationRef.current = 0;
+      latestWorkingDocumentRef.current = outcome.workingDocument;
+      latestPersistedDocumentRef.current = outcome.persistedDocument;
+      latestDraftRevisionRef.current = outcome.draftRevision;
+
+      setDocumentState({
+        persistedDocument: outcome.persistedDocument,
+        workingDocument: outcome.workingDocument,
+        isDirty: false,
+      });
+      setHistoryState(createInitialHistoryState());
+      setLastUndoSnapshot(null);
+
+      const hasValidRecovery =
+        outcome.recoveryEvaluation &&
+        (outcome.recoveryEvaluation.status === "recoverable" ||
+          outcome.recoveryEvaluation.status === "stale_against_server");
+
+      setRecoveryEvaluation(outcome.recoveryEvaluation ?? null);
+      setShowRecoveryDialog(Boolean(hasValidRecovery && outcome.recoveryEvaluation?.status === "recoverable"));
+
+      setPersistenceState({
+        status: outcome.error
+          ? "error"
+          : hasValidRecovery
+            ? "recovery_available"
+            : "saved",
+        initializationSource: outcome.source,
+        draftRevision: outcome.draftRevision,
+        publishedRevision: outcome.publishedRevision,
+        isPublishedLive: outcome.isPublishedLive,
+        lastSavedAt: outcome.draftRecord?.updatedAt ?? null,
+        error: outcome.error,
+        validationError: null,
+        pageRecord: outcome.pageRecord,
+        draftRecord: outcome.draftRecord,
+        localGeneration: 0,
+        lastSubmittedGeneration: 0,
+        lastSavedGeneration: 0,
+        isOnline: isOnlineRef.current,
+        retryAttempt: 0,
+      });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [persistenceAdapter, clearAutosaveTimers],
+  );
+
+  useEffect(() => {
+    void loadDraft({ forceOverwriteUnsaved: true });
   }, [loadDraft]);
 
-  // 3. Browser beforeunload protection when working draft has unsaved changes
+  // 2b. Track Browser Online/Offline Connectivity (Prompt 13, Part 14, Section 45)
   useEffect(() => {
-    if (!documentState.isDirty) return;
+    const handleOffline = () => {
+      isOnlineRef.current = false;
+      clearAutosaveTimers();
+      setPersistenceState((prev) => ({
+        ...prev,
+        isOnline: false,
+        status:
+          !areDocumentsContentEqual(
+            latestWorkingDocumentRef.current,
+            latestPersistedDocumentRef.current,
+          ) && prev.status !== "conflict"
+            ? "offline"
+            : prev.status,
+      }));
+    };
 
-    saveLocalDraftRecoverySnapshot("home", documentState.workingDocument);
+    const handleOnline = () => {
+      isOnlineRef.current = true;
+      setPersistenceState((prev) => {
+        const dirty = !areDocumentsContentEqual(
+          latestWorkingDocumentRef.current,
+          latestPersistedDocumentRef.current,
+        );
+        return {
+          ...prev,
+          isOnline: true,
+          retryAttempt: 0,
+          error: prev.status === "offline" ? null : prev.error,
+          status:
+            prev.status === "conflict"
+              ? "conflict"
+              : dirty
+                ? "unsaved"
+                : "saved",
+        };
+      });
+    };
+
+    window.addEventListener("offline", handleOffline);
+    window.addEventListener("online", handleOnline);
+    return () => {
+      window.removeEventListener("offline", handleOffline);
+      window.removeEventListener("online", handleOnline);
+    };
+  }, [clearAutosaveTimers]);
+
+  // 3. Browser beforeunload & Scoped Local Recovery Checkpoint Protection (Prompt 13, Parts 15–16)
+  useEffect(() => {
+    if (!documentState.isDirty) {
+      if (persistenceState.status === "saved") {
+        clearLocalDraftRecoverySnapshot("home");
+      }
+      return;
+    }
+
+    const latestTxLabel = getNextUndoLabel(historyState);
+    saveLocalDraftRecoverySnapshot("home", documentState.workingDocument, {
+      baseDraftRevision: persistenceState.draftRevision,
+      lastTransactionLabel: latestTxLabel,
+    });
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
@@ -211,7 +388,13 @@ export function StudioShell({
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [documentState.isDirty, documentState.workingDocument]);
+  }, [
+    documentState.isDirty,
+    documentState.workingDocument,
+    persistenceState.draftRevision,
+    persistenceState.status,
+    historyState,
+  ]);
 
   // 4. Synchronize Selection State if workingDocument or renderMode changes
   useEffect(() => {
@@ -313,7 +496,7 @@ export function StudioShell({
     [documentState.workingDocument, uiState.hoveredNodeId, categories, allKnownProducts],
   );
 
-  // 7. Centralized Selection & Hover Controller Handlers (Prompt 10, Part 3, Sections 7–8)
+  // 7. Centralized Selection & Hover Controller Handlers
   const handleSelectNode = useCallback(
     (
       nodeId: string | null,
@@ -336,7 +519,6 @@ export function StudioShell({
           prev.renderMode,
         );
 
-        // Automatically expand ancestors in the Layer Tree when a nested node or runtime instance is selected
         const ancestorsToExpand = getAncestorLayerIdsForTarget(
           documentState.workingDocument,
           nextSel.selectedNodeId,
@@ -443,9 +625,45 @@ export function StudioShell({
     }));
   }, []);
 
-  // 8. Localized Validated Property & Style Edit Handlers
-  const commitDocumentResult = useCallback(
-    (result: { ok: boolean; document: StudioDocumentState["workingDocument"]; error?: string }) => {
+  // 8. Unified Authoritative Editing Transaction Pipeline (Prompt 13, Part 3, Section 7)
+  const applyCommittedDocumentChange = useCallback(
+    (nextWorkingDocument: StudioDocumentState["workingDocument"]) => {
+      localGenerationRef.current += 1;
+      latestWorkingDocumentRef.current = nextWorkingDocument;
+
+      if (isSavingRef.current) {
+        queuedSaveAfterInFlightRef.current = {
+          needed: true,
+          isManual: queuedSaveAfterInFlightRef.current.isManual,
+        };
+      }
+
+      setDocumentState((prevDoc) => {
+        const next = applyWorkingDocumentUpdate(prevDoc, persistenceState, nextWorkingDocument);
+        setPersistenceState({
+          ...next.persistenceState,
+          localGeneration: localGenerationRef.current,
+          retryAttempt: 0,
+        });
+        return next.documentState;
+      });
+    },
+    [persistenceState],
+  );
+
+  const commitPropertyMutationWithHistory = useCallback(
+    (
+      result: { ok: boolean; document: StudioDocumentState["workingDocument"]; error?: string },
+      meta: {
+        targetNodeId: string;
+        actionType: HistoryActionType;
+        propertyPath: string;
+        breakpoint?: EditorBreakpoint;
+        isReset?: boolean;
+        customLabel?: string;
+        allowCoalesce?: boolean;
+      },
+    ) => {
       if (!result.ok) {
         setPersistenceState((prev) => ({
           ...prev,
@@ -453,21 +671,42 @@ export function StudioShell({
         }));
         return;
       }
-      setDocumentState((prevDoc) => {
-        const next = applyWorkingDocumentUpdate(prevDoc, persistenceState, result.document);
-        setPersistenceState(next.persistenceState);
-        return next.documentState;
+
+      if (result.document === documentState.workingDocument) {
+        return;
+      }
+
+      setHistoryState((prevHistory) => {
+        const recorded = recordPropertyMutationInHistory(
+          prevHistory,
+          documentState.workingDocument,
+          result,
+          {
+            ...meta,
+            currentSelectedNodeId: uiState.selectedNodeId,
+          },
+        );
+        return recorded.historyState;
       });
+
+      setLastUndoSnapshot(null);
+      applyCommittedDocumentChange(result.document);
     },
-    [persistenceState],
+    [documentState.workingDocument, uiState.selectedNodeId, applyCommittedDocumentChange],
   );
 
   const handleUpdateNodeName = useCallback(
     (selectedId: string, newName: string) => {
       const res = updateStudioNodeName(documentState.workingDocument, selectedId, newName);
-      commitDocumentResult(res);
+      commitPropertyMutationWithHistory(res, {
+        targetNodeId: selectedId,
+        actionType: "structural.rename",
+        propertyPath: "name",
+        customLabel: `Rename Layer to "${newName.trim()}"`,
+        allowCoalesce: true,
+      });
     },
-    [documentState.workingDocument, commitDocumentResult],
+    [documentState.workingDocument, commitPropertyMutationWithHistory],
   );
 
   const handleUpdateNodeVisibility = useCallback(
@@ -478,9 +717,16 @@ export function StudioShell({
         visible,
         bp,
       );
-      commitDocumentResult(res);
+      commitPropertyMutationWithHistory(res, {
+        targetNodeId: selectedId,
+        actionType: "structural.visibility",
+        propertyPath: "visible",
+        breakpoint: bp,
+        customLabel: `${visible ? "Show" : "Hide"} ${bp && bp !== "desktop" ? `${bp === "mobile" ? "Mobile " : "Tablet "}` : ""}Component`,
+        allowCoalesce: false,
+      });
     },
-    [documentState.workingDocument, commitDocumentResult],
+    [documentState.workingDocument, commitPropertyMutationWithHistory],
   );
 
   const handleUpdateNodeProp = useCallback(
@@ -490,9 +736,15 @@ export function StudioShell({
       value: SafeComponentProps[K],
     ) => {
       const res = updateStudioNodeProp(documentState.workingDocument, selectedId, propKey, value);
-      commitDocumentResult(res);
+      commitPropertyMutationWithHistory(res, {
+        targetNodeId: selectedId,
+        actionType: "property.content",
+        propertyPath: String(propKey),
+        customLabel: `Change ${String(propKey)}`,
+        allowCoalesce: true,
+      });
     },
-    [documentState.workingDocument, commitDocumentResult],
+    [documentState.workingDocument, commitPropertyMutationWithHistory],
   );
 
   const handleUpdateNodeSpacing = useCallback(
@@ -509,21 +761,50 @@ export function StudioShell({
         box,
         bp,
       );
-      commitDocumentResult(res);
+      commitPropertyMutationWithHistory(res, {
+        targetNodeId: selectedId,
+        actionType: box === undefined ? "property.reset" : "property.spacing",
+        propertyPath: `geometry.${field}`,
+        breakpoint: bp,
+        isReset: box === undefined,
+        allowCoalesce: box !== undefined,
+      });
     },
-    [documentState.workingDocument, commitDocumentResult],
+    [documentState.workingDocument, commitPropertyMutationWithHistory],
   );
 
   const handleUpdateNodeAppearance = useCallback(
     (selectedId: string, patch: StudioAppearancePatch, bp?: EditorBreakpoint) => {
       const res = updateStudioNodeAppearance(documentState.workingDocument, selectedId, patch, bp);
-      commitDocumentResult(res);
+      const propertyPath =
+        "backgroundColor" in patch
+          ? "appearance.backgroundColor"
+          : "cornerRadiusPx" in patch
+            ? "shape.cornerRadius"
+            : "appearance.opacity";
+      const isReset =
+        patch.backgroundColor === null ||
+        patch.cornerRadiusPx === null ||
+        patch.opacity === null;
+      commitPropertyMutationWithHistory(res, {
+        targetNodeId: selectedId,
+        actionType: isReset ? "property.reset" : "property.appearance",
+        propertyPath,
+        breakpoint: bp,
+        isReset,
+        allowCoalesce: !isReset,
+      });
     },
-    [documentState.workingDocument, commitDocumentResult],
+    [documentState.workingDocument, commitPropertyMutationWithHistory],
   );
 
   const handleUpdateStyleProperty = useCallback(
-    (selectedId: string, path: InspectorStylePath, value: unknown, bp?: EditorBreakpoint) => {
+    (
+      selectedId: string,
+      path: InspectorStylePath | string,
+      value: unknown,
+      bp?: EditorBreakpoint,
+    ) => {
       const res = updateInspectorStyleProperty(
         documentState.workingDocument,
         selectedId,
@@ -531,35 +812,61 @@ export function StudioShell({
         value,
         bp,
       );
-      commitDocumentResult(res);
+      const isReset = value === null || value === undefined;
+      commitPropertyMutationWithHistory(res, {
+        targetNodeId: selectedId,
+        actionType: isReset ? "property.reset" : "property.style",
+        propertyPath: String(path),
+        breakpoint: bp,
+        isReset,
+        allowCoalesce: !isReset,
+      });
     },
-    [documentState.workingDocument, commitDocumentResult],
+    [documentState.workingDocument, commitPropertyMutationWithHistory],
   );
 
   const handleResetStyleProperty = useCallback(
-    (selectedId: string, path: InspectorStylePath, bp?: EditorBreakpoint) => {
+    (selectedId: string, path: InspectorStylePath | string, bp?: EditorBreakpoint) => {
       const res = resetInspectorStyleProperty(documentState.workingDocument, selectedId, path, bp);
-      commitDocumentResult(res);
+      commitPropertyMutationWithHistory(res, {
+        targetNodeId: selectedId,
+        actionType: "property.reset",
+        propertyPath: String(path),
+        breakpoint: bp,
+        isReset: true,
+        allowCoalesce: false,
+      });
     },
-    [documentState.workingDocument, commitDocumentResult],
+    [documentState.workingDocument, commitPropertyMutationWithHistory],
   );
 
   const handleResetBreakpointOverrides = useCallback(
     (selectedId: string, bp: EditorBreakpoint) => {
       const res = resetInspectorBreakpointOverrides(documentState.workingDocument, selectedId, bp);
-      commitDocumentResult(res);
+      commitPropertyMutationWithHistory(res, {
+        targetNodeId: selectedId,
+        actionType: "property.reset_breakpoint",
+        propertyPath: `responsive.${bp}`,
+        breakpoint: bp,
+        isReset: true,
+        customLabel: `Reset ${bp === "mobile" ? "Mobile" : "Tablet"} Overrides`,
+        allowCoalesce: false,
+      });
     },
-    [documentState.workingDocument, commitDocumentResult],
+    [documentState.workingDocument, commitPropertyMutationWithHistory],
   );
 
-  // 8b. Centralized Structural Command Dispatcher (Prompt 11)
+  // 8b. Centralized Structural Command Dispatcher Connected to History (Prompt 11 & Prompt 13 Part 18)
   const handleExecuteStructuralCommand = useCallback(
     (command: StructuralCommand): StructuralOperationResult => {
-      const res = executeStructuralCommand(
-        documentState.workingDocument,
-        command,
-        uiState.selectedNodeId,
-      );
+      const { operationResult: res, historyState: nextHistoryState } =
+        executeStructuralCommandWithHistory(
+          historyState,
+          documentState.workingDocument,
+          command,
+          uiState.selectedNodeId,
+        );
+
       if (!res.ok) {
         setPersistenceState((prev) => ({
           ...prev,
@@ -572,17 +879,15 @@ export function StudioShell({
         return res;
       }
 
+      setHistoryState(nextHistoryState);
+
       if (res.undoSnapshot) {
         setLastUndoSnapshot(res.undoSnapshot);
       } else {
         setLastUndoSnapshot(null);
       }
 
-      setDocumentState((prevDoc) => {
-        const next = applyWorkingDocumentUpdate(prevDoc, persistenceState, res.document);
-        setPersistenceState(next.persistenceState);
-        return next.documentState;
-      });
+      applyCommittedDocumentChange(res.document);
 
       const shouldUpdateSelection =
         res.selectedNodeId !== undefined &&
@@ -649,114 +954,414 @@ export function StudioShell({
 
       return res;
     },
-    [documentState.workingDocument, uiState.selectedNodeId, persistenceState],
+    [
+      historyState,
+      documentState.workingDocument,
+      uiState.selectedNodeId,
+      applyCommittedDocumentChange,
+    ],
   );
 
-  const handleUndoLastStructuralRemoval = useCallback(() => {
-    if (!lastUndoSnapshot) return;
-    const { previousDocument, previousSelectedNodeId } = lastUndoSnapshot;
-    setLastUndoSnapshot(null);
-    setDocumentState((prevDoc) => {
-      const next = applyWorkingDocumentUpdate(prevDoc, persistenceState, previousDocument);
-      setPersistenceState(next.persistenceState);
-      return next.documentState;
-    });
-    if (previousSelectedNodeId) {
-      setUiState((prev) => {
-        const nextSel = selectStudioTarget(
-          {
-            selectedNodeId: prev.selectedNodeId,
-            hoveredNodeId: prev.hoveredNodeId,
-            previousSelectedNodeId: prev.previousSelectedNodeId,
-            selectionSource: prev.selectionSource,
-            interactionMode: prev.interactionMode,
-          },
-          previousDocument,
-          previousSelectedNodeId,
-          "programmatic",
-          prev.renderMode,
-        );
-        const nextExpanded = new Set(prev.expandedLayerIds);
-        for (const ancId of getAncestorLayerIdsForTarget(
-          previousDocument,
-          nextSel.selectedNodeId,
-        )) {
-          nextExpanded.add(ancId);
-        }
-        return {
+  // 8c. Global Undo & Redo Handlers (Prompt 13, Parts 4, 5, 8 & 9)
+  const handleUndo = useCallback(() => {
+    const outcome = undoEditingTransaction(
+      historyState,
+      documentState.workingDocument,
+      uiState.selectedNodeId,
+    );
+    if (!outcome.ok) {
+      if (outcome.error && outcome.error.code !== "EMPTY_UNDO_STACK") {
+        setPersistenceState((prev) => ({
           ...prev,
-          selectedNodeId: nextSel.selectedNodeId,
-          previousSelectedNodeId: nextSel.previousSelectedNodeId,
-          selectionSource: nextSel.selectionSource,
-          expandedLayerIds: nextExpanded,
-        };
-      });
+          validationError: outcome.error?.message ?? "Unable to undo.",
+        }));
+      }
+      return;
     }
-  }, [lastUndoSnapshot, persistenceState]);
 
-  // 9. Save Draft & Revert Handlers
-  const handleSaveDraft = useCallback(async () => {
-    if (isSavingRef.current) return;
-    isSavingRef.current = true;
+    setHistoryState(outcome.state);
+    setLastUndoSnapshot(null);
+    applyCommittedDocumentChange(outcome.document);
 
-    const intendedWorkingDoc = documentState.workingDocument;
-    setPersistenceState((prev) => ({
-      ...prev,
-      status: "saving",
-      error: null,
-      validationError: null,
-    }));
-
-    try {
-      const outcome = await saveStudioWorkspaceDraft(
+    setUiState((prev) => {
+      const nextExpanded = new Set(prev.expandedLayerIds);
+      for (const ancId of outcome.expandLayerIds) {
+        nextExpanded.add(ancId);
+      }
+      const nextSel = selectStudioTarget(
         {
-          workingDocument: intendedWorkingDoc,
-          expectedDraftRevision: persistenceState.draftRevision,
-          pageKey: "home",
-          slug: "/",
-          title: intendedWorkingDoc.name || "Storefront Homepage",
+          selectedNodeId: prev.selectedNodeId,
+          hoveredNodeId: prev.hoveredNodeId,
+          previousSelectedNodeId: prev.previousSelectedNodeId,
+          selectionSource: prev.selectionSource,
+          interactionMode: prev.interactionMode,
         },
-        { adapter: persistenceAdapter },
+        outcome.document,
+        outcome.selectedNodeId,
+        "programmatic",
+        prev.renderMode,
       );
+      return {
+        ...prev,
+        selectedNodeId: nextSel.selectedNodeId,
+        previousSelectedNodeId: nextSel.previousSelectedNodeId,
+        selectionSource: nextSel.selectionSource,
+        expandedLayerIds: nextExpanded,
+      };
+    });
+  }, [
+    historyState,
+    documentState.workingDocument,
+    uiState.selectedNodeId,
+    applyCommittedDocumentChange,
+  ]);
 
-      if (outcome.ok) {
-        setDocumentState((prevDoc) => {
-          const stillMatchesSaved = prevDoc.workingDocument === intendedWorkingDoc;
-          return {
-            persistedDocument: outcome.persistedDocument,
-            workingDocument: prevDoc.workingDocument,
-            isDirty: !stillMatchesSaved,
-          };
-        });
+  const handleRedo = useCallback(() => {
+    const outcome = redoEditingTransaction(
+      historyState,
+      documentState.workingDocument,
+      uiState.selectedNodeId,
+    );
+    if (!outcome.ok) {
+      if (outcome.error && outcome.error.code !== "EMPTY_REDO_STACK") {
+        setPersistenceState((prev) => ({
+          ...prev,
+          validationError: outcome.error?.message ?? "Unable to redo.",
+        }));
+      }
+      return;
+    }
+
+    setHistoryState(outcome.state);
+    setLastUndoSnapshot(null);
+    applyCommittedDocumentChange(outcome.document);
+
+    setUiState((prev) => {
+      const nextExpanded = new Set(prev.expandedLayerIds);
+      for (const ancId of outcome.expandLayerIds) {
+        nextExpanded.add(ancId);
+      }
+      const nextSel = selectStudioTarget(
+        {
+          selectedNodeId: prev.selectedNodeId,
+          hoveredNodeId: prev.hoveredNodeId,
+          previousSelectedNodeId: prev.previousSelectedNodeId,
+          selectionSource: prev.selectionSource,
+          interactionMode: prev.interactionMode,
+        },
+        outcome.document,
+        outcome.selectedNodeId,
+        "programmatic",
+        prev.renderMode,
+      );
+      return {
+        ...prev,
+        selectedNodeId: nextSel.selectedNodeId,
+        previousSelectedNodeId: nextSel.previousSelectedNodeId,
+        selectionSource: nextSel.selectionSource,
+        expandedLayerIds: nextExpanded,
+      };
+    });
+  }, [
+    historyState,
+    documentState.workingDocument,
+    uiState.selectedNodeId,
+    applyCommittedDocumentChange,
+  ]);
+
+  const handleUndoLastStructuralRemoval = useCallback(() => {
+    setLastUndoSnapshot(null);
+    handleUndo();
+  }, [handleUndo]);
+
+  // 9. Disciplined Save Draft, Debounced Autosave & Race-Safe Persistence Coordinator
+  const executeSaveOperation = useCallback(
+    async (options?: { isManual?: boolean; isRetry?: boolean }): Promise<boolean> => {
+      clearAutosaveTimers();
+
+      const isManual = Boolean(options?.isManual);
+      if (isSavingRef.current) {
+        queuedSaveAfterInFlightRef.current = {
+          needed: true,
+          isManual: queuedSaveAfterInFlightRef.current.isManual || isManual,
+        };
+        return false;
+      }
+
+      if (!isOnlineRef.current && !isManual) {
+        setPersistenceState((prev) => ({
+          ...prev,
+          isOnline: false,
+          status: "offline",
+        }));
+        return false;
+      }
+
+      const submittedDoc = latestWorkingDocumentRef.current;
+      const submittedGen = localGenerationRef.current;
+      const expectedRev = latestDraftRevisionRef.current;
+
+      // Avoid redundant network writes if already saved and not a forced manual initial save
+      if (
+        !isManual &&
+        expectedRev > 0 &&
+        areDocumentsContentEqual(submittedDoc, latestPersistedDocumentRef.current)
+      ) {
         setPersistenceState((prev) => ({
           ...prev,
           status: "saved",
-          draftRevision: outcome.draftRevision,
-          publishedRevision: outcome.publishedRevision,
-          lastSavedAt: outcome.savedAt,
-          error: null,
-          validationError: null,
-          pageRecord: outcome.pageRecord,
-          draftRecord: outcome.draftRecord,
         }));
-      } else {
-        const isConflict = outcome.error?.code === "DRAFT_REVISION_CONFLICT";
-        setPersistenceState((prev) => ({
-          ...prev,
-          status: isConflict ? "conflict" : "error",
-          error: outcome.error,
-        }));
+        return true;
       }
-    } finally {
-      isSavingRef.current = false;
+
+      isSavingRef.current = true;
+      queuedSaveAfterInFlightRef.current = { needed: false, isManual: false };
+      lastSubmittedGenerationRef.current = submittedGen;
+
+      setPersistenceState((prev) => ({
+        ...prev,
+        status: "saving",
+        error: null,
+        validationError: null,
+        lastSubmittedGeneration: submittedGen,
+      }));
+
+      try {
+        const outcome = await saveStudioWorkspaceDraft(
+          {
+            workingDocument: submittedDoc,
+            expectedDraftRevision: expectedRev,
+            pageKey: "home",
+            slug: "/",
+            title: submittedDoc.name || "Storefront Homepage",
+          },
+          { adapter: persistenceAdapter },
+        );
+
+        isSavingRef.current = false;
+
+        if (outcome.ok) {
+          latestPersistedDocumentRef.current = outcome.persistedDocument;
+          latestDraftRevisionRef.current = outcome.draftRevision;
+          lastSavedGenerationRef.current = Math.max(
+            lastSavedGenerationRef.current,
+            submittedGen,
+          );
+
+          const currentWorkingDoc = latestWorkingDocumentRef.current;
+          const stillHasNewerChanges =
+            localGenerationRef.current > submittedGen &&
+            !areDocumentsContentEqual(currentWorkingDoc, outcome.persistedDocument);
+
+          setDocumentState({
+            persistedDocument: outcome.persistedDocument,
+            workingDocument: currentWorkingDoc,
+            isDirty: stillHasNewerChanges,
+          });
+
+          setPersistenceState((prev) => ({
+            ...prev,
+            status: stillHasNewerChanges
+              ? isOnlineRef.current
+                ? "unsaved"
+                : "offline"
+              : "saved",
+            draftRevision: outcome.draftRevision,
+            publishedRevision: outcome.publishedRevision,
+            lastSavedAt: outcome.savedAt,
+            error: null,
+            validationError: null,
+            pageRecord: outcome.pageRecord,
+            draftRecord: outcome.draftRecord,
+            lastSavedGeneration: lastSavedGenerationRef.current,
+            retryAttempt: 0,
+          }));
+
+          if (stillHasNewerChanges && queuedSaveAfterInFlightRef.current.isManual) {
+            queuedSaveAfterInFlightRef.current = { needed: false, isManual: false };
+            return executeSaveOperation({ isManual: true });
+          }
+
+          return true;
+        }
+
+        // Handle failure classification (conflict vs auth vs validation vs transient network)
+        const classified = classifySaveFailure(outcome.error, {
+          expectedDraftRevision: expectedRev,
+          isBrowserOnline: isOnlineRef.current,
+        });
+
+        if (classified.category === "conflict") {
+          clearAutosaveTimers();
+          setPersistenceState((prev) => ({
+            ...prev,
+            status: "conflict",
+            error: classified.error,
+            retryAttempt: 0,
+          }));
+          return false;
+        }
+
+        if (classified.isOfflineLikely) {
+          isOnlineRef.current = false;
+          setPersistenceState((prev) => ({
+            ...prev,
+            isOnline: false,
+            status: "offline",
+            error: classified.error,
+          }));
+          return false;
+        }
+
+        setPersistenceState((prev) => {
+          const nextAttempt = (prev.retryAttempt ?? 0) + 1;
+          const canRetry =
+            classified.canAutoRetry &&
+            isOnlineRef.current &&
+            nextAttempt <= autosaveMaxRetries &&
+            !areDocumentsContentEqual(
+              latestWorkingDocumentRef.current,
+              latestPersistedDocumentRef.current,
+            );
+
+          if (canRetry) {
+            const backoffMs = computeRetryBackoffDelayMs(
+              nextAttempt,
+              autosaveBaseRetryDelayMs,
+            );
+            if (retryTimerRef.current !== null) {
+              clearTimeout(retryTimerRef.current);
+            }
+            retryTimerRef.current = setTimeout(() => {
+              retryTimerRef.current = null;
+              void executeSaveOperation({ isManual: false, isRetry: true });
+            }, backoffMs);
+          }
+
+          return {
+            ...prev,
+            status: "error",
+            error: classified.error,
+            retryAttempt: canRetry ? nextAttempt : prev.retryAttempt ?? 0,
+          };
+        });
+
+        return false;
+      } finally {
+        isSavingRef.current = false;
+      }
+    },
+    [
+      clearAutosaveTimers,
+      persistenceAdapter,
+      autosaveMaxRetries,
+      autosaveBaseRetryDelayMs,
+    ],
+  );
+
+  const handleSaveDraft = useCallback(async () => {
+    await executeSaveOperation({ isManual: true });
+  }, [executeSaveOperation]);
+
+  // 9b. Trailing Debounce & Max-Wait Autosave Scheduler (Prompt 13, Part 10, Sections 31–34)
+  useEffect(() => {
+    if (!autosaveEnabled) return;
+    if (!documentState.isDirty) {
+      if (debounceTimerRef.current !== null) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
+      if (maxWaitTimerRef.current !== null) {
+        clearTimeout(maxWaitTimerRef.current);
+        maxWaitTimerRef.current = null;
+      }
+      return;
     }
-  }, [documentState.workingDocument, persistenceState.draftRevision, persistenceAdapter]);
+
+    if (
+      persistenceState.status === "loading" ||
+      persistenceState.status === "saving" ||
+      persistenceState.status === "conflict" ||
+      persistenceState.status === "error" ||
+      persistenceState.status === "offline" ||
+      !isOnlineRef.current
+    ) {
+      return;
+    }
+
+    // Do not persist while an active continuous interaction session is uncommitted
+    if (historyState.activeInteraction !== null) {
+      return;
+    }
+
+    if (debounceTimerRef.current !== null) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      debounceTimerRef.current = null;
+      void executeSaveOperation({ isManual: false });
+    }, autosaveDebounceMs);
+
+    if (maxWaitTimerRef.current === null && autosaveMaxWaitMs > 0) {
+      maxWaitTimerRef.current = setTimeout(() => {
+        maxWaitTimerRef.current = null;
+        if (debounceTimerRef.current !== null) {
+          clearTimeout(debounceTimerRef.current);
+          debounceTimerRef.current = null;
+        }
+        void executeSaveOperation({ isManual: false });
+      }, autosaveMaxWaitMs);
+    }
+
+    return () => {
+      if (debounceTimerRef.current !== null) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
+    };
+  }, [
+    autosaveEnabled,
+    autosaveDebounceMs,
+    autosaveMaxWaitMs,
+    documentState.isDirty,
+    documentState.workingDocument,
+    persistenceState.status,
+    historyState.activeInteraction,
+    executeSaveOperation,
+  ]);
 
   const handleResetWorkingDraft = useCallback(() => {
+    clearAutosaveTimers();
     clearLocalDraftRecoverySnapshot("home");
+    setRecoveryEvaluation(null);
+    setShowRecoveryDialog(false);
+
+    const restoredDoc = structuredClone(documentState.persistedDocument);
+    if (!isDocumentDirty(documentState.workingDocument, restoredDoc)) {
+      return;
+    }
+
+    setHistoryState((prevHistory) =>
+      recordEditingTransaction(prevHistory, {
+        actionType: "document.revert",
+        label: "Revert to Saved Draft",
+        affectedNodeIds: [],
+        origin: "toolbar",
+        previousDocument: documentState.workingDocument,
+        nextDocument: restoredDoc,
+        previousSelectionId: uiState.selectedNodeId,
+        nextSelectionId: uiState.selectedNodeId,
+        coalesceKey: null,
+        allowCoalesce: false,
+      }).state,
+    );
+
+    localGenerationRef.current += 1;
+    latestWorkingDocumentRef.current = restoredDoc;
+
     setDocumentState((prev) => ({
       ...prev,
-      workingDocument: structuredClone(prev.persistedDocument),
+      workingDocument: restoredDoc,
       isDirty: false,
     }));
     setPersistenceState((prev) => ({
@@ -764,8 +1369,61 @@ export function StudioShell({
       status: "saved",
       error: null,
       validationError: null,
+      localGeneration: localGenerationRef.current,
+      retryAttempt: 0,
     }));
-  }, []);
+  }, [
+    clearAutosaveTimers,
+    documentState.persistedDocument,
+    documentState.workingDocument,
+    uiState.selectedNodeId,
+  ]);
+
+  const handleRestoreRecoveryCheckpoint = useCallback(() => {
+    if (
+      !recoveryEvaluation ||
+      (recoveryEvaluation.status !== "recoverable" &&
+        recoveryEvaluation.status !== "stale_against_server")
+    ) {
+      return;
+    }
+
+    const recoveredDoc = structuredClone(recoveryEvaluation.checkpoint.document);
+    setShowRecoveryDialog(false);
+    setRecoveryEvaluation(null);
+
+    setHistoryState((prevHistory) =>
+      recordEditingTransaction(prevHistory, {
+        actionType: "document.batch",
+        label: "Restore Unsaved Checkpoint",
+        affectedNodeIds: [],
+        origin: "toolbar",
+        previousDocument: documentState.workingDocument,
+        nextDocument: recoveredDoc,
+        previousSelectionId: uiState.selectedNodeId,
+        nextSelectionId: uiState.selectedNodeId,
+        coalesceKey: null,
+        allowCoalesce: false,
+      }).state,
+    );
+
+    applyCommittedDocumentChange(recoveredDoc);
+  }, [
+    recoveryEvaluation,
+    documentState.workingDocument,
+    uiState.selectedNodeId,
+    applyCommittedDocumentChange,
+  ]);
+
+  const handleDiscardRecoveryCheckpoint = useCallback(() => {
+    clearLocalDraftRecoverySnapshot("home");
+    setShowRecoveryDialog(false);
+    setRecoveryEvaluation(null);
+    setPersistenceState((prev) => ({
+      ...prev,
+      status: documentState.isDirty ? "unsaved" : "saved",
+    }));
+  }, [documentState.isDirty]);
 
   const handleRequestReturnToAdmin = useCallback(() => {
     if (documentState.isDirty) {
@@ -775,7 +1433,7 @@ export function StudioShell({
     onNavigateToAdmin?.();
   }, [documentState.isDirty, onNavigateToAdmin]);
 
-  // 10. Global Studio Keyboard Navigation (Prompt 10, Part 5, Section 13 & Part 15, Section 43)
+  // 10. Global Studio Keyboard Navigation (Selection, Save Draft, Undo, Redo)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (uiState.renderMode !== "editor") return;
@@ -792,6 +1450,18 @@ export function StudioShell({
       if (action.type === "save_draft") {
         e.preventDefault();
         void handleSaveDraft();
+        return;
+      }
+
+      if (action.type === "undo") {
+        e.preventDefault();
+        handleUndo();
+        return;
+      }
+
+      if (action.type === "redo") {
+        e.preventDefault();
+        handleRedo();
         return;
       }
 
@@ -820,6 +1490,8 @@ export function StudioShell({
     documentState.workingDocument,
     categories,
     handleSaveDraft,
+    handleUndo,
+    handleRedo,
     handleSelectNode,
   ]);
 
@@ -833,7 +1505,7 @@ export function StudioShell({
         title="Administrator Authorization Required"
         message={persistenceState.error.publicMessage}
         onReturnToAdmin={onNavigateToAdmin}
-        onRetry={() => void loadDraft()}
+        onRetry={() => void loadDraft({ forceOverwriteUnsaved: true })}
       />
     );
   }
@@ -853,9 +1525,19 @@ export function StudioShell({
     queryClient.setQueryData(categoriesQuery.queryKey, categories);
   }
 
-  const conflictDetails = persistenceState.error?.conflictInfo
-    ? `Expected Rev ${persistenceState.error.conflictInfo.expectedRevision ?? "?"} · Actual Rev ${persistenceState.error.conflictInfo.actualRevision ?? "?"}`
+  const conflictDetails = persistenceState.error?.conflict
+    ? `Expected Rev ${persistenceState.error.conflict.expectedRevision ?? "?"} · Actual Rev ${persistenceState.error.conflict.actualRevision ?? "?"}`
     : undefined;
+
+  const canUndo = canUndoHistory(historyState);
+  const canRedo = canRedoHistory(historyState);
+  const nextUndoLabel = getNextUndoLabel(historyState);
+  const nextRedoLabel = getNextRedoLabel(historyState);
+  const hasRecoveryCandidate = Boolean(
+    recoveryEvaluation &&
+      (recoveryEvaluation.status === "recoverable" ||
+        recoveryEvaluation.status === "stale_against_server"),
+  );
 
   const layersPanelElement = (
     <StudioLayersPanel
@@ -999,6 +1681,19 @@ export function StudioShell({
         leftPanelCollapsed={uiState.leftPanelCollapsed}
         rightPanelCollapsed={uiState.rightPanelCollapsed}
         mobileActiveDrawer={uiState.mobileActiveDrawer}
+        canUndo={canUndo}
+        canRedo={canRedo}
+        nextUndoLabel={nextUndoLabel}
+        nextRedoLabel={nextRedoLabel}
+        isOnline={persistenceState.isOnline ?? true}
+        retryAttempt={persistenceState.retryAttempt ?? 0}
+        persistenceError={persistenceState.error}
+        validationError={persistenceState.validationError}
+        hasRecoveryCheckpoint={hasRecoveryCandidate}
+        onUndo={handleUndo}
+        onRedo={handleRedo}
+        onRetrySave={() => void handleSaveDraft()}
+        onOpenRecovery={() => setShowRecoveryDialog(true)}
         onReturnToAdmin={handleRequestReturnToAdmin}
         onSaveDraft={() => void handleSaveDraft()}
         onResetWorkingDraft={handleResetWorkingDraft}
@@ -1069,7 +1764,7 @@ export function StudioShell({
         <StudioInlineErrorBanner
           message={persistenceState.error.publicMessage}
           conflictDetails={conflictDetails}
-          onReloadDraft={() => void loadDraft()}
+          onReloadDraft={() => void loadDraft({ forceOverwriteUnsaved: true })}
           onDismiss={() =>
             setPersistenceState((prev) => ({
               ...prev,
@@ -1177,6 +1872,19 @@ export function StudioShell({
         }
         validationError={persistenceState.validationError}
       />
+
+      {/* Local Unsaved Draft Recovery Modal */}
+      {showRecoveryDialog &&
+        recoveryEvaluation &&
+        (recoveryEvaluation.status === "recoverable" ||
+          recoveryEvaluation.status === "stale_against_server") && (
+          <RecoveryDialog
+            evaluation={recoveryEvaluation}
+            serverDraftRevision={persistenceState.draftRevision}
+            onRestore={handleRestoreRecoveryCheckpoint}
+            onDiscard={handleDiscardRecoveryCheckpoint}
+          />
+        )}
 
       {/* Unsaved Work Protection Confirmation Modal */}
       {showUnsavedExitConfirm && (

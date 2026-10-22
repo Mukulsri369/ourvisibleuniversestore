@@ -17,7 +17,15 @@ import {
 export type StudioInspectorTab = "content" | "layout" | "appearance" | "responsive";
 
 export type StudioPersistenceStatus =
-  "loading" | "saved" | "unsaved" | "saving" | "error" | "conflict";
+  | "loading"
+  | "saved"
+  | "unsaved"
+  | "saving"
+  | "offline"
+  | "error"
+  | "conflict"
+  | "validation_error"
+  | "recovery_available";
 
 export type StudioMobileDrawer = "none" | "layers" | "inspector";
 
@@ -54,7 +62,7 @@ export interface StudioUIState {
 }
 
 /**
- * 3. Persistence Lifecycle State (Part 11, Section 27)
+ * 3. Persistence Lifecycle State (Part 11, Section 27 & Prompt 13 Part 11, Sections 35–37)
  */
 export interface StudioPersistenceState {
   readonly status: StudioPersistenceStatus;
@@ -67,6 +75,11 @@ export interface StudioPersistenceState {
   readonly validationError: string | null;
   readonly pageRecord: StorePageRecord | null;
   readonly draftRecord: StorePageDraftRecord | null;
+  readonly localGeneration?: number;
+  readonly lastSubmittedGeneration?: number;
+  readonly lastSavedGeneration?: number;
+  readonly isOnline?: boolean;
+  readonly retryAttempt?: number;
 }
 
 export function createInitialStudioDocumentState(
@@ -114,6 +127,11 @@ export function createInitialStudioPersistenceState(): StudioPersistenceState {
     validationError: null,
     pageRecord: null,
     draftRecord: null,
+    localGeneration: 0,
+    lastSubmittedGeneration: 0,
+    lastSavedGeneration: 0,
+    isOnline: true,
+    retryAttempt: 0,
   };
 }
 
@@ -126,8 +144,19 @@ export function applyWorkingDocumentUpdate(
   persistenceState: StudioPersistenceState;
 } {
   const dirty = isDocumentDirty(nextWorkingDocument, currentDocState.persistedDocument);
+  const isOnline = currentPersistenceState.isOnline ?? true;
   const nextStatus: StudioPersistenceStatus =
-    currentPersistenceState.status === "saving" ? "saving" : dirty ? "unsaved" : "saved";
+    currentPersistenceState.status === "saving"
+      ? "saving"
+      : currentPersistenceState.status === "conflict"
+        ? "conflict"
+        : dirty
+          ? isOnline
+            ? "unsaved"
+            : "offline"
+          : "saved";
+
+  const nextLocalGen = (currentPersistenceState.localGeneration ?? 0) + 1;
 
   return {
     documentState: {
@@ -139,6 +168,7 @@ export function applyWorkingDocumentUpdate(
       ...currentPersistenceState,
       status: nextStatus,
       validationError: null,
+      localGeneration: nextLocalGen,
     },
   };
 }
