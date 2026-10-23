@@ -46,8 +46,21 @@ export function ProductImage({
       loading={eager ? "eager" : "lazy"}
       decoding="async"
       onError={() => setFailed(true)}
+      data-product-image-zoom
+      onPointerMove={(event) => {
+        if (event.pointerType !== "mouse") return;
+        const bounds = event.currentTarget.getBoundingClientRect();
+        const x = Math.min(100, Math.max(0, ((event.clientX - bounds.left) / bounds.width) * 100));
+        const y = Math.min(100, Math.max(0, ((event.clientY - bounds.top) / bounds.height) * 100));
+        event.currentTarget.style.setProperty("--product-image-x", `${x}%`);
+        event.currentTarget.style.setProperty("--product-image-y", `${y}%`);
+      }}
+      onPointerLeave={(event) => {
+        event.currentTarget.style.removeProperty("--product-image-x");
+        event.currentTarget.style.removeProperty("--product-image-y");
+      }}
       style={style}
-      className={cn("object-cover", className)}
+      className={cn("product-image-hover-zoom object-cover", className)}
     />
   );
 }
@@ -101,8 +114,8 @@ export function ProductCard({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={cn(
-          "group relative flex flex-col overflow-hidden rounded-xl sm:rounded-2xl border border-border/70 bg-card/70 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_8px_25px_-5px_rgba(139,92,246,0.18)] snap-start shrink-0 select-none",
-          "w-[calc((100vw-50px)/3)] min-w-[calc((100vw-50px)/3)] max-w-[calc((100vw-50px)/3)] sm:max-w-none sm:w-[130px] sm:min-w-[130px] md:w-[155px] md:min-w-[155px] lg:w-[calc((100%-5*14px)/6)] lg:min-w-[160px] xl:w-[calc((100%-5*16px)/6)] xl:min-w-[172px]",
+          "product-card-cinematic group relative flex flex-col overflow-hidden rounded-xl sm:rounded-2xl border border-border/70 bg-card/70 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-sm snap-start shrink-0 select-none",
+          "w-[calc((100vw-48px)/1.75)] min-w-[calc((100vw-48px)/1.75)] max-w-[calc((100vw-48px)/1.75)] sm:max-w-none sm:w-[180px] sm:min-w-[180px] md:w-[205px] md:min-w-[205px] lg:w-[220px] lg:min-w-[220px] xl:w-[238px] xl:min-w-[238px]",
           className,
         )}
       >
@@ -126,7 +139,7 @@ export function ProductCard({
                     src={currentSrc}
                     alt={currentAlt}
                     style={imageStyle}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="h-full w-full object-cover"
                   />
                 </motion.div>
               </AnimatePresence>
@@ -135,7 +148,7 @@ export function ProductCard({
                 src={p.image}
                 alt={p.imageAlt || p.name}
                 style={imageStyle}
-                className="h-full w-full transition-transform duration-500 group-hover:scale-105"
+                className="h-full w-full"
               />
             )}
           </Link>
@@ -195,13 +208,13 @@ export function ProductCard({
         <div className="flex flex-1 flex-col justify-between p-1.5 sm:p-2.5 gap-1">
           <div>
             {p.category && (
-              <p className="hidden sm:block text-[8px] uppercase tracking-widest font-mono text-muted-foreground truncate mb-0.5">
+              <p className="hidden sm:block text-[9px] uppercase tracking-widest font-mono text-muted-foreground truncate mb-1">
                 {p.category.name}
               </p>
             )}
             <Link to="/product/$slug" params={{ slug: p.slug }}>
               <h3
-                className="line-clamp-2 text-[10px] sm:text-[11px] font-medium leading-tight text-foreground transition-colors group-hover:text-primary"
+                className="line-clamp-2 text-xs sm:text-sm font-medium leading-snug text-foreground transition-colors group-hover:text-primary"
                 title={p.name}
               >
                 {p.name}
@@ -210,15 +223,15 @@ export function ProductCard({
           </div>
 
           <div className="pt-0.5">
-            <p className="text-[10px] sm:text-[11px] font-bold text-primary truncate">
-              {price ?? <span className="font-normal text-[8px] text-muted-foreground">Price</span>}
+            <p className="text-xs sm:text-sm font-semibold text-primary truncate">
+              {price ?? <span className="font-normal text-[10px] text-muted-foreground">Price</span>}
             </p>
 
             <div className="mt-1 flex items-center gap-1">
               {onQuickPreview && (
                 <button
                   onClick={() => onQuickPreview(p)}
-                  className="sm:hidden flex-1 h-5.5 rounded-full bg-secondary/80 text-[8.5px] font-medium text-foreground hover:text-primary"
+                  className="sm:hidden flex-1 h-7 rounded-md bg-secondary/80 text-[10px] font-medium text-foreground hover:text-primary"
                 >
                   Peek
                 </button>
@@ -230,7 +243,7 @@ export function ProductCard({
                   rel="nofollow sponsored noopener noreferrer"
                   onClick={() => logOutboundClick(p.id)}
                   aria-label={`Buy ${p.name}`}
-                  className="inline-flex h-5.5 sm:h-6 w-full sm:w-auto sm:flex-1 items-center justify-center gap-0.5 rounded-full bg-primary/15 sm:bg-primary text-[8.5px] sm:text-[9px] font-semibold text-primary sm:text-primary-foreground hover:bg-primary/25 sm:hover:bg-primary/90 transition-colors"
+                  className="inline-flex h-7 sm:h-8 w-full sm:w-auto sm:flex-1 items-center justify-center gap-1 rounded-md bg-primary/15 sm:bg-primary text-[10px] sm:text-xs font-semibold text-primary sm:text-primary-foreground hover:bg-primary/25 sm:hover:bg-primary/90 transition-colors"
                 >
                   <span>Buy</span>
                   <ExternalLink className="size-2 sm:size-2.5 shrink-0" />
@@ -252,7 +265,7 @@ export function ProductCard({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/65 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5",
+        "product-card-cinematic group relative flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/65 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-sm",
         className,
       )}
     >
@@ -276,7 +289,7 @@ export function ProductCard({
                   src={currentSrc}
                   alt={currentAlt}
                   style={imageStyle}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="h-full w-full object-cover"
                 />
               </motion.div>
             </AnimatePresence>
@@ -285,7 +298,7 @@ export function ProductCard({
               src={p.image}
               alt={p.imageAlt || p.name}
               style={imageStyle}
-              className="h-full w-full transition-transform duration-500 group-hover:scale-105"
+              className="h-full w-full"
             />
           )}
         </Link>

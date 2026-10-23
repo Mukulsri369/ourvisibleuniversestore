@@ -97,8 +97,8 @@ function CelestialScrollWorldCanvas({
 
   // Smooth out scroll delta with spring physics for natural celestial inertia
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 70,
-    damping: 24,
+    stiffness: 125,
+    damping: 30,
     restDelta: 0.001,
   });
 
@@ -121,7 +121,7 @@ function CelestialScrollWorldCanvas({
     [0.05, 0.22, 0.45, 0.7, 0.9, 1],
     reducedMotion
       ? ["78vw", "78vw", "78vw", "78vw", "78vw", "78vw"]
-      : ["82vw", "76vw", "86vw", "74vw", "80vw", "76vw"],
+      : ["82vw", "78vw", "74vw", "70vw", "66vw", "62vw"],
   );
   const earthY = useTransform(
     smoothProgress,
@@ -150,7 +150,7 @@ function CelestialScrollWorldCanvas({
     [0.14, 0.32, 0.55, 0.75, 0.9, 1],
     reducedMotion
       ? ["10vw", "10vw", "10vw", "10vw", "10vw", "10vw"]
-      : ["4vw", "16vw", "6vw", "18vw", "8vw", "14vw"],
+      : ["4vw", "14vw", "24vw", "34vw", "44vw", "54vw"],
   );
   const venusY = useTransform(
     smoothProgress,
@@ -179,7 +179,7 @@ function CelestialScrollWorldCanvas({
     [0.28, 0.48, 0.68, 0.85, 1],
     reducedMotion
       ? ["65vw", "65vw", "65vw", "65vw", "65vw"]
-      : ["66vw", "52vw", "72vw", "58vw", "64vw"],
+      : ["66vw", "54vw", "42vw", "30vw", "18vw"],
   );
   const marsY = useTransform(
     smoothProgress,
@@ -288,11 +288,20 @@ function CelestialScrollWorldCanvas({
   }
 
   return (
-    <div
-      aria-hidden="true"
-      className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none"
-    >
-      {planetsContent}
-    </div>
+    <>
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none"
+      >
+        {planetsContent}
+      </div>
+      {!reducedMotion && !isIsolatedStudioCanvas && (
+        <motion.div
+          aria-hidden="true"
+          className="store-scroll-progress"
+          style={{ scaleX: smoothProgress }}
+        />
+      )}
+    </>
   );
 }

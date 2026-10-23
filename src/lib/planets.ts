@@ -16,7 +16,7 @@ export const PLANETS = [
     poster: earthPoster.url,
     cutout: earthCutout.url,
     description:
-      "Our pale blue home. Discover astronomy-inspired products, space gear and cosmic gifts that bring the wonder of the universe closer.",
+      "Astronomy gifts, maps and essentials for curious minds.",
   },
   {
     id: "venus",
@@ -25,7 +25,7 @@ export const PLANETS = [
     poster: venusPoster.url,
     cutout: venusCutout.url,
     description:
-      "A world wrapped in golden clouds, and the hottest planet in our solar system. Find luminous lights, celestial décor and a little otherworldly wonder.",
+      "Atmospheric lighting and cosmic décor for softer evenings.",
   },
   {
     id: "mars",
@@ -34,7 +34,7 @@ export const PLANETS = [
     poster: marsPoster.url,
     cutout: marsCutout.url,
     description:
-      "The rust-red world of towering volcanoes and new horizons. Explore space-inspired gear, gifts and discoveries for your next adventure.",
+      "Stargazing gear and space gifts for the next frontier.",
   },
 ] as const;
 

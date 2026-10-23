@@ -140,7 +140,7 @@ export function HomepageRenderer({
 
   return (
     <HomepageRenderErrorBoundary fallback={legacyFallbackElement}>
-      <div className="relative">
+      <div className="store-homepage relative">
         <PageRenderer
           document={resolvedDocResult.document}
           mode={mode}

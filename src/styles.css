@@ -580,3 +580,97 @@
     background: linear-gradient(0deg, var(--space-void) 5%, transparent 65%);
   }
 }
+
+/* Quiet product interactions: keep the planetary hero cinematic and let the goods stay clear. */
+html { scroll-behavior: smooth; }
+.store-homepage .product-card-cinematic { position: relative; border: 1px solid color-mix(in oklch, var(--color-border) 70%, transparent); border-radius: 0.9rem; background: transparent; box-shadow: none; backdrop-filter: none; transition: border-color 220ms ease; }
+.product-image-hover-zoom { --product-image-x: 50%; --product-image-y: 50%; transform: scale(1); transform-origin: var(--product-image-x) var(--product-image-y); transition: transform 520ms cubic-bezier(.2,.7,.2,1); }
+@media (hover: hover) and (pointer: fine) {
+  .product-image-hover-zoom:hover { transform: scale(1.18); }
+  .store-homepage .product-card-cinematic:hover { border-color: color-mix(in oklch, var(--color-primary) 34%, var(--color-border)); box-shadow: none; transform: none; }
+}
+.store-homepage .product-card-cinematic::after { content: none; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .product-card-cinematic, .product-image-hover-zoom { transition: none; }
+  .product-image-hover-zoom:hover { transform: none; }
+}
+.store-homepage #festival-special > div { border-color: color-mix(in oklch, var(--color-border) 82%, transparent); background: color-mix(in oklch, var(--color-background) 72%, transparent); box-shadow: none; }
+.store-homepage #festival-special > div > .starfield { opacity: 0.12; }
+.store-homepage #festival-special .eyebrow { color: var(--muted-foreground); }
+/* Editorial finish: sparse typography, quiet outlines, and motion tied to scroll progress. */
+.store-homepage .planet-brand {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+}
+.store-homepage .planet-brand span {
+  margin-left: 0.8em;
+  letter-spacing: 0.28em;
+}
+.store-homepage .planet-eyebrow {
+  margin-top: clamp(28px, 5vh, 48px);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+}
+.store-homepage .planet-title-mask {
+  height: clamp(82px, 12vw, 148px);
+  margin-top: 12px;
+}
+.store-homepage .planet-title {
+  font-size: clamp(76px, 11.5vw, 144px);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+.store-homepage .planet-rule {
+  width: 44px;
+  height: 1px;
+  margin-top: 22px;
+  opacity: 0.8;
+}
+.store-homepage .planet-lede {
+  max-width: 440px;
+  min-height: 0;
+  margin-top: 20px;
+  color: color-mix(in oklch, var(--planet-ink) 82%, transparent);
+  font-size: clamp(14px, 1.2vw, 16px);
+  line-height: 1.55;
+}
+.store-homepage .planet-cta {
+  margin-top: 26px;
+}
+.store-homepage .planet-shop {
+  height: 48px;
+  padding-inline: 24px;
+  letter-spacing: 0.02em;
+}
+.store-homepage .product-card-cinematic {
+  border-radius: 0.65rem;
+}
+.store-homepage .product-card-cinematic h3 {
+  letter-spacing: -0.015em;
+}
+.store-scroll-progress {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 60;
+  height: 2px;
+  transform-origin: left center;
+  background: linear-gradient(90deg, #8fd3ee, #e6bf8b 58%, #c8a2ef);
+  box-shadow: 0 0 14px rgb(143 211 238 / 38%);
+  pointer-events: none;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .store-homepage .product-card-cinematic {
+      animation: store-product-arrive linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 24%;
+    }
+    @keyframes store-product-arrive {
+      from { opacity: 0.72; translate: 0 14px; }
+      to { opacity: 1; translate: 0 0; }
+    }
+  }
+}

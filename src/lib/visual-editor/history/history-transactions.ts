@@ -1,5 +1,5 @@
 import type { PageDocument } from "../schema/page-document";
-import { validatePageDocument } from "../schema/validation";
+import { safeParsePageDocument } from "../schema/validation";
 import { validateStructuralDocumentIntegrity } from "../structure/index";
 import { shouldCoalesceTransactions } from "./history-grouping";
 import {
@@ -102,14 +102,14 @@ export function validateHistoryDocumentState(document: unknown): {
     };
   }
 
-  const schemaValidation = validatePageDocument(candidate);
-  if (!schemaValidation.valid || !schemaValidation.data) {
+  const schemaValidation = safeParsePageDocument(candidate);
+  if (!schemaValidation.success) {
     return {
       valid: false,
       error: {
         code: "HISTORY_RESTORE_INVALID_DOCUMENT",
         message:
-          schemaValidation.errors?.[0]?.message ??
+          schemaValidation.issues[0]?.message ??
           "History document failed PageDocument schema validation.",
       },
     };

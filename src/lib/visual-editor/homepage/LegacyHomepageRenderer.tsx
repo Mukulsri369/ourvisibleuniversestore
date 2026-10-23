@@ -117,7 +117,7 @@ export function LegacyHomepageView({ homeData, categories, settings }: LegacyHom
       : "Galaxy night lights, glowing globes, and starry lamps for festive spaces.";
 
   return (
-    <div className="relative">
+    <div className="store-homepage relative">
       <CelestialScrollWorld />
 
       <div className="relative z-10">
