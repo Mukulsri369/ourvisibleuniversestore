@@ -1,3 +1,4 @@
+import { OrbitalEmblem } from "./OrbitalEmblem";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Instagram, Menu, Search, X } from "lucide-react";
@@ -7,14 +8,7 @@ import { categoriesQuery, settingsQuery } from "@/lib/store";
 function Logo({ logo }: { logo?: string | null | undefined }) {
   return (
     <Link to="/" className="flex items-center gap-2.5">
-      {logo ? (
-        <img src={logo} alt="" className="size-8 rounded-full object-cover" />
-      ) : (
-        <span className="relative flex size-8 items-center justify-center rounded-full border border-primary/50">
-          <span className="size-2 rounded-full bg-primary shadow-glow" />
-          <span className="absolute inset-[-4px] rounded-full border border-accent/20" />
-        </span>
-      )}
+      <OrbitalEmblem />
       <span className="leading-none">
         <span className="block font-display text-lg text-foreground">Our Visible Universe</span>
         <span className="block font-mono text-[9px] uppercase tracking-[0.3em] text-muted-foreground">

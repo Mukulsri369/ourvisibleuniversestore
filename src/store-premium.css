@@ -41,7 +41,7 @@
 .cosmic-store .product-card-cinematic { background: transparent; border: 0; border-radius: 0; backdrop-filter: none; box-shadow: none; } /* taste-skill-ignore: removes a legacy visual treatment; adds none. */
 .cosmic-store .product-card-cinematic:hover { box-shadow: none; transform: none; } /* taste-skill-ignore: removes a legacy visual treatment; adds none. */
 .cosmic-store .product-card-cinematic > div:first-child { border-radius: 0; background: #e8eae5; aspect-ratio: 4 / 5; }
-.cosmic-store .product-card-cinematic > div:first-child img { object-fit: contain; padding: 18px; }
+.cosmic-store .product-card-cinematic > div:first-child img, .cosmic-store .product-card-cinematic > div:first-child video { width: 100%; height: 100%; object-fit: cover; padding: 0; display: block; }
 .cosmic-store .product-card-cinematic h3 { font-size: 17px; line-height: 1.4; font-weight: 400; }
 .cosmic-store .product-card-cinematic.snap-start { width: clamp(240px,25vw,380px); min-width: clamp(240px,25vw,380px); max-width: none; }
 .cosmic-store .product-image-hover-zoom { transition: transform .65s cubic-bezier(.2,.7,.2,1); }
@@ -88,4 +88,58 @@
 .cosmic-store .planet-copy button { pointer-events: auto; }
 @media (max-width: 760px) {
   .cosmic-store .earth-stage { inset: 0; width: 100%; height: 100%; }
+}
+.cosmic-store #featured-products { scroll-margin-top: 104px; }
+/* Soft corners for storefront media and actions. */
+.cosmic-store .product-card-cinematic,
+.cosmic-store .product-card-cinematic > div:first-child { border-radius: 10px; }
+.cosmic-store button,
+.cosmic-store a[data-slot="button"],
+.cosmic-store .planet-shop,
+.cosmic-store a[class*="inline-flex"][class*="rounded"] { border-radius: 10px; }
+.cosmic-store .earth-viewer-controls button,
+.cosmic-store .planet-scroll { border-radius: 50%; }
+.cosmic-store .orbital-emblem {
+  display: block;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  color: #ffffff;
+}
+.cosmic-store .orbital-emblem-orbit {
+  transform-origin: 50% 50%;
+  transform-box: view-box;
+  animation: emblem-orbit 24s linear infinite;
+}
+.cosmic-store a:hover .orbital-emblem-orbit,
+.cosmic-store a:focus-visible .orbital-emblem-orbit { animation-play-state: paused; }
+@keyframes emblem-orbit { to { transform: rotate(360deg); } }
+@media(prefers-reduced-motion:reduce) {
+  .cosmic-store .orbital-emblem-orbit { animation: none; }
+}
+.cosmic-store .featured-collection-intro {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  align-items: end;
+  gap: 32px;
+  padding-block: 8px 48px;
+  scroll-margin-top: 112px;
+}
+.cosmic-store .featured-collection-intro h2 {
+  max-width: 700px;
+  margin: 0;
+  font-size: clamp(40px, 4.5vw, 68px);
+  line-height: 1.06;
+  text-wrap: balance;
+}
+.cosmic-store .featured-collection-intro p {
+  max-width: 440px;
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--shop-ink);
+}
+@media (max-width: 760px) {
+  .cosmic-store .featured-collection-intro { grid-template-columns: 1fr; gap: 24px; padding-bottom: 36px; scroll-margin-top: 96px; }
+  .cosmic-store .featured-collection-intro p { font-size: 16px; }
 }

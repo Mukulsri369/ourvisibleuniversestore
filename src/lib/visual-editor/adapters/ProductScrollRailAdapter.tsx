@@ -1,3 +1,4 @@
+import { FeaturedCollectionIntro } from "@/components/store/FeaturedCollectionIntro";
 import React from "react";
 import { ProductScrollRail } from "@/components/store/ProductScrollRail";
 import type { ComponentAdapterRenderProps } from "../registry/component-registry";
@@ -72,6 +73,7 @@ export function ProductScrollRailAdapter({ node, resolvedStyle }: ComponentAdapt
           id={node.props.scrollTargetId}
           className="relative z-10 mx-auto max-w-7xl px-4 py-6 sm:py-10 sm:px-6"
         >
+          {node.props.scrollTargetId === "featured-products" && <FeaturedCollectionIntro />}
           {railElement}
         </section>
       ) : (

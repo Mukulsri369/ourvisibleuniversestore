@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowDown, ArrowRight } from "lucide-react";
 import { useRef } from "react";
@@ -31,12 +30,18 @@ export function PlanetHero() {
           Astronomy gifts, space gear, and objects for a life inspired by the universe.
         </p>
         <div className="planet-cta">
-          <Link
-            to="/shop"
+          <a
+            href="#featured-collection"
+            onClick={(event) => {
+              const target = document.getElementById("featured-collection") || document.getElementById("featured-products");
+              if (!target) return;
+              event.preventDefault();
+              target.scrollIntoView({ behavior: reducedMotion ? "instant" : "smooth", block: "start" });
+            }}
             className={buttonVariants({ variant: "planet", size: "xl", className: "planet-shop" })}
           >
             Explore collection <ArrowRight />
-          </Link>
+          </a>
         </div>
       </motion.div>
       <button
