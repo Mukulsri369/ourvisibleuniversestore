@@ -56,3 +56,16 @@ export function pathFromUrl(url: string | null | undefined) {
   const m = url.match(/\/api\/public\/img\/(.+)$/);
   return m ? m[1] : null;
 }
+
+/** Optional product video; stored in the same ordered media gallery as photos. */
+export async function uploadProductVideo(file: File) {
+  if (!["video/mp4", "video/webm"].includes(file.type)) throw new Error("Choose an MP4 or WebM video.");
+  if (file.size > 50 * 1024 * 1024) throw new Error("Video must be 50 MB or smaller.");
+  const ext = file.type === "video/webm" ? "webm" : "mp4";
+  const path = `products/${crypto.randomUUID()}.${ext}`;
+  const { error } = await supabase.storage.from("store-images").upload(path, file, {
+    contentType: file.type, cacheControl: "31536000",
+  });
+  if (error) throw new Error(`Video upload failed: ${error.message}`);
+  return { path, url: `/api/public/img/${path}` };
+}

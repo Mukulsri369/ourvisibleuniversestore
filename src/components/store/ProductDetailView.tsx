@@ -145,10 +145,10 @@ export function ProductDetailView({
                     : "border-transparent opacity-70 hover:opacity-100"
                 }`}
               >
-                <img
+                <ProductImage
                   src={im.image_url}
                   alt=""
-                  loading="lazy"
+
                   className="h-full w-full object-cover"
                 />
               </button>

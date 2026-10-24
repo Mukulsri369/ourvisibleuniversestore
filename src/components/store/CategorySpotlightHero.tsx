@@ -1,3 +1,5 @@
+import { isProductVideo } from "@/lib/product-media";
+import { ScrollProductVideo } from "./ScrollProductVideo";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, ChevronDown, ChevronUp, Eye, Sparkles } from "lucide-react";
@@ -24,6 +26,7 @@ export function CategorySpotlightHero({
   const [isExpanded, setIsExpanded] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
 
+  const spotlightVideo = product.images?.find((media) => isProductVideo(media.image_url))?.image_url ?? (isProductVideo(product.image) ? product.image : null);
   const priceFormatted = formatPrice(product.price, product.currency);
   const hasDescription = Boolean(product.description && product.description.trim().length > 0);
   const hasShortDescription = Boolean(
@@ -42,6 +45,7 @@ export function CategorySpotlightHero({
   return (
     <>
       <div
+        style={spotlightVideo ? { overflow: "visible" } : undefined}
         className={cn(
           "relative overflow-hidden rounded-xl sm:rounded-2xl border border-border/70 bg-gradient-to-br from-card/90 via-card/60 to-secondary/30 p-3.5 sm:p-5 lg:p-6 backdrop-blur-md shadow-sm transition-all duration-300 hover:border-primary/40 mb-4 sm:mb-8",
           className,
@@ -56,9 +60,10 @@ export function CategorySpotlightHero({
             <Link
               to="/product/$slug"
               params={{ slug: product.slug }}
+              style={spotlightVideo ? { aspectRatio: "auto", maxHeight: "none", overflow: "visible" } : undefined}
               className="group relative block aspect-[16/10] sm:aspect-[4/3] lg:aspect-square w-full max-h-52 sm:max-h-none overflow-hidden rounded-lg sm:rounded-xl border border-border/50 bg-secondary/40 shadow-inner"
             >
-              {product.image ? (
+              {spotlightVideo ? <ScrollProductVideo src={spotlightVideo} label={`${product.name} scroll video`} /> : product.image ? (
                 <img
                   src={product.image}
                   alt={product.imageAlt || product.name}

@@ -1,7 +1,8 @@
+import { isProductVideo } from "@/lib/product-media";
 import { Link } from "@tanstack/react-router";
 import { ExternalLink, Eye, Telescope } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { formatPrice, logOutboundClick, type ProductCardData } from "@/lib/store";
 import { BuyButton } from "./BuyButton";
 import { ProductQuickPreviewModal } from "./ProductQuickPreviewModal";
@@ -21,6 +22,18 @@ export function ProductImage({
   style?: React.CSSProperties;
 }) {
   const [failed, setFailed] = useState(false);
+  const reducedMotion = useReducedMotion();
+  const mediaVideo = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const element = mediaVideo.current;
+    if (!element || reducedMotion || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) void element.play().catch(() => {});
+      else element.pause();
+    }, { threshold: .2 });
+    observer.observe(element);
+    return () => { observer.disconnect(); element.pause(); };
+  }, [src, reducedMotion]);
 
   useEffect(() => {
     setFailed(false);
@@ -39,6 +52,7 @@ export function ProductImage({
       </div>
     );
   }
+  if (isProductVideo(src)) return <video ref={mediaVideo} src={src!} aria-label={alt} muted playsInline controls={!!reducedMotion} loop preload="metadata" style={style} className={cn("object-cover", className)} />;
   return (
     <img
       src={src}

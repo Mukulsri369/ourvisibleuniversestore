@@ -1,3 +1,4 @@
+import { ProductImage } from "./ProductCard";
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "@tanstack/react-router";
 import {
@@ -105,7 +106,7 @@ export function ProductQuickPreviewModal({ product, onClose }: ProductQuickPrevi
           <div className="relative flex flex-col justify-between bg-secondary/30 p-4 sm:p-6 border-b md:border-b-0 md:border-r border-border/50">
             <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-secondary/50 border border-border/40 flex items-center justify-center">
               {currentImg?.image_url ? (
-                <img
+                <ProductImage
                   key={currentImg.image_url}
                   src={currentImg.image_url}
                   alt={currentImg.alt_text || product.name}
@@ -164,7 +165,7 @@ export function ProductQuickPreviewModal({ product, onClose }: ProductQuickPrevi
                         : "border-border/60 opacity-60 hover:opacity-100",
                     )}
                   >
-                    <img src={img.image_url} alt="" className="size-full object-cover" />
+                    <ProductImage src={img.image_url} alt="" className="size-full object-cover" />
                   </button>
                 ))}
               </div>

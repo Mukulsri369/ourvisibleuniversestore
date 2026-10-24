@@ -1,0 +1,2 @@
+Earth surface texture: https://github.com/turban/webgl-earth/blob/master/images/2_no_clouds_4k.jpg
+Cloud texture: https://github.com/turban/webgl-earth/blob/master/images/fair_clouds_4k.png (4096 x 2048, transparent PNG).

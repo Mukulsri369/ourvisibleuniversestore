@@ -1,3 +1,4 @@
+import "@/store-premium.css";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { StoreFooter, StoreHeader } from "@/components/store/StoreChrome";
 import { categoriesQuery, settingsQuery } from "@/lib/store";

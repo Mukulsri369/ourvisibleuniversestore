@@ -1,3 +1,4 @@
+import { isProductVideo } from "@/lib/product-media";
 import type { ReactNode } from "react";
 
 export function AdminTitle({
@@ -100,6 +101,7 @@ export function Section({
 }
 
 export function Thumb({ src }: { src: string | null }) {
+  if (isProductVideo(src)) return <video src={src!} muted playsInline preload="metadata" aria-label="Product video" className="size-12 rounded-lg object-cover" />;
   return src ? (
     <img src={src} alt="" loading="lazy" className="size-12 rounded-lg object-cover" />
   ) : (

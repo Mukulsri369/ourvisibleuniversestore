@@ -78,6 +78,13 @@
       "when": 1792519200000,
       "tag": "0010_storefront_page_persistence",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1792790000000,
+      "tag": "0011_product_video_uploads",
+      "breakpoints": true
     }
   ]
 }

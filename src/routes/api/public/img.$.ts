@@ -16,6 +16,12 @@ export const Route = createFileRoute("/api/public/img/$")({
         }
         try {
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          if (/\.(mp4|webm)$/i.test(path)) {
+            // Let Storage stream byte ranges directly instead of downloading the entire video per seek.
+            const { data: signed, error: signError } = await supabaseAdmin.storage.from("store-images").createSignedUrl(path, 3600);
+            if (signError || !signed) return new Response("Not found", { status: 404 });
+            return new Response(null, { status: 307, headers: { location: signed.signedUrl, "cache-control": "private, no-store" } });
+          }
           const { data, error } = await supabaseAdmin.storage.from("store-images").download(path);
           if (error || !data) return new Response("Not found", { status: 404 });
           return new Response(data, {

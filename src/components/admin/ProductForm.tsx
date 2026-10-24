@@ -1,3 +1,4 @@
+import { isProductVideo } from "@/lib/product-media";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -23,7 +24,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { ProductDetailView } from "@/components/store/ProductDetailView";
 import { supabase } from "@/integrations/supabase/client";
-import { removeStoragePaths, uploadImage } from "@/lib/admin";
+import { removeStoragePaths, uploadImage, uploadProductVideo } from "@/lib/admin";
 import { adminCategoriesQuery, adminDuplicateCatalogQuery } from "@/lib/admin-queries";
 import { formatPrice, isValidAffiliateUrl, slugify, type ProductFull } from "@/lib/store";
 import { isDuplicateAffiliateError, productSaveErrorMessage } from "@/lib/product-errors";
@@ -449,7 +450,7 @@ export function ProductForm({ productId }: { productId?: string }) {
     setUploading(true);
     for (const f of Array.from(files)) {
       try {
-        const r = await uploadImage(f, "products");
+        const r = await (f.type.startsWith("video/") ? uploadProductVideo(f) : uploadImage(f, "products"));
         setImages((s) => [...s, { key: r.path, url: r.url, path: r.path, alt: "" }]);
       } catch (e) {
         toast.error(e instanceof Error ? e.message : "Image upload failed.");
@@ -503,7 +504,7 @@ export function ProductForm({ productId }: { productId?: string }) {
       if (!short.trim()) e.short = "Short description is required.";
       if (!desc.trim()) e.desc = "Description is required.";
       if (!categoryIds.length) e.category = "Please select at least one category.";
-      if (!images.length) e.images = "Please upload a primary image.";
+      if (!images.length) e.images = "Please upload a primary media.";
       if (!affiliateUrl.trim()) e.affiliate = "Affiliate URL is required.";
       else if (!isValidAffiliateUrl(affiliateUrl))
         e.affiliate = "Please enter a valid secure affiliate URL.";
@@ -919,10 +920,10 @@ export function ProductForm({ productId }: { productId?: string }) {
         </Field>
       </Section>
 
-      <Section title="2 · Product images">
+      <Section title="2 · Product photos and optional videos">
         <p className="text-xs text-muted-foreground">
-          JPG, JPEG, PNG or WEBP. Images are automatically optimised. The first image is the primary
-          image.
+          JPG, PNG, WEBP, or optional MP4/WebM videos up to 50 MB. Use the star to choose the default display media. The first item is the primary
+          media.
         </p>
         {errors.images && (
           <p role="alert" className="text-xs text-destructive">
@@ -936,7 +937,7 @@ export function ProductForm({ productId }: { productId?: string }) {
               className={`overflow-hidden rounded-xl border ${i === 0 ? "border-primary" : "border-border"} bg-secondary`}
             >
               <div className="relative aspect-square">
-                <img src={im.url} alt="" className="h-full w-full object-cover" />
+                {isProductVideo(im.url) ? <video src={im.url} muted playsInline controls preload="metadata" className="h-full w-full object-contain" /> : <img src={im.url} alt="" className="h-full w-full object-cover" />}
                 {i === 0 && (
                   <span className="absolute left-2 top-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">
                     PRIMARY
@@ -993,13 +994,13 @@ export function ProductForm({ productId }: { productId?: string }) {
             ) : (
               <ImagePlus className="size-6" />
             )}
-            {uploading ? "Uploading…" : images.length ? "Add images" : "Upload primary image"}
+            {uploading ? "Uploading…" : images.length ? "Add photos or videos" : "Upload photos or video"}
           </button>
         </div>
         <input
           ref={fileRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp"
+          accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"
           multiple
           hidden
           onChange={(e) => onFiles(e.target.files)}
@@ -1180,15 +1181,15 @@ export function ProductForm({ productId }: { productId?: string }) {
             Preview
           </Button>
           {productId ? (
-            <Button variant="affiliate" disabled={!!saving} onClick={() => save("save")}>
+            <Button variant="affiliate" disabled={!!saving || uploading} onClick={() => save("save")}>
               {saving && <Loader2 className="animate-spin" />} Save Changes
             </Button>
           ) : (
             <>
-              <Button variant="secondary" disabled={!!saving} onClick={() => save("draft")}>
+              <Button variant="secondary" disabled={!!saving || uploading} onClick={() => save("draft")}>
                 {saving === "draft" && <Loader2 className="animate-spin" />} Save Draft
               </Button>
-              <Button variant="affiliate" disabled={!!saving} onClick={() => save("publish")}>
+              <Button variant="affiliate" disabled={!!saving || uploading} onClick={() => save("publish")}>
                 {saving === "publish" && <Loader2 className="animate-spin" />} Publish Product
               </Button>
             </>

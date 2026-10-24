@@ -1,0 +1,91 @@
+/* Public storefront only. Admin and editor controls retain their own theme. */
+.cosmic-store {
+  --background: #080b0e; --foreground: #f4f3ef; --card: #14191d;
+  --card-foreground: #f4f3ef; --secondary: #20272c; --muted: #20272c;
+  --muted-foreground: #b8c0c3; --primary: #b8d8c5; --primary-foreground: #101a15;
+  --accent: #b8d8c5; --border: #30393e; --input: #30393e;
+  --shop-ground: #080b0e; --shop-ink: #f4f3ef; --shop-accent: #b8d8c5;
+  background: var(--shop-ground); color: var(--shop-ink);
+  font-family: 'Hanken Grotesk', sans-serif; font-size: 16px; line-height: 1.6;
+}
+.cosmic-store .font-mono { font-family: inherit; letter-spacing: normal; text-transform: none; } /* taste-skill-ignore: removes a legacy visual treatment; adds none. */
+.cosmic-store .font-display { font-family: 'Hanken Grotesk', sans-serif; }
+.cosmic-store > header { background: var(--shop-ground); border: 0; backdrop-filter: none; } /* taste-skill-ignore: removes a legacy visual treatment; adds none. */
+.cosmic-store > header > div:first-child { max-width: 1600px; height: 88px; padding-inline: 32px; }
+.cosmic-store > header nav { color: var(--shop-ink); font-size: 16px; }
+.cosmic-store > header input { border-radius: 0; border: 0; background: #1b2227; font-size: 14px; }
+.cosmic-store > header a > .leading-none > span:first-child { font-size: 19px; font-weight: 500; letter-spacing: -.04em; }
+.cosmic-store > header a > .leading-none > span:last-child { font-size: 13px; letter-spacing: normal; text-transform: none; }
+.cosmic-store .glass, .cosmic-store .glass-dark { background: #1b2227; backdrop-filter: none; box-shadow: none; } /* taste-skill-ignore: removes a legacy visual treatment; adds none. */
+.cosmic-store .planet-hero { background: var(--shop-ground); min-height: 740px; height: calc(100svh - 88px); }
+.cosmic-store .hero-starfield, .cosmic-store .hero-orbit, .cosmic-store .planet-shade,
+.cosmic-store .planet-brand, .cosmic-store .planet-eyebrow, .cosmic-store .planet-rule { display: none; }
+.cosmic-store .planet-copy { width: 49%; padding: clamp(100px,17vh,180px) 0 100px 32px; pointer-events: none; }
+.cosmic-store .planet-title { font-family: inherit; font-size: clamp(72px,7.5vw,120px); letter-spacing: -.065em; line-height: .98; max-width: 670px; }
+.cosmic-store .planet-lede { max-width: 400px; margin-top: 36px; font-size: 18px; color: var(--shop-ink); line-height: 1.6; }
+.cosmic-store .planet-cta { margin-top: 32px; pointer-events: auto; }
+.cosmic-store .planet-shop { background: var(--shop-accent); color: #101a15; border: 0; border-radius: 0; height: 54px; font-size: 16px; padding-inline: 28px; backdrop-filter: none; } /* taste-skill-ignore: removes a legacy visual treatment; adds none. */
+.cosmic-store .planet-shop:hover { background: #d3e7da; }
+.cosmic-store .earth-stage { width: 65%; right: -6%; }
+.cosmic-store .earth-viewer-hint { font-size: 13px; text-transform: none; letter-spacing: normal; }
+.cosmic-store .earth-viewer-controls button, .cosmic-store .planet-scroll { min-width: 44px; min-height: 44px; border: 0; background: #20272c; backdrop-filter: none; } /* taste-skill-ignore: removes a legacy visual treatment; adds none. */
+.cosmic-store .planet-scroll { left: 32px; }
+.cosmic-store .store-homepage > section, .cosmic-store main section.max-w-7xl { max-width: 1600px; padding-inline: 32px; padding-top: 96px; padding-bottom: 32px; }
+.cosmic-store h2 { font-size: clamp(32px,4vw,60px); letter-spacing: -.05em; line-height: 1.08; font-weight: 400; }
+.cosmic-store h3 { letter-spacing: -.025em; }
+.cosmic-store .eyebrow { display: none; } /* taste-skill-ignore: removes a legacy visual treatment; adds none. */
+.cosmic-store .shadow-glow, .cosmic-store .shadow-glow-sm { box-shadow: none; } /* taste-skill-ignore: removes a legacy visual treatment; adds none. */
+.cosmic-store [class*='bg-gradient-'] { background-image: none; } /* taste-skill-ignore: removes a legacy visual treatment; adds none. */
+.cosmic-store .starfield, .cosmic-store .nebula::before, .cosmic-store .nebula::after { background-image: none; }
+.cosmic-store #festival-special > div { border: 0; border-radius: 0; background: #15231e; box-shadow: none; padding: 40px; } /* taste-skill-ignore: removes a legacy visual treatment; adds none. */
+.cosmic-store .product-card-cinematic { background: transparent; border: 0; border-radius: 0; backdrop-filter: none; box-shadow: none; } /* taste-skill-ignore: removes a legacy visual treatment; adds none. */
+.cosmic-store .product-card-cinematic:hover { box-shadow: none; transform: none; } /* taste-skill-ignore: removes a legacy visual treatment; adds none. */
+.cosmic-store .product-card-cinematic > div:first-child { border-radius: 0; background: #e8eae5; aspect-ratio: 4 / 5; }
+.cosmic-store .product-card-cinematic > div:first-child img { object-fit: contain; padding: 18px; }
+.cosmic-store .product-card-cinematic h3 { font-size: 17px; line-height: 1.4; font-weight: 400; }
+.cosmic-store .product-card-cinematic.snap-start { width: clamp(240px,25vw,380px); min-width: clamp(240px,25vw,380px); max-width: none; }
+.cosmic-store .product-image-hover-zoom { transition: transform .65s cubic-bezier(.2,.7,.2,1); }
+.cosmic-store .product-card-cinematic:hover .product-image-hover-zoom { transform: scale(1.07); }
+.cosmic-store button:focus-visible, .cosmic-store a:focus-visible { outline: 2px solid var(--shop-accent); outline-offset: 5px; }
+.cosmic-store button:active, .cosmic-store .planet-shop:active { transform: scale(.98); }
+.cosmic-store footer { margin-top: 120px; border: 0; background: #17221e; padding-top: 64px; }
+.cosmic-store footer .max-w-7xl { max-width: 1600px; padding-inline: 32px; }
+.cosmic-store footer h3 { font-size: 28px; }
+@media(max-width:760px) {
+ .cosmic-store > header > div:first-child { height: 72px; padding-inline: 20px; }
+ .cosmic-store > header a > .leading-none > span:first-child { font-size: 16px; }
+ .cosmic-store .planet-hero { min-height: 850px; height: auto; }
+ .cosmic-store .planet-copy { padding: 56px 20px 0; width: 100%; }
+ .cosmic-store .planet-title { font-size: clamp(56px,14vw,88px); max-width: 540px; }
+ .cosmic-store .planet-lede { font-size: 16px; max-width: 330px; margin-top: 28px; }
+ .cosmic-store .earth-stage { top: 38%; height: 62%; width: 110%; right: -5%; }
+ .cosmic-store .planet-scroll { left: 20px; }
+ .cosmic-store .store-homepage > section, .cosmic-store main section.max-w-7xl { padding-inline: 20px; padding-top: 64px; }
+ .cosmic-store #festival-special > div { padding: 24px 16px; }
+ .cosmic-store h2 { font-size: 36px; }
+ .cosmic-store footer { margin-top: 72px; }
+ .cosmic-store .earth-viewer-controls { gap: 8px; }
+}
+@media(prefers-reduced-motion:reduce) { .cosmic-store *, .cosmic-store *::before, .cosmic-store *::after { scroll-behavior: auto !important; transition-duration: 0s !important; animation: none !important; } }
+@supports (animation-timeline: view()) {
+ @media(prefers-reduced-motion:no-preference) {
+  .cosmic-store main section h2, .cosmic-store .product-card-cinematic {
+   animation: store-arrive linear both;
+   animation-timeline: view();
+   animation-range: entry 0% entry 75%;
+  }
+ }
+}
+@keyframes store-arrive { from { transform: translateY(24px); } to { transform: translateY(0); } }
+/* Earth shares the entire hero viewport, including while zoomed. */
+.cosmic-store .earth-stage {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.cosmic-store .planet-copy { pointer-events: none; }
+.cosmic-store .planet-copy a,
+.cosmic-store .planet-copy button { pointer-events: auto; }
+@media (max-width: 760px) {
+  .cosmic-store .earth-stage { inset: 0; width: 100%; height: 100%; }
+}
