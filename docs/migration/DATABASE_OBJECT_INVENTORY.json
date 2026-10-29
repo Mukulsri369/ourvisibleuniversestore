@@ -1,0 +1,187 @@
+[
+  {
+    "file": "drizzle/migrations/0000_migration.sql",
+    "kind": "TABLE",
+    "name": "public.admins"
+  },
+  {
+    "file": "drizzle/migrations/0000_migration.sql",
+    "kind": "FUNCTION",
+    "name": "public.is_admin"
+  },
+  {
+    "file": "drizzle/migrations/0000_migration.sql",
+    "kind": "FUNCTION",
+    "name": "public.set_updated_at"
+  },
+  {
+    "file": "drizzle/migrations/0000_migration.sql",
+    "kind": "TABLE",
+    "name": "public.categories"
+  },
+  {
+    "file": "drizzle/migrations/0000_migration.sql",
+    "kind": "TRIGGER",
+    "name": "categories_updated"
+  },
+  {
+    "file": "drizzle/migrations/0000_migration.sql",
+    "kind": "TABLE",
+    "name": "public.products"
+  },
+  {
+    "file": "drizzle/migrations/0000_migration.sql",
+    "kind": "TRIGGER",
+    "name": "products_updated"
+  },
+  {
+    "file": "drizzle/migrations/0000_migration.sql",
+    "kind": "FUNCTION",
+    "name": "public.product_is_live"
+  },
+  {
+    "file": "drizzle/migrations/0000_migration.sql",
+    "kind": "TABLE",
+    "name": "public.product_images"
+  },
+  {
+    "file": "drizzle/migrations/0000_migration.sql",
+    "kind": "TABLE",
+    "name": "public.product_features"
+  },
+  {
+    "file": "drizzle/migrations/0000_migration.sql",
+    "kind": "TABLE",
+    "name": "public.product_tags"
+  },
+  {
+    "file": "drizzle/migrations/0000_migration.sql",
+    "kind": "TABLE",
+    "name": "public.site_settings"
+  },
+  {
+    "file": "drizzle/migrations/0000_migration.sql",
+    "kind": "TRIGGER",
+    "name": "settings_updated"
+  },
+  {
+    "file": "drizzle/migrations/0000_migration.sql",
+    "kind": "TABLE",
+    "name": "public.outbound_clicks"
+  },
+  {
+    "file": "drizzle/migrations/0006_validate_retailer_affiliate_links.sql",
+    "kind": "FUNCTION",
+    "name": "public.validate_product_affiliate_fields"
+  },
+  {
+    "file": "drizzle/migrations/0006_validate_retailer_affiliate_links.sql",
+    "kind": "TRIGGER",
+    "name": "validate_product_affiliate_fields"
+  },
+  {
+    "file": "drizzle/migrations/0007_prevent_duplicate_affiliate_publishing.sql",
+    "kind": "FUNCTION",
+    "name": "public.prevent_duplicate_affiliate_publishing"
+  },
+  {
+    "file": "drizzle/migrations/0007_prevent_duplicate_affiliate_publishing.sql",
+    "kind": "TRIGGER",
+    "name": "prevent_duplicate_affiliate_publishing"
+  },
+  {
+    "file": "drizzle/migrations/0008_multiple_product_categories.sql",
+    "kind": "FUNCTION",
+    "name": "public.validate_product_categories"
+  },
+  {
+    "file": "drizzle/migrations/0008_multiple_product_categories.sql",
+    "kind": "TRIGGER",
+    "name": "validate_product_categories"
+  },
+  {
+    "file": "drizzle/migrations/0008_multiple_product_categories.sql",
+    "kind": "FUNCTION",
+    "name": "public.remove_deleted_product_category"
+  },
+  {
+    "file": "drizzle/migrations/0008_multiple_product_categories.sql",
+    "kind": "TRIGGER",
+    "name": "remove_deleted_product_category"
+  },
+  {
+    "file": "drizzle/migrations/0009_admin_approvals_and_management.sql",
+    "kind": "FUNCTION",
+    "name": "public.is_approved_admin_email"
+  },
+  {
+    "file": "drizzle/migrations/0010_storefront_page_persistence.sql",
+    "kind": "TABLE",
+    "name": "public.store_pages"
+  },
+  {
+    "file": "drizzle/migrations/0010_storefront_page_persistence.sql",
+    "kind": "TABLE",
+    "name": "public.store_page_versions"
+  },
+  {
+    "file": "drizzle/migrations/0010_storefront_page_persistence.sql",
+    "kind": "TABLE",
+    "name": "public.store_page_drafts"
+  },
+  {
+    "file": "drizzle/migrations/0010_storefront_page_persistence.sql",
+    "kind": "TABLE",
+    "name": "public.store_page_publishing_events"
+  },
+  {
+    "file": "drizzle/migrations/0010_storefront_page_persistence.sql",
+    "kind": "TRIGGER",
+    "name": "store_pages_updated"
+  },
+  {
+    "file": "drizzle/migrations/0010_storefront_page_persistence.sql",
+    "kind": "FUNCTION",
+    "name": "public.enforce_store_page_draft_invariants"
+  },
+  {
+    "file": "drizzle/migrations/0010_storefront_page_persistence.sql",
+    "kind": "TRIGGER",
+    "name": "store_page_drafts_invariants"
+  },
+  {
+    "file": "drizzle/migrations/0010_storefront_page_persistence.sql",
+    "kind": "FUNCTION",
+    "name": "public.prevent_immutable_page_version_mutation"
+  },
+  {
+    "file": "drizzle/migrations/0010_storefront_page_persistence.sql",
+    "kind": "TRIGGER",
+    "name": "store_page_versions_immutable"
+  },
+  {
+    "file": "drizzle/migrations/0010_storefront_page_persistence.sql",
+    "kind": "TRIGGER",
+    "name": "store_page_publishing_events_immutable"
+  },
+  {
+    "file": "drizzle/migrations/0010_storefront_page_persistence.sql",
+    "kind": "FUNCTION",
+    "name": "public.get_published_store_page"
+  },
+  {
+    "file": "drizzle/migrations/0010_storefront_page_persistence.sql",
+    "kind": "FUNCTION",
+    "name": "public.save_store_page_draft"
+  },
+  {
+    "file": "drizzle/migrations/0010_storefront_page_persistence.sql",
+    "kind": "FUNCTION",
+    "name": "public.publish_store_page_draft"
+  },
+  {
+    "file": "drizzle/migrations/0010_storefront_page_persistence.sql",
+    "kind": "FUNCTION",
+    "name": "public.restore_store_page_version"
+  }
+]
