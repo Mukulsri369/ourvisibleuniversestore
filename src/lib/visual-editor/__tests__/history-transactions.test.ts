@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultHomepageDocument } from "../homepage";
 import { executeStructuralCommand } from "../commands";
-import { findNodeById, updateNodeById } from "../tree";
+import { findNodeById, updateNodeById } from "../utils/node-tree";
 import {
   resetNodeBreakpointOverrides,
   resetNodeStyleProperty,
@@ -49,7 +49,7 @@ describe("history-transactions — Structural Commands, Responsive Overrides & I
       targetId: "home-category-grid",
       name: "Renamed Sector Grid",
     });
-    expect(findNodeById(working.root, "home-category-grid")?.name).toBe("Renamed Sector Grid");
+    expect(findNodeById(working, "home-category-grid")?.name).toBe("Renamed Sector Grid");
 
     // 2. Toggle visibility
     runCommand({
@@ -57,7 +57,7 @@ describe("history-transactions — Structural Commands, Responsive Overrides & I
       targetId: "home-category-grid",
       hidden: true,
     });
-    expect(findNodeById(working.root, "home-category-grid")?.hidden).toBe(true);
+    expect(findNodeById(working, "home-category-grid")?.hidden).toBe(true);
 
     // 3. Toggle lock
     runCommand({
@@ -65,7 +65,7 @@ describe("history-transactions — Structural Commands, Responsive Overrides & I
       targetId: "home-story-intro",
       locked: true,
     });
-    expect(findNodeById(working.root, "home-story-intro")?.locked).toBe(true);
+    expect(findNodeById(working, "home-story-intro")?.locked).toBe(true);
 
     // Unlock so we can wrap/duplicate/remove
     runCommand({
@@ -90,14 +90,14 @@ describe("history-transactions — Structural Commands, Responsive Overrides & I
       containerType: "Container",
     });
     const wrapperId = wrapRes.selectedNodeId!;
-    expect(findNodeById(working.root, wrapperId)?.type).toBe("Container");
+    expect(findNodeById(working, wrapperId)?.type).toBe("Container");
 
     runCommand({
       type: "UnwrapContainer",
       targetId: wrapperId,
     });
-    expect(findNodeById(working.root, wrapperId)).toBeNull();
-    expect(findNodeById(working.root, "home-story-intro")).not.toBeNull();
+    expect(findNodeById(working, wrapperId)).toBeNull();
+    expect(findNodeById(working, "home-story-intro")).not.toBeNull();
 
     // 6. Duplicate node
     const dupRes = runCommand({
@@ -105,7 +105,7 @@ describe("history-transactions — Structural Commands, Responsive Overrides & I
       targetId: "home-story-intro",
     });
     const duplicatedId = dupRes.selectedNodeId!;
-    expect(findNodeById(working.root, duplicatedId)).not.toBeNull();
+    expect(findNodeById(working, duplicatedId)).not.toBeNull();
 
     // 7. Remove duplicated node
     runCommand(
@@ -115,16 +115,16 @@ describe("history-transactions — Structural Commands, Responsive Overrides & I
       },
       duplicatedId,
     );
-    expect(findNodeById(working.root, duplicatedId)).toBeNull();
+    expect(findNodeById(working, duplicatedId)).toBeNull();
 
     // Undo Remove -> duplicated node is restored with its exact ID and selection!
     const undoRemove = undoHistory(history, working);
-    expect(findNodeById(undoRemove.document.root, duplicatedId)).not.toBeNull();
+    expect(findNodeById(undoRemove.document, duplicatedId)).not.toBeNull();
     expect(undoRemove.selectionId).toBe(duplicatedId);
 
     // Redo Remove -> duplicated node is removed again
     const redoRemove = redoHistory(undoRemove.state, undoRemove.document);
-    expect(findNodeById(redoRemove.document.root, duplicatedId)).toBeNull();
+    expect(findNodeById(redoRemove.document, duplicatedId)).toBeNull();
 
     // Undo all the way back to initial document
     let cursorState = redoRemove.state;
@@ -172,8 +172,8 @@ describe("history-transactions — Structural Commands, Responsive Overrides & I
       allowCoalesce: false,
     }).state;
 
-    expect(findNodeById(doc2.root, "home-category-grid")?.styles?.desktop?.paddingTop).toBe(64);
-    expect(findNodeById(doc2.root, "home-category-grid")?.styles?.mobile?.paddingTop).toBe(20);
+    expect(findNodeById(doc2, "home-category-grid")?.styles?.desktop?.paddingTop).toBe(64);
+    expect(findNodeById(doc2, "home-category-grid")?.styles?.mobile?.paddingTop).toBe(20);
 
     // 3. Reset Mobile paddingTop override
     const doc3 = updateNodeById(doc2, "home-category-grid", (node) =>
@@ -191,17 +191,17 @@ describe("history-transactions — Structural Commands, Responsive Overrides & I
     }).state;
 
     expect(
-      findNodeById(doc3.root, "home-category-grid")?.styles?.mobile?.paddingTop,
+      findNodeById(doc3, "home-category-grid")?.styles?.mobile?.paddingTop,
     ).toBeUndefined();
-    expect(findNodeById(doc3.root, "home-category-grid")?.styles?.desktop?.paddingTop).toBe(64);
+    expect(findNodeById(doc3, "home-category-grid")?.styles?.desktop?.paddingTop).toBe(64);
 
     // Undo Reset -> mobile override 20 returns while desktop 64 remains intact
     const undoReset = undoHistory(history, doc3);
     expect(
-      findNodeById(undoReset.document.root, "home-category-grid")?.styles?.mobile?.paddingTop,
+      findNodeById(undoReset.document, "home-category-grid")?.styles?.mobile?.paddingTop,
     ).toBe(20);
     expect(
-      findNodeById(undoReset.document.root, "home-category-grid")?.styles?.desktop?.paddingTop,
+      findNodeById(undoReset.document, "home-category-grid")?.styles?.desktop?.paddingTop,
     ).toBe(64);
 
     // Reset all mobile overrides and test Undo
@@ -221,7 +221,7 @@ describe("history-transactions — Structural Commands, Responsive Overrides & I
 
     const undoBulkReset = undoHistory(afterBulkReset, doc4);
     expect(
-      findNodeById(undoBulkReset.document.root, "home-category-grid")?.styles?.mobile?.paddingTop,
+      findNodeById(undoBulkReset.document, "home-category-grid")?.styles?.mobile?.paddingTop,
     ).toBe(20);
   });
 });

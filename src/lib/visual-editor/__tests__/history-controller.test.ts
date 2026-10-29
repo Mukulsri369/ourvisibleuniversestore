@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultHomepageDocument } from "../homepage";
-import { findNodeById, updateNodeById } from "../tree";
+import { findNodeById, updateNodeById } from "../utils/node-tree";
 import type { EditorNode, PageDocument } from "../types";
 import {
   canRedoHistory,
@@ -156,7 +156,7 @@ describe("history-controller — Core Undo/Redo Engine & Memory Accounting", () 
     expect(undo2.applied).toBe(true);
     expect(undo2.document).toBe(doc1);
     expect(
-      (findNodeById(undo2.document.root, "home-hero-planet")?.props as { headline?: string })
+      (findNodeById(undo2.document, "home-hero-planet")?.props as { headline?: string })
         ?.headline,
     ).toBe("Step 1 Headline");
 

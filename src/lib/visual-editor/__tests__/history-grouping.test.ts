@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultHomepageDocument } from "../homepage";
-import { findNodeById, updateNodeById } from "../tree";
+import { findNodeById, updateNodeById } from "../utils/node-tree";
 import {
   beginHistoryInteraction,
   buildHistoryCoalesceKey,
@@ -68,14 +68,14 @@ describe("history-grouping — Rapid Input Coalescing & Interaction Sessions", (
     // Redoing once returns directly to the final slider value (56)
     const redone = redoHistory(undone.state, undone.document);
     expect(
-      findNodeById(redone.document.root, "home-hero-planet")?.styles?.desktop?.paddingTop,
+      findNodeById(redone.document, "home-hero-planet")?.styles?.desktop?.paddingTop,
     ).toBe(56);
   });
 
   it("drops the coalesced history entry cleanly if rapid edits return a property to its original starting value", () => {
     const doc0 = createDefaultHomepageDocument();
     const originalTitle = (
-      findNodeById(doc0.root, "home-hero-planet")?.props as { headline?: string }
+      findNodeById(doc0, "home-hero-planet")?.props as { headline?: string }
     )?.headline;
 
     const doc1 = updateNodeById(doc0, "home-hero-planet", (n) => ({

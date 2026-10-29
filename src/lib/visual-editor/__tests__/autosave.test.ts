@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createDefaultHomepageDocument } from "../homepage";
-import { updateNodeById } from "../tree";
+import { updateNodeById } from "../utils/node-tree";
 import { createHistoryState, recordHistoryEdit, undoHistory } from "../history";
 import {
   areDocumentsContentEqual,

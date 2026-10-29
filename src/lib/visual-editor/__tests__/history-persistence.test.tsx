@@ -4,7 +4,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Category, HomeData, ProductCardData, Settings } from "@/lib/store";
 import { createDefaultHomepageDocument } from "../homepage";
-import { updateNodeById } from "../tree";
+import { updateNodeById } from "../utils/node-tree";
 import { InMemoryTransactionalPersistenceAdapter } from "../persistence/index";
 import {
   clearLocalDraftRecoverySnapshot,

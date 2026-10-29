@@ -1,24 +1,31 @@
 # Test results
 
-Baseline source: OVU ba30dc9035a229eb475c5d36ec7ef1b6bf2db263, Store b73f3b0f666e0f97d523f59c3b122de5a4547227. Date 2026-10-29.
+Updated 2026-10-29. Results below are local development evidence, not production migration proof.
 
-| Check | Result | Limits |
+| Check | Result | Limit |
 |---|---|---|
-| Saved DBeaver MariaDB login | PASS | 11.8.9-MariaDB, port 3307, root@localhost observed in query |
-| Local DB creation | PASS | Both schemas displayed as utf8mb4; configured collation utf8mb4_unicode_ci |
-| OVU GitHub tracked source hashes | PASS | All non-env tracked files matched, normalized LF |
-| Store snapshot restoration | PASS | All pinned non-env tracked files match GitHub hashes after LF normalization; earlier checkout's unrelated changes preserved |
-| OVU npm run build | PASS (exit 0) | Original provider config; Cloudflare output. Not independent Node proof |
-| OVU npm run test:auth | PASS (exit 0) | Navigation/storage/redirect checks; not real independent auth |
-| OVU npm run test:all | PASS (exit 0) | Existing suite; AI/TTS fallback and placeholder persistence are not service/database proof |
-| Terminal MariaDB app connections | BLOCKED | Windows socket 10013 in restricted tool session, for both local app credential tests |
-| Direct remote Git operations | BLOCKED | Restricted runtime DNS/thread and MSYS access errors; GitHub connector still works |
-| Restricted account creation/grants | UNVERIFIED | Provisioning attempted through DBeaver; do not claim effective grants or credential validity |
-| Store build/test | NOT RUN | Independent dependency installation/lockfile baseline remains pending |
-| Independent MariaDB integration/concurrency | NOT RUN | No schema migration implemented, terminal access blocked |
-| Browser SSR/mobile/3D parity | NOT RUN | Original build alone is insufficient |
-| Razorpay Test Mode | NOT RUN | No test credentials configured, no payment performed |
-| Production export/import/backup restore | NOT RUN | Production access/approval and verified export required |
-| Hostinger staging runtime | NOT RUN | No plan purchased; compatibility report preliminary |
+| MariaDB 11.8.9, port 3307, both databases | PASS | Local only |
+| Both runtime users, DML-only exact schema grants | PASS | Cross-app/system/DDL negative checks passed |
+| Reviewed migration replay/checksum/Unicode/JSON/FK/UTC/rollback | PASS, 4 tests | Main; no production import |
+| Better Auth lifecycle, reset, revocation, CSRF, HTTPS and roles | PASS, 3 tests | In-memory test mail transport; no SMTP/Google provider test |
+| Durable entitlement/payment/admin/expiry transactions | PASS, 8 tests | Includes 20 concurrent retries and refund-first delivery |
+| Razorpay provider boundary/HMAC/recovery | PASS, 4 tests | Synthetic provider; no external payment request |
+| Independent authenticated HTTP API | PASS, 1 workflow | Real MariaDB and Better Auth handler; built Node auth/session/anonymous denial HTTP smoke also passes |
+| OVU official Node build | PASS | Provider runtime calls still exist |
+| OVU realtime voice validation | PASS, 61 checks | Server-only fallback import boundary repaired |
+| OVU original build/test:all | PASS at baseline | Existing suite is not independent service proof |
+| Store original provider build | PASS | Official independent Node build also passes |
+| Store retailer URL/DNS/address/limit validation | PASS, 4 tests | Not yet wired into all scraper paths |
+| Store original suite after dependency/import repair | FAIL | 195 passed / 40 failed; 13 failing files / 52. No skipped/deleted assertions |
+| Store typecheck | FAIL | Existing editor/public types and legacy tests disagree; new fetch Response body typing fixed afterward |
+| Downloaded OVU export integrity/encryption | PASS | Archive header/hash/DPAPI round-trip, pg_restore extraction and reference/count inspection; full restore rehearsal pending |
+| Store production export | BLOCKED | Lovable workspace paused/out of credits; no billing action |
+| Real Razorpay Test Mode, SMTP, Google OAuth | NOT RUN | Private test configuration required |
+| Full UI, mobile, 3D, Academy, Store workflows | NOT COMPLETE | No claim of parity or runtime independence |
+| Production data import, deployment, cutover | NOT RUN | Explicit approval gates remain |
 
-Raw baseline logs are kept locally in work/evidence, outside GitHub documentation. No production tests, transactions or service changes were performed. Cached dependencies were copied from an existing local installation; a fresh reproducible install against lockfiles must also pass before release.
+Raw logs remain in work/evidence outside source commits. No real payment or production write was performed. Both package lockfiles are retained for reproducible installs. Earlier npm audit reported 8 OVU dependency vulnerabilities including existing Lovable MCP dependencies; removals/upgrades require tested replacements, not force-fix.
+
+Additional Store checks: independent authentication lifecycle/HTTPS tests PASS (3); real Store schema replay/Unicode/UTC/category/editor invariants PASS (2). OVU latest combined independent backend suite: 16 passing tests with no skips.
+
+Migration portability: .gitattributes preserves the exact applied SQL bytes on Windows/Linux. Staged SQL blobs were compared byte-for-byte to the applied local files; checksums must never depend on Git line-ending conversion. No completed SQL statement or database ledger was rewritten.

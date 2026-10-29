@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createDefaultHomepageDocument } from "../homepage";
-import { updateNodeById } from "../tree";
+import { updateNodeById } from "../utils/node-tree";
 import {
   clearLocalDraftRecoverySnapshot,
   evaluateDraftRecoveryCandidate,

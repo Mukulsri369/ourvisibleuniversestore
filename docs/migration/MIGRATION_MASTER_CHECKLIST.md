@@ -1,34 +1,26 @@
 # OVU migration master checklist
 
-Updated 2026-10-29. Status: IN PROGRESS, blocked at terminal network/database access. This is not a completion declaration.
+Updated 2026-10-29. Status: IN PROGRESS. Production cutover is not authorized.
 
-## Verified
+## Completed and verified
 
-- DBeaver saved connection authenticates to MariaDB 11.8.9 at 127.0.0.1:3307 as root@localhost.
-- Created ovu_main and ovu_store with utf8mb4 / utf8mb4_unicode_ci. DBeaver information_schema query displayed both rows. SHOW DATABASES was executed as part of follow-up verification.
-- GitHub access verified for both public repositories. Isolated migration/mariadb-hostinger branches created from pinned default-branch heads.
-- Main tracked source checked against GitHub blob hashes, with no differences after LF normalization.
-- Store baseline reconstructed from its pinned GitHub tree; all non-env tracked hashes match. Earlier unrelated local work remains in its original directory.
-- Full file inventory and dependency candidate scan produced for both applications.
-- OVU original build, auth-navigation validation and test:all baseline passed using copied existing dependencies. Original build emits Cloudflare output, not independent Node output.
-- Four local credential sets generated and protected using Windows DPAPI and a current-user-only directory outside both source repositories.
+- Both repositories are on isolated migration/mariadb-hostinger branches with original source and audit history preserved.
+- Both local databases, four restricted account logins, effective privilege boundaries and UTF-8 configuration are verified.
+- Main: Better Auth schema, 23 source application tables, payment ledger/locking/audit/identity-map tables applied through repeatable migrations. Store: auth schema, 11 original tables and added relationship/invariant tables applied.
+- Main MariaDB tests: schema replay/checksum drift, Unicode/JSON/FKs, UTC pool initialization and transaction rollback (4 tests); authentication/reset/session/role/HTTPS checks (3); access/concurrency/refunds/admin/expiry (8); synthetic Razorpay provider/HMAC/recovery (4); cookie-authenticated HTTP authorization/audit (1).
+- Main independent Node build passes. Built Node HTTP smoke passes homepage/science/learn/auth/catalog, /api/auth/get-session (200) and anonymous /api/backend/access denial (401). Existing realtime voice boundary validation passes all 61 checks. Main TypeScript passed with the payment endpoints.
+- Store original provider and official Node builds pass. New outbound-retailer validation tests pass (4). Its original test suite remains failing: latest run 195 passed, 40 failed, 13 failing files out of 52. Missing peer dependency/import paths were repaired without removing assertions. Store typecheck also exposes existing source/test API mismatches; no release approval.
+- Main downloaded backup has a valid PostgreSQL archive header, 356090 bytes, SHA-256 57ACA90478F0D22FD425A2D34213782EE710015682A929DA226FA031EAB68CA9. Encrypted copy and pg_restore schema/data extraction verified. No orphaned entitlement identities or duplicate payment references found. No customer import performed.
 
-## Incomplete
+## Current work and blockers
 
-- Account provisioning was attempted in the existing DBeaver session; account creation, grants and credential login are NOT yet verified.
-- Application schema conversion, auth replacement, durable fulfillment, Store persistence and independent storage are not implemented.
-- No production customer data or objects exported/imported. Deployed production commit IDs have not been independently verified.
-- Store dependency installation/build/tests are pending; do not infer success from the OVU baseline.
-- Independent Node runtime, end-to-end workflows, browser visual parity and mobile/3D tests remain pending.
-- Hostinger report is preliminary; no annual checkout quote or measured runtime suitability yet.
+1. Inspect the main export safely and reconcile deployed schema drift. Store data/storage export is blocked by the paused Lovable workspace; preserve current services and await an available backup or user-approved source access.
+2. Finish backend/API replacements and connect existing UI to independent cookie authentication, payment/access APIs, Academy/certificates/catalog and Store persistence/storage. Provider runtime calls still exist.
+3. Finish failed-attempt payment history, owner-controlled roles/invites, admin UI and reconciliation tools; do not grant real customer access without authorized identities/periods.
+4. Repair original Store API/fixture/typecheck failures; retain all assertions and test budgets. Run complete local business/visual/mobile/3D workflows.
+5. Configure test-only Razorpay, SMTP and Google OAuth privately when required. No real provider end-to-end workflow has passed yet.
+6. Complete Hostinger measured compatibility and actual annual/renewal quote. Stop before any purchase, deployment, DNS/payment changes or Lovable cancellation for explicit approval.
 
-## Next executable sequence
+Additional Store verification: independent authentication lifecycle/HTTPS tests pass (3); real Store schema replay/Unicode/UTC/category FK/editor JSON/same-page publication tests pass (2). These do not resolve the original editor suite/typecheck failures.
 
-1. Restore terminal network access, then verify provisioned local users or complete provisioning through the saved root connection. Confirm DML-only app grants and schema-only migrator grants with positive and negative tests.
-2. Obtain clean Store dependencies and lockfile; complete original Store baseline. Preserve pinned source artifacts.
-3. Add independent Node build in isolation while retaining TanStack Start, official plugins and the SSR error wrapper. Test built entry with host-assigned PORT.
-4. Implement versioned MariaDB schema/authorization and real transactional concurrency tests, then independent auth/storage/APIs.
-5. Replace fulfillment only after replay, duplicate, refund and expiry tests pass. Use Razorpay Test Mode exclusively.
-6. Run all original validations plus real local business workflows and visual/mobile/3D regression checks.
-7. Resolve Hostinger engine/version/storage/runtime limits and annual/renewal costs. STOP for purchase approval.
-8. Deployment, data import, DNS cutover and Lovable cancellation each remain gated by explicit approval.
+Migration portability: .gitattributes preserves the exact applied SQL bytes on Windows/Linux. Staged SQL blobs were compared byte-for-byte to the applied local files; checksums must never depend on Git line-ending conversion. No completed SQL statement or database ledger was rewritten.
