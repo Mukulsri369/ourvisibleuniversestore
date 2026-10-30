@@ -30,6 +30,17 @@ test("product edits require admin, preserve atomic category membership, deny sta
       name: "Synthetic local product",
       slug: product,
       category_ids: [category],
+      images: [
+        {
+          image_url: "https://example.test/synthetic.webp",
+          storage_path: null,
+          alt_text: "Synthetic fixture",
+        },
+      ],
+      features: ["Synthetic feature"],
+      tags: ["synthetic-tag"],
+      retailer: "Other",
+      subcategory: "Synthetic subtype",
       affiliate_url: "https://www.amazon.in/dp/SYNTHETIC?tag=" + product,
     };
     await assert.rejects(() =>
@@ -57,6 +68,21 @@ test("product edits require admin, preserve atomic category membership, deny sta
       () => saveProduct(actor, { ...input, id: second, slug: second, active: true }),
       /already belongs/,
     );
+    const [gallery]: any = await database().execute(
+      "SELECT image_url FROM product_images WHERE product_id=?",
+      [product],
+    );
+    assert.equal(gallery.length, 1);
+    assert.equal(gallery[0].image_url, "https://example.test/synthetic.webp");
+    await assert.rejects(() =>
+      saveProduct(actor, {
+        ...input,
+        expectedRevision: 2,
+        price: 999,
+        images: [{ image_url: "javascript:alert(1)", storage_path: null, alt_text: null }],
+      }),
+    );
+    assert.equal(Number((await publicProduct(product)).price), 123.45);
     const [missing]: any = await database().execute("SELECT id FROM products WHERE id=?", [second]);
     assert.equal(missing.length, 0);
     await assert.rejects(() =>

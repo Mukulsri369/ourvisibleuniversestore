@@ -148,8 +148,7 @@ export async function loadStudioWorkspaceDraft(
           persistedDocument: structuredClone(existingDraft.draftDocument),
           draftRevision: existingDraft.draftRevision,
           publishedRevision: pageRecord.publishedRevision,
-          isPublishedLive:
-            pageRecord.status === "published" && Boolean(pageRecord.publishedVersionId),
+          isPublishedLive: Boolean(pageRecord.publishedVersionId),
           pageRecord,
           draftRecord: existingDraft,
           error: null,

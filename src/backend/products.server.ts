@@ -21,6 +21,24 @@ const productInput = z
       .default("INR"),
     active: z.boolean().default(false),
     featured: z.boolean().default(false),
+    subcategory: z.string().max(300).nullable().optional(),
+    retailer: z.string().max(100).nullable().optional(),
+    retailer_product_id: z.string().max(300).nullable().optional(),
+    price_updated_at: z.string().datetime().nullable().optional(),
+    images: z
+      .array(
+        z
+          .object({
+            image_url: z.string().max(4000),
+            storage_path: z.string().max(300).nullable(),
+            alt_text: z.string().max(500).nullable(),
+          })
+          .strict(),
+      )
+      .max(50)
+      .optional(),
+    features: z.array(z.string().max(2000)).max(100).optional(),
+    tags: z.array(z.string().max(200)).max(100).optional(),
   })
   .strict();
 function affiliate(value: string | null) {
@@ -40,6 +58,8 @@ export async function saveProduct(principal: Principal | null, input: unknown) {
     const [old]: any = await c.execute("SELECT * FROM products WHERE id=? FOR UPDATE", [p.id]);
     if ((old[0]?.revision ?? 0) !== p.expectedRevision || (!old.length && p.expectedRevision !== 0))
       throw new Error("Product revision conflict");
+    if (input && typeof input === "object" && !Object.hasOwn(input, "amazon_url"))
+      p.amazon_url = old[0]?.amazon_url ?? null;
     const effective = p.affiliate_url || p.amazon_url;
     if (p.active && !effective) throw new Error("Published product requires an affiliate URL");
     if (effective) {
@@ -85,6 +105,42 @@ export async function saveProduct(principal: Principal | null, input: unknown) {
         "INSERT INTO products(name,slug,description,short_description,brand,affiliate_url,amazon_url,category_id,category_ids,price,currency,active,featured,id,revision) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,1)",
         [...values, p.id],
       );
+    for (const key of [
+      "subcategory",
+      "retailer",
+      "retailer_product_id",
+      "price_updated_at",
+    ] as const) {
+      if (p[key] !== undefined)
+        await c.execute("UPDATE products SET " + key + "=? WHERE id=?", [
+          key === "price_updated_at" && p[key] ? new Date(p[key]!) : p[key],
+          p.id,
+        ]);
+    }
+    if (p.images) {
+      for (const im of p.images) {
+        if (!/^\/api\/public\/img\/[a-zA-Z0-9/_.-]+$/.test(im.image_url)) affiliate(im.image_url);
+      }
+      await c.execute("DELETE FROM product_images WHERE product_id=?", [p.id]);
+      for (const [i, im] of p.images.entries())
+        await c.execute(
+          "INSERT INTO product_images(product_id,image_url,storage_path,alt_text,sort_order) VALUES(?,?,?,?,?)",
+          [p.id, im.image_url, im.storage_path, im.alt_text, i],
+        );
+    }
+    if (p.features) {
+      await c.execute("DELETE FROM product_features WHERE product_id=?", [p.id]);
+      for (const [i, f] of p.features.entries())
+        await c.execute(
+          "INSERT INTO product_features(product_id,feature,sort_order) VALUES(?,?,?)",
+          [p.id, f, i],
+        );
+    }
+    if (p.tags) {
+      await c.execute("DELETE FROM product_tags WHERE product_id=?", [p.id]);
+      for (const t of [...new Set(p.tags)])
+        await c.execute("INSERT INTO product_tags(product_id,tag) VALUES(?,?)", [p.id, t]);
+    }
     await c.execute("DELETE FROM product_categories WHERE product_id=?", [p.id]);
     for (const [position, id] of categories.entries())
       await c.execute(

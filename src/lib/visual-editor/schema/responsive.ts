@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v3";
 import { GeometryConfigSchema, type GeometryConfig } from "./geometry";
 import { ShapeConfigSchema, type ShapeConfig } from "./shapes";
 import {

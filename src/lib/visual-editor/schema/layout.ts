@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v3";
 import { ALIGNMENT_MODES, type AlignmentMode } from "./geometry";
 
 export const LAYOUT_MODES = [

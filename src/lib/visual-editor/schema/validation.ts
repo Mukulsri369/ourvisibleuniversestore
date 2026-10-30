@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v3";
 import { FORBIDDEN_BUSINESS_DATA_KEYS } from "./bindings";
 import {
   LEAF_COMPONENT_TYPES,

@@ -9,3 +9,5 @@ export * from "../history/index";
 export * from "../autosave/index";
 export * from "../recovery/index";
 
+
+export { PersistenceError } from "../persistence/persistence-errors";

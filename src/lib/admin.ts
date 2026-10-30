@@ -1,5 +1,3 @@
-import { supabase } from "@/integrations/supabase/client";
-
 export const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 export const MAX_BYTES = 5 * 1024 * 1024;
 
@@ -38,17 +36,25 @@ export async function uploadImage(file: File, folder: "products" | "categories" 
   const ext =
     blob.type === "image/webp" ? "webp" : file.name.split(".").pop()?.toLowerCase() || "jpg";
   const path = `${folder}/${crypto.randomUUID()}.${ext}`;
-  const { error } = await supabase.storage.from("store-images").upload(path, blob, {
-    contentType: blob.type || file.type,
-    cacheControl: "31536000",
+  const response = await fetch("/api/store/media?folder=" + folder, {
+    method: "POST",
+    headers: { "content-type": blob.type || file.type },
+    body: blob,
   });
-  if (error) throw new Error(`Upload failed: ${error.message}`);
-  return { path, url: `/api/public/img/${path}` };
+  if (!response.ok) throw new Error("Upload failed");
+  return response.json() as Promise<{ path: string; url: string }>;
 }
 
 export async function removeStoragePaths(paths: (string | null | undefined)[]) {
   const p = paths.filter(Boolean) as string[];
-  if (p.length) await supabase.storage.from("store-images").remove(p);
+  if (p.length) {
+    const response = await fetch("/api/store/media?action=remove", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ paths: p }),
+    });
+    if (!response.ok) throw new Error("Media removal failed");
+  }
 }
 
 export function pathFromUrl(url: string | null | undefined) {
@@ -59,13 +65,16 @@ export function pathFromUrl(url: string | null | undefined) {
 
 /** Optional product video; stored in the same ordered media gallery as photos. */
 export async function uploadProductVideo(file: File) {
-  if (!["video/mp4", "video/webm"].includes(file.type)) throw new Error("Choose an MP4 or WebM video.");
+  if (!["video/mp4", "video/webm"].includes(file.type))
+    throw new Error("Choose an MP4 or WebM video.");
   if (file.size > 50 * 1024 * 1024) throw new Error("Video must be 50 MB or smaller.");
   const ext = file.type === "video/webm" ? "webm" : "mp4";
   const path = `products/${crypto.randomUUID()}.${ext}`;
-  const { error } = await supabase.storage.from("store-images").upload(path, file, {
-    contentType: file.type, cacheControl: "31536000",
+  const response = await fetch("/api/store/media?folder=products", {
+    method: "POST",
+    headers: { "content-type": file.type },
+    body: file,
   });
-  if (error) throw new Error(`Video upload failed: ${error.message}`);
-  return { path, url: `/api/public/img/${path}` };
+  if (!response.ok) throw new Error("Video upload failed");
+  return response.json() as Promise<{ path: string; url: string }>;
 }

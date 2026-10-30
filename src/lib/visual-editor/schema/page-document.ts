@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v3";
 import { EditorNodeSchema, NodeIdSchema, type EditorNode } from "./nodes";
 
 export const CURRENT_PAGE_SCHEMA_VERSION = "1.0.0" as const;

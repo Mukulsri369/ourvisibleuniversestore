@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v3";
 
 const SAFE_RECORD_ID_REGEX = /^[a-zA-Z0-9_-]{1,128}$/;
 

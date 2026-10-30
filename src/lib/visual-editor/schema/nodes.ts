@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v3";
 import { MediaAssetRefSchema, type MediaAssetRef } from "./media";
 import { DataBindingSchema, type DataBinding } from "./bindings";
 import {

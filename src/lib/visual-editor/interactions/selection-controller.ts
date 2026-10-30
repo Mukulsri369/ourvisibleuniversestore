@@ -238,7 +238,7 @@ export function resolveFirstChildTargetId(
 
   const node = index.nodeById.get(identity.documentNodeId);
   if (node?.binding?.kind === "repeated_category_sections" && categories.length > 0) {
-    const sorted = [...categories].sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
+    const sorted = [...categories].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
     if (sorted[0]) {
       return buildVirtualCategoryNodeId(node.id, sorted[0].id);
     }

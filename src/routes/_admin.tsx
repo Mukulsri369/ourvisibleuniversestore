@@ -21,7 +21,8 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { identity } from "@/lib/identity";
+import { storeAdminIdentity } from "@/lib/store-api.functions";
 
 const ADMIN_NAVIGATION_ITEMS = [
   { to: "/admin" as const, label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -37,19 +38,15 @@ function isDesignStudioPathname(pathname: string): boolean {
   return pathname === "/admin/design" || pathname.startsWith("/admin/design/");
 }
 
-// Client-only gate for the admin UI. Real enforcement is database-side:
-// every write is checked by Row Level Security using is_admin().
+// UI navigation is gated by the independent session; each server mutation rechecks the database role.
 export const Route = createFileRoute("/_admin")({
   ssr: false,
   beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/admin/login", search: { denied: undefined } });
-    const { data: isAdmin } = await supabase.rpc("is_admin");
-    if (!isAdmin) {
-      await supabase.auth.signOut();
-      throw redirect({ to: "/admin/login", search: { denied: "1" } });
+    try {
+      return await storeAdminIdentity();
+    } catch {
+      throw redirect({ to: "/admin/login", search: { denied: undefined } });
     }
-    return { user: data.user };
   },
   head: () => ({ meta: [{ name: "robots", content: "noindex, nofollow" }] }),
   component: AdminShell,
@@ -66,7 +63,7 @@ function AdminShell() {
   async function logout() {
     await qc.cancelQueries();
     qc.removeQueries({ queryKey: ["admin"] });
-    await supabase.auth.signOut();
+    await identity.signOut();
     navigate({ to: "/admin/login", search: { denied: undefined }, replace: true });
   }
 

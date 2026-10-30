@@ -29,7 +29,7 @@ const CANONICAL_CREATED_AT = "2026-10-20T00:00:00.000Z";
  * - Global `<StoreHeader />` and `<StoreFooter />` remain owned by `src/routes/_store.tsx`
  *   (`renderGlobalChromeInDocument: false` by default).
  */
-export const DEFAULT_HOMEPAGE_PAGE_DOCUMENT: PageDocument = Object.freeze({
+export const DEFAULT_HOMEPAGE_PAGE_DOCUMENT: PageDocument = Object.freeze<PageDocument>({
   id: CANONICAL_HOMEPAGE_DOCUMENT_ID,
   pageId: CANONICAL_HOMEPAGE_PAGE_ID,
   pageType: "home",

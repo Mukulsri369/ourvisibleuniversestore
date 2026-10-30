@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v3";
 
 export const NUMERIC_DIMENSION_UNITS = ["px", "%", "rem", "vw", "vh"] as const;
 export const KEYWORD_DIMENSION_UNITS = [

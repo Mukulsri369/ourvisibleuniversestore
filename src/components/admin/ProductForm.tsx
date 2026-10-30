@@ -1,3 +1,5 @@
+import { updateStoreProductPrice } from "@/lib/store-api.functions";
+import { loadStoreProduct, saveStoreProduct, availableStoreSlug } from "@/lib/store-api.functions";
 import { isProductVideo } from "@/lib/product-media";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -23,7 +25,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { ProductDetailView } from "@/components/store/ProductDetailView";
-import { supabase } from "@/integrations/supabase/client";
+
 import { removeStoragePaths, uploadImage, uploadProductVideo } from "@/lib/admin";
 import { adminCategoriesQuery, adminDuplicateCatalogQuery } from "@/lib/admin-queries";
 import { formatPrice, isValidAffiliateUrl, slugify, type ProductFull } from "@/lib/store";
@@ -46,6 +48,8 @@ const CURRENCIES = ["INR", "USD", "GBP", "EUR", "CAD", "AUD", "AED"];
 export function ProductForm({ productId }: { productId?: string }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const stableId = useRef(productId ?? crypto.randomUUID());
+  const [revision, setRevision] = useState(0);
   const { data: cats = [] } = useQuery(adminCategoriesQuery);
   const { data: duplicateCatalog = [] } = useQuery(adminDuplicateCatalogQuery);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -263,19 +267,16 @@ export function ProductForm({ productId }: { productId?: string }) {
         }
 
         if (productId) {
-          await supabase
-            .from("products")
-            .update({
+          const updated = await updateStoreProductPrice({
+            data: {
+              id: productId,
+              expectedRevision: revision,
+              price: newPriceNum,
+              currency: newCurrency,
               active: false,
-              ...(newPriceNum != null
-                ? {
-                    price: newPriceNum,
-                    currency: newCurrency,
-                    price_updated_at: new Date().toISOString(),
-                  }
-                : {}),
-            })
-            .eq("id", productId);
+            },
+          });
+          setRevision(updated.revision);
           qc.invalidateQueries({ queryKey: ["admin"] });
         }
 
@@ -309,30 +310,17 @@ export function ProductForm({ productId }: { productId?: string }) {
       // If editing an existing product, save immediately to database as requested
       if (productId) {
         const nowIso = new Date().toISOString();
-        const { error } = await supabase
-          .from("products")
-          .update({
+        const updated = await updateStoreProductPrice({
+          data: {
+            id: productId,
+            expectedRevision: revision,
             price: newPriceNum,
             currency: newCurrency,
-            price_updated_at: nowIso,
-            updated_at: nowIso,
             ...(data.retailer ? { retailer: data.retailer } : {}),
-            ...(data.retailer_product_id
-              ? {
-                  retailer_product_id: data.retailer_product_id,
-                  ...(data.retailer === "Amazon" ? { amazon_asin: data.retailer_product_id } : {}),
-                }
-              : {}),
-          })
-          .eq("id", productId);
-
-        if (error) {
-          toast.error(
-            `Price found (${formatPrice(newPriceNum, newCurrency)}) but failed to save: ${error.message}`,
-          );
-          return;
-        }
-
+            ...(data.retailer_product_id ? { retailer_product_id: data.retailer_product_id } : {}),
+          },
+        });
+        setRevision(updated.revision);
         qc.invalidateQueries({ queryKey: ["admin"] });
 
         const sourceLabel = data.retailer ? ` from ${data.retailer}` : "";
@@ -362,13 +350,11 @@ export function ProductForm({ productId }: { productId?: string }) {
   useEffect(() => {
     if (!productId) return;
     (async () => {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*, product_images(*), product_features(*), product_tags(*)")
-        .eq("id", productId)
-        .maybeSingle();
-      if (error || !data) {
-        setLoadError(error?.message ?? "Product not found.");
+      const data = await loadStoreProduct({ data: { id: stableId.current } });
+
+      if (data) setRevision(data.revision);
+      if (!data) {
+        setLoadError("Product not found.");
         setLoading(false);
         return;
       }
@@ -405,7 +391,10 @@ export function ProductForm({ productId }: { productId?: string }) {
       setActive(data.active);
       setFeatured(data.featured);
       setLoading(false);
-    })();
+    })().catch((error: unknown) => {
+      setLoadError(error instanceof Error ? error.message : "Product could not be loaded");
+      setLoading(false);
+    });
   }, [productId]);
 
   useEffect(() => {
@@ -450,7 +439,9 @@ export function ProductForm({ productId }: { productId?: string }) {
     setUploading(true);
     for (const f of Array.from(files)) {
       try {
-        const r = await (f.type.startsWith("video/") ? uploadProductVideo(f) : uploadImage(f, "products"));
+        const r = await (f.type.startsWith("video/")
+          ? uploadProductVideo(f)
+          : uploadImage(f, "products"));
         setImages((s) => [...s, { key: r.path, url: r.url, path: r.path, alt: "" }]);
       } catch (e) {
         toast.error(e instanceof Error ? e.message : "Image upload failed.");
@@ -520,10 +511,7 @@ export function ProductForm({ productId }: { productId?: string }) {
     const b = slugify(base) || "product";
     for (let n = 1; n < 50; n++) {
       const s = n === 1 ? b : `${b}-${n}`;
-      let q = supabase.from("products").select("id").eq("slug", s);
-      if (productId) q = q.neq("id", productId);
-      const { data } = await q.maybeSingle();
-      if (!data) return s;
+      if (await availableStoreSlug({ data: { slug: s, id: productId } })) return s;
     }
     return `${b}-${Date.now()}`;
   }
@@ -573,7 +561,7 @@ export function ProductForm({ productId }: { productId?: string }) {
         slug: finalSlug,
         short_description: short.trim() || null,
         description: desc.trim() || null,
-        category_id: categoryIds[0] ?? null,
+
         category_ids: categoryIds,
         subcategory: subcategory.trim() || null,
         brand: brand.trim() || null,
@@ -590,53 +578,22 @@ export function ProductForm({ productId }: { productId?: string }) {
         featured,
         active: nextActive,
       };
-      let id = productId;
-      if (id) {
-        const { error } = await supabase.from("products").update(payload).eq("id", id);
-        if (error) throw error;
-      } else {
-        const { data, error } = await supabase
-          .from("products")
-          .insert(payload)
-          .select("id")
-          .single();
-        if (error) throw error;
-        id = data.id;
-      }
-      if (!id) throw new Error("Product could not be saved.");
-      const pid = id;
-      await Promise.all([
-        supabase.from("product_images").delete().eq("product_id", pid),
-        supabase.from("product_features").delete().eq("product_id", pid),
-        supabase.from("product_tags").delete().eq("product_id", pid),
-      ]);
-      const ops = [];
-      if (images.length)
-        ops.push(
-          supabase.from("product_images").insert(
-            images.map((im, i) => ({
-              product_id: pid,
-              image_url: im.url,
-              storage_path: im.path,
-              alt_text: im.alt || name,
-              sort_order: i,
-            })),
-          ),
-        );
-      const feats = features.map((f) => f.trim()).filter(Boolean);
-      if (feats.length)
-        ops.push(
-          supabase
-            .from("product_features")
-            .insert(feats.map((f, i) => ({ product_id: pid, feature: f, sort_order: i }))),
-        );
-      if (tags.length)
-        ops.push(
-          supabase.from("product_tags").insert(tags.map((t) => ({ product_id: pid, tag: t }))),
-        );
-      const results = await Promise.all(ops);
-      const failed = results.find((r) => r.error);
-      if (failed?.error) throw failed.error;
+      const result = await saveStoreProduct({
+        data: {
+          ...payload,
+          id: stableId.current,
+          expectedRevision: revision,
+          images: images.map((im) => ({
+            image_url: im.url,
+            storage_path: im.path,
+            alt_text: im.alt || name,
+          })),
+          features: features.map((f) => f.trim()).filter(Boolean),
+          tags,
+        },
+      });
+      const pid = result.id;
+      setRevision(result.revision);
       await removeStoragePaths(removed);
       setRemoved([]);
       setActive(nextActive);
@@ -922,8 +879,8 @@ export function ProductForm({ productId }: { productId?: string }) {
 
       <Section title="2 · Product photos and optional videos">
         <p className="text-xs text-muted-foreground">
-          JPG, PNG, WEBP, or optional MP4/WebM videos up to 50 MB. Use the star to choose the default display media. The first item is the primary
-          media.
+          JPG, PNG, WEBP, or optional MP4/WebM videos up to 50 MB. Use the star to choose the
+          default display media. The first item is the primary media.
         </p>
         {errors.images && (
           <p role="alert" className="text-xs text-destructive">
@@ -937,7 +894,18 @@ export function ProductForm({ productId }: { productId?: string }) {
               className={`overflow-hidden rounded-xl border ${i === 0 ? "border-primary" : "border-border"} bg-secondary`}
             >
               <div className="relative aspect-square">
-                {isProductVideo(im.url) ? <video src={im.url} muted playsInline controls preload="metadata" className="h-full w-full object-contain" /> : <img src={im.url} alt="" className="h-full w-full object-cover" />}
+                {isProductVideo(im.url) ? (
+                  <video
+                    src={im.url}
+                    muted
+                    playsInline
+                    controls
+                    preload="metadata"
+                    className="h-full w-full object-contain"
+                  />
+                ) : (
+                  <img src={im.url} alt="" className="h-full w-full object-cover" />
+                )}
                 {i === 0 && (
                   <span className="absolute left-2 top-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">
                     PRIMARY
@@ -994,7 +962,11 @@ export function ProductForm({ productId }: { productId?: string }) {
             ) : (
               <ImagePlus className="size-6" />
             )}
-            {uploading ? "Uploading…" : images.length ? "Add photos or videos" : "Upload photos or video"}
+            {uploading
+              ? "Uploading…"
+              : images.length
+                ? "Add photos or videos"
+                : "Upload photos or video"}
           </button>
         </div>
         <input
@@ -1181,15 +1153,27 @@ export function ProductForm({ productId }: { productId?: string }) {
             Preview
           </Button>
           {productId ? (
-            <Button variant="affiliate" disabled={!!saving || uploading} onClick={() => save("save")}>
+            <Button
+              variant="affiliate"
+              disabled={!!saving || uploading}
+              onClick={() => save("save")}
+            >
               {saving && <Loader2 className="animate-spin" />} Save Changes
             </Button>
           ) : (
             <>
-              <Button variant="secondary" disabled={!!saving || uploading} onClick={() => save("draft")}>
+              <Button
+                variant="secondary"
+                disabled={!!saving || uploading}
+                onClick={() => save("draft")}
+              >
                 {saving === "draft" && <Loader2 className="animate-spin" />} Save Draft
               </Button>
-              <Button variant="affiliate" disabled={!!saving || uploading} onClick={() => save("publish")}>
+              <Button
+                variant="affiliate"
+                disabled={!!saving || uploading}
+                onClick={() => save("publish")}
+              >
                 {saving === "publish" && <Loader2 className="animate-spin" />} Publish Product
               </Button>
             </>

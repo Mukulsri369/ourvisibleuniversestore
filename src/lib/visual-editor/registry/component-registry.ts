@@ -175,7 +175,10 @@ export class VisualComponentRegistry {
   /**
    * 4. Validate a node's configuration against the registry, Zod schema, and security boundaries.
    */
-  public validateNodeConfiguration(node: unknown): NodeConfigurationValidationResult {
+  public validateNodeConfiguration(
+    node: unknown,
+    context?: { isRootLevel: boolean },
+  ): NodeConfigurationValidationResult {
     const errors: string[] = [];
     const unsupportedStyleWarnings: string[] = [];
 
@@ -237,6 +240,8 @@ export class VisualComponentRegistry {
 
     const capabilities = this.getTrustedCapabilities(validNode.type);
     if (capabilities) {
+      if (context && capabilities.isRootOnly && !context.isRootLevel)
+        errors.push("Root-only component cannot be nested");
       if (
         validNode.binding &&
         !capabilities.supportedBindingKinds.includes(validNode.binding.kind)

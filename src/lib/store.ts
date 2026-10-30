@@ -1,3 +1,8 @@
+import {
+  storePublicProduct,
+  storePublicCategories,
+  storePublicSettings,
+} from "./store-api.functions";
 import { createClient } from "@supabase/supabase-js";
 import { queryOptions } from "@tanstack/react-query";
 import type { Database } from "@/integrations/supabase/types";
@@ -198,15 +203,7 @@ function liveProducts() {
 
 export const settingsQuery = queryOptions({
   queryKey: ["settings"],
-  queryFn: async () => {
-    const { data, error } = await publicDb()
-      .from("public_site_settings")
-      .select("*")
-      .eq("id", 1)
-      .maybeSingle();
-    if (error) throw error;
-    return data ? { ...data, contact_email: null } : null;
-  },
+  queryFn: () => storePublicSettings(),
   staleTime: 60_000,
 });
 
@@ -232,16 +229,7 @@ export const LEGACY_CATEGORY_SLUG_MAP: Record<string, string> = {
 
 export const categoriesQuery = queryOptions({
   queryKey: ["categories", "public"],
-  queryFn: async () => {
-    const { data, error } = await publicDb()
-      .from("categories")
-      .select("*")
-      .eq("active", true)
-      .order("sort_order")
-      .order("name");
-    if (error) throw error;
-    return data ?? [];
-  },
+  queryFn: () => storePublicCategories(),
   staleTime: 60_000,
 });
 
@@ -818,16 +806,7 @@ export const categoryQuery = (slug: string) =>
   });
 
 export async function fetchProductFull(slug: string): Promise<ProductFull | null> {
-  const { data, error } = await publicDb()
-    .from("products")
-    .select(
-      `${CARD_SELECT},description,brand,retailer,retailer_product_id,price_updated_at,product_features(feature,sort_order),product_tags(tag)`,
-    )
-    .eq("slug", slug)
-    .eq("active", true)
-    .is("deleted_at", null)
-    .maybeSingle();
-  if (error) throw error;
+  const data = await storePublicProduct({ data: { slug } });
   if (!data) return null;
   const r = data as unknown as RawCard & {
     category_id: string | null;
@@ -842,14 +821,7 @@ export async function fetchProductFull(slug: string): Promise<ProductFull | null
   };
   const imgs = [...(r.product_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
   const categoryIds = productCategoryIds(r);
-  const { data: assigned, error: categoryError } = categoryIds.length
-    ? await publicDb()
-        .from("categories")
-        .select("id,name,slug")
-        .in("id", categoryIds)
-        .eq("active", true)
-    : { data: [], error: null };
-  if (categoryError) throw categoryError;
+  const assigned: {id:string;name:string;slug:string}[] = data.assigned_categories;
   return {
     ...toCard(r),
     category_id: r.category_id,
@@ -986,3 +958,11 @@ export function logOutboundClick(productId: string) {
     /* ignore */
   }
 }
+
+/** Public homepage query result shared with the visual editor. */
+export type HomeData = {
+  featured: ProductCardData[];
+  newest: ProductCardData[];
+  festival: ProductCardData[];
+  allProducts: ProductCardData[];
+};

@@ -144,9 +144,7 @@ function mapEditorNodeToLayerTreeItem(
 
   // 3. Dynamic repeated category instances (derived virtually from real categories, never stored as duplicate nodes)
   if (node.binding?.kind === "repeated_category_sections" && categories.length > 0) {
-    const sortedCats = [...categories].sort(
-      (a, b) => (a.display_order ?? 0) - (b.display_order ?? 0),
-    );
+    const sortedCats = [...categories].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
     for (const cat of sortedCats) {
       const catVirtualId = buildVirtualCategoryNodeId(node.id, cat.id);
       const catProductChildren: StudioLayerTreeItem[] = [];
@@ -204,7 +202,7 @@ function mapEditorNodeToLayerTreeItem(
     homeData &&
     (node.type === "FeaturedCollection" ||
       node.type === "ProductScrollRail" ||
-      node.type === "ProductGridSection" ||
+      node.type === "ProductGrid" ||
       node.type === "FestivalSection")
   ) {
     const dataCatalog: StorefrontDataCatalog = {
@@ -259,10 +257,8 @@ function mapEditorNodeToLayerTreeItem(
   }
 
   // 5. CategoryGridSection runtime instances
-  if (node.type === "CategoryGridSection" && categories.length > 0) {
-    const sortedCats = [...categories].sort(
-      (a, b) => (a.display_order ?? 0) - (b.display_order ?? 0),
-    );
+  if (node.type === "CategoryGrid" && categories.length > 0) {
+    const sortedCats = [...categories].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
     for (const cat of sortedCats) {
       childrenItems.push({
         id: buildVirtualCategoryCardInstanceId(node.id, cat.id),

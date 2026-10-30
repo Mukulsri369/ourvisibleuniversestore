@@ -17,11 +17,11 @@ export const getRouter = () => {
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
     dehydrate: () => ({
-      queryClientState: dehydrate(queryClient) as unknown,
+      queryClientState: JSON.stringify(dehydrate(queryClient)),
     }),
-    hydrate: (dehydrated: { queryClientState?: unknown }) => {
+    hydrate: (dehydrated: { queryClientState?: string }) => {
       if (dehydrated?.queryClientState) {
-        hydrate(queryClient, dehydrated.queryClientState);
+        hydrate(queryClient, JSON.parse(dehydrated.queryClientState));
       }
     },
   });

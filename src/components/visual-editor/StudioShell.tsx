@@ -1880,9 +1880,8 @@ export function StudioShell({
           recoveryEvaluation.status === "stale_against_server") && (
           <RecoveryDialog
             evaluation={recoveryEvaluation}
-            serverDraftRevision={persistenceState.draftRevision}
-            onRestore={handleRestoreRecoveryCheckpoint}
-            onDiscard={handleDiscardRecoveryCheckpoint}
+            onRestoreCheckpoint={handleRestoreRecoveryCheckpoint}
+            onDiscardCheckpoint={handleDiscardRecoveryCheckpoint}
           />
         )}
 

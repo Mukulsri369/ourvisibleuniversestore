@@ -1,3 +1,5 @@
+import { identity } from "@/lib/identity";
+import { storeAdminIdentity } from "@/lib/store-api.functions";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff, Loader2, Lock } from "lucide-react";
 import { useState } from "react";
@@ -46,32 +48,35 @@ function Login() {
     setLoading(true);
     try {
       if (mode === "signin") {
-        const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        const { error } = await identity.signIn.email({ email: email.trim(), password });
         if (error) {
           setError(
-            error.message.toLowerCase().includes("confirm")
+            (error.message ?? "").toLowerCase().includes("confirm")
               ? "Please confirm your email first — check your inbox."
               : "Invalid email or password.",
           );
           return;
         }
-        const { data: isAdmin } = await supabase.rpc("is_admin");
+        const isAdmin = await storeAdminIdentity()
+          .then(() => true)
+          .catch(() => false);
         if (!isAdmin) {
-          await supabase.auth.signOut();
+          await identity.signOut();
           setError("This account does not have administrator access.");
           return;
         }
         toast.success("Welcome back, commander.");
         navigate({ to: "/admin" });
       } else if (mode === "forgot") {
-        const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        const { error } = await identity.requestPasswordReset({
+          email: email.trim(),
           redirectTo: `${window.location.origin}/admin/reset-password`,
         });
         if (error) throw error;
         setInfo("If that email is registered, a password reset link is on its way.");
       } else {
-        if (password.length < 8) {
-          setError("Password must be at least 8 characters.");
+        if (password.length < 12) {
+          setError("Password must be at least 12 characters.");
           return;
         }
 
@@ -123,10 +128,10 @@ function Login() {
           return;
         }
 
-        const { error } = await supabase.auth.signUp({
+        const { error } = await identity.signUp.email({
           email: cleanEmail,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/admin/login` },
+          name: "Store administrator",
         });
         if (error) throw error;
         setInfo("Check your inbox to confirm your email, then sign in here.");

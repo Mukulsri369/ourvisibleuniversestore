@@ -47,6 +47,13 @@ function isH3SwallowedErrorBody(body: string): boolean {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      const { handleMedia } = await import("./backend/media.server");
+      const media = await handleMedia(request);
+      if (media) return media;
+      if (new URL(request.url).pathname.startsWith("/api/auth/")) {
+        const { independentAuth } = await import("./backend/runtime.server");
+        return independentAuth().handler(request);
+      }
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);

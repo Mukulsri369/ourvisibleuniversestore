@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v3";
 import { AspectRatioValueSchema, type AspectRatioValue } from "./geometry";
 import { FocalPointSchema, OBJECT_FIT_MODES, type FocalPoint, type ObjectFitMode } from "./shapes";
 

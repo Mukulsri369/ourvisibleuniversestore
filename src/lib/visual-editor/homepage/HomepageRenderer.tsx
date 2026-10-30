@@ -36,13 +36,13 @@ class HomepageRenderErrorBoundary extends Component<
   HomepageErrorBoundaryProps,
   HomepageErrorBoundaryState
 > {
-  state: HomepageErrorBoundaryState = { hasError: false };
+  override state: HomepageErrorBoundaryState = { hasError: false };
 
   static getDerivedStateFromError(): HomepageErrorBoundaryState {
     return { hasError: true };
   }
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       return this.props.fallback;
     }

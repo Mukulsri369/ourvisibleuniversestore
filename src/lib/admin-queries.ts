@@ -1,3 +1,5 @@
+import { listStoreAdminProducts } from "./store-api.functions";
+import { storeAdminCategories, storeDuplicateCatalog } from "./store-api.functions";
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -31,15 +33,7 @@ export function firstImage(r: AdminRow) {
 
 export const adminCategoriesQuery = queryOptions({
   queryKey: ["admin", "categories"],
-  queryFn: async () => {
-    const { data, error } = await supabase
-      .from("categories")
-      .select("*")
-      .order("sort_order")
-      .order("name");
-    if (error) throw error;
-    return data ?? [];
-  },
+  queryFn: () => storeAdminCategories(),
 });
 
 export type AdminFilters = {
@@ -53,25 +47,7 @@ export type AdminFilters = {
 export const adminProductsQuery = (f: AdminFilters) =>
   queryOptions({
     queryKey: ["admin", "products", f],
-    queryFn: async () => {
-      const size = 20;
-      let q = supabase
-        .from("products")
-        .select(ADMIN_SELECT, { count: "exact" })
-        .is("deleted_at", null);
-      if (f.q) q = q.ilike("name", `%${f.q.replace(/[%,()]/g, " ")}%`);
-      if (f.category) q = q.contains("category_ids", [f.category]);
-      if (f.status === "active") q = q.eq("active", true);
-      if (f.status === "inactive") q = q.eq("active", false);
-      if (f.featured === "yes") q = q.eq("featured", true);
-      if (f.featured === "no") q = q.eq("featured", false);
-      const from = (f.page - 1) * size;
-      const { data, error, count } = await q
-        .order("created_at", { ascending: false })
-        .range(from, from + size - 1);
-      if (error) throw error;
-      return { rows: (data ?? []) as unknown as AdminRow[], total: count ?? 0, size };
-    },
+    queryFn: () => listStoreAdminProducts({ data: f }),
   });
 
 export const DUPLICATE_CATALOG_SELECT =
@@ -79,14 +55,6 @@ export const DUPLICATE_CATALOG_SELECT =
 
 export const adminDuplicateCatalogQuery = queryOptions({
   queryKey: ["admin", "duplicate-catalog"],
-  queryFn: async () => {
-    const { data, error } = await supabase
-      .from("products")
-      .select(DUPLICATE_CATALOG_SELECT)
-      .is("deleted_at", null)
-      .order("created_at", { ascending: false });
-    if (error) throw error;
-    return (data ?? []) as unknown as import("./duplicate-detector").CatalogProduct[];
-  },
+  queryFn: () => storeDuplicateCatalog(),
   staleTime: 1000 * 60 * 2, // 2 minutes cache
 });
