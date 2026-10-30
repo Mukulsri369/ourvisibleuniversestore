@@ -76,6 +76,10 @@ export function StudioCanvas({
   const lastHoverTargetRef = useRef<string | null>(hoveredNodeId);
   lastHoverTargetRef.current = hoveredNodeId;
 
+  const handleRenderedNodeSelect = useCallback(
+    (id: string) => onSelectNode(id, "canvas_click"),
+    [onSelectNode],
+  );
   const dataCatalog = useMemo<StorefrontDataCatalog>(
     () => ({
       featuredProducts: home.featured,
@@ -337,12 +341,10 @@ export function StudioCanvas({
                   renderGlobalChromeInDocument={hasExplicitHeader || hasExplicitFooter}
                   selectedNodeId={selectedNodeId}
                   hoveredNodeId={hoveredNodeId}
-                  onSelectNode={(id) => onSelectNode(id, "canvas_click")}
-                  onHoverNode={(id) => onHoverNode(id)}
+                  onSelectNode={handleRenderedNodeSelect}
+                  onHoverNode={onHoverNode}
                   onQuickPreviewProduct={
-                    renderMode === "preview"
-                      ? (product) => setQuickPreviewProduct(product)
-                      : undefined
+                    renderMode === "preview" ? setQuickPreviewProduct : undefined
                   }
                 />
               </main>

@@ -77,6 +77,7 @@ export async function handleMedia(request: Request): Promise<Response | null> {
     if (!rows.length) return new Response("Not found", { status: 404 });
     try {
       const filename = join(await root(), path);
+      if ((await lstat(dirname(filename))).isSymbolicLink()) throw Error("Invalid media folder");
       if ((await lstat(filename)).isSymbolicLink()) throw Error("Invalid media file");
       const bytes = await readFile(filename);
       if (createHash("sha256").update(bytes).digest("hex") !== rows[0].sha256)

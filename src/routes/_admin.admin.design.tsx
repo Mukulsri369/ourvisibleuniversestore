@@ -17,6 +17,7 @@ export const Route = createFileRoute("/_admin/admin/design")({
 
 function AdminDesignStudioPage() {
   const navigate = useNavigate();
+  const { user } = Route.useRouteContext();
 
   return (
     <Suspense
@@ -27,7 +28,10 @@ function AdminDesignStudioPage() {
         />
       }
     >
-      <LazyStudioShell onNavigateToAdmin={() => void navigate({ to: "/admin" })} />
+      <LazyStudioShell
+        userScope={user.id}
+        onNavigateToAdmin={() => void navigate({ to: "/admin" })}
+      />
     </Suspense>
   );
 }

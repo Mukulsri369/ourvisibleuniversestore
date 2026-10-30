@@ -38,7 +38,10 @@ export function buildRecoveryStorageKey(scope: RecoveryScopeDescriptor): string 
  * and respects retention and payload bounds (Prompt 13, Part 15, Section 49 & Part 20, Section 65).
  */
 export function containsForbiddenRecoveryCredentials(value: unknown, depth: number = 0): boolean {
-  if (depth > 20 || value === null || typeof value !== "object") {
+  if (depth > 64) return true;
+  if (typeof value === "string")
+    return /\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/.test(value);
+  if (value === null || typeof value !== "object") {
     return false;
   }
 
@@ -50,7 +53,7 @@ export function containsForbiddenRecoveryCredentials(value: unknown, depth: numb
     if (FORBIDDEN_CREDENTIAL_KEY_PATTERN.test(k)) {
       return true;
     }
-    if (typeof v === "string" && /^eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(v)) {
+    if (typeof v === "string" && /\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/.test(v)) {
       // Reject embedded JWT tokens
       return true;
     }

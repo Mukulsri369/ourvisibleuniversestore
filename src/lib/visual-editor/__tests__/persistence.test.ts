@@ -141,7 +141,7 @@ describe("Prompt 8 — Database Migration & Draft Persistence Foundation", () =>
       ? findNodeById(loadedDraft.draftDocument, "home-featured-products")
       : null;
     expect(featuredNode?.name).toBe("Curated Cosmic Picks");
-    expect(featuredNode?.style.shape?.cornerRadius.uniform).toBe(24);
+    expect(featuredNode?.style.shape?.cornerRadius?.uniform).toBe(24);
     expect(featuredNode?.responsive?.mobile?.geometry?.padding?.top).toBe(16);
     expect(featuredNode?.binding?.kind).toBe("product_collection");
 

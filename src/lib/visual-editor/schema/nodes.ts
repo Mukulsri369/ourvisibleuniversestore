@@ -214,28 +214,32 @@ export const NodeIdSchema = z
   .max(128)
   .regex(/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,127}$/, "Invalid node ID format");
 
-export const EditorNodeSchema: z.ZodType<EditorNode> = z.lazy(() =>
-  z
-    .object({
-      id: NodeIdSchema,
-      type: ComponentTypeSchema,
-      name: SafeStringProp(160),
-      locked: z.boolean().optional(),
-      hidden: z.boolean().optional(),
-      slotName: z
-        .string()
-        .max(64)
-        .regex(/^[a-zA-Z0-9_-]+$/)
-        .optional(),
-      props: SafeComponentPropsSchema,
-      style: NodeStyleBundleSchema,
-      responsive: ResponsiveOverridesSchema.optional(),
-      binding: DataBindingSchema.optional(),
-      media: z.record(z.string().regex(/^[a-zA-Z0-9_-]{1,64}$/), MediaAssetRefSchema).optional(),
-      children: z.array(EditorNodeSchema),
-      slots: z
-        .record(z.string().regex(/^[a-zA-Z0-9_-]{1,64}$/), z.array(EditorNodeSchema))
-        .optional(),
-    })
-    .strict(),
+// Zod invokes a lazy getter for every visited node. Build this recursive schema
+// once, rather than constructing all optional fields again for every node parsed.
+let editorNodeObjectSchema: z.ZodType<EditorNode> | undefined;
+export const EditorNodeSchema: z.ZodType<EditorNode> = z.lazy(
+  () =>
+    (editorNodeObjectSchema ??= z
+      .object({
+        id: NodeIdSchema,
+        type: ComponentTypeSchema,
+        name: SafeStringProp(160),
+        locked: z.boolean().optional(),
+        hidden: z.boolean().optional(),
+        slotName: z
+          .string()
+          .max(64)
+          .regex(/^[a-zA-Z0-9_-]+$/)
+          .optional(),
+        props: SafeComponentPropsSchema,
+        style: NodeStyleBundleSchema,
+        responsive: ResponsiveOverridesSchema.optional(),
+        binding: DataBindingSchema.optional(),
+        media: z.record(z.string().regex(/^[a-zA-Z0-9_-]{1,64}$/), MediaAssetRefSchema).optional(),
+        children: z.array(EditorNodeSchema),
+        slots: z
+          .record(z.string().regex(/^[a-zA-Z0-9_-]{1,64}$/), z.array(EditorNodeSchema))
+          .optional(),
+      })
+      .strict()),
 );

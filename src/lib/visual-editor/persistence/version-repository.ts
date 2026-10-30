@@ -9,7 +9,7 @@ import {
 } from "./persistence-types";
 import { mapDatabaseErrorToPersistenceError, PersistenceError } from "./persistence-errors";
 import { validateDocumentForPersistence, validateStoreScope } from "./persistence-validation";
-import { defaultPersistenceAdapter } from "./supabase-persistence-adapter";
+import { defaultPersistenceAdapter } from "./independent-persistence-adapter";
 
 export interface VersionRepositoryOptions {
   adapter?: PersistenceDatabaseAdapter;

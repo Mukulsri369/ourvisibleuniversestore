@@ -60,6 +60,11 @@ const SAMPLE_CATALOG: StorefrontDataCatalog = {
     affiliate_disclosure: "We may earn a commission from qualifying purchases.",
     instagram_url: "https://instagram.com/ourvisibleuniverse",
     social_links: baselineFixtures.siteSettings.social_links,
+    id: 1,
+    store_name: "Our Visible Universe",
+    logo_url: null,
+    contact_email: null,
+    updated_at: "2026-01-01T00:00:00Z",
   },
 };
 

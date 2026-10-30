@@ -1,4 +1,5 @@
 import React from "react";
+import { FeaturedCollectionIntro } from "@/components/store/FeaturedCollectionIntro";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
@@ -676,6 +677,7 @@ export function FeaturedCollectionSectionAdapter({
         id={node.props.scrollTargetId ?? "featured-products"}
         className="relative z-10 mx-auto max-w-7xl scroll-mt-20 px-4 py-6 sm:py-10 sm:px-6"
       >
+        <FeaturedCollectionIntro />
         <ProductScrollRail
           title={node.props.title ?? "Featured"}
           eyebrow={node.props.eyebrow}

@@ -15,6 +15,11 @@ import type {
   RecordTransactionOutcome,
 } from "./history-types";
 
+// History revisits the same snapshots frequently. Compare every serialized field before
+// reusing validation so even an accidentally mutated reference cannot bypass the schema.
+const validatedSnapshots = new WeakMap<object, string>();
+const validatedRootSnapshots = new WeakMap<object, string>();
+
 /**
  * Computes a deterministic content fingerprint for a `PageDocument` that ignores
  * `metadata.updatedAt` so UI/timestamp updates are never treated as substantive design edits
@@ -76,6 +81,19 @@ export function validateHistoryDocumentState(document: unknown): {
   }
 
   const candidate = document as PageDocument;
+  let serialized: string;
+  try {
+    serialized = JSON.stringify(candidate);
+  } catch {
+    return {
+      valid: false,
+      error: {
+        code: "HISTORY_RESTORE_INVALID_DOCUMENT",
+        message: "History document must be serializable.",
+      },
+    };
+  }
+  if (validatedSnapshots.get(candidate) === serialized) return { valid: true, document: candidate };
   if (
     typeof candidate.id !== "string" ||
     !Array.isArray(candidate.root) ||
@@ -102,7 +120,18 @@ export function validateHistoryDocumentState(document: unknown): {
     };
   }
 
-  const schemaValidation = safeParsePageDocument(candidate);
+  // Validate document fields separately, then only reparse changed root subtrees.
+  // The structural pass above still checks IDs, depth and node limits across ALL roots.
+  let schemaValidation = safeParsePageDocument({ ...candidate, root: [] });
+  if (schemaValidation.success) {
+    for (const node of candidate.root) {
+      const content = JSON.stringify(node);
+      if (validatedRootSnapshots.get(node) === content) continue;
+      schemaValidation = safeParsePageDocument({ ...candidate, root: [node] });
+      if (!schemaValidation.success) break;
+      validatedRootSnapshots.set(node, content);
+    }
+  }
   if (!schemaValidation.success) {
     return {
       valid: false,
@@ -115,6 +144,7 @@ export function validateHistoryDocumentState(document: unknown): {
     };
   }
 
+  validatedSnapshots.set(candidate, serialized);
   return {
     valid: true,
     document: candidate,
@@ -140,7 +170,10 @@ export function recordEditingTransaction(
   const allowCoalesce = input.allowCoalesce ?? true;
   const coalesceKey = input.coalesceKey ?? null;
 
-  const validatedNext = validateHistoryDocumentState(input.nextDocument);
+  const previous = validateHistoryDocumentState(input.previousDocument);
+  const validatedNext = previous.valid
+    ? validateHistoryDocumentState(input.nextDocument)
+    : previous;
   if (!validatedNext.valid) {
     const err: HistoryOperationError = validatedNext.error ?? {
       code: "INVALID_TRANSACTION",
@@ -161,11 +194,7 @@ export function recordEditingTransaction(
   }
 
   // If an explicit interaction session is open with the same groupKey, update the session in place
-  if (
-    state.activeInteraction &&
-    coalesceKey &&
-    state.activeInteraction.groupKey === coalesceKey
-  ) {
+  if (state.activeInteraction && coalesceKey && state.activeInteraction.groupKey === coalesceKey) {
     const updatedSession = {
       ...state.activeInteraction,
       latestDocument: input.nextDocument,

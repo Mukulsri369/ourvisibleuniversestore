@@ -1,16 +1,25 @@
 import type { Database } from "@/integrations/supabase/types";
 import { createServerFn, createMiddleware } from "@tanstack/react-start";
 import { z } from "zod";
-const admin = createMiddleware({ type: "function" }).server(async ({ next }) => {
-  const [{ getRequest }, { independentAuth }, { requireAdmin }] = await Promise.all([
-    import("@tanstack/react-start/server"),
-    import("@/backend/runtime.server"),
-    import("@/backend/authorization.server"),
-  ]);
-  const session = await independentAuth().api.getSession({ headers: getRequest().headers });
-  const principal = await requireAdmin(session?.user ?? null);
-  return next({ context: { principal } });
-});
+export const storeAdminMiddleware = createMiddleware({ type: "function" }).server(
+  async ({ next }) => {
+    const [{ getRequest }, { independentAuth }, { requireAdmin }] = await Promise.all([
+      import("@tanstack/react-start/server"),
+      import("@/backend/runtime.server"),
+      import("@/backend/authorization.server"),
+    ]);
+    const request = getRequest();
+    if (
+      request.method !== "GET" &&
+      request.headers.get("origin") !== new URL(process.env.BETTER_AUTH_URL!).origin
+    )
+      throw new Error("Untrusted request origin");
+    const session = await independentAuth().api.getSession({ headers: request.headers });
+    const principal = await requireAdmin(session?.user ?? null);
+    return next({ context: { principal } });
+  },
+);
+const admin = storeAdminMiddleware;
 export const storeAdminIdentity = createServerFn({ method: "GET" })
   .middleware([admin])
   .handler(async ({ context }) => ({ user: context.principal }));

@@ -10,6 +10,7 @@ import { setTimeout as delay } from "node:timers/promises";
 import { createClientRpc } from "@tanstack/start-client-core/client-rpc";
 import { database, closeDatabase } from "../src/backend/db.server";
 import { createIndependentAuth } from "../src/backend/auth.server";
+import { createDefaultHomepageDocument } from "../src/lib/visual-editor/homepage/default-homepage-document";
 assert.equal(process.env.DB_HOST, "127.0.0.1");
 assert.equal(process.env.DB_PORT, "3307");
 assert.equal(process.env.DB_NAME, "ovu_store");
@@ -27,10 +28,11 @@ test("built Store uses real cookie login and server-function product writes with
   await new Promise<void>((r) => socket.close(() => r()));
   const base = "http://127.0.0.1:" + port;
   let child: ChildProcess | undefined,
-    userId = "";
+    userId = "",
+    editorPageId = "";
   const pid = randomUUID();
-  const files = (await readdir(".output/server/_ssr")).filter((f) =>
-    f.startsWith("store-api.functions-"),
+  const files = (await readdir(".output/server/_ssr")).filter(
+    (f) => f.startsWith("store-api.functions-") || f.startsWith("editor-api.functions-"),
   );
   const code = (
     await Promise.all(files.map((f) => readFile(".output/server/_ssr/" + f, "utf8")))
@@ -38,7 +40,13 @@ test("built Store uses real cookie login and server-function product writes with
   const ids = new Map<string, string>();
   for (const m of code.matchAll(/id: "([a-f0-9]+)",\s*name: "([a-zA-Z]+)"/g)) ids.set(m[2], m[1]);
   assert.ok(ids.has("saveStoreProduct"));
-  async function rpc(name: string, method: "GET" | "POST", data: unknown, cookie = "") {
+  async function rpc(
+    name: string,
+    method: "GET" | "POST",
+    data: unknown,
+    cookie = "",
+    origin = base,
+  ) {
     const call = createClientRpc(ids.get(name)!);
     const envelope = await runWithStartContext(
       {
@@ -55,7 +63,7 @@ test("built Store uses real cookie login and server-function product writes with
         call({
           method,
           data,
-          headers: { cookie, origin: base },
+          headers: { cookie, origin },
           fetch: (url: string, init: RequestInit) => fetch(base + url, init),
         }),
     );
@@ -128,18 +136,137 @@ test("built Store uses real cookie login and server-function product writes with
     };
     assert.equal((await rpc("saveStoreProduct", "POST", value, cookie)).revision, 1);
     assert.equal((await rpc("storePublicProduct", "GET", { slug: pid })).name, value.name);
+    await assert.rejects(() =>
+      rpc(
+        "saveStoreProduct",
+        "POST",
+        { ...value, expectedRevision: 1 },
+        cookie,
+        "https://untrusted.example",
+      ),
+    );
     await assert.rejects(() => rpc("saveStoreProduct", "POST", value, cookie));
-    const loaded=await rpc('loadStoreProduct','GET',{id:pid},cookie);assert.equal(typeof loaded.active,'boolean');assert.equal(typeof loaded.featured,'boolean');
-    assert.equal((await rpc('saveStoreProduct','POST',{...value,expectedRevision:loaded.revision,active:loaded.active,featured:loaded.featured},cookie)).revision,2);
+    const loaded = await rpc("loadStoreProduct", "GET", { id: pid }, cookie);
+    assert.equal(typeof loaded.active, "boolean");
+    assert.equal(typeof loaded.featured, "boolean");
+    assert.equal(
+      (
+        await rpc(
+          "saveStoreProduct",
+          "POST",
+          {
+            ...value,
+            expectedRevision: loaded.revision,
+            active: loaded.active,
+            featured: loaded.featured,
+          },
+          cookie,
+        )
+      ).revision,
+      2,
+    );
     const page = await fetch(base + "/product/" + pid);
     assert.equal(page.status, 200);
     assert.ok((await page.text()).includes(value.name));
+    const designKey = "qa-" + pid,
+      designSlug = "/" + designKey;
+    await assert.rejects(() =>
+      rpc("editorAdminOperation", "POST", { op: "getPageByKey", key: designKey, scope: "default" }),
+    );
+    const saved = await rpc(
+      "editorAdminOperation",
+      "POST",
+      {
+        op: "saveDraftAtomic",
+        input: {
+          pageKey: designKey,
+          pageType: "home",
+          slug: designSlug,
+          title: "Synthetic built design",
+          schemaVersion: "1.0.0",
+          draftDocument: createDefaultHomepageDocument(),
+          checksum: "untrusted-client-value",
+          expectedDraftRevision: 0,
+          storeScope: "default",
+        },
+      },
+      cookie,
+    );
+    assert.equal(saved.ok, true);
+    editorPageId = JSON.parse(saved.json).page.id;
+    assert.equal(
+      await rpc("editorPublishedPage", "GET", { slug: designSlug, scope: "default" }),
+      null,
+    );
+    const published = await rpc(
+      "editorAdminOperation",
+      "POST",
+      {
+        op: "publishDraftAtomic",
+        input: {
+          pageId: editorPageId,
+          expectedDraftRevision: 1,
+          expectedPublishedRevision: 0,
+          releaseNotes: null,
+          storeScope: "default",
+        },
+      },
+      cookie,
+    );
+    assert.equal(published.ok, true);
+    const conflict = await rpc(
+      "editorAdminOperation",
+      "POST",
+      {
+        op: "publishDraftAtomic",
+        input: {
+          pageId: editorPageId,
+          expectedDraftRevision: 1,
+          expectedPublishedRevision: 0,
+          releaseNotes: null,
+          storeScope: "default",
+        },
+      },
+      cookie,
+    );
+    assert.equal(conflict.ok, false);
+    assert.equal(conflict.error.code, "PUBLISHED_REVISION_CONFLICT");
+    assert.equal(
+      (await rpc("editorPublishedPage", "GET", { slug: designSlug, scope: "default" }))
+        .publishedRevision,
+      1,
+    );
     await stop();
     await start();
     assert.equal((await rpc("loadStoreProduct", "GET", { id: pid }, cookie)).revision, 2);
     assert.equal((await rpc("storePublicProduct", "GET", { slug: pid })).price, 42.5);
+    assert.equal(
+      (await rpc("editorPublishedPage", "GET", { slug: designSlug, scope: "default" }))
+        .publishedRevision,
+      1,
+    );
+    await database().execute("DELETE FROM app_roles WHERE user_id=?", [userId]);
+    await assert.rejects(() =>
+      rpc(
+        "editorAdminOperation",
+        "POST",
+        { op: "getDraftByPageId", id: editorPageId, scope: "default" },
+        cookie,
+      ),
+    );
   } finally {
     await stop();
+    if (editorPageId) {
+      await database().execute("UPDATE store_pages SET published_version_id=NULL WHERE id=?", [
+        editorPageId,
+      ]);
+      await database().execute("DELETE FROM store_page_publishing_events WHERE page_id=?", [
+        editorPageId,
+      ]);
+      await database().execute("DELETE FROM store_page_drafts WHERE page_id=?", [editorPageId]);
+      await database().execute("DELETE FROM store_page_versions WHERE page_id=?", [editorPageId]);
+      await database().execute("DELETE FROM store_pages WHERE id=?", [editorPageId]);
+    }
     if (userId) {
       await database().execute("DELETE FROM store_admin_audit WHERE actor_id=?", [userId]);
       await database().execute("DELETE FROM products WHERE id=?", [pid]);

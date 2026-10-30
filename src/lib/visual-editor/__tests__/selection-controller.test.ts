@@ -37,8 +37,10 @@ const TEST_CATEGORIES: Category[] = [
     slug: "telescopes-optics",
     description: "Deep sky instruments",
     image_url: null,
-    display_order: 1,
+    sort_order: 1,
     created_at: "2026-01-01T00:00:00Z",
+    active: true,
+    updated_at: "2026-01-01T00:00:00Z",
   },
   {
     id: "cat-lighting",
@@ -46,8 +48,10 @@ const TEST_CATEGORIES: Category[] = [
     slug: "cosmic-lighting",
     description: "Nebula lamps",
     image_url: null,
-    display_order: 2,
+    sort_order: 2,
     created_at: "2026-01-01T00:00:00Z",
+    active: true,
+    updated_at: "2026-01-01T00:00:00Z",
   },
 ];
 
@@ -67,6 +71,7 @@ const TEST_PRODUCTS: ProductCardData[] = [
     image: "/img/orion.jpg",
     imageAlt: "Orion Nebula Projector",
     images: [],
+    created_at: "2026-01-01T00:00:00Z",
   },
 ];
 

@@ -1,3 +1,9 @@
+## Verified local checkpoint — 30 October 2026
+
+This section supersedes the historical 29 October notes below. Production, real customers, payments, deployments and DNS remain unchanged. The Store backup exception is already authorized; missing original data does not block reversible local development.
+
+Current changes are confined to migration branches and disposable local fixtures. Preserve earlier checkpoints and private DB/media backups. Media removals are reversible metadata changes; do not purge bytes. Published design rollback appends a new version/event instead of editing historical snapshots. Do not edit applied migration bytes or reset the migration ledger. Production remains on its original services; no DNS or financial rollback was needed.
+
 # Rollback plan
 
 ## Verified foundation checkpoint — 2026-10-29

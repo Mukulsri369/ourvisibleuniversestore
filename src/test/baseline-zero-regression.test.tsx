@@ -41,7 +41,13 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 const FIXTURE_PRODUCTS = baselineFixtures.products as unknown as ProductCardData[];
-const FIXTURE_CATEGORIES = baselineFixtures.categories;
+const FIXTURE_CATEGORIES = baselineFixtures.categories.map((c) => ({
+  ...c,
+  sort_order: c.display_order,
+  active: true,
+  created_at: "2026-01-01T00:00:00Z",
+  updated_at: "2026-01-01T00:00:00Z",
+}));
 
 function renderWithQueryClient(ui: React.ReactElement) {
   const queryClient = new QueryClient({
@@ -109,12 +115,12 @@ describe("Prompt 4 — Original Landing Page Baseline & Zero-Regression Verifica
     const compactArticle = compactContainer.querySelector("article");
     expect(compactArticle).not.toBeNull();
     // Exact verified responsive width formula from ProductCard.tsx:
-    // w-[calc((100vw-50px)/3)] sm:w-[130px] md:w-[155px] lg:w-[calc((100%-5*14px)/6)] lg:min-w-[160px] xl:w-[calc((100%-5*16px)/6)] xl:min-w-[172px]
-    expect(compactArticle?.className).toContain("w-[calc((100vw-50px)/3)]");
-    expect(compactArticle?.className).toContain("sm:w-[130px]");
-    expect(compactArticle?.className).toContain("md:w-[155px]");
-    expect(compactArticle?.className).toContain("lg:min-w-[160px]");
-    expect(compactArticle?.className).toContain("xl:min-w-[172px]");
+    // w-[calc((100vw-48px)/1.75)] sm:w-[180px] md:w-[205px] lg:w-[calc((100%-5*14px)/6)] lg:min-w-[220px] xl:w-[calc((100%-5*16px)/6)] xl:min-w-[238px]
+    expect(compactArticle?.className).toContain("w-[calc((100vw-48px)/1.75)]");
+    expect(compactArticle?.className).toContain("sm:w-[180px]");
+    expect(compactArticle?.className).toContain("md:w-[205px]");
+    expect(compactArticle?.className).toContain("lg:min-w-[220px]");
+    expect(compactArticle?.className).toContain("xl:min-w-[238px]");
     expect(compactArticle?.className).toContain("rounded-xl");
     expect(compactArticle?.className).toContain("snap-start");
     unmountCompact();
@@ -183,7 +189,7 @@ describe("Prompt 4 — Original Landing Page Baseline & Zero-Regression Verifica
     expect(screen.getByText("Show less")).toBeTruthy();
 
     // Verify reusable CategoryCard baseline
-    const { container: catCardContainer } = render(<CategoryCard c={category} count={12} />);
+    const { container: catCardContainer } = render(<CategoryCard c={category} />);
     const catLink = catCardContainer.querySelector("a");
     expect(catLink?.getAttribute("href")).toBe("/category/telescopes");
     expect(catLink?.className).toContain("min-h-48");

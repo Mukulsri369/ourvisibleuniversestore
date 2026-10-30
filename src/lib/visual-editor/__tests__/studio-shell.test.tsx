@@ -44,7 +44,9 @@ const SAMPLE_CATEGORIES: Category[] = [
     slug: "telescopes-optics",
     description: "Deep-sky optical instruments",
     image_url: "/img/telescopes.jpg",
-    display_order: 1,
+    sort_order: 1,
+    active: true,
+    updated_at: "2026-01-01T00:00:00Z",
     created_at: "2026-01-01T00:00:00Z",
   },
   {
@@ -53,7 +55,9 @@ const SAMPLE_CATEGORIES: Category[] = [
     slug: "celestial-lamps",
     description: "Ambient planetary lighting",
     image_url: "/img/lamps.jpg",
-    display_order: 2,
+    sort_order: 2,
+    active: true,
+    updated_at: "2026-01-01T00:00:00Z",
     created_at: "2026-01-01T00:00:00Z",
   },
 ];
@@ -67,6 +71,7 @@ const SAMPLE_PRODUCTS: ProductCardData[] = [
     price: 499,
     currency: "USD",
     affiliate_url: "https://example.com/affiliate/orion-telescope",
+    created_at: "2026-01-01T00:00:00Z",
     featured: true,
     category_id: "cat-telescopes",
     category_ids: ["cat-telescopes"],
@@ -83,6 +88,7 @@ const SAMPLE_PRODUCTS: ProductCardData[] = [
     price: 89,
     currency: "USD",
     affiliate_url: "https://example.com/affiliate/moon-lamp",
+    created_at: "2026-01-01T00:00:00Z",
     featured: true,
     category_id: "cat-lamps",
     category_ids: ["cat-lamps"],
@@ -103,12 +109,7 @@ const SAMPLE_HOME_DATA: HomeData = {
 const SAMPLE_SETTINGS: Settings = {
   id: 1,
   store_name: "Our Visible Universe",
-  tagline: "Explore the cosmos",
   logo_url: null,
-  hero_title: null,
-  hero_subtitle: null,
-  hero_cta_label: null,
-  hero_image_url: null,
   footer_text: "Explore the universe. Discover something extraordinary.",
   affiliate_disclosure: "We may earn a commission from qualifying purchases.",
   instagram_url: "https://instagram.com/ourvisibleuniverse",
@@ -179,9 +180,9 @@ describe("Prompt 9 — Store Design Studio Route, Authorization, Shell & Real St
     expect(adminRouteSource).toContain("admin-fullscreen-studio-layout");
     expect(adminRouteSource).toContain("h-screen w-screen overflow-hidden");
 
-    // 3. Supabase auth + is_admin() RPC enforcement preserved on /_admin
-    expect(adminRouteSource).toContain("supabase.auth.getUser()");
-    expect(adminRouteSource).toContain('supabase.rpc("is_admin")');
+    // 3. Independent session and fresh server-side role enforcement on /_admin
+    expect(adminRouteSource).toContain("storeAdminIdentity()");
+    expect(adminRouteSource).toContain("@/lib/store-api.functions");
 
     // 4. Lazy-loaded StudioShell boundary and noindex meta on /_admin/admin/design
     expect(designRouteSource).toContain('createFileRoute("/_admin/admin/design")');
@@ -193,7 +194,7 @@ describe("Prompt 9 — Store Design Studio Route, Authorization, Shell & Real St
 
   it("blocks anonymous and non-admin users from accessing draft persistence in StudioShell", async () => {
     const anonAdapter = new InMemoryTransactionalPersistenceAdapter({
-      role: "anon",
+      role: "anonymous",
     });
 
     renderStudio(anonAdapter);
@@ -230,8 +231,8 @@ describe("Prompt 9 — Store Design Studio Route, Authorization, Shell & Real St
     const primaryStage = stages[0];
 
     // 1. Real StoreHeader and StoreFooter rendered once per stage (not duplicated)
-    const headers = primaryStage.querySelectorAll("header");
-    const footers = primaryStage.querySelectorAll("footer");
+    const headers = primaryStage.querySelectorAll('[data-store-chrome="header"]');
+    const footers = primaryStage.querySelectorAll('[data-store-chrome="footer"]');
     expect(headers.length).toBe(1);
     expect(footers.length).toBe(1);
 

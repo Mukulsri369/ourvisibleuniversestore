@@ -5,7 +5,7 @@ import {
 } from "./persistence-types";
 import { mapDatabaseErrorToPersistenceError } from "./persistence-errors";
 import { validateStoreScope } from "./persistence-validation";
-import { defaultPersistenceAdapter } from "./supabase-persistence-adapter";
+import { defaultPersistenceAdapter } from "./independent-persistence-adapter";
 
 export interface PageRepositoryOptions {
   adapter?: PersistenceDatabaseAdapter;

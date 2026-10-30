@@ -31,6 +31,14 @@ interface CachedValidationEntry {
   document: PageDocument;
   checksum: string;
   byteLength: number;
+  inputSerialized: string;
+  canonicalSerialized: string;
+}
+
+function freezeValidatedTree(value: unknown): void {
+  if (value === null || typeof value !== "object" || Object.isFrozen(value)) return;
+  for (const child of Object.values(value)) freezeValidatedTree(child);
+  Object.freeze(value);
 }
 
 const VALIDATED_OBJECT_CACHE = new WeakMap<object, CachedValidationEntry>();
@@ -163,8 +171,11 @@ export function validateDocumentForPersistence(
   const inputChecksum = computePageDocumentChecksum(serialized);
   if (registry === defaultComponentRegistry) {
     const cachedByHash = VALIDATED_CHECKSUM_CACHE.get(inputChecksum);
-    if (cachedByHash) {
-      VALIDATED_OBJECT_CACHE.set(candidate, cachedByHash);
+    if (
+      cachedByHash &&
+      (serialized === cachedByHash.inputSerialized ||
+        serialized === cachedByHash.canonicalSerialized)
+    ) {
       return {
         document: cachedByHash.document,
         checksum: cachedByHash.checksum,
@@ -225,17 +236,25 @@ export function validateDocumentForPersistence(
 
   const canonicalSerialized = JSON.stringify(doc);
   const checksum = computePageDocumentChecksum(canonicalSerialized);
-  const entry: CachedValidationEntry = { document: doc, checksum, byteLength };
-  VALIDATED_OBJECT_CACHE.set(doc, entry);
-  VALIDATED_OBJECT_CACHE.set(candidate, entry);
-
+  // Only the detached, recursively frozen parse result is eligible for a reference
+  // cache hit. Caller-owned mutable objects must be serialized and compared again.
+  freezeValidatedTree(doc);
+  const entry: CachedValidationEntry = {
+    document: doc,
+    checksum,
+    byteLength,
+    inputSerialized: serialized,
+    canonicalSerialized,
+  };
   if (registry === defaultComponentRegistry) {
-    if (VALIDATED_CHECKSUM_CACHE.size >= MAX_CHECKSUM_CACHE_ENTRIES) {
-      const oldestKey = VALIDATED_CHECKSUM_CACHE.keys().next().value;
-      if (oldestKey) VALIDATED_CHECKSUM_CACHE.delete(oldestKey);
-    }
+    VALIDATED_OBJECT_CACHE.set(doc, entry);
     VALIDATED_CHECKSUM_CACHE.set(inputChecksum, entry);
     VALIDATED_CHECKSUM_CACHE.set(checksum, entry);
+    while (VALIDATED_CHECKSUM_CACHE.size > MAX_CHECKSUM_CACHE_ENTRIES) {
+      const oldestKey = VALIDATED_CHECKSUM_CACHE.keys().next().value;
+      if (oldestKey === undefined) break;
+      VALIDATED_CHECKSUM_CACHE.delete(oldestKey);
+    }
   }
 
   return {

@@ -15,7 +15,17 @@ const MOCK_GEOMETRY: ElementGeometryMeasurement = {
   targetId: "home-planet-hero",
   nodeId: "home-planet-hero",
   instanceId: null,
-  instanceType: null,
+  overlayRect: {
+    left: 24,
+    top: 60,
+    width: 1200,
+    height: 480,
+    visibleRect: { left: 24, top: 60, width: 1200, height: 480, right: 1224, bottom: 540 },
+  },
+  canvasScale: 1,
+  hasCssTransform: false,
+  fragmentCount: 1,
+  measuredAt: 0,
   isValid: true,
   visibilityStatus: "visible",
   renderedWidthPx: 1200,
@@ -48,14 +58,6 @@ const MOCK_GEOMETRY: ElementGeometryMeasurement = {
     isClipped: false,
     isOffscreen: false,
     visibleRatio: 1,
-    visibleCanvasRect: {
-      left: 24,
-      top: 60,
-      width: 1200,
-      height: 480,
-      right: 1224,
-      bottom: 540,
-    },
     clippedTop: false,
     clippedBottom: false,
     clippedLeft: false,
@@ -103,7 +105,7 @@ describe("Prompt 10 — Selection Overlay, Hover Outline, Labels, Dimensions & B
           offsetTopPx: 4,
           offsetLeftPx: 4,
           maxWidthPx: 280,
-          dimensionPillPlacement: "outside_bottom_right",
+          dimensionPillPlacement: "bottom_right",
         }}
       />,
     );
@@ -119,17 +121,20 @@ describe("Prompt 10 — Selection Overlay, Hover Outline, Labels, Dimensions & B
   it("renders ElementDimensions and InspectorGeometryComparisonCard distinguishing rendered DOM geometry from configured design rules", () => {
     render(
       <div>
-        <ElementDimensions widthPx={288.4} heightPx={370.2} placement="outside_bottom_right" />
+        <ElementDimensions widthPx={288.4} heightPx={370.2} placement="bottom_right" />
         <InspectorGeometryComparisonCard
           renderedMeasurement={MOCK_GEOMETRY}
           configuredGeometry={{
             breakpoint: "desktop",
             width: { value: 100, unit: "%" },
             height: "auto",
-            minWidth: "auto",
+
             maxWidth: { value: 1280, unit: "px" },
-            minHeight: "auto",
-            maxHeight: "auto",
+            minHeight: undefined,
+            gridColumns: undefined,
+            padding: undefined,
+            margin: undefined,
+
             aspectRatio: "16:9",
             layoutMode: "grid",
             positionMode: "relative",
@@ -165,12 +170,16 @@ describe("Prompt 10 — Selection Overlay, Hover Outline, Labels, Dimensions & B
             label: "Featured Products",
             componentType: "ProductScrollRailSection",
             isRuntimeInstance: false,
+            isGlobalChrome: false,
+            locked: false,
           },
           {
             id: "home-featured-products::product::prod-101",
             label: "Product Card (Deep Space Refractor 90mm)",
             componentType: "ProductCard",
             isRuntimeInstance: true,
+            isGlobalChrome: false,
+            locked: false,
           },
         ]}
         activeId="home-featured-products::product::prod-101"

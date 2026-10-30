@@ -88,8 +88,10 @@ import { StudioStatusBar } from "./StudioStatusBar";
 import { StudioToolbar } from "./StudioToolbar";
 
 export interface StudioShellProps {
+  /** Session-scoped local recovery isolation; production route supplies the authenticated ID. */
+  userScope?: string;
   /**
-   * Optional persistence adapter override (used in integration tests; defaults to real Supabase adapter).
+   * Optional persistence adapter override (used in integration tests; defaults to independent MariaDB transport).
    */
   persistenceAdapter?: PersistenceDatabaseAdapter;
   /**
@@ -117,6 +119,7 @@ const EMPTY_HOME_DATA: HomeData = {
 };
 
 export function StudioShell({
+  userScope = "admin",
   persistenceAdapter,
   initialHomeData,
   initialCategories,
@@ -259,6 +262,7 @@ export function StudioShell({
 
       const outcome = await loadStudioWorkspaceDraft({
         adapter: persistenceAdapter,
+        userScope,
         pageKey: "home",
         pageSlug: "/",
       });
@@ -284,14 +288,12 @@ export function StudioShell({
           outcome.recoveryEvaluation.status === "stale_against_server");
 
       setRecoveryEvaluation(outcome.recoveryEvaluation ?? null);
-      setShowRecoveryDialog(Boolean(hasValidRecovery && outcome.recoveryEvaluation?.status === "recoverable"));
+      setShowRecoveryDialog(
+        Boolean(hasValidRecovery && outcome.recoveryEvaluation?.status === "recoverable"),
+      );
 
       setPersistenceState({
-        status: outcome.error
-          ? "error"
-          : hasValidRecovery
-            ? "recovery_available"
-            : "saved",
+        status: outcome.error ? "error" : hasValidRecovery ? "recovery_available" : "saved",
         initializationSource: outcome.source,
         draftRevision: outcome.draftRevision,
         publishedRevision: outcome.publishedRevision,
@@ -309,7 +311,7 @@ export function StudioShell({
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [persistenceAdapter, clearAutosaveTimers],
+    [persistenceAdapter, userScope, clearAutosaveTimers],
   );
 
   useEffect(() => {
@@ -346,12 +348,7 @@ export function StudioShell({
           isOnline: true,
           retryAttempt: 0,
           error: prev.status === "offline" ? null : prev.error,
-          status:
-            prev.status === "conflict"
-              ? "conflict"
-              : dirty
-                ? "unsaved"
-                : "saved",
+          status: prev.status === "conflict" ? "conflict" : dirty ? "unsaved" : "saved",
         };
       });
     };
@@ -368,13 +365,14 @@ export function StudioShell({
   useEffect(() => {
     if (!documentState.isDirty) {
       if (persistenceState.status === "saved") {
-        clearLocalDraftRecoverySnapshot("home");
+        clearLocalDraftRecoverySnapshot("home", { userScope });
       }
       return;
     }
 
     const latestTxLabel = getNextUndoLabel(historyState);
     saveLocalDraftRecoverySnapshot("home", documentState.workingDocument, {
+      userScope,
       baseDraftRevision: persistenceState.draftRevision,
       lastTransactionLabel: latestTxLabel,
     });
@@ -394,6 +392,7 @@ export function StudioShell({
     persistenceState.draftRevision,
     persistenceState.status,
     historyState,
+    userScope,
   ]);
 
   // 4. Synchronize Selection State if workingDocument or renderMode changes
@@ -513,14 +512,14 @@ export function StudioShell({
             selectionSource: prev.selectionSource,
             interactionMode: prev.interactionMode,
           },
-          documentState.workingDocument,
+          latestWorkingDocumentRef.current,
           nodeId,
           source,
           prev.renderMode,
         );
 
         const ancestorsToExpand = getAncestorLayerIdsForTarget(
-          documentState.workingDocument,
+          latestWorkingDocumentRef.current,
           nextSel.selectedNodeId,
         );
         let nextExpanded = prev.expandedLayerIds;
@@ -556,38 +555,41 @@ export function StudioShell({
         }));
       }
     },
-    [documentState.workingDocument],
+    [],
   );
 
-  const handleHoverNode = useCallback(
-    (nodeId: string | null) => {
-      setUiState((prev) => {
-        const nextHov = hoverStudioTarget(
-          {
-            selectedNodeId: prev.selectedNodeId,
-            hoveredNodeId: prev.hoveredNodeId,
-            previousSelectedNodeId: prev.previousSelectedNodeId,
-            selectionSource: prev.selectionSource,
-            interactionMode: prev.interactionMode,
-          },
-          documentState.workingDocument,
-          nodeId,
-          prev.renderMode,
-        );
-        if (
-          nextHov.hoveredNodeId === prev.hoveredNodeId &&
-          nextHov.interactionMode === prev.interactionMode
-        ) {
-          return prev;
-        }
-        return {
-          ...prev,
-          hoveredNodeId: nextHov.hoveredNodeId,
-          interactionMode: nextHov.interactionMode,
-        };
-      });
-    },
-    [documentState.workingDocument],
+  const handleHoverNode = useCallback((nodeId: string | null) => {
+    setUiState((prev) => {
+      const nextHov = hoverStudioTarget(
+        {
+          selectedNodeId: prev.selectedNodeId,
+          hoveredNodeId: prev.hoveredNodeId,
+          previousSelectedNodeId: prev.previousSelectedNodeId,
+          selectionSource: prev.selectionSource,
+          interactionMode: prev.interactionMode,
+        },
+        latestWorkingDocumentRef.current,
+        nodeId,
+        prev.renderMode,
+      );
+      if (
+        nextHov.hoveredNodeId === prev.hoveredNodeId &&
+        nextHov.interactionMode === prev.interactionMode
+      ) {
+        return prev;
+      }
+      return {
+        ...prev,
+        hoveredNodeId: nextHov.hoveredNodeId,
+        interactionMode: nextHov.interactionMode,
+      };
+    });
+  }, []);
+
+  const handleCanvasSelect = useCallback(
+    (id: string | null, source?: StudioSelectionSource) =>
+      handleSelectNode(id, { source: source ?? "canvas_click" }),
+    [handleSelectNode],
   );
 
   const handleToggleExpandLayer = useCallback((nodeId: string) => {
@@ -783,9 +785,7 @@ export function StudioShell({
             ? "shape.cornerRadius"
             : "appearance.opacity";
       const isReset =
-        patch.backgroundColor === null ||
-        patch.cornerRadiusPx === null ||
-        patch.opacity === null;
+        patch.backgroundColor === null || patch.cornerRadiusPx === null || patch.opacity === null;
       commitPropertyMutationWithHistory(res, {
         targetNodeId: selectedId,
         actionType: isReset ? "property.reset" : "property.appearance",
@@ -1135,7 +1135,7 @@ export function StudioShell({
             slug: "/",
             title: submittedDoc.name || "Storefront Homepage",
           },
-          { adapter: persistenceAdapter },
+          { adapter: persistenceAdapter, userScope },
         );
 
         isSavingRef.current = false;
@@ -1143,10 +1143,7 @@ export function StudioShell({
         if (outcome.ok) {
           latestPersistedDocumentRef.current = outcome.persistedDocument;
           latestDraftRevisionRef.current = outcome.draftRevision;
-          lastSavedGenerationRef.current = Math.max(
-            lastSavedGenerationRef.current,
-            submittedGen,
-          );
+          lastSavedGenerationRef.current = Math.max(lastSavedGenerationRef.current, submittedGen);
 
           const currentWorkingDoc = latestWorkingDocumentRef.current;
           const stillHasNewerChanges =
@@ -1161,11 +1158,7 @@ export function StudioShell({
 
           setPersistenceState((prev) => ({
             ...prev,
-            status: stillHasNewerChanges
-              ? isOnlineRef.current
-                ? "unsaved"
-                : "offline"
-              : "saved",
+            status: stillHasNewerChanges ? (isOnlineRef.current ? "unsaved" : "offline") : "saved",
             draftRevision: outcome.draftRevision,
             publishedRevision: outcome.publishedRevision,
             lastSavedAt: outcome.savedAt,
@@ -1225,10 +1218,7 @@ export function StudioShell({
             );
 
           if (canRetry) {
-            const backoffMs = computeRetryBackoffDelayMs(
-              nextAttempt,
-              autosaveBaseRetryDelayMs,
-            );
+            const backoffMs = computeRetryBackoffDelayMs(nextAttempt, autosaveBaseRetryDelayMs);
             if (retryTimerRef.current !== null) {
               clearTimeout(retryTimerRef.current);
             }
@@ -1242,7 +1232,7 @@ export function StudioShell({
             ...prev,
             status: "error",
             error: classified.error,
-            retryAttempt: canRetry ? nextAttempt : prev.retryAttempt ?? 0,
+            retryAttempt: canRetry ? nextAttempt : (prev.retryAttempt ?? 0),
           };
         });
 
@@ -1251,12 +1241,7 @@ export function StudioShell({
         isSavingRef.current = false;
       }
     },
-    [
-      clearAutosaveTimers,
-      persistenceAdapter,
-      autosaveMaxRetries,
-      autosaveBaseRetryDelayMs,
-    ],
+    [clearAutosaveTimers, persistenceAdapter, autosaveMaxRetries, autosaveBaseRetryDelayMs],
   );
 
   const handleSaveDraft = useCallback(async () => {
@@ -1332,7 +1317,7 @@ export function StudioShell({
 
   const handleResetWorkingDraft = useCallback(() => {
     clearAutosaveTimers();
-    clearLocalDraftRecoverySnapshot("home");
+    clearLocalDraftRecoverySnapshot("home", { userScope });
     setRecoveryEvaluation(null);
     setShowRecoveryDialog(false);
 
@@ -1341,19 +1326,20 @@ export function StudioShell({
       return;
     }
 
-    setHistoryState((prevHistory) =>
-      recordEditingTransaction(prevHistory, {
-        actionType: "document.revert",
-        label: "Revert to Saved Draft",
-        affectedNodeIds: [],
-        origin: "toolbar",
-        previousDocument: documentState.workingDocument,
-        nextDocument: restoredDoc,
-        previousSelectionId: uiState.selectedNodeId,
-        nextSelectionId: uiState.selectedNodeId,
-        coalesceKey: null,
-        allowCoalesce: false,
-      }).state,
+    setHistoryState(
+      (prevHistory) =>
+        recordEditingTransaction(prevHistory, {
+          actionType: "document.revert",
+          label: "Revert to Saved Draft",
+          affectedNodeIds: [],
+          origin: "toolbar",
+          previousDocument: documentState.workingDocument,
+          nextDocument: restoredDoc,
+          previousSelectionId: uiState.selectedNodeId,
+          nextSelectionId: uiState.selectedNodeId,
+          coalesceKey: null,
+          allowCoalesce: false,
+        }).state,
     );
 
     localGenerationRef.current += 1;
@@ -1392,19 +1378,20 @@ export function StudioShell({
     setShowRecoveryDialog(false);
     setRecoveryEvaluation(null);
 
-    setHistoryState((prevHistory) =>
-      recordEditingTransaction(prevHistory, {
-        actionType: "document.batch",
-        label: "Restore Unsaved Checkpoint",
-        affectedNodeIds: [],
-        origin: "toolbar",
-        previousDocument: documentState.workingDocument,
-        nextDocument: recoveredDoc,
-        previousSelectionId: uiState.selectedNodeId,
-        nextSelectionId: uiState.selectedNodeId,
-        coalesceKey: null,
-        allowCoalesce: false,
-      }).state,
+    setHistoryState(
+      (prevHistory) =>
+        recordEditingTransaction(prevHistory, {
+          actionType: "document.batch",
+          label: "Restore Unsaved Checkpoint",
+          affectedNodeIds: [],
+          origin: "toolbar",
+          previousDocument: documentState.workingDocument,
+          nextDocument: recoveredDoc,
+          previousSelectionId: uiState.selectedNodeId,
+          nextSelectionId: uiState.selectedNodeId,
+          coalesceKey: null,
+          allowCoalesce: false,
+        }).state,
     );
 
     applyCommittedDocumentChange(recoveredDoc);
@@ -1416,7 +1403,7 @@ export function StudioShell({
   ]);
 
   const handleDiscardRecoveryCheckpoint = useCallback(() => {
-    clearLocalDraftRecoverySnapshot("home");
+    clearLocalDraftRecoverySnapshot("home", { userScope });
     setShowRecoveryDialog(false);
     setRecoveryEvaluation(null);
     setPersistenceState((prev) => ({
@@ -1535,8 +1522,8 @@ export function StudioShell({
   const nextRedoLabel = getNextRedoLabel(historyState);
   const hasRecoveryCandidate = Boolean(
     recoveryEvaluation &&
-      (recoveryEvaluation.status === "recoverable" ||
-        recoveryEvaluation.status === "stale_against_server"),
+    (recoveryEvaluation.status === "recoverable" ||
+      recoveryEvaluation.status === "stale_against_server"),
   );
 
   const layersPanelElement = (
@@ -1653,7 +1640,7 @@ export function StudioShell({
       hoveredLabel={hoveredOverlayLabel}
       showRulers={uiState.showRulers}
       scrollRequestNodeId={scrollRequestNodeId}
-      onSelectNode={(id, source) => handleSelectNode(id, { source: source ?? "canvas_click" })}
+      onSelectNode={handleCanvasSelect}
       onHoverNode={handleHoverNode}
       onSelectedGeometryChange={setSelectedGeometry}
       onAvailableContainerWidthChange={setAvailableCanvasWidthPx}
@@ -1917,7 +1904,7 @@ export function StudioShell({
               <button
                 type="button"
                 onClick={() => {
-                  clearLocalDraftRecoverySnapshot("home");
+                  clearLocalDraftRecoverySnapshot("home", { userScope });
                   setShowUnsavedExitConfirm(false);
                   onNavigateToAdmin?.();
                 }}

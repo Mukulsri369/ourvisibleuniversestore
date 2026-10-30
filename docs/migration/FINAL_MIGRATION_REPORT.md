@@ -1,3 +1,9 @@
+## Verified local checkpoint — 30 October 2026
+
+This section supersedes the historical 29 October notes below. Production, real customers, payments, deployments and DNS remain unchanged. The Store backup exception is already authorized; missing original data does not block reversible local development.
+
+**INCOMPLETE — local development continues.** Store: full 239-test suite, TypeScript and Node build pass; independent product UI and editor draft persistence are browser-verified, with backend publish/version/restart checks. Public catalogue/admin/import/publishing UI and Academy offline/provider replacements remain outstanding. Hostinger has a conditional candidate and annual quote, not a deployment approval. Razorpay provider testing remains deferred/unverified. No production/customer/payment/DNS/hosting changes occurred.
+
 # Migration progress report — INCOMPLETE
 
 ## Verified foundation checkpoint — 2026-10-29

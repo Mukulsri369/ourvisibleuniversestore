@@ -1,3 +1,16 @@
+## Verified local checkpoint — 30 October 2026
+
+This section supersedes the historical 29 October notes below. Production, real customers, payments, deployments and DNS remain unchanged. The Store backup exception is already authorized; missing original data does not block reversible local development.
+
+- Store product UI checkpoint `2522c0a` is pushed on the migration branch. Independent sign-in, product creation/editing, images, list and public detail were exercised in the browser.
+- Editor drafts, page versions, authorized publishing/rollback and audit events now use independent MariaDB server functions. Browser draft save/reload works. Publishing/version-management controls are the next UI integration task.
+- Full Store suite: **239 passed, 0 failed, 0 skipped**. TypeScript and independent Node build pass. Combined backend suite: 11 passed; latest built-app/page-service regression: 2 passed; schema invariants: 2 passed. See EDITOR_MARIADB_CHECKPOINT_2026-10-30.md and raw evidence outside Git.
+- Remaining: public catalogue and remaining admin CRUD/import/price routes; publishing/history UI; complete Store business/mobile/security workflows; Academy offline/provider replacement. The new catalogue service has a real MariaDB test but is not yet connected to the public screens.
+- Razorpay provider testing remains deferred and unverified. No customer import or access restoration has occurred.
+- Hostinger annual Unlimited quote: ₹4,233.84 including current tax; eligibility is conditional. See HOSTINGER_VERIFIED_FACTS_2026-10-30.md. No purchase recommendation or authorization is implied.
+
+### Historical foundation notes
+
 ## Store backup exception authorized — 30 October 2026
 
 The user explicitly authorized local Store development and MariaDB migration without a verified Lovable Store backup. The GitHub repository is the source of truth for code. Missing data must be documented and never invented. This removes the backup prerequisite for reversible local development and testing only; it does not authorize production deletion, deployment, purchases, DNS/payment changes, customer access modifications or Lovable cancellation.

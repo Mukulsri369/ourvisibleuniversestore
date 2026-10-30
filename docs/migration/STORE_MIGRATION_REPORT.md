@@ -1,3 +1,9 @@
+## Verified local checkpoint — 30 October 2026
+
+This section supersedes the historical 29 October notes below. Production, real customers, payments, deployments and DNS remain unchanged. The Store backup exception is already authorized; missing original data does not block reversible local development.
+
+Independent product/admin sign-in/media and editor persistence are implemented and locally exercised. The complete Store suite now passes 239 tests; TypeScript and Node build pass. Detailed changes and test contract mappings are in EDITOR_MARIADB_CHECKPOINT_2026-10-30.md. Full Store runtime independence is not yet achieved: public catalogue queries, remaining admin management/import/price paths, publishing/history controls and email delivery still require completion.
+
 ## Store backup exception authorized — 30 October 2026
 
 The user explicitly authorized local Store development and MariaDB migration without a verified Lovable Store backup. The GitHub repository is the source of truth for code. Missing data must be documented and never invented. This removes the backup prerequisite for reversible local development and testing only; it does not authorize production deletion, deployment, purchases, DNS/payment changes, customer access modifications or Lovable cancellation.

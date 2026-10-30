@@ -1,14 +1,21 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createDefaultHomepageDocument } from "../homepage";
 import { updateNodeById } from "../utils/node-tree";
 import {
-  clearLocalDraftRecoverySnapshot,
+  clearLocalDraftRecoveryCheckpoint,
   evaluateDraftRecoveryCandidate,
-  getDraftRecoveryStorageKey,
-  readLocalDraftRecoverySnapshot,
-  RECOVERY_SNAPSHOT_MAX_AGE_MS,
-  writeLocalDraftRecoverySnapshot,
+  buildRecoveryStorageKey,
+  readLocalDraftRecoveryCheckpoint,
+  MAX_RECOVERY_RETENTION_MS,
+  writeLocalDraftRecoveryCheckpoint,
 } from "../recovery";
+
+const scope = { pageKey: "home", userScope: "qa-admin" };
+beforeEach(() => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date("2026-04-20T12:05:00Z"));
+});
+afterEach(() => vi.useRealTimers());
 
 function createMemoryStorage(): Pick<Storage, "getItem" | "setItem" | "removeItem"> {
   const map = new Map<string, string>();
@@ -27,30 +34,28 @@ describe("recovery — Session-Scoped Unsaved Draft Recovery & Stale/Security Gu
   it("writes, validates, and evaluates a recoverable local unsaved checkpoint when it differs from the server draft", () => {
     const storage = createMemoryStorage();
     const serverDoc = createDefaultHomepageDocument();
-    const unsavedDoc = updateNodeById(serverDoc, "home-hero-planet", (n) => ({
+    const unsavedDoc = updateNodeById(serverDoc, "home-planet-hero", (n) => ({
       ...n,
-      props: { ...n.props, headline: "Unsaved Local Hero Headline" },
+      props: { ...n.props, title: "Unsaved Local Hero Headline" },
     }));
 
-    const written = writeLocalDraftRecoverySnapshot(
-      {
-        pageKey: "home",
-        document: unsavedDoc,
-        baseDraftRevision: 3,
-        localEditGeneration: 4,
-        savedAt: "2026-04-20T12:00:00.000Z",
-      },
+    const written = writeLocalDraftRecoveryCheckpoint({
+      pageKey: "home",
+      document: unsavedDoc,
+      baseDraftRevision: 3,
+      nowMs: Date.parse("2026-04-20T12:00:00.000Z"),
       storage,
-    );
+      userScope: "qa-admin",
+    });
     expect(written).toBe(true);
 
-    const read = readLocalDraftRecoverySnapshot("home", storage);
-    expect(read.ok).toBe(true);
-    expect(read.envelope?.baseDraftRevision).toBe(3);
+    const read = readLocalDraftRecoveryCheckpoint(scope, { storage });
+    expect(read).not.toBeNull();
+    expect(read?.baseDraftRevision).toBe(3);
 
     const evaluation = evaluateDraftRecoveryCandidate({
-      envelope: read.envelope,
-      pageKey: "home",
+      scope,
+      storage,
       serverDocument: serverDoc,
       serverDraftRevision: 3,
       nowMs: new Date("2026-04-20T12:05:00.000Z").getTime(),
@@ -58,34 +63,32 @@ describe("recovery — Session-Scoped Unsaved Draft Recovery & Stale/Security Gu
 
     expect(evaluation.status).toBe("recoverable");
     if (evaluation.status === "recoverable") {
-      expect(evaluation.isNewerServerRevision).toBe(false);
-      expect(evaluation.envelope.document).toEqual(unsavedDoc);
+      expect(evaluation.checkpoint.baseDraftRevision).toBe(evaluation.serverDraftRevision);
+      expect(evaluation.checkpoint.document).toEqual(unsavedDoc);
     }
   });
 
   it("flags checkpoint as stale_against_server when the server draft revision has advanced past baseDraftRevision", () => {
     const storage = createMemoryStorage();
     const serverDoc = createDefaultHomepageDocument();
-    const unsavedDoc = updateNodeById(serverDoc, "home-hero-planet", (n) => ({
+    const unsavedDoc = updateNodeById(serverDoc, "home-planet-hero", (n) => ({
       ...n,
       name: "Checkpoint from Rev 2",
     }));
 
-    writeLocalDraftRecoverySnapshot(
-      {
-        pageKey: "home",
-        document: unsavedDoc,
-        baseDraftRevision: 2,
-        localEditGeneration: 1,
-        savedAt: "2026-04-20T12:00:00.000Z",
-      },
-      storage,
-    );
-
-    const read = readLocalDraftRecoverySnapshot("home", storage);
-    const evaluation = evaluateDraftRecoveryCandidate({
-      envelope: read.envelope,
+    writeLocalDraftRecoveryCheckpoint({
       pageKey: "home",
+      document: unsavedDoc,
+      baseDraftRevision: 2,
+      nowMs: Date.parse("2026-04-20T12:00:00.000Z"),
+      storage,
+      userScope: "qa-admin",
+    });
+
+    const read = readLocalDraftRecoveryCheckpoint(scope, { storage });
+    const evaluation = evaluateDraftRecoveryCandidate({
+      scope,
+      storage,
       serverDocument: serverDoc,
       serverDraftRevision: 5, // Server moved ahead to revision 5!
       nowMs: new Date("2026-04-20T12:05:00.000Z").getTime(),
@@ -93,7 +96,7 @@ describe("recovery — Session-Scoped Unsaved Draft Recovery & Stale/Security Gu
 
     expect(evaluation.status).toBe("stale_against_server");
     if (evaluation.status === "stale_against_server") {
-      expect(evaluation.isNewerServerRevision).toBe(true);
+      expect(evaluation.checkpoint.baseDraftRevision).toBeLessThan(evaluation.serverDraftRevision);
       expect(evaluation.serverDraftRevision).toBe(5);
     }
   });
@@ -102,96 +105,90 @@ describe("recovery — Session-Scoped Unsaved Draft Recovery & Stale/Security Gu
     const storage = createMemoryStorage();
     const serverDoc = createDefaultHomepageDocument();
 
-    writeLocalDraftRecoverySnapshot(
-      {
-        pageKey: "home",
-        document: serverDoc,
-        baseDraftRevision: 4,
-        localEditGeneration: 2,
-        savedAt: "2026-04-20T12:00:00.000Z",
-      },
-      storage,
-    );
-
-    const read = readLocalDraftRecoverySnapshot("home", storage);
-    const evaluation = evaluateDraftRecoveryCandidate({
-      envelope: read.envelope,
+    writeLocalDraftRecoveryCheckpoint({
       pageKey: "home",
+      document: serverDoc,
+      baseDraftRevision: 4,
+      nowMs: Date.parse("2026-04-20T12:00:00.000Z"),
+      storage,
+      userScope: "qa-admin",
+    });
+
+    const read = readLocalDraftRecoveryCheckpoint(scope, { storage });
+    const evaluation = evaluateDraftRecoveryCandidate({
+      scope,
+      storage,
       serverDocument: serverDoc,
       serverDraftRevision: 4,
       nowMs: new Date("2026-04-20T12:01:00.000Z").getTime(),
     });
 
-    expect(evaluation.status).toBe("identical_to_server");
+    expect(evaluation).toEqual({ status: "none", reason: "identical_to_server" });
+    expect(storage.getItem(buildRecoveryStorageKey(scope))).toBeNull();
   });
 
   it("rejects expired recovery checkpoints and clears invalid/corrupted or token-bearing payloads", () => {
     const storage = createMemoryStorage();
     const serverDoc = createDefaultHomepageDocument();
-    const unsavedDoc = updateNodeById(serverDoc, "home-hero-planet", (n) => ({
+    const unsavedDoc = updateNodeById(serverDoc, "home-planet-hero", (n) => ({
       ...n,
       name: "Expired Checkpoint",
     }));
 
-    writeLocalDraftRecoverySnapshot(
-      {
-        pageKey: "home",
-        document: unsavedDoc,
-        baseDraftRevision: 1,
-        localEditGeneration: 1,
-        savedAt: "2026-04-01T00:00:00.000Z",
-      },
-      storage,
-    );
-
-    const read = readLocalDraftRecoverySnapshot("home", storage);
-    const expiredEval = evaluateDraftRecoveryCandidate({
-      envelope: read.envelope,
+    writeLocalDraftRecoveryCheckpoint({
       pageKey: "home",
+      document: unsavedDoc,
+      baseDraftRevision: 1,
+      nowMs: Date.parse("2026-04-01T00:00:00.000Z"),
+      storage,
+      userScope: "qa-admin",
+    });
+
+    const read = readLocalDraftRecoveryCheckpoint(scope, { storage });
+    const expiredEval = evaluateDraftRecoveryCandidate({
+      scope,
+      storage,
       serverDocument: serverDoc,
       serverDraftRevision: 1,
-      nowMs: new Date("2026-04-01T00:00:00.000Z").getTime() + RECOVERY_SNAPSHOT_MAX_AGE_MS + 1000,
+      nowMs: new Date("2026-04-01T00:00:00.000Z").getTime() + MAX_RECOVERY_RETENTION_MS + 1000,
     });
-    expect(expiredEval.status).toBe("expired");
+    expect(expiredEval.status).toBe("none");
+    expect(storage.getItem(buildRecoveryStorageKey(scope))).toBeNull();
 
     // Attempt to write a payload containing a JWT / secret token -> must be rejected!
-    const docWithSecret = updateNodeById(serverDoc, "home-hero-planet", (n) => ({
+    const docWithSecret = updateNodeById(serverDoc, "home-planet-hero", (n) => ({
       ...n,
       props: {
         ...n.props,
-        headline:
+        title:
           "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
       },
     }));
 
-    const secretWritten = writeLocalDraftRecoverySnapshot(
-      {
-        pageKey: "home",
-        document: docWithSecret,
-        baseDraftRevision: 1,
-        localEditGeneration: 2,
-      },
+    const secretWritten = writeLocalDraftRecoveryCheckpoint({
+      pageKey: "home",
+      document: docWithSecret,
+      baseDraftRevision: 1,
       storage,
-    );
+      userScope: "qa-admin",
+    });
     expect(secretWritten).toBe(false);
 
     // Corrupted JSON in storage is automatically cleaned up on read
-    storage.setItem(getDraftRecoveryStorageKey("home"), "{corrupted-json");
-    const corruptedRead = readLocalDraftRecoverySnapshot("home", storage);
-    expect(corruptedRead.ok).toBe(false);
-    expect(storage.getItem(getDraftRecoveryStorageKey("home"))).toBeNull();
+    storage.setItem(buildRecoveryStorageKey(scope), "{corrupted-json");
+    const corruptedRead = readLocalDraftRecoveryCheckpoint(scope, { storage });
+    expect(corruptedRead).toBeNull();
+    expect(storage.getItem(buildRecoveryStorageKey(scope))).toBeNull();
 
     // Clear removes checkpoint cleanly
-    writeLocalDraftRecoverySnapshot(
-      {
-        pageKey: "home",
-        document: unsavedDoc,
-        baseDraftRevision: 1,
-        localEditGeneration: 1,
-      },
+    writeLocalDraftRecoveryCheckpoint({
+      pageKey: "home",
+      document: unsavedDoc,
+      baseDraftRevision: 1,
       storage,
-    );
-    clearLocalDraftRecoverySnapshot("home", storage);
-    expect(readLocalDraftRecoverySnapshot("home", storage).envelope).toBeNull();
+      userScope: "qa-admin",
+    });
+    clearLocalDraftRecoveryCheckpoint(scope, storage);
+    expect(readLocalDraftRecoveryCheckpoint(scope, { storage })).toBeNull();
   });
 });

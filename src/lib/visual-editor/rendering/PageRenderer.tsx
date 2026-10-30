@@ -14,6 +14,8 @@ import {
 } from "./RenderContext";
 import { RenderNode } from "./RenderNode";
 
+const EMPTY_CARD_TEMPLATES: Readonly<Record<string, NodeStyleBundle>> = Object.freeze({});
+
 export interface PageRendererProps {
   document: PageDocument;
   mode?: RenderMode;
@@ -46,7 +48,7 @@ export function PageRenderer({
   selectedNodeId = null,
   hoveredNodeId = null,
   renderGlobalChromeInDocument = false,
-  cardTemplates = {},
+  cardTemplates = EMPTY_CARD_TEMPLATES,
   onSelectNode,
   onHoverNode,
   onQuickPreviewProduct,
@@ -133,7 +135,7 @@ export function MiniComponentPreviewRenderer({
   breakpoint = "desktop",
   dataCatalog = EMPTY_STOREFRONT_DATA_CATALOG,
   registry = defaultComponentRegistry,
-  cardTemplates = {},
+  cardTemplates = EMPTY_CARD_TEMPLATES,
   sampleProduct = null,
   sampleCategory = null,
 }: MiniComponentPreviewRendererProps) {

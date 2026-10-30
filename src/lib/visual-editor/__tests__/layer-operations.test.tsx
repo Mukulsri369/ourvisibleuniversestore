@@ -47,8 +47,10 @@ const MOCK_CATEGORIES: Category[] = [
     slug: "cosmic-apparel",
     description: "Apparel from across the galaxy",
     image_url: "/img/apparel.jpg",
-    display_order: 1,
+    sort_order: 1,
     created_at: "2026-01-01T00:00:00.000Z",
+    active: true,
+    updated_at: "2026-01-01T00:00:00Z",
   },
 ];
 
@@ -68,6 +70,7 @@ const MOCK_PRODUCTS: ProductCardData[] = [
     image: "/img/hoodie.jpg",
     imageAlt: "Nebula Hoodie",
     images: [{ image_url: "/img/hoodie.jpg", alt_text: "Nebula Hoodie" }],
+    created_at: "2026-01-01T00:00:00Z",
   },
 ];
 
@@ -81,12 +84,7 @@ const MOCK_HOME_DATA: HomeData = {
 const MOCK_SETTINGS: Settings = {
   id: 1,
   store_name: "Cosmic Tester",
-  tagline: "Curated across the stars",
   logo_url: null,
-  hero_title: "Explore the Cosmos",
-  hero_subtitle: "Handpicked celestial goods",
-  hero_cta_label: "Shop Sector",
-  hero_image_url: null,
   footer_text: "Curated cosmic gifts",
   affiliate_disclosure: "As an associate we earn from qualifying purchases.",
   instagram_url: "https://instagram.com/cosmic",

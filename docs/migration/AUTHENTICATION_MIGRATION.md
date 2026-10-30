@@ -1,3 +1,9 @@
+## Verified local checkpoint — 30 October 2026
+
+This section supersedes the historical 29 October notes below. Production, real customers, payments, deployments and DNS remain unchanged. The Store backup exception is already authorized; missing original data does not block reversible local development.
+
+The built Store serves Better Auth and uses real cookie sessions for protected admin routes and server functions. Every private editor/product request checks the database role; writes recheck inside transactions and enforce origin. Browser sign-in/logout and built restart persistence passed. Store SMTP/reset/invitation delivery and OAuth are not operationally verified; legacy setup approval reads still require replacement. No client-controlled email setting grants a role.
+
 # Independent authentication
 
 ## Verified foundation checkpoint — 2026-10-29

@@ -13,7 +13,7 @@ import {
   validatePageKeyAndSlug,
   validateStoreScope,
 } from "./persistence-validation";
-import { defaultPersistenceAdapter } from "./supabase-persistence-adapter";
+import { defaultPersistenceAdapter } from "./independent-persistence-adapter";
 
 export interface DraftRepositoryOptions {
   adapter?: PersistenceDatabaseAdapter;

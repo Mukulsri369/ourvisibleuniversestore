@@ -1,3 +1,9 @@
+## Verified local checkpoint — 30 October 2026
+
+This section supersedes the historical 29 October notes below. Production, real customers, payments, deployments and DNS remain unchanged. The Store backup exception is already authorized; missing original data does not block reversible local development.
+
+Local Store command: npm run build:node, then node .output/server/index.mjs with private server environment supplied outside Git. Configure STORE_MEDIA_DIRECTORY as an absolute durable directory outside the checkout. Back up its bytes and store_media_objects with the database; test restore/redeploy persistence before hosting approval. Use Node 24 and two independent application environments/cookie prefixes. No deployment/cutover is authorized. See the dated Hostinger evidence report for the conditional managed-plan candidate and unresolved restrictions.
+
 # Deployment runbook — not executable until approval gates pass
 
 ## Verified foundation checkpoint — 2026-10-29

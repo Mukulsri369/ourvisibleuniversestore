@@ -61,8 +61,10 @@ const SAMPLE_CATEGORIES: Category[] = [
     slug: "astronomy-gear",
     description: "Stargazing optics",
     image_url: "/img/astro.jpg",
-    display_order: 1,
+    sort_order: 1,
     created_at: "2026-01-01T00:00:00Z",
+    active: true,
+    updated_at: "2026-01-01T00:00:00Z",
   },
 ];
 
@@ -82,6 +84,7 @@ const SAMPLE_PRODUCTS: ProductCardData[] = [
     image: "/img/refractor.jpg",
     imageAlt: "Deep Space Refractor 90mm",
     images: [{ image_url: "/img/refractor.jpg", alt_text: "Deep Space Refractor 90mm" }],
+    created_at: "2026-01-01T00:00:00Z",
   },
 ];
 
@@ -95,12 +98,7 @@ const SAMPLE_HOME: HomeData = {
 const SAMPLE_SETTINGS: Settings = {
   id: 1,
   store_name: "Our Visible Universe",
-  tagline: "Explore",
   logo_url: null,
-  hero_title: null,
-  hero_subtitle: null,
-  hero_cta_label: null,
-  hero_image_url: null,
   footer_text: "Footer copy",
   affiliate_disclosure: "Disclosure",
   instagram_url: "https://instagram.com/ovu",

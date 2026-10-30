@@ -309,7 +309,7 @@ export function StudioToolbar({
         <button
           type="button"
           onClick={onSaveDraft}
-          disabled={isSaving || persistenceStatus === "loading"}
+          disabled={isSaving || persistenceStatus === "loading" || (!isDirty && draftRevision > 0)}
           data-testid="studio-save-draft-btn"
           className={cn(
             "inline-flex h-8 items-center gap-1.5 rounded-lg px-3.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50",

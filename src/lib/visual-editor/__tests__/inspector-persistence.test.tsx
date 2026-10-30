@@ -50,8 +50,10 @@ const MOCK_CATEGORIES: Category[] = [
     slug: "galaxy-lamps",
     description: "Ambient space lighting",
     image_url: "/img/lamps.jpg",
-    display_order: 1,
+    sort_order: 1,
     created_at: "2026-01-01T00:00:00.000Z",
+    active: true,
+    updated_at: "2026-01-01T00:00:00Z",
   },
 ];
 
@@ -71,6 +73,7 @@ const MOCK_PRODUCTS: ProductCardData[] = [
     image: "/img/lamp.jpg",
     imageAlt: "Nebula Lamp",
     images: [{ image_url: "/img/lamp.jpg", alt_text: "Nebula Lamp" }],
+    created_at: "2026-01-01T00:00:00Z",
   },
 ];
 
@@ -84,12 +87,7 @@ const MOCK_HOME_DATA: HomeData = {
 const MOCK_SETTINGS: Settings = {
   id: 1,
   store_name: "Cosmic Store",
-  tagline: "Space Goods",
   logo_url: null,
-  hero_title: "Cosmic Hero",
-  hero_subtitle: "Subtitle",
-  hero_cta_label: "Explore",
-  hero_image_url: null,
   footer_text: "Curated cosmic gifts",
   affiliate_disclosure: "We may earn a commission.",
   instagram_url: "https://instagram.com/cosmic",

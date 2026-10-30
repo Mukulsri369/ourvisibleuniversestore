@@ -1,3 +1,9 @@
+## Verified local checkpoint — 30 October 2026
+
+This section supersedes the historical 29 October notes below. Production, real customers, payments, deployments and DNS remain unchanged. The Store backup exception is already authorized; missing original data does not block reversible local development.
+
+Replaced runtime paths: product editor reads/writes, admin product list/categories selection, product detail, cookie sign-in/admin guard, local media uploads/removal/public reads, and visual-editor default persistence. The compatibility adapter filename contains Supabase but now re-exports independent transport; it no longer constructs a provider client. Remaining Store public catalogue and admin settings/category/bulk/import/price/provider paths must still be migrated and checked. Do not remove the package until all remaining callers are replaced.
+
 # Lovable, Supabase and PostgreSQL dependency inventory
 
 ## Verified foundation checkpoint — 2026-10-29

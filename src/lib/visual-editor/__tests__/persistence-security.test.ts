@@ -15,6 +15,19 @@ import { publishPageDraft, restorePublishedVersion } from "../publishing/index";
 import { updateNodeById } from "../utils/node-tree";
 
 describe("Prompt 8 — Authorization Boundary Matrix & Business-Data Protection", () => {
+  it("revalidates mutable callers and keeps cached normalized snapshots deeply immutable", () => {
+    const input = structuredClone(DEFAULT_HOMEPAGE_PAGE_DOCUMENT);
+    const validated = validateDocumentForPersistence(input);
+    expect(Object.isFrozen(input)).toBe(false);
+    expect(Object.isFrozen(validated.document)).toBe(true);
+    expect(Object.isFrozen(validated.document.root[1].props)).toBe(true);
+    expect(() => {
+      validated.document.root[1].name = "Mutable cache attack";
+    }).toThrow();
+    input.root[1].props.href = "javascript:alert(1)";
+    expect(() => validateDocumentForPersistence(input)).toThrow();
+    expect(validateDocumentForPersistence(validated.document).document).toBe(validated.document);
+  });
   it("1. enforces strict authorization matrix across anonymous, non-admin authenticated, and admin roles", async () => {
     const adapter = new InMemoryTransactionalPersistenceAdapter({
       role: "admin",

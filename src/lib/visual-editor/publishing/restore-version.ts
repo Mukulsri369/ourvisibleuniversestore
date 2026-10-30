@@ -9,7 +9,7 @@ import {
   PersistenceError,
 } from "../persistence/persistence-errors";
 import { validateStoreScope } from "../persistence/persistence-validation";
-import { defaultPersistenceAdapter } from "../persistence/supabase-persistence-adapter";
+import { defaultPersistenceAdapter } from "../persistence/independent-persistence-adapter";
 import { validateDocumentForPublishing } from "./publish-validation";
 
 export interface RestoreVersionOptions {

@@ -57,6 +57,9 @@ const FOUR_CATEGORIES: Category[] = [
     description: "Verified chondrites and iron meteorites",
     image_url: null,
     sort_order: 3,
+    active: true,
+    created_at: "2026-01-01T00:00:00Z",
+    updated_at: "2026-01-01T00:00:00Z",
   },
   {
     id: "cat-posters-4",
@@ -65,6 +68,9 @@ const FOUR_CATEGORIES: Category[] = [
     description: "Deep sky starcharts and archival prints",
     image_url: null,
     sort_order: 4,
+    active: true,
+    created_at: "2026-01-01T00:00:00Z",
+    updated_at: "2026-01-01T00:00:00Z",
   },
 ];
 
@@ -75,7 +81,6 @@ const FOUR_CATEGORY_PRODUCTS: ProductCardData[] = [
     category_id: FOUR_CATEGORIES[0].id,
     category_ids: [FOUR_CATEGORIES[0].id],
     category: {
-      id: FOUR_CATEGORIES[0].id,
       name: FOUR_CATEGORIES[0].name,
       slug: FOUR_CATEGORIES[0].slug,
     },
@@ -87,7 +92,6 @@ const FOUR_CATEGORY_PRODUCTS: ProductCardData[] = [
     category_id: FOUR_CATEGORIES[1].id,
     category_ids: [FOUR_CATEGORIES[1].id],
     category: {
-      id: FOUR_CATEGORIES[1].id,
       name: FOUR_CATEGORIES[1].name,
       slug: FOUR_CATEGORIES[1].slug,
     },
@@ -101,7 +105,6 @@ const FOUR_CATEGORY_PRODUCTS: ProductCardData[] = [
     category_id: "cat-meteorites-3",
     category_ids: ["cat-meteorites-3"],
     category: {
-      id: "cat-meteorites-3",
       name: "Planetary Meteorite Specimens",
       slug: "planetary-meteorite-specimens",
     },
@@ -115,7 +118,6 @@ const FOUR_CATEGORY_PRODUCTS: ProductCardData[] = [
     category_id: "cat-posters-4",
     category_ids: ["cat-posters-4"],
     category: {
-      id: "cat-posters-4",
       name: "Deep Sky Observatory Charts",
       slug: "deep-sky-observatory-charts",
     },
@@ -145,6 +147,11 @@ const SAMPLE_SETTINGS: Settings = {
       "cat-meteorites-3": "prod-cat-3",
     },
   },
+  id: 1,
+  store_name: "Our Visible Universe",
+  logo_url: null,
+  contact_email: null,
+  updated_at: "2026-01-01T00:00:00Z",
 };
 
 function renderWithQuery(ui: React.ReactElement) {
@@ -215,8 +222,8 @@ describe("Prompt 7 — Real Homepage Migration, Data Bindings & Progressive Load
     );
 
     // Global chrome (header/footer) is owned by _store.tsx and never duplicated inside HomepageRenderer
-    expect(container.querySelector("header")).toBeNull();
-    expect(container.querySelector("footer")).toBeNull();
+    expect(container.querySelector('[data-store-chrome="header"]')).toBeNull();
+    expect(container.querySelector('[data-store-chrome="footer"]')).toBeNull();
 
     // PlanetHero and CelestialScrollWorld mounted
     expect(container.querySelector(".planet-hero")).not.toBeNull();

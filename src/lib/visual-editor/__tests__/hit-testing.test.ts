@@ -150,7 +150,7 @@ describe("Prompt 10 — Precise DOM Hit-Testing, Nested Selection, Decorative Ov
     );
     const prodId1 = buildVirtualProductInstanceId(catIdA, "prod-900");
     const cardId1 = buildVirtualCategoryCardInstanceId(
-      CANONICAL_HOMEPAGE_NODE_IDS.categoryGrid,
+      CANONICAL_HOMEPAGE_NODE_IDS.dynamicCategories,
       "cat-astro",
     );
 
@@ -161,7 +161,10 @@ describe("Prompt 10 — Precise DOM Hit-Testing, Nested Selection, Decorative Ov
     expect(catIdA).not.toBe(catIdB);
     expect(buildVirtualProductInstanceId(catIdA, "prod-900")).toBe(prodId1);
     expect(
-      buildVirtualCategoryCardInstanceId(CANONICAL_HOMEPAGE_NODE_IDS.categoryGrid, "cat-astro"),
+      buildVirtualCategoryCardInstanceId(
+        CANONICAL_HOMEPAGE_NODE_IDS.dynamicCategories,
+        "cat-astro",
+      ),
     ).toBe(cardId1);
   });
 });

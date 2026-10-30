@@ -68,7 +68,10 @@ export function StoreHeader() {
   const [searchOpen, setSearchOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl">
+    <header
+      data-store-chrome="header"
+      className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl"
+    >
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
         <Logo logo={settings?.logo_url} />
         <nav className="ml-8 hidden items-center gap-7 text-sm text-muted-foreground lg:flex">
@@ -187,7 +190,7 @@ export function StoreFooter() {
   const { data: s } = useSuspenseQuery(settingsQuery);
   const social = (s?.social_links ?? {}) as Record<string, string>;
   return (
-    <footer className="relative mt-24 border-t border-border">
+    <footer data-store-chrome="footer" className="relative mt-24 border-t border-border">
       <div className="nebula absolute inset-0 opacity-40" />
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-5">
         <div className="md:col-span-2">

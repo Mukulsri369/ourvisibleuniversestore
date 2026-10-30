@@ -1,3 +1,20 @@
+## Verified local checkpoint — 30 October 2026
+
+This section supersedes the historical 29 October notes below. Production, real customers, payments, deployments and DNS remain unchanged. The Store backup exception is already authorized; missing original data does not block reversible local development.
+
+| Current Store check | Result | Scope |
+|---|---|---|
+| Complete original/editor suite | 239 passed, 0 failed, 0 skipped | Original scenarios retained; contract/fixture repairs documented |
+| TypeScript | PASS | Source and test files |
+| Independent Node build | PASS | Real Better Auth login bundling verified |
+| Combined real backend/auth/media/product/retailer/page checks | 11 passed | Database-backed limits retained |
+| Latest built Node + page transaction checks | 2 passed | Cookie, origin, role, revision, publish, restart, rollback and private metadata projection |
+| Schema replay/invariants | 2 passed | Local MariaDB only |
+| Actual browser | PASS for product and draft workflows | Synthetic records cleaned; screenshots outside Git |
+| Full Store, all mobile/science/payment workflows | NOT COMPLETE | Provider paths and remaining UI still outstanding |
+
+A diagnostic validation run encountered a worker-start timeout (9 tests completed plus 1 runner error); it was not counted as a clean pass. A fresh security retry passed, followed by the full clean 239-test run. Historical failure counts below are baseline evidence, not the current result.
+
 # Test results
 
 Updated 2026-10-29. Results below are local development evidence, not production migration proof.

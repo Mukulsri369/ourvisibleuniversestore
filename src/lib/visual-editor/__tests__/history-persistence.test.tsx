@@ -5,10 +5,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Category, HomeData, ProductCardData, Settings } from "@/lib/store";
 import { createDefaultHomepageDocument } from "../homepage";
 import { updateNodeById } from "../utils/node-tree";
-import { InMemoryTransactionalPersistenceAdapter } from "../persistence/index";
+import { savePageDraft, InMemoryTransactionalPersistenceAdapter } from "../persistence/index";
 import {
-  clearLocalDraftRecoverySnapshot,
-  writeLocalDraftRecoverySnapshot,
+  clearLocalDraftRecoveryCheckpoint,
+  writeLocalDraftRecoveryCheckpoint,
 } from "../recovery/index";
 import { StudioShell } from "@/components/visual-editor/StudioShell";
 
@@ -47,7 +47,9 @@ const SAMPLE_CATEGORIES: Category[] = [
     slug: "telescopes-optics",
     description: "Deep-sky optical instruments",
     image_url: "/img/telescopes.jpg",
-    display_order: 1,
+    sort_order: 1,
+    active: true,
+    updated_at: "2026-01-01T00:00:00Z",
     created_at: "2026-01-01T00:00:00Z",
   },
 ];
@@ -61,6 +63,7 @@ const SAMPLE_PRODUCTS: ProductCardData[] = [
     price: 499,
     currency: "USD",
     affiliate_url: "https://example.com/affiliate/orion-telescope",
+    created_at: "2026-01-01T00:00:00Z",
     featured: true,
     category_id: "cat-telescopes",
     category_ids: ["cat-telescopes"],
@@ -81,12 +84,7 @@ const SAMPLE_HOME_DATA: HomeData = {
 const SAMPLE_SETTINGS: Settings = {
   id: 1,
   store_name: "Our Visible Universe",
-  tagline: "Explore the cosmos",
   logo_url: null,
-  hero_title: null,
-  hero_subtitle: null,
-  hero_cta_label: null,
-  hero_image_url: null,
   footer_text: "Explore the universe.",
   affiliate_disclosure: "We may earn a commission.",
   instagram_url: "https://instagram.com/ourvisibleuniverse",
@@ -106,7 +104,6 @@ function renderStudio(adapter: InMemoryTransactionalPersistenceAdapter) {
     <QueryClientProvider client={queryClient}>
       <StudioShell
         persistenceAdapter={adapter}
-        actorEmail="admin@example.com"
         initialHomeData={SAMPLE_HOME_DATA}
         initialCategories={SAMPLE_CATEGORIES}
         initialSettings={SAMPLE_SETTINGS}
@@ -117,19 +114,32 @@ function renderStudio(adapter: InMemoryTransactionalPersistenceAdapter) {
 
 describe("history-persistence.test.tsx — StudioShell Undo/Redo, Shortcuts & Recovery Integration", () => {
   beforeEach(() => {
-    clearLocalDraftRecoverySnapshot("home");
+    clearLocalDraftRecoveryCheckpoint({ pageKey: "home" });
   });
 
   afterEach(() => {
     cleanup();
-    clearLocalDraftRecoverySnapshot("home");
+    clearLocalDraftRecoveryCheckpoint({ pageKey: "home" });
   });
 
   it("enables toolbar Undo/Redo buttons on Inspector edits, restores saved status on Undo to baseline, and respects keyboard shortcuts", async () => {
     const adapter = new InMemoryTransactionalPersistenceAdapter({
-      adminAllowlistEmails: ["admin@example.com"],
+      role: "admin",
+      userId: "synthetic-admin",
+      email: "admin@example.com",
     });
 
+    const seeded = await savePageDraft(
+      {
+        pageKey: "home",
+        slug: "/",
+        title: "Synthetic test homepage",
+        document: createDefaultHomepageDocument(),
+        expectedDraftRevision: 0,
+      },
+      { adapter },
+    );
+    expect(seeded.ok).toBe(true);
     renderStudio(adapter);
 
     await waitFor(() => {
@@ -145,11 +155,11 @@ describe("history-persistence.test.tsx — StudioShell Undo/Redo, Shortcuts & Re
     expect(saveDraftBtn.disabled).toBe(true);
 
     // Select the Story Intro section in the layer tree
-    const storyLayer = screen.getByTestId("studio-layer-row-home-story-intro");
+    const storyLayer = screen.getByTestId("studio-layer-select-home-explore-by-interest");
     fireEvent.click(storyLayer);
 
-    // Toggle visibility of home-story-intro via layer tree visibility button
-    const toggleVisBtn = screen.getByTestId("studio-layer-visibility-home-story-intro");
+    // Toggle visibility of home-explore-by-interest via layer tree visibility button
+    const toggleVisBtn = screen.getByRole("button", { name: "Hide Explore by Interest" });
     fireEvent.click(toggleVisBtn);
 
     await waitFor(() => {
@@ -196,25 +206,26 @@ describe("history-persistence.test.tsx — StudioShell Undo/Redo, Shortcuts & Re
 
   it("detects a recoverable local unsaved checkpoint on load and allows restoring or discarding it", async () => {
     const adapter = new InMemoryTransactionalPersistenceAdapter({
-      adminAllowlistEmails: ["admin@example.com"],
+      role: "admin",
+      userId: "synthetic-admin",
+      email: "admin@example.com",
     });
 
     // Seed a local recovery checkpoint with a custom document name
     const baseDoc = createDefaultHomepageDocument();
     const unsavedDoc = {
-      ...updateNodeById(baseDoc, "home-hero-planet", (n) => ({
+      ...updateNodeById(baseDoc, "home-planet-hero", (n) => ({
         ...n,
         name: "Recovered Planetary Hero",
       })),
       name: "Recovered Cosmic Draft",
     };
 
-    writeLocalDraftRecoverySnapshot({
+    writeLocalDraftRecoveryCheckpoint({
       pageKey: "home",
       document: unsavedDoc,
-      baseDraftRevision: null,
-      localEditGeneration: 3,
-      savedAt: new Date().toISOString(),
+      baseDraftRevision: 0,
+      nowMs: Date.now(),
     });
 
     renderStudio(adapter);

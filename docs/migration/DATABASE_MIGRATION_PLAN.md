@@ -1,3 +1,9 @@
+## Verified local checkpoint — 30 October 2026
+
+This section supersedes the historical 29 October notes below. Production, real customers, payments, deployments and DNS remain unchanged. The Store backup exception is already authorized; missing original data does not block reversible local development.
+
+Migration 0004 adds local media ownership/type/length/hash/deletion metadata. Existing translated page/draft/version/event tables now have real transactional MariaDB services with server validation, revision conflicts, role rechecks, private/public projections and rollback as a new version. Runtime users retain schema-scoped DML privileges; migrator accounts handle DDL. No original Store records have been recovered or invented.
+
 # MariaDB migration plan
 
 ## Verified foundation checkpoint — 2026-10-29

@@ -50,6 +50,11 @@ const SAMPLE_SETTINGS: Settings = {
   affiliate_disclosure: "We may earn a commission from qualifying purchases.",
   instagram_url: "https://instagram.com/ourvisibleuniverse",
   social_links: baselineFixtures.siteSettings.social_links,
+  id: 1,
+  store_name: "Our Visible Universe",
+  logo_url: null,
+  contact_email: null,
+  updated_at: "2026-01-01T00:00:00Z",
 };
 
 function renderWithQuery(ui: React.ReactElement) {
@@ -77,7 +82,6 @@ describe("Prompt 7 — Full-Page DOM Parity & SSR Compatibility Tests (Legacy vs
         disableClientShuffle
       />,
     );
-
     expect(migratedContainer.innerHTML).toBe(legacyContainer.innerHTML);
   });
 
@@ -105,7 +109,6 @@ describe("Prompt 7 — Full-Page DOM Parity & SSR Compatibility Tests (Legacy vs
         disableClientShuffle
       />,
     );
-
     expect(migratedDisabled.innerHTML).toBe(legacyDisabled.innerHTML);
 
     // Also test empty festival collection (EmptyState parity)
@@ -157,7 +160,6 @@ describe("Prompt 7 — Full-Page DOM Parity & SSR Compatibility Tests (Legacy vs
         />
       </QueryClientProvider>,
     );
-
     expect(migratedSsrHtml).toBe(legacySsrHtml);
   });
 
@@ -181,7 +183,6 @@ describe("Prompt 7 — Full-Page DOM Parity & SSR Compatibility Tests (Legacy vs
         disableClientShuffle
       />,
     );
-
     expect(rollbackContainer.innerHTML).toBe(sharedContainer.innerHTML);
   });
 });

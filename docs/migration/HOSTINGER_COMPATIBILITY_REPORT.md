@@ -1,3 +1,9 @@
+## Verified local checkpoint — 30 October 2026
+
+This section supersedes the historical 29 October notes below. Production, real customers, payments, deployments and DNS remain unchanged. The Store backup exception is already authorized; missing original data does not block reversible local development.
+
+The updated factual assessment and actual 12-month quote are in HOSTINGER_VERIFIED_FACTS_2026-10-30.md. One Unlimited/Business account has five documented Node app slots and MariaDB, but exact SQL/runtime/storage compatibility still needs verification. The unsubmitted annual cart quote was ₹4,233.84 including tax, renewing at ₹649/month before tax. No purchase is recommended until the remaining compatibility evidence and local workflows pass.
+
 # Hostinger compatibility report — preliminary, purchase NOT approved
 
 ## Verified foundation checkpoint — 2026-10-29
