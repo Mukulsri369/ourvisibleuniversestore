@@ -1,3 +1,13 @@
+## Store backup exception authorized — 30 October 2026
+
+The user explicitly authorized local Store development and MariaDB migration without a verified Lovable Store backup. The GitHub repository is the source of truth for code. Missing data must be documented and never invented. This removes the backup prerequisite for reversible local development and testing only; it does not authorize production deletion, deployment, purchases, DNS/payment changes, customer access modifications or Lovable cancellation.
+
+No Store database or object-storage export is available. Original product records, categories, customized settings, product images not committed to the repository, click history and visual-editor drafts/published versions cannot currently be verified or restored. Source code and checked-in assets are recoverable from GitHub. Local tests use named synthetic fixtures and clean them up; they are not original records. Empty schema creation is not production data recovery.
+
+A new internal MariaDB product service validates administrator roles, strict fields, HTTPS affiliate URLs, exact category references, atomic ordered category updates, revision conflicts and duplicate affiliate URLs on publication. It records administrative audits and filters public reads to active/non-deleted products. Migration 0003 adds revision tracking. The service is not connected to Store UI/API routes yet.
+
+Verification: 8 backend/authentication/retailer/product tests pass with no skips; 2 real Store schema/replay/Unicode/JSON/FK/UTC tests pass; official Node build passes. The original 40 editor test failures and source type mismatches remain unresolved and were not skipped or removed. Pending: wire product APIs/admin/catalog, complete editor persistence/storage/imports and repair original tests, then browser/mobile/integration QA. Academy offline/provider replacement and Hostinger compatibility remain open. Actual Razorpay provider testing remains deferred and unverified.
+
 # Store migration report
 
 ## Verified foundation checkpoint — 2026-10-29

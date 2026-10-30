@@ -1,0 +1,1 @@
+ALTER TABLE products ADD COLUMN revision INT NOT NULL DEFAULT 0;
