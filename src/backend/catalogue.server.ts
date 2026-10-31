@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { database } from "./db.server";
+import { database, transaction } from "./db.server";
+import { randomUUID } from "node:crypto";
+import { setTimeout as delay } from "node:timers/promises";
 
 export const catalogueInput = z
   .object({
@@ -10,6 +12,7 @@ export const catalogueInput = z
     terms: z.array(z.string().min(1).max(80)).max(30).optional(),
     tagTerms: z.array(z.string().min(1).max(80)).max(10).optional(),
     textTerms: z.array(z.string().min(1).max(80)).max(10).optional(),
+    nameTerms: z.array(z.string().min(1).max(80)).max(10).optional(),
     tags: z.array(z.string().min(1).max(200)).max(100).optional(),
     ids: z.array(z.string().uuid()).max(500).optional(),
     categoryIds: z.array(z.string().uuid()).max(100).optional(),
@@ -113,13 +116,17 @@ export async function publicCatalogue(input: unknown = {}) {
     );
     values.push(...p.tagTerms.map(like));
   }
-  if (p.textTerms?.length) {
+  if (p.textTerms?.length || p.nameTerms?.length) {
     const terms: string[] = [];
-    for (const term of p.textTerms)
+    for (const term of p.textTerms ?? [])
       for (const column of ["p.name", "p.short_description"]) {
         terms.push("LOWER(" + column + ") LIKE LOWER(?) ESCAPE '!'");
         values.push(like(term));
       }
+    for (const term of p.nameTerms ?? []) {
+      terms.push("LOWER(p.name) LIKE LOWER(?) ESCAPE '!'");
+      values.push(like(term));
+    }
     where.push("(" + terms.join(" OR ") + ")");
   }
   if (p.terms?.length) {
@@ -191,4 +198,49 @@ export async function publicCatalogue(input: unknown = {}) {
     product_images: images.get(r.id) ?? [],
   }));
   return { data, count: Number(counts[0].total) };
+}
+
+/** Anonymous analytics only, bounded globally without storing visitor identifiers. */
+export async function recordPublicOutboundClick(productId: string, now = Date.now()) {
+  z.string().uuid().parse(productId);
+  const record = () =>
+    transaction(async (c) => {
+      const [product]: any = await c.execute(
+        "SELECT id FROM products WHERE id=? AND active=true AND deleted_at IS NULL",
+        [productId],
+      );
+      if (!product.length) return false;
+      const key = "ovu-store:outbound:global";
+      await c.execute(
+        "INSERT INTO auth_rate_limit(id,`key`,`count`,lastRequest) VALUES(?,?,0,?) ON DUPLICATE KEY UPDATE id=id",
+        [randomUUID(), key, now],
+      );
+      const [limits]: any = await c.execute(
+        "SELECT `count`,lastRequest FROM auth_rate_limit WHERE `key`=? FOR UPDATE",
+        [key],
+      );
+      const count = now - Number(limits[0].lastRequest) >= 60_000 ? 0 : Number(limits[0].count);
+      if (count >= 1000) return false;
+      await c.execute("UPDATE auth_rate_limit SET `count`=?,lastRequest=? WHERE `key`=?", [
+        count + 1,
+        count === 0 ? now : Number(limits[0].lastRequest),
+        key,
+      ]);
+      await c.execute("INSERT INTO outbound_clicks(product_id) VALUES(?)", [productId]);
+      return true;
+    });
+  // MariaDB snapshot conflicts and lock deadlocks roll back the complete attempt.
+  // Retrying the transaction preserves the shared cap under simultaneous clicks.
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await record();
+    } catch (error: any) {
+      if (
+        attempt >= 2 ||
+        !["ER_CHECKREAD", "ER_LOCK_DEADLOCK", "ER_LOCK_WAIT_TIMEOUT"].includes(error?.code)
+      )
+        throw error;
+      await delay(5 * (attempt + 1));
+    }
+  }
 }

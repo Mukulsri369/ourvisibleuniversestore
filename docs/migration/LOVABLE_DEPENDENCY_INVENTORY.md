@@ -1,3 +1,7 @@
+## Public runtime replacement — 31 October 2026
+
+`src/lib/store.ts` no longer creates or uses a Supabase client: catalogue/search/category/related/festival/home reads and analytics now use independent server functions. Its hardcoded Lovable connection configuration was removed. The remaining schema import is type-only. Studio publication/history and public published-document reads are also independent. Remaining admin and extraction/price provider/security paths must still be completed; the overall package dependency has not yet been removed. Evidence: [catalogue checkpoint](STORE_CATALOGUE_CHECKPOINT_2026-10-31.md).
+
 ## Verified local checkpoint — 30 October 2026
 
 This section supersedes the historical 29 October notes below. Production, real customers, payments, deployments and DNS remain unchanged. The Store backup exception is already authorized; missing original data does not block reversible local development.

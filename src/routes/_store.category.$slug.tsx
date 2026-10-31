@@ -1,6 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ProductBrowser, validateBrowseSearch } from "@/components/store/ProductBrowser";
+import {
+  ProductBrowser,
+  validateBrowseSearch,
+  browseProductsQuery,
+} from "@/components/store/ProductBrowser";
 import { CategoryFullBackground } from "@/components/store/CategoryFullBackground";
 import { SpaceLaserLine } from "@/components/store/SpaceLaserLine";
 import { getCelestialSystemForCategory } from "@/lib/celestial-catalog";
@@ -8,9 +12,13 @@ import { absoluteUrl, categoryQuery, SITE_URL } from "@/lib/store";
 
 export const Route = createFileRoute("/_store/category/$slug")({
   validateSearch: validateBrowseSearch,
-  loader: async ({ context, params }) => {
+  loaderDeps: ({ search }) => search,
+  loader: async ({ context, params, deps }) => {
     const cat = await context.queryClient.ensureQueryData(categoryQuery(params.slug));
     if (!cat) throw notFound();
+    await context.queryClient
+      .ensureQueryData(browseProductsQuery(deps, params.slug))
+      .catch(() => undefined);
     return { cat };
   },
   head: ({ loaderData, params }) => {

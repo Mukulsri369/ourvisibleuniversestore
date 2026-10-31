@@ -1,3 +1,11 @@
+## Current catalogue work — 31 October 2026
+
+- [x] Independent public catalogue/search/category/related/festival/home queries and bounded click logging.
+- [x] Verify actual desktop/mobile catalogue flows, rendered Node pages and persistence across restart.
+- [x] Complete clean full suite: 251 passed across 54 files.
+- [ ] Finish remaining admin management, extraction/price request security, onboarding/email and media lifecycle; see [latest catalogue checkpoint](STORE_CATALOGUE_CHECKPOINT_2026-10-31.md).
+- [ ] Finish Main Academy offline/provider replacement and final hosting compatibility checks.
+
 ## Current publishing work — 31 October 2026
 
 - [x] Connect authorized draft publication, version history and restoration to the existing Studio.

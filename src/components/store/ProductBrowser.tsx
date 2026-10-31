@@ -30,6 +30,9 @@ export function validateBrowseSearch(s: Record<string, unknown>): BrowseSearch {
   };
 }
 
+export const browseProductsQuery = (search: BrowseSearch, lockCategory?: string) =>
+  productsQuery({ ...search, category: lockCategory ?? search.category, page: search.page ?? 1 });
+
 export function ProductBrowser({
   search,
   to,
@@ -40,12 +43,7 @@ export function ProductBrowser({
   lockCategory?: string;
 }) {
   const navigate = useNavigate();
-  const params: ListParams = {
-    ...search,
-    category: lockCategory ?? search.category,
-    page: search.page ?? 1,
-  };
-  const { data, isLoading, isError, refetch } = useQuery(productsQuery(params));
+  const { data, isLoading, isError, refetch } = useQuery(browseProductsQuery(search, lockCategory));
   const { data: cats = [] } = useQuery(categoriesQuery);
   const [showFilters, setShowFilters] = useState(false);
 

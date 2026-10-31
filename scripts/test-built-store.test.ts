@@ -32,7 +32,10 @@ test("built Store uses real cookie login and server-function product writes with
     editorPageId = "";
   const pid = randomUUID();
   const files = (await readdir(".output/server/_ssr")).filter(
-    (f) => f.startsWith("store-api.functions-") || f.startsWith("editor-api.functions-"),
+    (f) =>
+      f.startsWith("store-api.functions-") ||
+      f.startsWith("editor-api.functions-") ||
+      f.startsWith("catalogue-api.functions-"),
   );
   const code = (
     await Promise.all(files.map((f) => readFile(".output/server/_ssr/" + f, "utf8")))
@@ -168,6 +171,19 @@ test("built Store uses real cookie login and server-function product writes with
     const page = await fetch(base + "/product/" + pid);
     assert.equal(page.status, 200);
     assert.ok((await page.text()).includes(value.name));
+    const listed = await rpc("storePublicCatalogue", "GET", { ids: [pid], limit: 1 });
+    assert.equal(listed.count, 1);
+    assert.equal(listed.data[0].name, value.name);
+    assert.ok((await (await fetch(base + "/shop")).text()).includes(value.name));
+    assert.ok(
+      (await (await fetch(base + "/search?q=" + encodeURIComponent(value.name))).text()).includes(
+        value.name,
+      ),
+    );
+    assert.equal(await rpc("storeOutboundClick", "POST", { productId: pid }), true);
+    await assert.rejects(() =>
+      rpc("storeOutboundClick", "POST", { productId: pid }, "", "https://untrusted.example"),
+    );
     // This suite owns an otherwise empty local homepage, never an existing design.
     const designKey = "home",
       designSlug = "/";

@@ -1,3 +1,7 @@
+## Catalogue verification — 31 October 2026
+
+Latest complete Store suite: **251 passed, 0 failed, 0 skipped across 54 files**. Built Node/real MariaDB, actual catalogue/search/category/related browser flows and 390-pixel price filtering also passed. Scope and remaining limitations: [catalogue checkpoint](STORE_CATALOGUE_CHECKPOINT_2026-10-31.md). Actual Razorpay provider testing remains deferred and unverified.
+
 ## Publishing verification — 31 October 2026
 
 See [the publishing checkpoint](STORE_PUBLISHING_CHECKPOINT_2026-10-31.md) for the latest actual browser, mobile, public-rendering, restart and test evidence. The 30 October full-suite result below describes that earlier verified commit, not an automatic pass for subsequent changes.

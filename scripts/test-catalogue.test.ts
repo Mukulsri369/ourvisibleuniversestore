@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { randomUUID } from "node:crypto";
 import { database, closeDatabase } from "../src/backend/db.server";
 import { saveProduct } from "../src/backend/products.server";
-import { publicCatalogue } from "../src/backend/catalogue.server";
+import { publicCatalogue, recordPublicOutboundClick } from "../src/backend/catalogue.server";
 assert.equal(process.env.DB_HOST, "127.0.0.1");
 assert.equal(process.env.DB_PORT, "3307");
 assert.equal(process.env.DB_NAME, "ovu_store");
@@ -89,6 +89,58 @@ test("public catalogue preserves filters, category memberships, ordered images a
     await assert.rejects(() => publicCatalogue({ ids, includeDeleted: true }));
     await assert.rejects(() => publicCatalogue({ limit: 501 }));
     await assert.rejects(() => publicCatalogue({ sort: "p.id; DROP TABLE products" }));
+    await database().execute(
+      "UPDATE products SET name='Synthetic other item',short_description='lamp' WHERE id=?",
+      [ids[0]],
+    );
+    assert.deepEqual(
+      (
+        await publicCatalogue({ ids, textTerms: ["diwali", "light"], nameTerms: ["lamp"] })
+      ).data.map((p) => p.id),
+      [ids[1]],
+    );
+    assert.equal(await recordPublicOutboundClick(ids[0]), true);
+    assert.equal(await recordPublicOutboundClick(ids[2]), false);
+    assert.equal(await recordPublicOutboundClick(ids[3]), false);
+    const [clicks]: any = await database().execute(
+      "SELECT product_id FROM outbound_clicks WHERE product_id IN (?,?,?,?)",
+      ids,
+    );
+    assert.deepEqual(
+      clicks.map((r: any) => r.product_id),
+      [ids[0]],
+    );
+    // Local-only limiter fixture: restore the shared counter even if an assertion fails.
+    const counterKey = "ovu-store:outbound:global",
+      testNow = Date.now();
+    const [priorCounter]: any = await database().execute(
+      "SELECT `count`,lastRequest FROM auth_rate_limit WHERE `key`=?",
+      [counterKey],
+    );
+    try {
+      await database().execute(
+        "UPDATE auth_rate_limit SET `count`=999,lastRequest=? WHERE `key`=?",
+        [testNow, counterKey],
+      );
+      const competing = await Promise.all([
+        recordPublicOutboundClick(ids[0], testNow),
+        recordPublicOutboundClick(ids[0], testNow),
+      ]);
+      assert.equal(competing.filter(Boolean).length, 1);
+      assert.equal(await recordPublicOutboundClick(ids[0], testNow + 1), false);
+      assert.equal(await recordPublicOutboundClick(ids[0], testNow + 60_001), true);
+    } finally {
+      await database().execute("UPDATE auth_rate_limit SET `count`=?,lastRequest=? WHERE `key`=?", [
+        priorCounter[0].count,
+        priorCounter[0].lastRequest,
+        counterKey,
+      ]);
+    }
+    const [boundedClicks]: any = await database().execute(
+      "SELECT COUNT(*) AS total FROM outbound_clicks WHERE product_id=?",
+      [ids[0]],
+    );
+    assert.equal(Number(boundedClicks[0].total), 3);
   } finally {
     await database().execute("DELETE FROM store_admin_audit WHERE actor_id=?", [user]);
     for (const id of ids) await database().execute("DELETE FROM products WHERE id=?", [id]);

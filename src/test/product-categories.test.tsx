@@ -3,7 +3,12 @@ import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { CategorySelect } from "@/components/admin/CategorySelect";
 import { productCategoryIds } from "@/lib/product-categories";
-import { listProducts, publicDb, relatedQuery } from "@/lib/store";
+import { listProducts, relatedQuery } from "@/lib/store";
+import { storePublicCatalogue } from "@/lib/catalogue-api.functions";
+vi.mock("@/lib/catalogue-api.functions", () => ({
+  storePublicCatalogue: vi.fn(async () => ({ data: [], count: 0 })),
+  storeOutboundClick: vi.fn(),
+}));
 
 describe("product category selection", () => {
   it("preserves existing products and selected order", () => {
@@ -47,32 +52,19 @@ describe("product category selection", () => {
 
 describe("category browsing", () => {
   it("filters and searches all memberships, not only the first", async () => {
-    const query: Record<string, unknown> = {};
-    for (const method of [
-      "select",
-      "eq",
-      "is",
-      "order",
-      "ilike",
-      "limit",
-      "neq",
-      "overlaps",
-      "contains",
-      "or",
-      "in",
-    ])
-      query[method] = vi.fn(() => query);
-    query["maybeSingle"] = vi.fn(async () => ({ data: { id: "second" }, error: null }));
-    query["range"] = vi.fn(async () => ({ data: [], count: 0, error: null }));
-    query["then"] = (resolve: (value: unknown) => unknown) =>
-      Promise.resolve({ data: [{ id: "second" }], error: null }).then(resolve);
-    const spy = vi
-      .spyOn(publicDb(), "from")
-      .mockReturnValue(query as unknown as ReturnType<ReturnType<typeof publicDb>["from"]>);
+    const spy = vi.mocked(storePublicCatalogue);
+    spy.mockClear();
     try {
       await listProducts({ category: "lights", q: "Lights" });
-      expect(query["overlaps"]).toHaveBeenCalledWith("category_ids", ["second"]);
-      expect(query["or"]).toHaveBeenCalledWith(expect.stringContaining("category_ids.ov.{second}"));
+      // The independent endpoint applies these filters to every membership in SQL.
+      // Real MariaDB coverage verifies second-category matches and visibility rules.
+      expect(spy).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          categorySlugs: expect.arrayContaining(["lights", "cosmic-lighting"]),
+          terms: ["lights"],
+          limit: 200,
+        }),
+      });
       const related = relatedQuery({
         id: "product",
         category_id: "first",
@@ -80,9 +72,15 @@ describe("category browsing", () => {
         tags: [],
       });
       await (related.queryFn as () => Promise<unknown>)();
-      expect(query["overlaps"]).toHaveBeenCalledWith("category_ids", ["first", "second"]);
+      expect(spy).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          categoryIds: ["first", "second"],
+          excludeId: "product",
+          limit: 4,
+        }),
+      });
     } finally {
-      spy.mockRestore();
+      spy.mockClear();
     }
   });
 });

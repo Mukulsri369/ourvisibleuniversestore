@@ -1,3 +1,7 @@
+## Public catalogue integration — 31 October 2026
+
+The public catalogue, search, category/related queries, festival/home rails and bounded click logging now use the independent backend. Actual desktop/mobile catalogue workflows passed; the complete suite passed 251 tests across 54 files. See [the catalogue checkpoint](STORE_CATALOGUE_CHECKPOINT_2026-10-31.md) for exact evidence and remaining admin/import/security work. Historical provider/publishing-pending notes below do not describe this checkpoint.
+
 ## Publishing integration — 31 October 2026
 
 The Studio publishing/history controls and public homepage published-document read are connected. The actual built-browser publish/change/restore/reload workflow passes with disposable local records, including a 390-pixel responsive check. Detailed test results, limits and remaining work: [publishing checkpoint](STORE_PUBLISHING_CHECKPOINT_2026-10-31.md). The earlier “publishing controls pending” statement below is historical.

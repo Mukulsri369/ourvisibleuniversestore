@@ -1,10 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SearchBox } from "@/components/store/StoreChrome";
-import { ProductBrowser, validateBrowseSearch } from "@/components/store/ProductBrowser";
+import {
+  ProductBrowser,
+  validateBrowseSearch,
+  browseProductsQuery,
+} from "@/components/store/ProductBrowser";
 import { SpaceLaserLine } from "@/components/store/SpaceLaserLine";
 
 export const Route = createFileRoute("/_store/search")({
   validateSearch: validateBrowseSearch,
+  loaderDeps: ({ search }) => search,
+  loader: async ({ context, deps }) => {
+    await context.queryClient.ensureQueryData(browseProductsQuery(deps)).catch(() => undefined);
+  },
   head: ({ match }) => {
     const q = (match.search as { q?: string }).q;
     const t = q

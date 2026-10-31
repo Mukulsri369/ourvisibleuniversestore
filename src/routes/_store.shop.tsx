@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/store/Pagination";
-import { ProductBrowser, validateBrowseSearch } from "@/components/store/ProductBrowser";
+import {
+  ProductBrowser,
+  validateBrowseSearch,
+  browseProductsQuery,
+} from "@/components/store/ProductBrowser";
 import { AnimatedBlackHole } from "@/components/store/AnimatedBlackHole";
 import { SpaceLaserLine } from "@/components/store/SpaceLaserLine";
 
@@ -10,6 +14,10 @@ const D =
 
 export const Route = createFileRoute("/_store/shop")({
   validateSearch: validateBrowseSearch,
+  loaderDeps: ({ search }) => search,
+  loader: async ({ context, deps }) => {
+    await context.queryClient.ensureQueryData(browseProductsQuery(deps)).catch(() => undefined);
+  },
   head: () => ({
     meta: [
       { title: T },
