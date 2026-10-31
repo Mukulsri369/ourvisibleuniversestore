@@ -1,3 +1,7 @@
+## Publishing verification — 31 October 2026
+
+See [the publishing checkpoint](STORE_PUBLISHING_CHECKPOINT_2026-10-31.md) for the latest actual browser, mobile, public-rendering, restart and test evidence. The 30 October full-suite result below describes that earlier verified commit, not an automatic pass for subsequent changes.
+
 ## Verified local checkpoint — 30 October 2026
 
 This section supersedes the historical 29 October notes below. Production, real customers, payments, deployments and DNS remain unchanged. The Store backup exception is already authorized; missing original data does not block reversible local development.

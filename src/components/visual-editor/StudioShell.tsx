@@ -86,6 +86,7 @@ import {
 } from "./StudioLoadingState";
 import { StudioStatusBar } from "./StudioStatusBar";
 import { StudioToolbar } from "./StudioToolbar";
+import { StudioPublishing } from "./StudioPublishing";
 
 export interface StudioShellProps {
   /** Session-scoped local recovery isolation; production route supplies the authenticated ID. */
@@ -1149,10 +1150,16 @@ export function StudioShell({
           const stillHasNewerChanges =
             localGenerationRef.current > submittedGen &&
             !areDocumentsContentEqual(currentWorkingDoc, outcome.persistedDocument);
+          // Adopt the server's normalized snapshot only when no newer edit is waiting.
+          // Otherwise a reconnect can mistake schema defaults for unsaved design changes.
+          const savedWorkingDoc = stillHasNewerChanges
+            ? currentWorkingDoc
+            : outcome.persistedDocument;
+          latestWorkingDocumentRef.current = savedWorkingDoc;
 
           setDocumentState({
             persistedDocument: outcome.persistedDocument,
-            workingDocument: currentWorkingDoc,
+            workingDocument: savedWorkingDoc,
             isDirty: stillHasNewerChanges,
           });
 
@@ -1654,6 +1661,31 @@ export function StudioShell({
     >
       {/* Top Workspace Toolbar */}
       <StudioToolbar
+        publishingControls={
+          <StudioPublishing
+            page={persistenceState.pageRecord}
+            draftRevision={persistenceState.draftRevision}
+            isDirty={documentState.isDirty}
+            disabled={persistenceState.status === "saving"}
+            adapter={persistenceAdapter}
+            onPublished={(page, action) =>
+              setPersistenceState((previous) => ({
+                ...previous,
+                pageRecord: page,
+                publishedRevision: page.publishedRevision,
+                isPublishedLive: Boolean(page.publishedVersionId),
+                draftRecord:
+                  action === "publish" && previous.draftRecord
+                    ? {
+                        ...previous.draftRecord,
+                        basePublishedVersionId: page.publishedVersionId,
+                        basePublishedRevision: page.publishedRevision,
+                      }
+                    : previous.draftRecord,
+              }))
+            }
+          />
+        }
         pageTitle={documentState.workingDocument.name || "Storefront Homepage"}
         persistenceStatus={persistenceState.status}
         isDirty={documentState.isDirty}

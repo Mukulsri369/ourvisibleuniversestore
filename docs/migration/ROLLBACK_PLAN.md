@@ -1,3 +1,7 @@
+## Local design rollback — 31 October 2026
+
+The Studio's **Publish & history** dialog can restore an earlier published design. Confirming restoration appends a new published version and audit event; it preserves the saved draft and unsaved edits. The actual local public page and editor reload were verified. This is a design rollback, not a product/customer/database backup or authorization for production actions.
+
 ## Verified local checkpoint — 30 October 2026
 
 This section supersedes the historical 29 October notes below. Production, real customers, payments, deployments and DNS remain unchanged. The Store backup exception is already authorized; missing original data does not block reversible local development.

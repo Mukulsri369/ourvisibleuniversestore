@@ -103,8 +103,9 @@ export function StudioStatusBar({
           {formattedTime ? ` at ${formattedTime}` : ""}
         </span>
         <span aria-hidden="true">·</span>
-        <span title="Publishing workflow unlocks in Phase 8 after visual editing verification">
-          Published Rev {publishedRevision} (Draft-Only Workspace)
+        <span title="Published revisions are separate from saved and unsaved drafts">
+          Published Rev {publishedRevision}
+          {publishedRevision === 0 ? " (Canonical storefront)" : ""}
         </span>
       </div>
     </footer>

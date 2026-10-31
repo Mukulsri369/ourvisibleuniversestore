@@ -159,6 +159,8 @@ describe("Prompt 11 — Structural Layer Persistence & Published Storefront Isol
     await waitFor(() => {
       expect(screen.getByTestId("studio-persistence-summary")).toHaveTextContent(/Draft Saved/i);
     });
+    fireEvent(window, new Event("online"));
+    expect(screen.getByTestId("studio-persistence-summary")).toHaveTextContent(/Draft Saved/i);
 
     // 6. Verify published storefront remains untouched (live published query falls back to canonical baseline when unpublished)
     const publishedResult = await getPublishedPage("/", { adapter });

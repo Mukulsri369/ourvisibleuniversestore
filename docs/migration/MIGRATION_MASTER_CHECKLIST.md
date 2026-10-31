@@ -1,3 +1,11 @@
+## Current publishing work — 31 October 2026
+
+- [x] Connect authorized draft publication, version history and restoration to the existing Studio.
+- [x] Connect the public homepage to the validated published snapshot with canonical fallback.
+- [x] Exercise actual local browser publish/change/restore/reload and mobile controls.
+- [x] Complete a clean full-suite run: 243 passed across 53 files; inspect [latest evidence](STORE_PUBLISHING_CHECKPOINT_2026-10-31.md).
+- [ ] Complete remaining independent catalogue/admin/import and Academy paths; payment provider testing remains deferred.
+
 ## Verified local checkpoint — 30 October 2026
 
 This section supersedes the historical 29 October notes below. Production, real customers, payments, deployments and DNS remain unchanged. The Store backup exception is already authorized; missing original data does not block reversible local development.

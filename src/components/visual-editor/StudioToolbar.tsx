@@ -58,6 +58,7 @@ export interface StudioToolbarProps {
   onOpenRecovery?: () => void;
   onReturnToAdmin: () => void;
   onSaveDraft: () => void;
+  publishingControls?: React.ReactNode;
   onResetWorkingDraft: () => void;
   onChangeRenderMode: (mode: Extract<RenderMode, "editor" | "preview">) => void;
   onSelectDevicePreset: (preset: Exclude<StudioDevicePreset, "custom">) => void;
@@ -98,6 +99,7 @@ export function StudioToolbar({
   onOpenRecovery,
   onReturnToAdmin,
   onSaveDraft,
+  publishingControls,
   onResetWorkingDraft,
   onChangeRenderMode,
   onSelectDevicePreset,
@@ -305,6 +307,7 @@ export function StudioToolbar({
           </button>
         )}
 
+        {publishingControls}
         {/* Primary Save Draft Button (Part 12, Section 30) */}
         <button
           type="button"

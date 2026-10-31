@@ -1,3 +1,7 @@
+## Publishing integration — 31 October 2026
+
+The Studio publishing/history controls and public homepage published-document read are connected. The actual built-browser publish/change/restore/reload workflow passes with disposable local records, including a 390-pixel responsive check. Detailed test results, limits and remaining work: [publishing checkpoint](STORE_PUBLISHING_CHECKPOINT_2026-10-31.md). The earlier “publishing controls pending” statement below is historical.
+
 ## Verified local checkpoint — 30 October 2026
 
 This section supersedes the historical 29 October notes below. Production, real customers, payments, deployments and DNS remain unchanged. The Store backup exception is already authorized; missing original data does not block reversible local development.

@@ -15,6 +15,13 @@ export function EarthModelViewer() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    // Keep the existing fallback usable on browsers without a graphics API.
+    // Loading Three.js cannot create a missing WebGL implementation.
+    if (typeof window.WebGL2RenderingContext === "undefined" &&
+        typeof window.WebGLRenderingContext === "undefined") {
+      setFailed(true);
+      return;
+    }
 
     let cancelled = false;
     let frame = 0;

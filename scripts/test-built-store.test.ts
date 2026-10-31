@@ -168,8 +168,19 @@ test("built Store uses real cookie login and server-function product writes with
     const page = await fetch(base + "/product/" + pid);
     assert.equal(page.status, 200);
     assert.ok((await page.text()).includes(value.name));
-    const designKey = "qa-" + pid,
-      designSlug = "/" + designKey;
+    // This suite owns an otherwise empty local homepage, never an existing design.
+    const designKey = "home",
+      designSlug = "/";
+    const [existingHome]: any = await database().execute(
+      "SELECT id FROM store_pages WHERE store_scope='default' AND (page_key='home' OR slug='/')",
+    );
+    assert.equal(
+      existingHome.length,
+      0,
+      "Use an empty test homepage; existing designs are protected",
+    );
+    const designDocument = createDefaultHomepageDocument();
+    designDocument.root.find((node) => node.id === "home-why-shop-with-us")!.hidden = true;
     await assert.rejects(() =>
       rpc("editorAdminOperation", "POST", { op: "getPageByKey", key: designKey, scope: "default" }),
     );
@@ -184,7 +195,7 @@ test("built Store uses real cookie login and server-function product writes with
           slug: designSlug,
           title: "Synthetic built design",
           schemaVersion: "1.0.0",
-          draftDocument: createDefaultHomepageDocument(),
+          draftDocument: designDocument,
           checksum: "untrusted-client-value",
           expectedDraftRevision: 0,
           storeScope: "default",
@@ -198,6 +209,8 @@ test("built Store uses real cookie login and server-function product writes with
       await rpc("editorPublishedPage", "GET", { slug: designSlug, scope: "default" }),
       null,
     );
+    const unpublishedHtml = await (await fetch(base + "/")).text();
+    assert.ok(/<h[1-6][^>]*>Why shop with us<\/h[1-6]>/.test(unpublishedHtml));
     const published = await rpc(
       "editorAdminOperation",
       "POST",
@@ -214,6 +227,9 @@ test("built Store uses real cookie login and server-function product writes with
       cookie,
     );
     assert.equal(published.ok, true);
+    const publishedHtml = await (await fetch(base + "/")).text();
+    assert.ok(!/<h[1-6][^>]*>Why shop with us<\/h[1-6]>/.test(publishedHtml));
+    assert.ok(publishedHtml.includes("Wonder, closer."));
     const conflict = await rpc(
       "editorAdminOperation",
       "POST",
@@ -238,6 +254,8 @@ test("built Store uses real cookie login and server-function product writes with
     );
     await stop();
     await start();
+    const restartedHtml = await (await fetch(base + "/")).text();
+    assert.ok(!/<h[1-6][^>]*>Why shop with us<\/h[1-6]>/.test(restartedHtml));
     assert.equal((await rpc("loadStoreProduct", "GET", { id: pid }, cookie)).revision, 2);
     assert.equal((await rpc("storePublicProduct", "GET", { slug: pid })).price, 42.5);
     assert.equal(
